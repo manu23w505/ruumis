@@ -129,13 +129,17 @@
         }
     };
 
-window.verCalendario = function(id) {
-    const anuncio = todosLosAnuncios.find(a => a.id === id);
-    if (anuncio && (anuncio.link_airbnb || anuncio.link_calendario)) {
-        const link = anuncio.link_airbnb || anuncio.link_calendario;
-        window.open(link, '_blank'); 
-    } else {
-        alert("Este anuncio no tiene un enlace de calendario o Airbnb asignado.");
+window.verCalendario = async function(id) {
+    try {
+        const respuesta = await fetch(`/api/anuncios/${id}/calendario-capsula`);
+        const mapaFechas = await respuesta.json(); 
+        const modal = document.getElementById('modal-calendario');
+        modal.classList.remove('hidden');
+        pintarCalendario(mapaFechas);
+
+    } catch (error) {
+        console.error("Error al obtener disponibilidad:", error);
+        alert("No se pudo cargar el calendario.");
     }
 };
 
