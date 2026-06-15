@@ -315,21 +315,18 @@
 
         let todosLosAnuncios = []; 
         let todosLosTipos = [];
-        let todasLasUbicaciones = []; // Almacenará la lista de zonas con su ciudad_id
+        let todasLasUbicaciones = []; 
 
         let creandoNuevaCiudad = false;
 
-        // ==========================================
-        // UTILERÍAS: CONTROL DE SELECT DE CIUDADES
-        // ==========================================
         async function cargarCiudadesEnSelect() {
             try {
-                const res = await fetch('http://localhost:3000/api/ubicaciones');
+                const res = await fetch('/api/ubicaciones');
                 if (!res.ok) throw new Error("Error en la petición de ubicaciones");
                 
                 const datos = await res.json();
                 const select = document.getElementById('ubicacion-ciudad-select');
-                if (!select) return; // Control por si no encuentra el elemento
+                if (!select) return; 
                 
                 select.innerHTML = ''; 
                 const ciudadesUnicas = new Set();
@@ -376,15 +373,11 @@
         }
 
 
-       // ==========================================
-        // MÓDULO: LOGIN Y CONTROL DE SESIÓN
-        // ==========================================
         document.getElementById('form-login').addEventListener('submit', async (e) => {
             e.preventDefault();
             const usuario = document.getElementById('login-usuario').value;
             const contrasena = document.getElementById('login-pass').value;
             
-            // CORREGIDO: Eliminamos 'gata ||' que causaba el error
             const recaptchaToken = grecaptcha.getResponse(); 
 
             if (!recaptchaToken) {
@@ -393,7 +386,7 @@
             }
 
             try {
-                const res = await fetch('http://localhost:3000/api/login', {
+               const res = await fetch('/api/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ usuario, contrasena, recaptchaToken }) 
@@ -417,13 +410,9 @@
         });
 
 
-        // ==========================================
-        // MÓDULO: CONTROL GENERAL DE CATÁLOGOS
-        // ==========================================
         async function cargarCatalogos() {
             try {
-                // 1. Cargar Tipos de Propiedad
-                const resTipos = await fetch('http://localhost:3000/api/tipos-propiedad');
+                const resTipos = await fetch('/api/tipos-propiedad');
                 todosLosTipos = resTipos.ok ? await resTipos.json() : [];
                 
                 const selectTipo = document.getElementById('tipo_propiedad');
@@ -436,22 +425,15 @@
                 });
                 renderTablaTipos();
 
-                // 2. Cargar Ubicaciones (Zonas) desde el Backend
-                const resUbi = await fetch('http://localhost:3000/api/ubicaciones');
+                const resUbi = await fetch('/api/ubicaciones');
                 todasLasUbicaciones = resUbi.ok ? await resUbi.json() : [];
                 
                 llenarSelectCiudades();
                 renderTablaUbicaciones();
-                
-                // Forzamos también la actualización del dropdown del Modal de Ubicaciones
                 await cargarCiudadesEnSelect();
-
-                // Escucha activa al cambiar de ciudad para filtrar zonas dinámicamente en anuncios
                 const selectCiudad = document.getElementById('ciudad');
-                // Clonamos para evitar acumular múltiples listeners si se llama seguido
                 const nuevoSelectCiudad = selectCiudad.cloneNode(true);
                 selectCiudad.parentNode.replaceChild(nuevoSelectCiudad, selectCiudad);
-                
                 nuevoSelectCiudad.addEventListener('change', (e) => {
                     filtrarZonasPorCiudad(e.target.value);
                 });
@@ -493,13 +475,9 @@
             });
         }
 
-
-        // ==========================================
-        // MÓDULO: PROPIEDADES / ANUNCIOS
-        // ==========================================
         async function listarAnuncios() {
             try {
-                const res = await fetch('http://localhost:3000/api/anuncios');
+                const res = await fetch('/api/anuncios');
                 todosLosAnuncios = await res.json();
                 
                 const tbody = document.getElementById('tabla-anuncios-body');
@@ -579,11 +557,11 @@
                 formData.append('imagen', fileInput.files[0]);
             }
 
-            let url = 'http://localhost:3000/api/anuncios';
+            let url = '/api/anuncios';
             let metodo = 'POST';
 
             if (modoEdicion) {
-                url = `http://localhost:3000/api/anuncios/${id}`;
+                url = `/api/anuncios/${id}`;
                 metodo = 'PUT'; 
             }
 
@@ -603,7 +581,7 @@
         async function eliminarAnuncio(id) {
             if(!confirm("¿Estás seguro de eliminar esta propiedad?")) return;
             try {
-                const res = await fetch(`http://localhost:3000/api/anuncios/${id}`, { method: 'DELETE' });
+                const res = await fetch(`/api/anuncios/${id}`, { method: 'DELETE' });
                 if (res.ok) listarAnuncios();
             } catch (err) { console.error(err); }
         }
@@ -649,10 +627,6 @@
             document.getElementById('modal-formulario').classList.replace('flex', 'hidden');
         }
 
-
-        // ==========================================
-        // MÓDULO: TIPOS DE PROPIEDAD (CATEGORÍAS)
-        // ==========================================
         function renderTablaTipos() {
             const tbody = document.getElementById('tabla-tipos-body');
             tbody.innerHTML = '';
@@ -690,11 +664,11 @@
             const id = document.getElementById('tipo-id').value;
             const nombre = document.getElementById('tipo-nombre').value.trim();
 
-            let url = 'http://localhost:3000/api/tipos-propiedad';
+            let url = '/api/tipos-propiedad';
             let metodo = 'POST';
 
             if (modoEdicionTipo) {
-                url = `http://localhost:3000/api/tipos-propiedad/${id}`;
+                url = `/api/tipos-propiedad/${id}`;
                 metodo = 'PUT';
             }
 
@@ -724,15 +698,11 @@
         async function eliminarTipo(id) {
             if(!confirm("¿Eliminar esta categoría?")) return;
             try {
-                const res = await fetch(`http://localhost:3000/api/tipos-propiedad/${id}`, { method: 'DELETE' });
+                const res = await fetch(`/api/tipos-propiedad/${id}`, { method: 'DELETE' });
                 if (res.ok) await cargarCatalogos();
             } catch (err) { console.error(err); }
         }
 
-
-        // ==========================================
-        // MÓDULO CORREGIDO: UBICACIONES (CIUDAD / ZONA)
-        // ==========================================
         function renderTablaUbicaciones() {
             const tbody = document.getElementById('tabla-ubicaciones-body');
             tbody.innerHTML = '';
@@ -783,11 +753,11 @@
                 ciudad = document.getElementById('ubicacion-ciudad-select').value;
             }
 
-            let url = 'http://localhost:3000/api/ubicaciones';
+            let url = '/api/ubicaciones';
             let metodo = 'POST';
 
             if (modoEdicionUbicacion) {
-                url = `http://localhost:3000/api/ubicaciones/${id}`;
+                url = `/api/ubicaciones/${id}`;
                 metodo = 'PUT';
             }
 
@@ -831,10 +801,10 @@
         async function eliminarUbicacion(id) {
             if(!confirm("¿Eliminar esta ubicación?")) return;
             try {
-                const res = await fetch(`http://localhost:3000/api/ubicaciones/${id}`, { method: 'DELETE' });
+                const res = await fetch(`/api/ubicaciones/${id}`, { method: 'DELETE' });
                 if (res.ok) await cargarCatalogos();
             } catch (err) { console.error(err); }
         }
 </script>
 </body>
-</html>                                                               
+</html>

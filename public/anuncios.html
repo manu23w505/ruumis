@@ -121,7 +121,6 @@
     let todosLosAnuncios = [];
     let contadorHuespedes = 1;
 
-    // Función para manejar el contador de huéspedes
     window.cambiarHuespedes = function(delta) {
         const nuevoValor = contadorHuespedes + delta;
         if (nuevoValor >= 1 && nuevoValor <= 8) {
@@ -133,7 +132,7 @@
 
     async function cargarAnuncios() {
         try {
-            const respuesta = await fetch('http://localhost:3000/api/anuncios');
+            const respuesta = await fetch('/api/anuncios');
             todosLosAnuncios = await respuesta.json();
             await cargarCiudadesAPI();
             renderizarTarjetas(todosLosAnuncios);
@@ -147,7 +146,7 @@
 
     async function cargarCiudadesAPI() {
         try {
-            const res = await fetch('http://localhost:3000/api/ciudades');
+            const res = await fetch('/api/ciudades');
             const ciudades = await res.json();
             const selectCiudad = document.getElementById('filtro-ciudad');
             
@@ -175,7 +174,7 @@
         }
 
         try {
-            const res = await fetch(`http://localhost:3000/api/zonas?ciudad_id=${ciudadId}`);
+            const res = await fetch(`/api/zonas?ciudad_id=${ciudadId}`);
             const zonas = await res.json();
             
             selectZona.innerHTML = '<option value="">Todas las zonas</option>';
@@ -253,7 +252,6 @@
         });
     }
 
-    // Configuración de Event Listeners
     document.getElementById('filtro-busqueda').addEventListener('input', aplicarFiltros);
     document.getElementById('filtro-precio-min').addEventListener('input', aplicarFiltros);
     document.getElementById('filtro-precio-max').addEventListener('input', aplicarFiltros);
@@ -274,11 +272,7 @@
         renderizarTarjetas(todosLosAnuncios);
     });
 
-    // Carga inicial
     cargarAnuncios();
-
-    // Mantener funciones de modales existentes (verDetalles, verCalendario, etc.) fuera de este bloque si es necesario, 
-    // pero incluirlas aquí si deseas que todo el script esté centralizado.
 </script>
 </body>
 </html>

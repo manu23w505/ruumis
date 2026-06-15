@@ -234,7 +234,7 @@
                             </p>
                         </div>
                         <form class="booking" id="form-buscador" action="#" method="post" autocomplete="off" data-type="booking" data-aos="fade-up">
-                            <input type="hidden" id="anuncio_id" value="5">
+                            <input type="hidden" id="anuncio_id" value="3">
                             <div class="item-wrapper d-sm-flex flex-wrap flex-lg-nowrap align-items-lg-center">
                                 <div class="booking_group d-flex flex-column">
                                     <label class="booking_group-label h5" for="checkIn">Check-in</label>
@@ -1742,28 +1742,19 @@
         </footer>
 
 <script>
-    const API_URL = 'https://resent-nebula-barterer.ngrok-free.dev';
-
     document.getElementById('form-buscador').addEventListener('submit', async (e) => {
         e.preventDefault();
-
         const idLocal = document.getElementById('anuncio_id').value;
-
         try {
-            // 1. Pedimos el link al servidor
-            const response = await fetch(`${API_URL}/api/anuncios/${idLocal}/link`);
-
-            // 2. Verificamos si la respuesta es exitosa (código 200)
+            const response = await fetch(`/api/anuncios/${idLocal}/link`);
             if (response.ok) {
                 const data = await response.json();
                 console.log("Link recibido del servidor:", data.link);
                 window.location.href = data.link;
             } else {
-                // Si el servidor responde 404 o 500, entramos aquí
                 alert("No se encontró el anuncio con ID: " + idLocal + ". Verifica el número en la base de datos.");
             }
         } catch (err) {
-            // Esto captura errores de red (por ejemplo, si el servidor está apagado)
             console.error("Error completo:", err);
             alert("Error de conexión con el servidor. Revisa la consola (F12).");
         }
