@@ -266,8 +266,8 @@
                     <h3 class="text-xl font-bold mb-2 text-slate-900 group-hover:text-cyan-600 transition-colors">${anuncio.titulo}</h3>
                     <p class="text-slate-600 text-sm mb-4 flex-grow">${(anuncio.descripcion_corta || anuncio.descripcion || '').substring(0, 100)}...</p>
                     <div class="grid grid-cols-2 gap-2 mt-auto">
-                        <button onclick="verCalendario(${anuncios})" class="w-full text-center bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition-colors">Calendario</button>
-                        <button onclick="verDetalles(${anuncios})" class="w-full text-center bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition-colors">Ver Detalles</button>
+                        <button onclick="verCalendario(${anuncio.id})" class="w-full text-center bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition-colors">Calendario</button>
+                        <button onclick="verDetalles(${anuncio.id})" class="w-full text-center bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition-colors">Ver Detalles</button>
                     </div>
                 </div>`;
             contenedor.appendChild(tarjeta);
