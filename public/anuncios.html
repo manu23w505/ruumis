@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruumis - Recámaras Disponibles</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style>
+    /* Estilos base para el calendario */
+    .dia-pasado {
+        background-color: #f8fafc;
+        color: #cbd5e1;
+        cursor: not-allowed;
+        text-decoration: line-through;
+    }
+
+        /* Colores vibrantes para estados */
+    .marcador-llegada {
+        background-color: #0ea5e9 !important; /* Un azul cian más intenso */
+        color: white !important;
+        border-color: #0369a1 !important;
+    }
+
+    .marcador-salida {
+        background-color: #10b981 !important; /* Un verde esmeralda para salida */
+        color: white !important;
+        border-color: #059669 !important;
+    }
+
+    .mitad-ocupado-der {
+        background: linear-gradient(to right, transparent 50%, #f1f5f9 50%) !important;
+    }
+
+    .mitad-ocupado-izq {
+        background: linear-gradient(to right, #f1f5f9 50%, transparent 50%) !important;
+    }
+    /* Esto hace que los botones de llegada y salida se vean más marcados */
+    .marcador-activo {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+        border: 2px solid #0891b2 !important; /* Un azul mucho más fuerte */
+        transform: scale(1.1); /* Lo hace un poquito más grande para que destaque */
+    }
+</style>
+</head>
+<body class="bg-white text-slate-900 min-h-screen font-sans">
+    <header class="border-b border-slate-200 backdrop-blur sticky top-0 z-50 bg-white/90">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-wider text-cyan-600">RUUMIS</h1>
+            <span class="text-sm text-slate-500 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">Prueba de Concepto</span>
+            <a style="color: black" href="admin.html" class="font-semibold hover:text-cyan-600 transition-colors">Panel Admin</a>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-12">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-extrabold mb-4 bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">Habitaciones Disponibles</h2>
+            <p class="text-slate-500 max-w-xl mx-auto">Encuentra tu espacio ideal. Habitaciones totalmente amuebladas y listas para mudarte hoy mismo.</p>
+        </div>
+
+        <div class="bg-slate-50 border border-slate-200 p-6 rounded-2xl shadow-sm mb-10 flex flex-col gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                <div class="w-full md:col-span-4">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">¿Qué estás buscando?</label>
+                    <input type="text" id="filtro-busqueda" placeholder="Ej. Loft, Alberca, Amueblado..." 
+                        class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                </div>
+
+                <div class="w-full md:col-span-4">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Ciudad</label>
+                    <select id="filtro-ciudad" 
+                        class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer">
+                        <option value="">Todas las ciudades</option>
+                    </select>
+                </div>
+
+                <div class="w-full md:col-span-4">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Zona / Colonia</label>
+                    <select id="filtro-zona" disabled 
+                        class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-400 focus:outline-none focus:border-cyan-500 transition-colors disabled:cursor-not-allowed">
+                        <option value="">Selecciona una ciudad primero</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Precio Mínimo (MXN)</label>
+                    <input type="number" id="filtro-precio-min" placeholder="Mínimo" 
+                        class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Precio Máximo (MXN)</label>
+                    <input type="number" id="filtro-precio-max" placeholder="Máximo" 
+                        class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                </div>
+
+                <div class="w-full">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Huéspedes</label>
+                    <div class="flex items-center justify-between bg-white border border-slate-200 rounded-xl px-4 py-2.5">
+                        <button type="button" onclick="cambiarHuespedes(-1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold">-</button>
+                        <span id="display-huespedes" class="font-bold text-slate-900">1</span>
+                        <button type="button" onclick="cambiarHuespedes(1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold">+</button>
+                    </div>
+                </div>
+
+                <div>
+                    <button id="btn-limpiar" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2.5 px-4 rounded-xl text-sm transition-colors cursor-pointer">
+                        Limpiar Filtros
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="contenedor-anuncios" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <p class="text-slate-500 col-span-full text-center py-12">Buscando habitaciones disponibles...</p>
+        </div>
+    </main>
+    
+<script>
+    let todosLosAnuncios = [];
+    let contadorHuespedes = 1;
+
+    // Función para manejar el contador de huéspedes
+    window.cambiarHuespedes = function(delta) {
+        const nuevoValor = contadorHuespedes + delta;
+        if (nuevoValor >= 1 && nuevoValor <= 8) {
+            contadorHuespedes = nuevoValor;
+            document.getElementById('display-huespedes').innerText = contadorHuespedes;
+            aplicarFiltros();
+        }
+    };
+
+    async function cargarAnuncios() {
+        try {
+            const respuesta = await fetch('http://localhost:3000/api/anuncios');
+            todosLosAnuncios = await respuesta.json();
+            await cargarCiudadesAPI();
+            renderizarTarjetas(todosLosAnuncios);
+        } catch (error) {
+            console.error('Error al conectar con la API:', error);
+            document.getElementById('contenedor-anuncios').innerHTML = `
+                <p class="text-red-500 col-span-full text-center py-12">Error al conectar con el servidor de Ruumis. Asegúrate de que Node.js esté corriendo.</p>
+            `;
+        }
+    }
+
+    async function cargarCiudadesAPI() {
+        try {
+            const res = await fetch('http://localhost:3000/api/ciudades');
+            const ciudades = await res.json();
+            const selectCiudad = document.getElementById('filtro-ciudad');
+            
+            selectCiudad.innerHTML = '<option value="">Todas las ciudades</option>';
+            ciudades.forEach(ciudad => {
+                const opt = document.createElement('option');
+                opt.value = ciudad.id;
+                opt.dataset.nombre = ciudad.nombre;
+                opt.innerText = ciudad.nombre;
+                selectCiudad.appendChild(opt);
+            });
+        } catch (error) {
+            console.error('Error al cargar ciudades:', error);
+        }
+    }
+
+    async function cargarZonasAPI(ciudadId) {
+        const selectZona = document.getElementById('filtro-zona');
+        
+        if (!ciudadId) {
+            selectZona.innerHTML = '<option value="">Selecciona una ciudad primero</option>';
+            selectZona.disabled = true;
+            selectZona.className = 'w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-400 focus:outline-none focus:border-cyan-500 transition-colors disabled:cursor-not-allowed';
+            return;
+        }
+
+        try {
+            const res = await fetch(`http://localhost:3000/api/zonas?ciudad_id=${ciudadId}`);
+            const zonas = await res.json();
+            
+            selectZona.innerHTML = '<option value="">Todas las zonas</option>';
+            zonas.forEach(zona => {
+                const opt = document.createElement('option');
+                opt.value = zona.nombre;
+                opt.innerText = zona.nombre;
+                selectZona.appendChild(opt);
+            });
+
+            selectZona.disabled = false;
+            selectZona.className = 'w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer';
+        } catch (error) {
+            console.error('Error al cargar zonas de la ciudad:', error);
+        }
+    }
+
+    function aplicarFiltros() {
+        const textobusqueda = document.getElementById('filtro-busqueda').value.toLowerCase();
+        const precioMinimo = parseFloat(document.getElementById('filtro-precio-min').value) || 0;
+        const precioMaximo = parseFloat(document.getElementById('filtro-precio-max').value) || Infinity;
+        
+        const selectCiudad = document.getElementById('filtro-ciudad');
+        const opcionCiudadSeleccionada = selectCiudad.options[selectCiudad.selectedIndex];
+        const ciudadTexto = (opcionCiudadSeleccionada && selectCiudad.value) ? opcionCiudadSeleccionada.dataset.nombre.toLowerCase() : '';
+        const zonaSeleccionada = document.getElementById('filtro-zona').value.toLowerCase();
+
+        const anunciosFiltrados = todosLosAnuncios.filter(anuncio => {
+            const camposDeBusqueda = [
+                anuncio.titulo, anuncio.descripcion, anuncio.descripcion_corta, 
+                anuncio.tipo_propiedad, anuncio.amenidades
+            ].join(' ').toLowerCase();
+
+            const capacidadAnuncio = parseInt(anuncio.capacidad_personas) || 0;
+            
+            return camposDeBusqueda.includes(textobusqueda) &&
+                   anuncio.precio >= precioMinimo &&
+                   anuncio.precio <= (isNaN(precioMaximo) ? Infinity : precioMaximo) &&
+                   (ciudadTexto === '' || (anuncio.ciudad && anuncio.ciudad.toLowerCase() === ciudadTexto)) &&
+                   (zonaSeleccionada === '' || (anuncio.zona && anuncio.zona.toLowerCase() === zonaSeleccionada)) &&
+                   capacidadAnuncio >= contadorHuespedes;
+        });
+
+        renderizarTarjetas(anunciosFiltrados);
+    }
+
+    function renderizarTarjetas(anunciosAMostrar) {
+        const contenedor = document.getElementById('contenedor-anuncios');
+        contenedor.innerHTML = '';
+
+        if (anunciosAMostrar.length === 0) {
+            contenedor.innerHTML = `<p class="text-slate-500 col-span-full text-center py-12">No se encontraron habitaciones con los filtros aplicados.</p>`;
+            return;
+        }
+
+        anunciosAMostrar.forEach((anuncio, index) => {
+            const tarjeta = document.createElement('div');
+            tarjeta.className = 'bg-slate-50 border border-slate-200 shadow-sm rounded-2xl overflow-hidden hover:shadow-md hover:border-cyan-500/50 transition-all duration-300 flex flex-col group';
+            tarjeta.innerHTML = `
+                <div class="relative overflow-hidden h-48 bg-slate-200">
+                    <img src="/uploads/${anuncio.imagen}" alt="${anuncio.titulo}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=500'"/>
+                    <div class="absolute top-3 left-3 bg-slate-900/70 backdrop-blur text-white font-medium px-2.5 py-0.5 rounded-lg text-xs">${anuncio.tipo_propiedad || 'Habitación'}</div>
+                    <div class="absolute top-3 right-3 bg-white/90 backdrop-blur text-cyan-600 font-bold px-3 py-1 rounded-xl text-xs border border-slate-200 shadow-sm">Hasta $${anuncio.precio} MXN / Noche</div>
+                </div>
+                <div class="p-6 flex flex-col flex-grow">
+                    <div class="text-xs font-semibold text-cyan-600 mb-1.5 uppercase tracking-wider">${anuncio.zona}, ${anuncio.ciudad}</div>
+                    <h3 class="text-xl font-bold mb-2 text-slate-900 group-hover:text-cyan-600 transition-colors">${anuncio.titulo}</h3>
+                    <p class="text-slate-600 text-sm mb-4 flex-grow">${(anuncio.descripcion_corta || anuncio.descripcion || '').substring(0, 100)}...</p>
+                    <div class="grid grid-cols-2 gap-2 mt-auto">
+                        <button onclick="verCalendario(${index})" class="w-full text-center bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition-colors">Calendario</button>
+                        <button onclick="verDetalles(${index})" class="w-full text-center bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition-colors">Ver Detalles</button>
+                    </div>
+                </div>`;
+            contenedor.appendChild(tarjeta);
+        });
+    }
+
+    // Configuración de Event Listeners
+    document.getElementById('filtro-busqueda').addEventListener('input', aplicarFiltros);
+    document.getElementById('filtro-precio-min').addEventListener('input', aplicarFiltros);
+    document.getElementById('filtro-precio-max').addEventListener('input', aplicarFiltros);
+    document.getElementById('filtro-ciudad').addEventListener('change', (e) => {
+        cargarZonasAPI(e.target.value);
+        aplicarFiltros();
+    });
+    document.getElementById('filtro-zona').addEventListener('change', aplicarFiltros);
+
+    document.getElementById('btn-limpiar').addEventListener('click', () => {
+        document.getElementById('filtro-busqueda').value = '';
+        document.getElementById('filtro-precio-min').value = '';
+        document.getElementById('filtro-precio-max').value = '';
+        document.getElementById('filtro-ciudad').value = '';
+        contadorHuespedes = 1;
+        document.getElementById('display-huespedes').innerText = '1';
+        cargarZonasAPI('');
+        renderizarTarjetas(todosLosAnuncios);
+    });
+
+    // Carga inicial
+    cargarAnuncios();
+
+    // Mantener funciones de modales existentes (verDetalles, verCalendario, etc.) fuera de este bloque si es necesario, 
+    // pero incluirlas aquí si deseas que todo el script esté centralizado.
+</script>
+</body>
+</html>

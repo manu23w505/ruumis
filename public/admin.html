@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruumis - Panel de Administración Seguro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <style>
+    /* Diseño del scrollbar personalizado */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f8fafc;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+    }
+</style>
+</head>
+<body class="bg-white text-slate-900 min-h-screen font-sans">
+
+    <div id="seccion-login" class="flex items-center justify-center min-h-screen px-4 bg-slate-50">
+        <div class="bg-white border border-slate-200 p-8 rounded-2xl shadow-xl w-full max-w-md">
+            <h2 class="text-3xl font-extrabold text-center mb-2 tracking-wider text-cyan-600">RUUMIS</h2>
+            <p class="text-center text-slate-500 text-sm mb-6">Inicia sesión para gestionar las propiedades</p>
+            
+            <form id="form-login" class="space-y-4">
+                <div>
+                    <label class="block text-sm text-slate-600 mb-1">Usuario</label>
+                    <input type="text" id="login-usuario" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                </div>
+                <div>
+                    <label class="block text-sm text-slate-600 mb-1">Contraseña</label>
+                    <input type="password" id="login-pass" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                </div>
+
+                <div class="flex justify-center py-2">
+                    <div class="g-recaptcha" data-sitekey="6LcsLgstAAAAACEu-uOFclU3JRCW7mCmehITrPfH"></div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-3 rounded-xl transition-colors cursor-pointer">Ingresar</button>
+                    <a href="index.html" class="w-full text-center bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 rounded-xl transition-colors">Salir</a>
+                </div>
+                <p id="error-login" class="text-red-500 text-center text-sm font-semibold mt-2 hidden">Credenciales incorrectas</p>
+            </form>
+        </div>
+    </div>
+
+    <div id="seccion-panel" class="hidden">
+        <header class="border-b border-slate-200 bg-white/80 backdrop-blur sticky top-0 z-40">
+            <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
+                <h1 class="text-xl font-bold text-cyan-600">RUUMIS <span class="text-xs text-slate-500 font-normal">| Panel Administrativo</span></h1>
+                <div class="flex items-center gap-4">
+                    <a href="index.html" target="_blank" class="text-sm text-slate-500 hover:text-cyan-600">Ver Sitio Público →</a>
+                    <button onclick="cerrarSesion()" class="text-xs bg-red-50 text-red-600 px-3 py-1 rounded-lg border border-red-200 hover:bg-red-600 hover:text-white transition-all cursor-pointer">Salir</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-5xl mx-auto px-4 py-10 space-y-12">
+            
+            <div>
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900">Inventario de Habitaciones</h2>
+                        <p class="text-slate-500 text-sm">Modifica, elimina o agrega nuevas opciones de hospedaje.</p>
+                    </div>
+                    <button onclick="abrirModalCrear()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold px-5 py-2.5 rounded-xl transition-colors shadow-sm cursor-pointer">
+                        + Crear Nuevo Anuncio
+                    </button>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-sm font-semibold">
+                                <th class="p-4">Propiedad</th>
+                                <th class="p-4">Ubicación</th>
+                                <th class="p-4">Precio</th>
+                                <th class="p-4 text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-anuncios-body" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900">Tipos de Propiedades</h3>
+                            <p class="text-slate-500 text-xs">Categorías para los anuncios.</p>
+                        </div>
+                        <button onclick="abrirModalTipoPropiedad()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3 py-2 rounded-xl transition-colors cursor-pointer">
+                            + Tipo Propiedad
+                        </button>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
+                                    <th class="p-3">Nombre del Tipo</th>
+                                    <th class="p-3 text-right">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-tipos-body" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900">Ciudades y Zonas</h3>
+                            <p class="text-slate-500 text-xs">Gestión de ubicaciones válidas.</p>
+                        </div>
+                        <button onclick="abrirModalUbicacion()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-3 py-2 rounded-xl transition-colors cursor-pointer">
+                            + Nueva Ubicación
+                        </button>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            </div>
+
+                        <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm max-h-[300px] overflow-y-auto custom-scrollbar">
+                            <table class="w-full text-left border-collapse text-sm">
+                                <thead>
+                                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold sticky top-0 z-10">
+                                        <th class="p-3">Ciudad</th>
+                                        <th class="p-3">Zona / Colonia</th>
+                                        <th class="p-3 text-right">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-ubicaciones-body" class="divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+            </div>
+        </main>
+    </div>
+
+    <div id="modal-formulario" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-white border border-slate-200 w-full max-w-xl p-8 rounded-2xl shadow-2xl relative max-h-[95vh] overflow-y-auto">
+            <h3 id="modal-titulo" class="text-2xl font-bold text-slate-900 mb-1">Registrar Propiedad</h3>
+            <p class="text-slate-500 text-xs mb-6">Ingresa la información detallada de la recámara.</p>
+
+            <form id="form-anuncio" class="space-y-4" enctype="multipart/form-data">
+                <input type="hidden" id="anuncio-id">
+                
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Título del Anuncio</label>
+                    <input type="text" id="titulo" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Descripción General</label>
+                        <textarea id="descripcion" rows="3" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Descripción Corta</label>
+                        <textarea id="descripcion_corta" rows="3" required placeholder="Resumen breve para tarjetas..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors"></textarea>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="flex flex-col">
+                        <label for="ciudad" class="text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">Ciudad</label>
+                        <select id="ciudad" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-cyan-500 transition-all" onchange="filtrarZonasPorCiudad(this.value)">
+                            <option value="">Selecciona una ciudad...</option>
+                        </select>
+                    </div>
+
+                    <div class="flex flex-col">
+                        <label for="zona" class="text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">Zona / Colonia</label>
+                        <select id="zona" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-cyan-500 transition-all">
+                            <option value="">Selecciona una zona...</option>
+                        </select>
+                    </div>
+
+                    <div class="flex flex-col">
+                        <label for="tipo_propiedad" class="text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">Tipo de Propiedad</label>
+                        <select id="tipo_propiedad" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-cyan-500 transition-all">
+                            <option value="">Selecciona un tipo...</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Capacidad Personas</label>
+                        <input type="number" id="capacidad_personas" min="1" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Recámaras</label>
+                        <input type="number" id="recamaras" min="0" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Camas</label>
+                        <input type="number" id="camas" min="1" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Baños</label>
+                        <input type="number" id="banos" min="0" step="0.5" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Precio Diario ($ MXN)</label>
+                        <input type="number" id="precio" step="0.01" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Foto de la Propiedad</label>
+                        <input type="file" id="imagen" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:bg-slate-200 file:text-slate-700 cursor-pointer">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Amenidades (Separadas por comas)</label>
+                    <input type="text" id="amenidades" placeholder="Ej: Wi-Fi, Cocina, Clima, Agua Caliente" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Enlace de Airbnb (Link de Redirección)</label>
+                    <input type="url" id="link_airbnb" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Enlace del Calendario (iCal de Airbnb)</label>
+                    <input type="url" id="link_calendario" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors" placeholder="https://www.airbnb.mx/calendar/ical/...">
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 mt-6">
+                    <button type="button" onclick="cerrarModal()" class="px-5 py-2 rounded-xl bg-slate-200 text-slate-700 hover:bg-slate-300 transition-colors text-sm font-semibold cursor-pointer">Cancelar</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-600 text-slate-950 transition-colors text-sm font-semibold cursor-pointer">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-tipo-propiedad" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-white border border-slate-200 w-full max-w-md p-6 rounded-2xl shadow-2xl relative">
+            <h3 id="modal-tipo-titulo" class="text-xl font-bold text-slate-900 mb-4">Agregar Tipo de Propiedad</h3>
+            <form id="form-tipo-propiedad" class="space-y-4">
+                <input type="hidden" id="tipo-id">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Nombre de la Categoría</label>
+                    <input type="text" id="tipo-nombre" required placeholder="Ej: Loft, Penthouse, Glamping" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                </div>
+                <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                    <button type="button" onclick="cerrarModalTipoPropiedad()" class="px-4 py-2 rounded-xl bg-slate-200 text-slate-700 text-sm font-semibold">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-cyan-500 text-slate-950 text-sm font-semibold">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<div id="modal-ubicacion" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center z-50 animate-fade-in">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 border border-slate-100 transform transition-all">
+        <h3 id="modal-ubicacion-titulo" class="text-lg font-bold text-slate-800 mb-4">Agregar Ubicación</h3>
+        
+        <form id="form-ubicacion" class="space-y-4">
+            <input type="hidden" id="ubicacion-id">
+            
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Ciudad</label>
+                <div class="flex gap-2">
+                    <select id="ubicacion-ciudad-select" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-hidden focus:border-cyan-500">
+                        </select>
+                    <button type="button" onclick="mostrarInputNuevaCiudad()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold rounded-lg cursor-pointer transition-colors">
+                        + Nueva
+                    </button>
+                </div>
+                
+                <input type="text" id="ubicacion-ciudad-nuevo" class="hidden mt-2 w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-hidden focus:border-cyan-500" placeholder="Escribe el nombre de la nueva ciudad">
+                <button type="button" id="btn-cancelar-nueva-ciudad" onclick="ocultarInputNuevaCiudad()" class="hidden text-[11px] text-red-500 mt-1 hover:underline cursor-pointer">
+                    Cancelar nueva ciudad
+                </button>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Zona / Colonia</label>
+                <input type="text" id="ubicacion-zona" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-hidden focus:border-cyan-500" placeholder="Ej. Mayorazgo">
+            </div>
+
+            <div class="flex justify-end space-x-2 pt-2">
+                <button type="button" onclick="cerrarModalUbicacion()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold rounded-lg cursor-pointer transition-colors">
+                    Cancelar
+                </button>
+                <button type="submit" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-semibold rounded-lg shadow-xs cursor-pointer transition-colors">
+                    Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+        let modoEdicion = false;
+        let modoEdicionTipo = false;
+        let modoEdicionUbicacion = false;
+
+        let todosLosAnuncios = []; 
+        let todosLosTipos = [];
+        let todasLasUbicaciones = []; // Almacenará la lista de zonas con su ciudad_id
+
+        let creandoNuevaCiudad = false;
+
+        // ==========================================
+        // UTILERÍAS: CONTROL DE SELECT DE CIUDADES
+        // ==========================================
+        async function cargarCiudadesEnSelect() {
+            try {
+                const res = await fetch('http://localhost:3000/api/ubicaciones');
+                if (!res.ok) throw new Error("Error en la petición de ubicaciones");
+                
+                const datos = await res.json();
+                const select = document.getElementById('ubicacion-ciudad-select');
+                if (!select) return; // Control por si no encuentra el elemento
+                
+                select.innerHTML = ''; 
+                const ciudadesUnicas = new Set();
+                
+                datos.forEach(item => {
+                    const nombreCiudad = item.ciudad || item.ciudad_nombre || item.nombre_ciudad;
+                    if (nombreCiudad) {
+                        ciudadesUnicas.add(nombreCiudad.trim());
+                    }
+                });
+
+                if (ciudadesUnicas.size === 0) {
+                    mostrarInputNuevaCiudad();
+                    return;
+                }
+
+                ciudadesUnicas.forEach(nombreCiudad => {
+                    const opt = document.createElement('option');
+                    opt.value = nombreCiudad;
+                    opt.innerText = nombreCiudad;
+                    select.appendChild(opt);
+                });
+
+            } catch (err) {
+                console.error("Error al poblar el select de ciudades:", err);
+            }
+        }
+
+        function mostrarInputNuevaCiudad() {
+            creandoNuevaCiudad = true;
+            document.getElementById('ubicacion-ciudad-select').classList.add('hidden');
+            document.getElementById('ubicacion-ciudad-nuevo').classList.remove('hidden');
+            document.getElementById('btn-cancelar-nueva-ciudad').classList.remove('hidden');
+            document.getElementById('ubicacion-ciudad-nuevo').required = true;
+        }
+
+        function ocultarInputNuevaCiudad() {
+            creandoNuevaCiudad = false;
+            document.getElementById('ubicacion-ciudad-select').classList.remove('hidden');
+            document.getElementById('ubicacion-ciudad-nuevo').classList.add('hidden');
+            document.getElementById('btn-cancelar-nueva-ciudad').classList.add('hidden');
+            document.getElementById('ubicacion-ciudad-nuevo').required = false;
+            document.getElementById('ubicacion-ciudad-nuevo').value = '';
+        }
+
+
+       // ==========================================
+        // MÓDULO: LOGIN Y CONTROL DE SESIÓN
+        // ==========================================
+        document.getElementById('form-login').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const usuario = document.getElementById('login-usuario').value;
+            const contrasena = document.getElementById('login-pass').value;
+            
+            // CORREGIDO: Eliminamos 'gata ||' que causaba el error
+            const recaptchaToken = grecaptcha.getResponse(); 
+
+            if (!recaptchaToken) {
+                mostrarErrorLogin('Por favor, marca la casilla "No soy un robot".');
+                return;
+            }
+
+            try {
+                const res = await fetch('http://localhost:3000/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ usuario, contrasena, recaptchaToken }) 
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    document.getElementById('seccion-login').classList.add('hidden');
+                    document.getElementById('seccion-panel').classList.remove('hidden');
+                    
+                    await cargarCatalogos();
+                    listarAnuncios();
+                } else {
+                    mostrarErrorLogin(data.error || 'Credenciales incorrectas');
+                    grecaptcha.reset();
+                }
+            } catch (err) {
+                mostrarErrorLogin('Error en la conexión con el servidor');
+                grecaptcha.reset();
+            }
+        });
+
+
+        // ==========================================
+        // MÓDULO: CONTROL GENERAL DE CATÁLOGOS
+        // ==========================================
+        async function cargarCatalogos() {
+            try {
+                // 1. Cargar Tipos de Propiedad
+                const resTipos = await fetch('http://localhost:3000/api/tipos-propiedad');
+                todosLosTipos = resTipos.ok ? await resTipos.json() : [];
+                
+                const selectTipo = document.getElementById('tipo_propiedad');
+                selectTipo.innerHTML = '<option value="">Selecciona un tipo...</option>';
+                todosLosTipos.forEach(t => {
+                    const opt = document.createElement('option');
+                    opt.value = t.id; 
+                    opt.textContent = t.nombre;
+                    selectTipo.appendChild(opt);
+                });
+                renderTablaTipos();
+
+                // 2. Cargar Ubicaciones (Zonas) desde el Backend
+                const resUbi = await fetch('http://localhost:3000/api/ubicaciones');
+                todasLasUbicaciones = resUbi.ok ? await resUbi.json() : [];
+                
+                llenarSelectCiudades();
+                renderTablaUbicaciones();
+                
+                // Forzamos también la actualización del dropdown del Modal de Ubicaciones
+                await cargarCiudadesEnSelect();
+
+                // Escucha activa al cambiar de ciudad para filtrar zonas dinámicamente en anuncios
+                const selectCiudad = document.getElementById('ciudad');
+                // Clonamos para evitar acumular múltiples listeners si se llama seguido
+                const nuevoSelectCiudad = selectCiudad.cloneNode(true);
+                selectCiudad.parentNode.replaceChild(nuevoSelectCiudad, selectCiudad);
+                
+                nuevoSelectCiudad.addEventListener('change', (e) => {
+                    filtrarZonasPorCiudad(e.target.value);
+                });
+
+            } catch (e) {
+                console.error("Error cargando catálogos secundarios:", e);
+            }
+        }
+
+        function llenarSelectCiudades() {
+            const selectCiudad = document.getElementById('ciudad');
+            selectCiudad.innerHTML = '<option value="">Selecciona una ciudad...</option>';
+            
+            const ciudadesUnicas = [...new Set(todasLasUbicaciones.map(u => u.ciudad || u.ciudad_nombre))].filter(Boolean);
+            
+            ciudadesUnicas.forEach(ciudad => {
+                const opt = document.createElement('option');
+                opt.value = city = ciudad;
+                opt.textContent = ciudad;
+                selectCiudad.appendChild(opt);
+            });
+        }
+
+        function filtrarZonasPorCiudad(ciudadSeleccionada) {
+            const selectZona = document.getElementById('zona');
+            selectZona.innerHTML = '<option value="">Selecciona una zona...</option>';
+            
+            if (!ciudadSeleccionada) return;
+
+            const zonasFiltradas = todasLasUbicaciones.filter(u => 
+                (u.ciudad || u.ciudad_nombre) === ciudadSeleccionada
+            );
+
+            zonasFiltradas.forEach(z => {
+                const opt = document.createElement('option');
+                opt.value = z.zona || z.nombre; 
+                opt.textContent = z.zona || z.nombre;
+                selectZona.appendChild(opt);
+            });
+        }
+
+
+        // ==========================================
+        // MÓDULO: PROPIEDADES / ANUNCIOS
+        // ==========================================
+        async function listarAnuncios() {
+            try {
+                const res = await fetch('http://localhost:3000/api/anuncios');
+                todosLosAnuncios = await res.json();
+                
+                const tbody = document.getElementById('tabla-anuncios-body');
+                tbody.innerHTML = '';
+
+                if(todosLosAnuncios.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-400">No hay anuncios registrados.</td></tr>`;
+                    return;
+                }
+
+                todosLosAnuncios.forEach(anuncio => {
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50 transition-colors";
+                    const tagUbicacion = anuncio.zona && anuncio.ciudad ? `${anuncio.zona}, ${anuncio.ciudad}` : 'No asignada';
+                    
+                    tr.innerHTML = `
+                        <td class="p-4 flex items-center gap-4">
+                            <img src="/uploads/${anuncio.imagen}" class="w-12 h-12 object-cover rounded-xl border border-slate-200 bg-slate-100" onerror="this.src='https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=100'">
+                            <div>
+                                <div class="font-bold text-slate-900">${anuncio.titulo}</div>
+                                <div class="text-xs text-slate-500 truncate max-w-xs">${anuncio.descripcion_corta || anuncio.descripcion}</div>
+                            </div>
+                        </td>
+                        <td class="p-4 text-sm text-slate-600 font-medium">${tagUbicacion}</td>
+                        <td class="p-4 font-semibold text-cyan-600">$${anuncio.precio}</td>
+                        <td class="p-4 text-right">
+                            <button onclick='abrirModalEditar(${JSON.stringify(anuncio)})' class="text-xs bg-amber-50 text-amber-600 border border-amber-200 px-3 py-1 rounded-lg mr-2 hover:bg-amber-500 hover:text-slate-950 transition-all font-semibold cursor-pointer">Editar</button>
+                            <button onclick="eliminarAnuncio(${anuncio.id})" class="text-xs bg-red-50 text-red-600 border border-red-200 px-3 py-1 rounded-lg hover:bg-red-600 hover:text-white transition-all font-semibold cursor-pointer">Borrar</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                console.error("Error al listar anuncios:", err);
+            }
+        }
+
+        document.getElementById('form-anuncio').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('anuncio-id').value;
+
+            const txtCiudad = document.getElementById('ciudad').value;
+            const txtZona = document.getElementById('zona').value;
+            
+            const ubicacionEncontrada = todasLasUbicaciones.find(u => {
+                const nombreCiudadDB = u.ciudad || u.ciudad_nombre || '';
+                const nombreZonaDB = u.zona || u.nombre || '';
+                return nombreCiudadDB.trim() === txtCiudad.trim() && nombreZonaDB.trim() === txtZona.trim();
+            });
+
+            const formData = new FormData();
+            formData.append('titulo', document.getElementById('titulo').value);
+            formData.append('descripcion', document.getElementById('descripcion').value);
+            
+            if (ubicacionEncontrada) {
+                formData.append('ciudad_id', ubicacionEncontrada.ciudad_id || '');
+                formData.append('zona_id', ubicacionEncontrada.id || ''); 
+            } else {
+                formData.append('ciudad_id', '');
+                formData.append('zona_id', '');
+            }
+            
+            formData.append('tipo_propiedad_id', document.getElementById('tipo_propiedad').value); 
+            formData.append('precio', document.getElementById('precio').value);
+            formData.append('link_airbnb', document.getElementById('link_airbnb').value);
+            formData.append('link_calendario', document.getElementById('link_calendario').value);
+            formData.append('usuario_id', '1');
+            formData.append('descripcion_corta', document.getElementById('descripcion_corta').value);
+            formData.append('recamaras', document.getElementById('recamaras').value);
+            formData.append('camas', document.getElementById('camas').value);
+            formData.append('banos', document.getElementById('banos').value);
+            formData.append('capacidad_personas', document.getElementById('capacidad_personas').value);
+            formData.append('amenidades', document.getElementById('amenidades').value);
+
+            const fileInput = document.getElementById('imagen');
+            if (fileInput.files[0]) {
+                formData.append('imagen', fileInput.files[0]);
+            }
+
+            let url = 'http://localhost:3000/api/anuncios';
+            let metodo = 'POST';
+
+            if (modoEdicion) {
+                url = `http://localhost:3000/api/anuncios/${id}`;
+                metodo = 'PUT'; 
+            }
+
+            try {
+                const res = await fetch(url, { method: metodo, body: formData });
+                if (res.ok) {
+                    cerrarModal();
+                    listarAnuncios();
+                } else {
+                    alert("El servidor rechazó los cambios del anuncio.");
+                }
+            } catch (err) {
+                console.error("Error al enviar formulario:", err);
+            }
+        });
+
+        async function eliminarAnuncio(id) {
+            if(!confirm("¿Estás seguro de eliminar esta propiedad?")) return;
+            try {
+                const res = await fetch(`http://localhost:3000/api/anuncios/${id}`, { method: 'DELETE' });
+                if (res.ok) listarAnuncios();
+            } catch (err) { console.error(err); }
+        }
+
+        function abrirModalCrear() {
+            modoEdicion = false;
+            document.getElementById('form-anuncio').reset();
+            document.getElementById('anuncio-id').value = '';
+            document.getElementById('modal-titulo').innerText = "Registrar Propiedad";
+            document.getElementById('imagen').required = true;
+            document.getElementById('modal-formulario').classList.replace('hidden', 'flex');
+        }
+
+        function abrirModalEditar(anuncio) {
+            modoEdicion = true;
+            document.getElementById('anuncio-id').value = anuncio.id;
+            document.getElementById('titulo').value = anuncio.titulo;
+            document.getElementById('descripcion').value = anuncio.descripcion;
+            
+            document.getElementById('ciudad').value = anuncio.ciudad || '';
+            filtrarZonasPorCiudad(anuncio.ciudad || '');
+            document.getElementById('zona').value = anuncio.zona || '';
+            
+            document.getElementById('precio').value = anuncio.precio;
+            document.getElementById('link_airbnb').value = anuncio.link_airbnb;
+            document.getElementById('link_calendario').value = anuncio.link_calendario || '';
+            document.getElementById('descripcion_corta').value = anuncio.descripcion_corta || '';
+            
+            document.getElementById('tipo_propiedad').value = anuncio.tipo_propiedad_id || '';
+            
+            document.getElementById('recamaras').value = anuncio.recamaras || 0;
+            document.getElementById('camas').value = anuncio.camas || 1;
+            document.getElementById('banos').value = anuncio.banos || 0;
+            document.getElementById('capacidad_personas').value = anuncio.capacidad_personas || 1;
+            document.getElementById('amenidades').value = anuncio.amenidades || '';
+
+            document.getElementById('modal-titulo').innerText = "Modificar Propiedad";
+            document.getElementById('imagen').required = false;
+            document.getElementById('modal-formulario').classList.replace('hidden', 'flex');
+        }
+
+        function cerrarModal() {
+            document.getElementById('modal-formulario').classList.replace('flex', 'hidden');
+        }
+
+
+        // ==========================================
+        // MÓDULO: TIPOS DE PROPIEDAD (CATEGORÍAS)
+        // ==========================================
+        function renderTablaTipos() {
+            const tbody = document.getElementById('tabla-tipos-body');
+            tbody.innerHTML = '';
+            if (todosLosTipos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="2" class="p-3 text-center text-slate-400 text-xs">Sin categorías.</td></tr>`;
+                return;
+            }
+            todosLosTipos.forEach(t => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-medium text-slate-800">${t.nombre}</td>
+                    <td class="p-3 text-right">
+                        <button onclick='abrirModalEditarTipo(${JSON.stringify(t)})' class="text-[11px] text-amber-600 hover:underline mr-2 cursor-pointer">Editar</button>
+                        <button onclick="eliminarTipo(${t.id})" class="text-[11px] text-red-600 hover:underline cursor-pointer">Borrar</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function abrirModalTipoPropiedad() {
+            modoEdicionTipo = false;
+            document.getElementById('form-tipo-propiedad').reset();
+            document.getElementById('tipo-id').value = '';
+            document.getElementById('modal-tipo-titulo').innerText = "Agregar Tipo de Propiedad";
+            document.getElementById('modal-tipo-propiedad').classList.replace('hidden', 'flex');
+        }
+
+        function cerrarModalTipoPropiedad() {
+            document.getElementById('modal-tipo-propiedad').classList.replace('flex', 'hidden');
+        }
+
+        document.getElementById('form-tipo-propiedad').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('tipo-id').value;
+            const nombre = document.getElementById('tipo-nombre').value.trim();
+
+            let url = 'http://localhost:3000/api/tipos-propiedad';
+            let metodo = 'POST';
+
+            if (modoEdicionTipo) {
+                url = `http://localhost:3000/api/tipos-propiedad/${id}`;
+                metodo = 'PUT';
+            }
+
+            try {
+                const res = await fetch(url, {
+                    method: metodo,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre: nombre, tipo_propiedad: nombre })
+                });
+                if (res.ok) {
+                    cerrarModalTipoPropiedad();
+                    await cargarCatalogos(); 
+                } else {
+                    alert("Error al guardar el tipo de propiedad en el servidor.");
+                }
+            } catch (err) { console.error("Error en tipos:", err); }
+        });
+
+        function abrirModalEditarTipo(tipo) {
+            modoEdicionTipo = true;
+            document.getElementById('tipo-id').value = tipo.id;
+            document.getElementById('tipo-nombre').value = tipo.nombre;
+            document.getElementById('modal-tipo-titulo').innerText = "Modificar Tipo de Propiedad";
+            document.getElementById('modal-tipo-propiedad').classList.replace('hidden', 'flex');
+        }
+
+        async function eliminarTipo(id) {
+            if(!confirm("¿Eliminar esta categoría?")) return;
+            try {
+                const res = await fetch(`http://localhost:3000/api/tipos-propiedad/${id}`, { method: 'DELETE' });
+                if (res.ok) await cargarCatalogos();
+            } catch (err) { console.error(err); }
+        }
+
+
+        // ==========================================
+        // MÓDULO CORREGIDO: UBICACIONES (CIUDAD / ZONA)
+        // ==========================================
+        function renderTablaUbicaciones() {
+            const tbody = document.getElementById('tabla-ubicaciones-body');
+            tbody.innerHTML = '';
+            if (todasLasUbicaciones.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-slate-400 text-xs">Sin ubicaciones configuradas.</td></tr>`;
+                return;
+            }
+            todasLasUbicaciones.forEach(u => {
+                const tr = document.createElement('tr');
+                const ciudadNombre = u.ciudad || u.ciudad_nombre || 'Desconocida';
+                const zonaNombre = u.zona || u.nombre || 'Desconocida';
+                
+                tr.innerHTML = `
+                    <td class="p-3 font-medium text-slate-800">${ciudadNombre}</td>
+                    <td class="p-3 text-slate-600">${zonaNombre}</td>
+                    <td class="p-3 text-right">
+                        <button onclick='abrirModalEditarUbicacion(${JSON.stringify(u)})' class="text-[11px] text-amber-600 hover:underline mr-2 cursor-pointer">Editar</button>
+                        <button onclick="eliminarUbicacion(${u.id})" class="text-[11px] text-red-600 hover:underline cursor-pointer">Borrar</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function abrirModalUbicacion() {
+            modoEdicionUbicacion = false;
+            document.getElementById('form-ubicacion').reset();
+            document.getElementById('ubicacion-id').value = '';
+            ocultarInputNuevaCiudad();
+            cargarCiudadesEnSelect(); 
+            document.getElementById('modal-ubicacion-titulo').innerText = "Agregar Ubicación";
+            document.getElementById('modal-ubicacion').classList.replace('hidden', 'flex');
+        }
+
+        function cerrarModalUbicacion() {
+            document.getElementById('modal-ubicacion').classList.replace('flex', 'hidden');
+        }
+
+        document.getElementById('form-ubicacion').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('ubicacion-id').value;
+            const zona = document.getElementById('ubicacion-zona').value.trim();
+            
+            let ciudad = "";
+            if (creandoNuevaCiudad) {
+                ciudad = document.getElementById('ubicacion-ciudad-nuevo').value.trim();
+            } else {
+                ciudad = document.getElementById('ubicacion-ciudad-select').value;
+            }
+
+            let url = 'http://localhost:3000/api/ubicaciones';
+            let metodo = 'POST';
+
+            if (modoEdicionUbicacion) {
+                url = `http://localhost:3000/api/ubicaciones/${id}`;
+                metodo = 'PUT';
+            }
+
+            try {
+                const res = await fetch(url, {
+                    method: metodo,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ciudad, zona })
+                });
+                
+                if (res.ok) {
+                    cerrarModalUbicacion();
+                    await cargarCatalogos(); 
+                } else {
+                    const errData = await res.json();
+                    alert("Error: " + (errData.error || "No se pudo guardar la ubicación."));
+                }
+            } catch (err) { 
+                console.error("Error en ubicaciones:", err); 
+            }
+        });
+
+        function abrirModalEditarUbicacion(u) {
+            modoEdicionUbicacion = true;
+            document.getElementById('ubicacion-id').value = u.id; 
+            document.getElementById('ubicacion-zona').value = u.zona || u.nombre || '';
+            
+            creandoNuevaCiudad = false;
+            document.getElementById('ubicacion-ciudad-select').classList.remove('hidden');
+            document.getElementById('ubicacion-ciudad-nuevo').classList.add('hidden');
+            document.getElementById('btn-cancelar-nueva-ciudad').classList.add('hidden');
+            
+            cargarCiudadesEnSelect().then(() => {
+                document.getElementById('ubicacion-ciudad-select').value = u.ciudad || u.ciudad_nombre || '';
+            });
+
+            document.getElementById('modal-ubicacion-titulo').innerText = "Modificar Ubicación";
+            document.getElementById('modal-ubicacion').classList.replace('hidden', 'flex');
+        }
+
+        async function eliminarUbicacion(id) {
+            if(!confirm("¿Eliminar esta ubicación?")) return;
+            try {
+                const res = await fetch(`http://localhost:3000/api/ubicaciones/${id}`, { method: 'DELETE' });
+                if (res.ok) await cargarCatalogos();
+            } catch (err) { console.error(err); }
+        }
+</script>
+</body>
+</html>                                                               
