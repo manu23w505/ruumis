@@ -40,9 +40,6 @@ const upload = multer({
     }
 });
 
-// ==========================================
-// CAMBIO 1: AJUSTE DE CONEXIÓN PARA RAILWAY
-// ==========================================
 const db = mysql.createConnection({
     host: process.env.MYSQLHOST || 'localhost',
     user: process.env.MYSQLUSER || 'root',
@@ -485,9 +482,6 @@ cron.schedule('*/5 * * * *', () => {
     sincronizarCalendarios();
 });
 
-// ==========================================
-// CAMBIO 2: PUERTO DINÁMICO PARA ENTORNO
-// ==========================================
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);

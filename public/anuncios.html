@@ -120,7 +120,6 @@
 <script>
     let todosLosAnuncios = [];
     let contadorHuespedes = 1;
-
     window.cambiarHuespedes = function(delta) {
         const nuevoValor = contadorHuespedes + delta;
         if (nuevoValor >= 1 && nuevoValor <= 8) {
@@ -128,6 +127,29 @@
             document.getElementById('display-huespedes').innerText = contadorHuespedes;
             aplicarFiltros();
         }
+    };
+
+    window.verCalendario = async function(id) {
+        try {
+            const respuesta = await fetch(`/api/anuncios/${id}/link`);
+            if (respuesta.ok) {
+                const data = await respuesta.json();
+                if (data.link) {
+                    window.location.href = data.link;
+                } else {
+                    alert("Este anuncio no tiene un enlace de calendario o Airbnb asignado.");
+                }
+            } else {
+                alert("No se pudo obtener el enlace de este anuncio.");
+            }
+        } catch (error) {
+            console.error("Error al redirigir al calendario:", error);
+            alert("Error de conexión con el servidor.");
+        }
+    };
+
+    window.verDetalles = function(id) {
+        window.location.href = `detalle.html?id=${id}`;
     };
 
     async function cargarAnuncios() {
@@ -230,7 +252,7 @@
             return;
         }
 
-        anunciosAMostrar.forEach((anuncio, index) => {
+        anunciosAMostrar.forEach((anuncio) => {
             const tarjeta = document.createElement('div');
             tarjeta.className = 'bg-slate-50 border border-slate-200 shadow-sm rounded-2xl overflow-hidden hover:shadow-md hover:border-cyan-500/50 transition-all duration-300 flex flex-col group';
             tarjeta.innerHTML = `
@@ -244,8 +266,8 @@
                     <h3 class="text-xl font-bold mb-2 text-slate-900 group-hover:text-cyan-600 transition-colors">${anuncio.titulo}</h3>
                     <p class="text-slate-600 text-sm mb-4 flex-grow">${(anuncio.descripcion_corta || anuncio.descripcion || '').substring(0, 100)}...</p>
                     <div class="grid grid-cols-2 gap-2 mt-auto">
-                        <button onclick="verCalendario(${index})" class="w-full text-center bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition-colors">Calendario</button>
-                        <button onclick="verDetalles(${index})" class="w-full text-center bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition-colors">Ver Detalles</button>
+                        <button onclick="verCalendario(${anuncio.id})" class="w-full text-center bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition-colors">Calendario</button>
+                        <button onclick="verDetalles(${anuncio.id})" class="w-full text-center bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition-colors">Ver Detalles</button>
                     </div>
                 </div>`;
             contenedor.appendChild(tarjeta);
