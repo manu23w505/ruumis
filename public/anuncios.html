@@ -116,6 +116,17 @@
             <p class="text-slate-500 col-span-full text-center py-12">Buscando habitaciones disponibles...</p>
         </div>
     </main>
+
+    <div id="modal-calendario" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div class="bg-white rounded-2xl p-8 w-full max-w-lg shadow-xl">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold">Disponibilidad</h2>
+            <button onclick="document.getElementById('modal-calendario').classList.add('hidden')" class="text-gray-500 hover:text-black text-2xl">&times;</button>
+        </div>
+        <div id="calendario-contenido" class="grid grid-cols-7 gap-2">
+            </div>
+    </div>
+</div>
     
 <script>
     let todosLosAnuncios = [];
@@ -131,15 +142,25 @@
 
 window.verCalendario = async function(id) {
     try {
-        const respuesta = await fetch(`/api/anuncios/${id}/calendario-capsula`);
-        const mapaFechas = await respuesta.json(); 
         const modal = document.getElementById('modal-calendario');
+        if (!modal) {
+            console.error("No se encontró el elemento modal-calendario en el HTML");
+            return;
+        }
+
+        // 1. Pedimos los datos al servidor
+        const respuesta = await fetch(`/api/anuncios/${id}/calendario-capsula`);
+        const mapaFechas = await respuesta.json();
+
+        // 2. Mostramos el modal
         modal.classList.remove('hidden');
-        pintarCalendario(mapaFechas);
+
+        // 3. (Opcional) Aquí imprimiríamos los datos recibidos para ver si llegan bien
+        console.log("Fechas recibidas para el ID", id, ":", mapaFechas);
 
     } catch (error) {
         console.error("Error al obtener disponibilidad:", error);
-        alert("No se pudo cargar el calendario.");
+        alert("No se pudo cargar el calendario. Revisa la consola.");
     }
 };
 
