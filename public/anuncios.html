@@ -129,24 +129,16 @@
         }
     };
 
-    window.verCalendario = async function(id) {
-        try {
-            const respuesta = await fetch(`/api/anuncios/${id}/link`);
-            if (respuesta.ok) {
-                const data = await respuesta.json();
-                if (data.link) {
-                    window.location.href = data.link;
-                } else {
-                    alert("Este anuncio no tiene un enlace de calendario o Airbnb asignado.");
-                }
-            } else {
-                alert("No se pudo obtener el enlace de este anuncio.");
-            }
-        } catch (error) {
-            console.error("Error al redirigir al calendario:", error);
-            alert("Error de conexión con el servidor.");
-        }
-    };
+window.verCalendario = function(idAnuncio) {
+    const anuncio = todosLosAnuncios.find(a => a.id === idAnuncio);
+    const link = anuncio.link_calendario || anuncio.link; 
+
+    if (link) {
+        window.location.href = link;
+    } else {
+        alert("Este anuncio no tiene un enlace de calendario configurado.");
+    }
+};
 
     window.verDetalles = function(id) {
         window.location.href = `detalle.html?id=${id}`;
