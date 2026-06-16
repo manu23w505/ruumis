@@ -60,32 +60,6 @@ db.connect((err) => {
 
 app.post('/api/login', async (req, res) => {
     const { usuario, contrasena, recaptchaToken } = req.body;
-    
-    //BYPASS TEMPORAL PARA DESARROLLO (Comentamos la validación del CAPTCHA)
-    /*
-    if (!recaptchaToken) {
-        return res.status(400).json({ success: false, error: 'Por favor, completa el CAPTCHA de seguridad.' });
-    }
-
-    const RECAPTCHA_SECRET_KEY = '6LcsLgstAAAAAKGCi3qHrT6LxiHBAEmYe_5zMxaI'; 
-
-    try {
-        const respuestaGoogle = await fetch(`https://www.google.com/recaptcha/api/siteverify`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `secret=${RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
-        });
-
-        const datosGoogle = await respuestaGoogle.json();
-
-        if (!datosGoogle.success) {
-            return res.status(400).json({ success: false, error: 'Validación de CAPTCHA fallida. Inténtalo de nuevo.' });
-        }
-    } catch (error) {
-        console.error('Error al conectar con Google reCAPTCHA:', error);
-        return res.status(500).json({ error: 'Error al verificar el filtro de seguridad externo' });
-    }
-    */
 
     const sql = 'SELECT * FROM usuarios WHERE usuario = ?';
     db.query(sql, [usuario], async (err, results) => {
