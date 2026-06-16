@@ -431,6 +431,29 @@ app.get('/api/anuncios/:id/calendario-capsula', (req, res) => {
     });
 });
 
+app.get('/api/redirect-airbnb/:id', (req, res) => {
+    const anuncioId = req.params.id;
+    
+    // Capturamos los parámetros que vienen del buscador
+    const { check_in, check_out, guests, adults, children } = req.query;
+    const sql = 'SELECT link_airbnb FROM anuncios WHERE id = ?';
+    
+    db.query(sql, [anuncioId], (err, results) => {
+        if (err) {
+            console.error('Error al buscar el anuncio:', err);
+            return res.status(500).send('Error interno del servidor');
+        }
+        if (results.length === 0 || !results[0].link_airbnb) {
+            return res.status(404).send('Lo sentimos, este anuncio no tiene un enlace de Airbnb configurado.');
+        }
+        let urlBaseReal = results[0].link_airbnb;
+        if (urlBaseReal.includes('?')) {
+            urlBaseReal = urlBaseReal.split('?')[0];
+        }
+        const urlFinal = `${urlBaseReal}?check_in=${check_in}&check_out=${check_out}&guests=${guests}&adults=${adults}&children=${children}`;
+        return res.redirect(urlFinal);
+    });
+});
 
 async function sincronizarCalendarios() {
     console.log('[iCal] Iniciando sincronización automática en el servidor...');

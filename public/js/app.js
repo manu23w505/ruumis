@@ -256,8 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-limpiar')?.addEventListener('click', limpiarFiltros);
 });
 
-//buscador index
-
+// buscador de index.js
 document.addEventListener('DOMContentLoaded', function () {
     const formBuscador = document.getElementById('form-buscador');
 
@@ -265,7 +264,6 @@ document.addEventListener('DOMContentLoaded', function () {
         formBuscador.addEventListener('submit', function (e) {
             e.preventDefault(); 
             const anuncioId = document.getElementById('anuncio_id').value;
-
             const checkInRaw = document.getElementById('checkIn').value;
             const checkOutRaw = document.getElementById('checkOut').value;
 
@@ -273,31 +271,35 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert('Por favor, selecciona las fechas de Check-in y Check-out.');
                 return;
             }
-
-            const adultos = parseInt(document.getElementById('adults').value) || 1;
-            const niños = parseInt(document.getElementById('children').value) || 0;
-            const totalGuests = adultos + niños;
+            const adultosInput = document.getElementById('adults');
+            const niñosInput = document.getElementById('children');
+            
+            const adults = adultosInput ? (parseInt(adultsInput.value) || 1) : 1;
+            const children = niñosInput ? (parseInt(niñosInput.value) || 0) : 0;
+            const totalGuests = adults + children;
 
             const checkIn = formatearFechaParaAirbnb(checkInRaw);
             const checkOut = formatearFechaParaAirbnb(checkOutRaw);
 
-            const airbnbUrl = `https://www.airbnb.com/rooms/${anuncioId}?check_in=${checkIn}&check_out=${checkOut}&guests=${totalGuests}&adults=${adults}&children=${niños}`;
+            const urlRedireccion = `/api/redirect-airbnb/${anuncioId}?check_in=${checkIn}&check_out=${checkOut}&guests=${totalGuests}&adults=${adults}&children=${children}`;
 
-            window.open(airbnbUrl, '_blank');
+            window.open(urlRedireccion, '_blank');
         });
     }
 });
 
 function formatearFechaParaAirbnb(fechaStr) {
-    if (fechaStr.includes('-') && fechaStr.split('-')[0].length === 4) {
-        return fechaStr;
+    if (fechaStr.includes('.')) {
+        const partes = fechaStr.split('.'); 
+        if (partes[2] && partes[2].length === 4) {
+            return `${partes[2]}-${partes[0]}-${partes[1]}`; 
+        }
     }
     if (fechaStr.includes('/')) {
         const partes = fechaStr.split('/');
         if (partes[2] && partes[2].length === 4) {
-            return `${partes[2]}-${partes[1]}-${partes[0]}`; 
+            return `${partes[2]}-${partes[0]}-${partes[1]}`;
         }
     }
-    
     return fechaStr; 
 }
