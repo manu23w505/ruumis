@@ -273,8 +273,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             const adultosInput = document.getElementById('adults');
             const niñosInput = document.getElementById('children');
-            
-            const adults = adultosInput ? (parseInt(adultsInput.value) || 1) : 1;
+
+            const adults = adultsInput ? (parseInt(adultsInput.value) || 1) : 1;
             const children = niñosInput ? (parseInt(niñosInput.value) || 0) : 0;
             const totalGuests = adults + children;
 
