@@ -433,8 +433,6 @@ app.get('/api/anuncios/:id/calendario-capsula', (req, res) => {
 
 app.get('/api/redirect-airbnb/:id', (req, res) => {
     const anuncioId = req.params.id;
-    
-    // Capturamos los parámetros que vienen del buscador
     const { check_in, check_out, guests, adults, children } = req.query;
     const sql = 'SELECT link_airbnb FROM anuncios WHERE id = ?';
     

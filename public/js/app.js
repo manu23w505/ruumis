@@ -263,6 +263,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (formBuscador) {
         formBuscador.addEventListener('submit', function (e) {
             e.preventDefault(); 
+            
             const anuncioId = document.getElementById('anuncio_id').value;
             const checkInRaw = document.getElementById('checkIn').value;
             const checkOutRaw = document.getElementById('checkOut').value;
@@ -271,10 +272,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert('Por favor, selecciona las fechas de Check-in y Check-out.');
                 return;
             }
-            const adultosInput = document.getElementById('adults');
-            const niñosInput = document.getElementById('children');
+            const adultosInput = formBuscador.querySelector('input[name="adults"]');
+            const niñosInput = formBuscador.querySelector('input[name="children"]');
 
-            const adults = adultsInput ? (parseInt(adultsInput.value) || 1) : 1;
+            const adults = adultosInput ? (parseInt(adultosInput.value) || 1) : 1;
             const children = niñosInput ? (parseInt(niñosInput.value) || 0) : 0;
             const totalGuests = adults + children;
 
