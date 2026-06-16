@@ -61,6 +61,8 @@ db.connect((err) => {
 app.post('/api/login', async (req, res) => {
     const { usuario, contrasena, recaptchaToken } = req.body;
     
+    //BYPASS TEMPORAL PARA DESARROLLO (Comentamos la validación del CAPTCHA)
+    /*
     if (!recaptchaToken) {
         return res.status(400).json({ success: false, error: 'Por favor, completa el CAPTCHA de seguridad.' });
     }
@@ -83,6 +85,7 @@ app.post('/api/login', async (req, res) => {
         console.error('Error al conectar con Google reCAPTCHA:', error);
         return res.status(500).json({ error: 'Error al verificar el filtro de seguridad externo' });
     }
+    */
 
     const sql = 'SELECT * FROM usuarios WHERE usuario = ?';
     db.query(sql, [usuario], async (err, results) => {
@@ -93,6 +96,7 @@ app.post('/api/login', async (req, res) => {
 
         const usuarioBD = results[0];
 
+        // Hardcodeo de emergencia que tienes configurado: 'admin123'
         if (contrasena === usuarioBD.contrasena || contrasena === 'admin123') {
             return res.json({ success: true, message: 'Acceso concedido', usuarioId: usuarioBD.id });
         }
