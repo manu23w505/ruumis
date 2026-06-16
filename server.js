@@ -59,7 +59,7 @@ db.connect((err) => {
 
 
 app.post('/api/login', async (req, res) => {
-    const { usuario, contrasena, recaptchaToken } = req.body;
+const { usuario, contrasena, recaptchaToken } = req.body;
     
     if (!recaptchaToken) {
         return res.status(400).json({ success: false, error: 'Por favor, completa el CAPTCHA de seguridad.' });
