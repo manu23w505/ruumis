@@ -188,17 +188,18 @@ window.abrirModalDetalles = function(id) {
 window.verCalendario = async function(id) {
     const modal = document.getElementById('modal-calendario');
     if (!modal) return alert("Error: No se encontró el modal-calendario en el HTML.");
-    
+    const anuncio = todosLosAnuncios.find(a => a.id === id);
+    const linkAirbnb = anuncio ? anuncio.link_airbnb : null;
     const mapaFechas = await apiCall(`/api/anuncios/${id}/calendario-capsula`);
     if (mapaFechas) {
         modal.classList.replace('hidden', 'flex');
-        renderizarCalendarioVisual(mapaFechas);
+        renderizarCalendarioVisual(mapaFechas, linkAirbnb);
     } else {
         alert("No se pudo obtener el estado de ocupación.");
     }
 };
 
-function renderizarCalendarioVisual(mapaFechas) {
+function renderizarCalendarioVisual(mapaFechas, linkAirbnb) {
     const contenedor = document.getElementById('calendario-contenido');
     if (!contenedor) return;
     contenedor.innerHTML = '';
@@ -208,27 +209,39 @@ function renderizarCalendarioVisual(mapaFechas) {
     const mes = hoy.getMonth();
     const primerDiaMes = new Date(año, mes, 1).getDay();
     const totalDiasMes = new Date(año, mes + 1, 0).getDate();
-
     for (let i = 0; i < primerDiaMes; i++) {
         contenedor.innerHTML += `<div class="p-3"></div>`;
     }
-
     for (let dia = 1; dia <= totalDiasMes; dia++) {
         const mm = String(mes + 1).padStart(2, '0');
         const dd = String(dia).padStart(2, '0');
         const formatoFechaStr = `${año}-${mm}-${dd}`;
         const estado = mapaFechas[formatoFechaStr];
-        let claseColor = 'bg-slate-50 text-slate-800 border-slate-100 hover:bg-slate-200'; 
+        const fechaDia = new Date(año, mes, dia);
+        hoy.setHours(0,0,0,0); 
+        const esDiaPasado = fechaDia < hoy;
 
-        if (estado === 'llegada') {
-            claseColor = 'marcador-llegada marcador-activo text-white font-bold';
+        let claseColor = ''; 
+        let atributosExtra = '';
+
+        if (esDiaPasado) {
+            claseColor = 'bg-slate-50 text-slate-300 border-slate-100 line-through cursor-not-allowed';
+        } else if (estado === 'llegada') {
+            claseColor = 'marcador-llegada marcador-activo text-white font-bold cursor-not-allowed';
         } else if (estado === 'salida') {
-            claseColor = 'marcador-salida marcador-activo text-white font-bold';
+            claseColor = 'marcador-salida marcador-activo text-white font-bold cursor-not-allowed';
         } else if (estado === 'intermedio') {
-            claseColor = 'bg-slate-200 text-slate-400 dia-pasado line-through';
+            claseColor = 'bg-slate-200 text-slate-400 dia-pasado line-through cursor-not-allowed';
+        } else {
+            claseColor = 'bg-emerald-50 text-emerald-800 border-emerald-100 hover:bg-emerald-500 hover:text-white font-semibold cursor-pointer shadow-xs transform hover:scale-105 transition-all';
+            if (linkAirbnb) {
+                atributosExtra = `onclick="window.open('${linkAirbnb}', '_blank')" title="¡Disponible! Clic para reservar en Airbnb"`;
+            }
         }
-
-        contenedor.innerHTML += `<div data-fecha="${formatoFechaStr}" class="p-3 border text-center rounded-xl text-sm transition-all ${claseColor}">${dia}</div>`;
+        contenedor.innerHTML += `
+            <div data-fecha="${formatoFechaStr}" ${atributosExtra} class="p-3 border text-center rounded-xl text-sm ${claseColor}">
+                ${dia}
+            </div>`;
     }
 }
 
