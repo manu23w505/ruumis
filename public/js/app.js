@@ -327,15 +327,23 @@ document.addEventListener('DOMContentLoaded', function () {
                     
                     clon.querySelector('.room-title').textContent = anuncio.titulo;
                     clon.querySelector('.room-description').textContent = anuncio.descripcion || 'Sin descripción disponible';
-                    
                     clon.querySelector('.room-capacity').textContent = anuncio.capacidad_personas || '2';
-                    
                     clon.querySelector('.room-beds').textContent = anuncio.camas ? `${anuncio.camas} beds` : '1 bed';
                     clon.querySelector('.room-price').textContent = `$${anuncio.precio}`;
                     
-                    if (anuncio.imagen) {
-                        clon.querySelector('.room-img').src = anuncio.imagen;
+                    // --- CORRECCIÓN DE LA IMAGEN ---
+                    const imgElement = clon.querySelector('.room-image'); // O la clase que tenga tu <img> en el template
+                    if (imgElement && anuncio.imagen) {
+                        // Si la imagen ya es un link de internet, úsala directo. Si no, concatena la ruta.
+                        if (anuncio.imagen.startsWith('http://') || anuncio.imagen.startsWith('https://')) {
+                            imgElement.src = anuncio.imagen;
+                        } else {
+                            imgElement.src = `/uploads/${anuncio.imagen}`;
+                        }
+                    } else if (imgElement) {
+                        imgElement.src = '/uploads/default.jpg'; // Imagen por si no hay ninguna
                     }
+                    // ---------------------------------
 
                     clon.querySelector('.room-link').href = `/api/redirect-airbnb/${anuncio.id}?check_in=&check_out=&guests=1&adults=1&children=0`;
 
