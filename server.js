@@ -499,6 +499,20 @@ async function sincronizarCalendarios() {
     });
 }
 
+//rooms 
+
+app.get('/api/anuncios-cards', (req, res) => {
+    const sql = 'SELECT id, titulo, descripcion, precio, capacidad, camas, imagen FROM anuncios';
+    
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error('Error al traer los anuncios:', err);
+            return res.status(500).json({ error: 'Error interno del servidor' });
+        }
+        res.json(results); 
+    });
+});
+
 cron.schedule('*/5 * * * *', () => {
     sincronizarCalendarios();
 });

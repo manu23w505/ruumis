@@ -304,3 +304,46 @@ function formatearFechaParaAirbnb(fechaStr) {
     }
     return fechaStr; 
 }
+
+// rooms.html
+
+document.addEventListener('DOMContentLoaded', function () {
+    const container = document.getElementById('anuncios-container');
+    const template = document.getElementById('room-template');
+    if (container && template) {
+        fetch('/api/anuncios-cards')
+            .then(response => {
+                if (!response.ok) throw new Error('Error al obtener datos del servidor');
+                return response.json();
+            })
+            .then(anuncios => {
+                anuncios.forEach((anuncio, index) => {
+                    const clon = template.cloneNode(true);
+                    clon.removeAttribute('id');
+                    clon.style.removeProperty('display');
+                    
+                    clon.setAttribute('data-order', index + 1);
+                    clon.querySelector('.room-title').textContent = anuncio.titulo;
+                    clon.querySelector('.room-description').textContent = anuncio.descripcion || 'Sin descripción disponible';
+                    clon.querySelector('.room-capacity').textContent = anuncio.capacidad || '2';
+                    clon.querySelector('.room-beds').textContent = anuncio.camas ? `${anuncio.camas} beds` : '1 bed';
+                    clon.querySelector('.room-price').textContent = `$${anuncio.precio}`;
+                    
+                    if (anuncio.imagen) {
+                        clon.querySelector('.room-img').src = anuncio.imagen;
+                    }
+
+                    clon.querySelector('.room-link').href = `/api/redirect-airbnb/${anuncio.id}?check_in=&check_out=&guests=1&adults=1&children=0`;
+
+                    container.appendChild(clon);
+                });
+
+                if (typeof AOS !== 'undefined') {
+                    AOS.refresh();
+                }
+            })
+            .catch(error => {
+                console.error('Error cargando los anuncios dinámicos:', error);
+            });
+    }
+});
