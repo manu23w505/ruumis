@@ -502,12 +502,12 @@ async function sincronizarCalendarios() {
 //rooms 
 
 app.get('/api/anuncios-cards', (req, res) => {
-    const sql = 'SELECT id, titulo, descripcion, precio, capacidad, camas, imagen FROM anuncios';
+    const sql = 'SELECT id, titulo, descripcion, precio, imagen, camas, capacidad_personas FROM anuncios';
     
     db.query(sql, (err, results) => {
         if (err) {
-            console.error('Error al traer los anuncios:', err);
-            return res.status(500).json({ error: 'Error interno del servidor' });
+            console.error('Error al traer los anuncios de la BD:', err);
+            return res.status(500).json({ error: 'Error interno del servidor', detalles: err.message });
         }
         res.json(results); 
     });
