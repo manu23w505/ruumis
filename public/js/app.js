@@ -305,6 +305,55 @@ function formatearFechaParaAirbnb(fechaStr) {
     return fechaStr; 
 }
 
+// hotel rooms index.html
+document.addEventListener('DOMContentLoaded', function () {
+    // Buscamos las 2 estructuras de lista que dejamos listas en el HTML
+    const tarjetasEstaticas = document.querySelectorAll('.item-home-dinamico');
+    
+    if (tarjetasEstaticas.length > 0) {
+        fetch('/api/anuncios-cards')
+            .then(response => {
+                if (!response.ok) throw new Error('Error al obtener datos del servidor');
+                return response.json();
+            })
+            .then(anuncios => {
+                // Recorremos las dos tarjetas físicas de nuestro HTML
+                tarjetasEstaticas.forEach((tarjeta, index) => {
+                    const anuncio = anuncios[index]; // Asignamos el anuncio correspondiente (0 o 1)
+                    
+                    if (anuncio) {
+                        // Inyectamos los datos reemplazando los placeholders
+                        tarjeta.querySelector('.home-room-title').textContent = anuncio.titulo;
+                        tarjeta.querySelector('.home-room-title').href = `room.html?id=${anuncio.id}`;
+                        tarjeta.querySelector('.home-room-price').textContent = `$${anuncio.precio}`;
+                        tarjeta.querySelector('.home-room-capacity').textContent = anuncio.capacidad_personas || '2';
+                        tarjeta.querySelector('.home-room-beds').textContent = anuncio.camas || '1';
+                        
+                        // Control y visualización inteligente de imágenes
+                        const imgElement = tarjeta.querySelector('.home-room-image');
+                        if (imgElement && anuncio.imagen) {
+                            if (anuncio.imagen.startsWith('http://') || anuncio.imagen.startsWith('https://')) {
+                                imgElement.src = anuncio.imagen;
+                                // Si tu plantilla usa lazyload, actualizamos el atributo data-src por si acaso
+                                imgElement.setAttribute('data-src', anuncio.imagen);
+                            } else {
+                                imgElement.src = `/uploads/${anuncio.imagen}`;
+                                imgElement.setAttribute('data-src', `/uploads/${anuncio.imagen}`);
+                            }
+                        }
+
+                        // Redirección de disponibilidad de Airbnb
+                        tarjeta.querySelector('.home-room-link').href = `/api/redirect-airbnb/${anuncio.id}?guests=1`;
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error cargando la información en el Home:', error);
+            });
+    }
+});
+
+
 // rooms.html
 
 document.addEventListener('DOMContentLoaded', function () {
