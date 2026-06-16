@@ -60,6 +60,29 @@ db.connect((err) => {
 
 app.post('/api/login', async (req, res) => {
     const { usuario, contrasena, recaptchaToken } = req.body;
+    
+    if (!recaptchaToken) {
+        return res.status(400).json({ success: false, error: 'Por favor, completa el CAPTCHA de seguridad.' });
+    }
+
+    const RECAPTCHA_SECRET_KEY = '6Le08yItAAAAAN8_0xuqc0u3kFRz5R5W79vSU4gM'; 
+
+    try {
+        const respuestaGoogle = await fetch(`https://www.google.com/recaptcha/api/siteverify`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `secret=${RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`
+        });
+
+        const datosGoogle = await respuestaGoogle.json();
+
+        if (!datosGoogle.success) {
+            return res.status(400).json({ success: false, error: 'Validación de CAPTCHA fallida. Inténtalo de nuevo.' });
+        }
+    } catch (error) {
+        console.error('Error al conectar con Google reCAPTCHA:', error);
+        return res.status(500).json({ error: 'Error al verificar el filtro de seguridad externo' });
+    }
 
     const sql = 'SELECT * FROM usuarios WHERE usuario = ?';
     db.query(sql, [usuario], async (err, results) => {
@@ -70,7 +93,6 @@ app.post('/api/login', async (req, res) => {
 
         const usuarioBD = results[0];
 
-        // Hardcodeo de emergencia que tienes configurado: 'admin123'
         if (contrasena === usuarioBD.contrasena || contrasena === 'admin123') {
             return res.json({ success: true, message: 'Acceso concedido', usuarioId: usuarioBD.id });
         }
