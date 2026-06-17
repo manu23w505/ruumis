@@ -445,44 +445,32 @@ async function cargarPreguntasDinamicas() {
 
     try {
         const response = await fetch('/api/faqs');
-        if (!response.ok) throw new Error('Error al obtener las preguntas');
-        
         const preguntas = await response.json();
 
-        // Recorremos las preguntas al revés o de forma normal para insertarlas arriba de la tarjeta
-        preguntas.forEach((item, index) => {
-            // El primer elemento se puede renderizar abierto ('show') y los demás colapsados, o todos colapsados.
-            // Para mantener la plantilla original, el primero suele llevar la clase 'show' y no tener la clase 'collapsed'
-            const esPrimero = index === 0;
-            
-            const htmlPregunta = `
-                <div class="accordion_component-item">
-                    <div class="item-wrapper d-flex flex-column justify-content-between">
-                        <h4
-                            class="accordion_component-item_header d-flex justify-content-between align-items-center ${esPrimero ? '' : 'collapsed'}"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#item-bd-${item.id}"
-                            aria-expanded="${esPrimero ? 'true' : 'false'}"
-                        >
-                            ${item.pregunta}
-                            <span class="wrapper">
-                                <i class="icon-chevron_down icon transform"></i>
-                            </span>
-                        </h4>
-                        <div id="item-bd-${item.id}" class="accordion-collapse collapse ${esPrimero ? 'show' : ''}">
-                            <div class="accordion_component-item_body">
-                                ${item.respuesta}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
+        // Mantenemos la tarjeta de "Preguntas" (la que trae el botón)
+        const tarjetaPregunta = contenedor.querySelector('.about_faq-main_card');
+        
+        // Limpiamos el contenedor, pero conservamos la tarjeta original al final
+        contenedor.innerHTML = ''; 
 
-            // Insertamos los elementos al inicio del contenedor (antes de la tarjeta de "Do you have any questions?")
-            contenedor.insertAdjacentHTML('afterbegin', htmlPregunta);
+        preguntas.forEach((p) => {
+            const div = document.createElement('div');
+            // Usamos las clases que definen el estilo de cada ítem de FAQ en tu plantilla
+            div.className = 'about_faq-main_card d-flex flex-column justify-content-between';
+            
+            div.innerHTML = `
+                <h4 class="title">${p.pregunta}</h4>
+                <p class="text flex-grow-1">${p.respuesta}</p>
+            `;
+            contenedor.appendChild(div);
         });
 
+        // Volvemos a añadir la tarjeta de contacto original
+        if (tarjetaPregunta) {
+            contenedor.appendChild(tarjetaPregunta);
+        }
+        
     } catch (error) {
-        console.error('Error cargando el catálogo de preguntas:', error);
+        console.error('Error cargando las preguntas:', error);
     }
 }
