@@ -355,23 +355,20 @@
         let creandoNuevaCiudad = false;
         let creandoNuevaZona = false;
 
-        // FUNCIÓN NUEVA: Maneja el intercambio visual entre pestañas del sidebar
+        // FUNCIÓN: Maneja el intercambio visual entre pestañas del sidebar
         function cambiarPestana(tabId, boton) {
-            // Ocultar todos los bloques de contenido
             document.querySelectorAll('.tab-content').forEach(contenido => {
                 contenido.classList.remove('active');
             });
-            // Quitar el foco activo a todos los botones del sidebar
             document.querySelectorAll('.sidebar-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             
-            // Mostrar la pestaña seleccionada y marcar botón como activo
             document.getElementById(tabId).classList.add('active');
             boton.classList.add('active');
         }
 
-        // Simulación de cierre de sesión
+        // Cierre de sesión
         function cerrarSesion() {
             document.getElementById('seccion-panel').classList.add('hidden');
             document.getElementById('seccion-login').classList.remove('hidden');
@@ -455,26 +452,23 @@
                     const selectUbicacion = document.getElementById('anuncio-ubicacion-id');
                     if (!selectUbicacion) return;
 
-                    // Limpiar opciones manteniendo la primera
                     selectUbicacion.innerHTML = '<option value="">-- Selecciona un Complejo/Ubicación --</option>';
                     
                     ubicaciones.forEach(u => {
                         const option = document.createElement('option');
-                        option.value = u.id; // ID de la ubicación física
-                        option.setAttribute('data-zona', u.zona_id || u.id || '');
-                        option.setAttribute('data-ciudad', u.ciudad_id || '');
+                        option.value = u.id; 
                         
-                        // Texto legible: "Nombre Complejo (Zona, Ciudad)"
                         const cNombre = u.ciudad_nombre || u.ciudad || 'Sin Ciudad';
-                        const zNombre = u.zona_nombre || u.zona || u.nombre || 'Sin Zona';
-                        option.textContent = `${u.nombre || 'Complejo'} (${zNombre}, ${cNombre})`;
+                        const zNombre = u.zona_nombre || u.zona || 'Sin Zona';
+                        const compNombre = u.nombre ? `${u.nombre} ` : 'Complejo ';
+                        
+                        option.textContent = `${compNombre}(${zNombre}, ${cNombre})`;
                         selectUbicacion.appendChild(option);
                     });
                 })
                 .catch(err => console.error('Error al cargar ubicaciones para anuncios:', err));
         }
 
-        // Asegúrate de ejecutar esta función cuando cargue la página de administración
         document.addEventListener('DOMContentLoaded', () => {
             cargarUbicacionesEnAnuncios();
         });
@@ -483,7 +477,6 @@
             e.preventDefault();
             const usuario = document.getElementById('login-usuario').value;
             const contrasena = document.getElementById('login-pass').value;
-            
             const recaptchaToken = grecaptcha.getResponse(); 
 
             if (!recaptchaToken) {
@@ -537,60 +530,13 @@
                 const resUbi = await fetch('/api/ubicaciones');
                 todasLasUbicaciones = resUbi.ok ? await resUbi.json() : [];
                 
-                // Actualizar también el select del formulario de anuncios
                 cargarUbicacionesEnAnuncios();
-                
-                llenarSelectCiudades();
                 renderTablaUbicaciones();
                 await cargarCiudadesEnSelect();
-
-                // Manejo seguro del antiguo selector de filtros por si aún existe en el HTML
-                const selectCiudad = document.getElementById('ciudad');
-                if (selectCiudad) {
-                    const nuevoSelectCiudad = selectCiudad.cloneNode(true);
-                    selectCiudad.parentNode.replaceChild(nuevoSelectCiudad, selectCiudad);
-                    nuevoSelectCiudad.addEventListener('change', (e) => {
-                        filtrarZonasPorCiudad(e.target.value);
-                    });
-                }
 
             } catch (e) {
                 console.error("Error cargando catálogos secundarios:", e);
             }
-        }
-
-        function llenarSelectCiudades() {
-            const selectCiudad = document.getElementById('ciudad');
-            if (!selectCiudad) return; // Validación defensiva
-
-            selectCiudad.innerHTML = '<option value="">Selecciona una ciudad...</option>';
-            const ciudadesUnicas = [...new Set(todasLasUbicaciones.map(u => u.ciudad || u.ciudad_nombre))].filter(Boolean);
-            
-            ciudadesUnicas.forEach(ciudad => {
-                const opt = document.createElement('option');
-                opt.value = ciudad;
-                opt.textContent = ciudad;
-                selectCiudad.appendChild(opt);
-            });
-        }
-
-        function filtrarZonasPorCiudad(ciudadSeleccionada) {
-            const selectZona = document.getElementById('zona');
-            if (!selectZona) return;
-
-            selectZona.innerHTML = '<option value="">Selecciona una zona...</option>';
-            if (!ciudadSeleccionada) return;
-
-            const zonasFiltradas = todasLasUbicaciones.filter(u => 
-                (u.ciudad || u.ciudad_nombre) === ciudadSeleccionada
-            );
-
-            zonasFiltradas.forEach(z => {
-                const opt = document.createElement('option');
-                opt.value = z.zona || z.nombre; 
-                opt.textContent = z.zona || z.nombre;
-                selectZona.appendChild(opt);
-            });
         }
 
         function cambiarZonasPorCiudadAdmin(ciudadSeleccionada) {
@@ -604,7 +550,7 @@
                 (u.ciudad || u.ciudad_nombre) === ciudadSeleccionada
             );
 
-            const nombresZonasUnicas = [...new Set(zonasFiltradas.map(z => z.zona || z.nombre))].filter(Boolean);
+            const nombresZonasUnicas = [...new Set(zonasFiltradas.map(z => z.zona || z.zona_nombre || z.nombre))].filter(Boolean);
 
             nombresZonasUnicas.forEach(zonaNombre => {
                 const opt = document.createElement('option');
@@ -632,14 +578,11 @@
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-slate-50 transition-colors";
                     
-                    // Mostrar complejo/nombre si está disponible, o zona/ciudad antigua
                     let tagUbicacion = 'No asignada';
                     if (anuncio.ubicacion_nombre) {
-                        tagUbicacion = anuncio.ubicacion_nombre;
+                        tagUbicacion = `${anuncio.ubicacion_nombre} (${anuncio.zona || ''}, ${anuncio.ciudad || ''})`;
                     } else if (anuncio.zona && anuncio.ciudad) {
                         tagUbicacion = `${anuncio.zona}, ${anuncio.ciudad}`;
-                    } else if (anuncio.zona_nombre || anuncio.ciudad_nombre) {
-                        tagUbicacion = `${anuncio.zona_nombre || ''} ${anuncio.ciudad_nombre || ''}`.trim();
                     }
                     
                     tr.innerHTML = `
@@ -664,35 +607,25 @@
             }
         }
 
+        // MODIFICADO: Ahora envía de manera limpia el 'ubicacion_id' unificado al Backend
         document.getElementById('form-anuncio').addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('anuncio-id').value;
-
             const selectUbicacion = document.getElementById('anuncio-ubicacion-id');
-            const opcionSeleccionada = selectUbicacion ? selectUbicacion.options[selectUbicacion.selectedIndex] : null;
 
             const formData = new FormData();
             formData.append('titulo', document.getElementById('titulo').value);
             formData.append('descripcion', document.getElementById('descripcion').value);
+            formData.append('descripcion_corta', document.getElementById('descripcion_corta').value);
             
-            if (opcionSeleccionada && selectUbicacion.value !== "") {
-                const ciudadId = opcionSeleccionada.getAttribute('data-ciudad');
-                const zonaId = opcionSeleccionada.getAttribute('data-zona');
-
-                formData.append('ciudad_id', ciudadId || '');
-                formData.append('zona_id', zonaId || ''); 
-                formData.append('ubicacion_id', selectUbicacion.value); // Opcional, por si tu backend lo asimila
-            } else {
-                formData.append('ciudad_id', '');
-                formData.append('zona_id', '');
-            }
-            
+            // Enviamos el ID de ubicación del select
+            formData.append('ubicacion_id', selectUbicacion.value || '');
             formData.append('tipo_propiedad_id', document.getElementById('tipo_propiedad').value); 
+            
             formData.append('precio', document.getElementById('precio').value);
             formData.append('link_airbnb', document.getElementById('link_airbnb').value);
             formData.append('link_calendario', document.getElementById('link_calendario').value);
             formData.append('usuario_id', '1');
-            formData.append('descripcion_corta', document.getElementById('descripcion_corta').value);
             formData.append('recamaras', document.getElementById('recamaras').value);
             formData.append('camas', document.getElementById('camas').value);
             formData.append('banos', document.getElementById('banos').value);
@@ -742,32 +675,22 @@
             document.getElementById('modal-formulario').classList.replace('hidden', 'flex');
         }
 
+        // MODIFICADO: Asigna correctamente el valor a 'anuncio-ubicacion-id'
         function abrirModalEditar(anuncio) {
             modoEdicion = true;
             document.getElementById('anuncio-id').value = anuncio.id;
             document.getElementById('titulo').value = anuncio.titulo;
             document.getElementById('descripcion').value = anuncio.descripcion;
+            document.getElementById('descripcion_corta').value = anuncio.descripcion_corta || '';
             
-            // CORRECCIÓN SELECCIÓN DE UBICACIÓN
             const selectUbicacion = document.getElementById('anuncio-ubicacion-id');
             if (selectUbicacion) {
-                let encontrado = false;
-                for (let i = 0; i < selectUbicacion.options.length; i++) {
-                    const opt = selectUbicacion.options[i];
-                    // Comparamos contra el zona_id guardado en el anuncio o su id de ubicación directa
-                    if (opt.getAttribute('data-zona') == anuncio.zona_id || opt.value == anuncio.ubicacion_id) {
-                        selectUbicacion.selectedIndex = i;
-                        encontrado = true;
-                        break;
-                    }
-                }
-                if (!encontrado) selectUbicacion.value = ""; 
+                selectUbicacion.value = anuncio.ubicacion_id || '';
             }
             
             document.getElementById('precio').value = anuncio.precio;
             document.getElementById('link_airbnb').value = anuncio.link_airbnb || '';
             document.getElementById('link_calendario').value = anuncio.link_calendario || '';
-            document.getElementById('descripcion_corta').value = anuncio.descripcion_corta || '';
             document.getElementById('tipo_propiedad').value = anuncio.tipo_propiedad_id || '';
             
             document.getElementById('recamaras').value = anuncio.recamaras || 0;
@@ -835,7 +758,7 @@
                 const res = await fetch(url, {
                     method: metodo,
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nombre: nombre, tipo_propiedad: nombre })
+                    body: JSON.stringify({ nombre: nombre })
                 });
                 if (res.ok) {
                     cerrarModalTipoPropiedad();
@@ -873,11 +796,12 @@
             todasLasUbicaciones.forEach(u => {
                 const tr = document.createElement('tr');
                 const ciudadNombre = u.ciudad || u.ciudad_nombre || 'Desconocida';
-                const zonaNombre = u.zona || u.zona_nombre || u.nombre || 'Desconocida';
+                const zonaNombre = u.zona || u.zona_nombre || 'Desconocida';
+                const complejoNombre = u.nombre ? `${u.nombre} ` : '';
                 
                 tr.innerHTML = `
                     <td class="p-3 font-medium text-slate-800">${ciudadNombre}</td>
-                    <td class="p-3 text-slate-600">${u.nombre || zonaNombre}</td>
+                    <td class="p-3 text-slate-600">${complejoNombre}(${zonaNombre})</td>
                     <td class="p-3 text-right">
                         <button onclick='abrirModalEditarUbicacion(${JSON.stringify(u)})' class="text-[11px] text-amber-600 hover:underline mr-2 cursor-pointer">Editar</button>
                         <button onclick="eliminarUbicacion(${u.id})" class="text-[11px] text-red-600 hover:underline cursor-pointer">Borrar</button>
@@ -991,7 +915,7 @@
                 cambiarZonasPorCiudadAdmin(ciudadActual);
                 
                 const selectZ = document.getElementById('ubicacion-zona-select');
-                if(selectZ) selectZ.value = u.zona || u.zona_nombre || u.nombre || '';
+                if(selectZ) selectZ.value = u.zona || u.zona_nombre || '';
             });
 
             document.getElementById('modal-ubicacion-titulo').innerText = "Modificar Ubicación";
@@ -1015,6 +939,6 @@
                 alert(mensaje);
             }
         }
-    </script>
+</script>
 </body>
 </html>

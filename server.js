@@ -198,25 +198,21 @@ app.post('/api/ubicaciones', (req, res) => {
         return res.status(400).json({ error: 'Ciudad y Zona son requeridas.' });
     }
 
-    // Paso 1: Asegurar que exista la Ciudad
     const sqlCiudad = 'SELECT id FROM ciudades WHERE nombre = ?';
     db.query(sqlCiudad, [ciudad.trim()], (err, ciudades) => {
         if (err) return res.status(500).json({ error: 'Error al buscar ciudad' });
 
         const procesarZona = (ciudadId) => {
-            // Paso 2: Asegurar que exista la Zona ligada a esa Ciudad
             const sqlZona = 'SELECT id FROM zonas WHERE nombre = ? AND ciudad_id = ?';
-            db.query(sqlZona, [zona.trim(), cityId = ciudadId], (err, zonas) => {
+            db.query(sqlZona, [zona.trim(), ciudadId], (err, zonas) => {
                 if (err) return res.status(500).json({ error: 'Error al buscar zona' });
 
                 const insertarFinalComplejo = (zonaId) => {
-                    // Paso 3: Insertar el registro final en tu tabla 'ubicaciones'
                     const sqlInsertUbicacion = `
                         INSERT INTO ubicaciones 
                         (nombre, direccion_completa, link_google_maps, iframe_mapa, especificaciones, zona_id) 
                         VALUES (?, ?, ?, ?, ?, ?)
                     `;
-                    // CORRECCIÓN: Se cambió 'specifications' que rompía el servidor por 'especificaciones'
                     db.query(sqlInsertUbicacion, [
                         nombre ? nombre.trim() : '',
                         direccion_completa ? direccion_completa.trim() : '',
@@ -345,15 +341,18 @@ app.delete('/api/ubicaciones/:id', (req, res) => {
     });
 });
 
+// MODIFICADO: Ahora hace LEFT JOIN a ubicaciones para obtener la información correcta
 app.get('/api/anuncios', (req, res) => {
     const sql = `
         SELECT a.*, 
-               c.nombre AS ciudad, 
+               u.nombre AS ubicacion_nombre,
                z.nombre AS zona, 
+               c.nombre AS ciudad, 
                t.nombre AS tipo_propiedad
         FROM anuncios a
-        LEFT JOIN ciudades c ON a.ciudad_id = c.id
-        LEFT JOIN zonas z ON a.zona_id = z.id
+        LEFT JOIN ubicaciones u ON a.ubicacion_id = u.id
+        LEFT JOIN zonas z ON u.zona_id = z.id
+        LEFT JOIN ciudades c ON z.ciudad_id = c.id
         LEFT JOIN tipos_propiedad t ON a.tipo_propiedad_id = t.id
     `;
     db.query(sql, (err, results) => {
@@ -362,6 +361,7 @@ app.get('/api/anuncios', (req, res) => {
     });
 });
 
+// MODIFICADO: Cambiado ciudad_id y zona_id por la nueva estructura de ubicacion_id
 app.post('/api/anuncios', (req, res) => {
     upload.single('imagen')(req, res, (err) => {
         if (err) {
@@ -371,19 +371,18 @@ app.post('/api/anuncios', (req, res) => {
 
         const { 
             titulo, descripcion, descripcion_corta, precio, link_airbnb, link_calendario, usuario_id,
-            ciudad_id, zona_id, tipo_propiedad_id, recamaras, camas, banos, capacidad_personas, amenidades
+            ubicacion_id, tipo_propiedad_id, recamaras, camas, banos, capacidad_personas, amenidades
         } = req.body;
 
         const nombreImagen = req.file ? req.file.filename : 'default.jpg';
         
         const sql = `INSERT INTO anuncios 
-            (titulo, descripcion, descripcion_corta, precio, imagen, link_airbnb, link_calendario, usuario_id, ciudad_id, zona_id, tipo_propiedad_id, recamaras, camas, banos, capacidad_personas, amenidades) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            (titulo, descripcion, descripcion_corta, precio, imagen, link_airbnb, link_calendario, usuario_id, ubicacion_id, tipo_propiedad_id, recamaras, camas, banos, capacidad_personas, amenidades) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
             
         db.query(sql, [
             titulo, descripcion, descripcion_corta, precio, nombreImagen, link_airbnb, link_calendario, usuario_id,
-            ciudad_id ? parseInt(ciudad_id) : null, 
-            zona_id ? parseInt(zona_id) : null, 
+            ubicacion_id ? parseInt(ubicacion_id) : null, 
             tipo_propiedad_id ? parseInt(tipo_propiedad_id) : null, 
             recamaras || 1, camas || 1, banos || 1, capacidad_personas || 1, amenidades || ''
         ], (err, result) => {
@@ -398,6 +397,7 @@ app.post('/api/anuncios', (req, res) => {
     });
 });
 
+// MODIFICADO: Ahora actualiza ubicacion_id y desecha los parámetros viejos
 app.put('/api/anuncios/:id', (req, res) => {
     upload.single('imagen')(req, res, (err) => {
         if (err) {
@@ -408,35 +408,34 @@ app.put('/api/anuncios/:id', (req, res) => {
         const { id } = req.params;
         const { 
             titulo, descripcion, descripcion_corta, precio, link_airbnb, link_calendario,
-            ciudad_id, zona_id, tipo_propiedad_id, recamaras, camas, banos, capacidad_personas, amenidades
+            ubicacion_id, tipo_propiedad_id, recamaras, camas, banos, capacidad_personas, amenidades
         } = req.body;
         
         let sql;
         let params;
 
-        const parsedCiudad = ciudad_id ? parseInt(ciudad_id) : null;
-        const parsedZona = zona_id ? parseInt(zona_id) : null;
+        const parsedUbicacion = ubicacion_id ? parseInt(ubicacion_id) : null;
         const parsedTipo = tipo_propiedad_id ? parseInt(tipo_propiedad_id) : null;
 
         if (req.file) {
             sql = `UPDATE anuncios SET 
                 titulo = ?, descripcion = ?, descripcion_corta = ?, precio = ?, link_airbnb = ?, link_calendario = ?, 
-                ciudad_id = ?, zona_id = ?, tipo_propiedad_id = ?, recamaras = ?, camas = ?, banos = ?, capacidad_personas = ?, amenidades = ?, 
+                ubicacion_id = ?, tipo_propiedad_id = ?, recamaras = ?, camas = ?, banos = ?, capacidad_personas = ?, amenidades = ?, 
                 imagen = ? 
                 WHERE id = ?`;
             params = [
                 titulo, descripcion, descripcion_corta, precio, link_airbnb, link_calendario, 
-                parsedCiudad, parsedZona, parsedTipo, recamaras, camas, banos, capacidad_personas, amenidades, 
+                parsedUbicacion, parsedTipo, recamaras, camas, banos, capacidad_personas, amenidades, 
                 req.file.filename, id
             ];
         } else {
             sql = `UPDATE anuncios SET 
                 titulo = ?, descripcion = ?, descripcion_corta = ?, precio = ?, link_airbnb = ?, link_calendario = ?, 
-                ciudad_id = ?, zona_id = ?, tipo_propiedad_id = ?, recamaras = ?, camas = ?, banos = ?, capacidad_personas = ?, amenidades = ? 
+                ubicacion_id = ?, tipo_propiedad_id = ?, recamaras = ?, camas = ?, banos = ?, capacidad_personas = ?, amenidades = ? 
                 WHERE id = ?`;
             params = [
                 titulo, descripcion, descripcion_corta, precio, link_airbnb, link_calendario, 
-                parsedCiudad, parsedZona, parsedTipo, recamaras, camas, banos, capacidad_personas, amenidades, 
+                parsedUbicacion, parsedTipo, recamaras, camas, banos, capacidad_personas, amenidades, 
                 id
             ];
         }
