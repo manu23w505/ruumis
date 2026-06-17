@@ -206,22 +206,23 @@ app.post('/api/ubicaciones', (req, res) => {
         const procesarZona = (ciudadId) => {
             // Paso 2: Asegurar que exista la Zona ligada a esa Ciudad
             const sqlZona = 'SELECT id FROM zonas WHERE nombre = ? AND ciudad_id = ?';
-            db.query(sqlZona, [zona.trim(), ciudadId], (err, zonas) => {
+            db.query(sqlZona, [zona.trim(), cityId = ciudadId], (err, zonas) => {
                 if (err) return res.status(500).json({ error: 'Error al buscar zona' });
 
                 const insertarFinalComplejo = (zonaId) => {
-                    // Paso 3: Insertar el registro final en tu nueva tabla 'ubicaciones'
+                    // Paso 3: Insertar el registro final en tu tabla 'ubicaciones'
                     const sqlInsertUbicacion = `
                         INSERT INTO ubicaciones 
                         (nombre, direccion_completa, link_google_maps, iframe_mapa, especificaciones, zona_id) 
                         VALUES (?, ?, ?, ?, ?, ?)
                     `;
+                    // CORRECCIÓN: Se cambió 'specifications' que rompía el servidor por 'especificaciones'
                     db.query(sqlInsertUbicacion, [
                         nombre ? nombre.trim() : '',
                         direccion_completa ? direccion_completa.trim() : '',
                         link_google_maps ? link_google_maps.trim() : '',
                         iframe_mapa ? iframe_mapa.trim() : '',
-                        especificaciones ? specifications : '',
+                        especificaciones ? especificaciones : '', 
                         zonaId
                     ], (err, resultUbicacion) => {
                         if (err) {
@@ -574,8 +575,6 @@ async function sincronizarCalendarios() {
         }
     });
 }
-
-//rooms 
 
 app.get('/api/anuncios-cards', (req, res) => {
     const sql = 'SELECT id, titulo, descripcion, precio, imagen, camas, capacidad_personas FROM anuncios';
