@@ -587,6 +587,58 @@ app.get('/api/anuncios-cards', (req, res) => {
     });
 });
 
+// ==========================================
+//          CRUD DE PREGUNTAS (PREGUNTAS)
+// ==========================================
+
+// 1. Obtener todas las preguntas
+app.get('/api/faqs', (req, res) => {
+    db.query('SELECT * FROM preguntas ORDER BY id ASC', (err, results) => {
+        if (err) return res.status(500).json({ error: 'Error al obtener las preguntas' });
+        res.json(results);
+    });
+});
+
+// 2. Crear nueva pregunta (Con tope máximo de 6)
+app.post('/api/faqs', (req, res) => {
+    const { pregunta, respuesta } = req.body;
+    if (!pregunta || !respuesta) return res.status(400).json({ error: 'Campos requeridos vacíos' });
+
+    // Validar el límite de 6 elementos en la tabla preguntas
+    db.query('SELECT COUNT(*) AS total FROM preguntas', (err, countResult) => {
+        if (err) return res.status(500).json({ error: 'Error de validación' });
+        
+        if (countResult[0].total >= 6) {
+            return res.status(400).json({ error: 'Límite alcanzado. Máximo se permiten 6 preguntas para proteger el diseño.' });
+        }
+
+        db.query('INSERT INTO preguntas (pregunta, respuesta) VALUES (?, ?)', [pregunta, respuesta], (err, result) => {
+            if (err) return res.status(500).json({ error: 'Error al insertar en la tabla preguntas' });
+            res.json({ success: true, message: 'Pregunta agregada correctamente' });
+        });
+    });
+});
+
+// 3. Modificar una pregunta existente
+app.put('/api/faqs/:id', (req, res) => {
+    const { id } = req.params;
+    const { pregunta, respuesta } = req.body;
+    
+    db.query('UPDATE preguntas SET pregunta = ?, respuesta = ? WHERE id = ?', [pregunta, respuesta, id], (err, result) => {
+        if (err) return res.status(500).json({ error: 'Error al actualizar la pregunta' });
+        res.json({ success: true });
+    });
+});
+
+// 4. Eliminar una pregunta
+app.delete('/api/faqs/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('DELETE FROM preguntas WHERE id = ?', [id], (err, result) => {
+        if (err) return res.status(500).json({ error: 'Error al eliminar la pregunta' });
+        res.json({ success: true });
+    });
+});
+
 cron.schedule('*/5 * * * *', () => {
     sincronizarCalendarios();
 });

@@ -66,6 +66,10 @@
                     <button onclick="cambiarPestana('tab-categorias', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-all text-left">
                         Tipos de Propiedad
                     </button>
+
+                    <button onclick="cambiarPestana('tab-preguntas', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-all text-left">
+                        Preguntas Frecuentes
+                    </button>
                     
                     <div class="pt-4 border-t border-slate-100 my-2">
                         <span class="px-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Próximamente</span>
@@ -162,6 +166,35 @@
                         </thead>
                         <tbody id="tabla-tipos-body" class="divide-y divide-slate-100"></tbody>
                     </table>
+                </div>
+            </section>
+
+            <section id="tab-preguntas" class="tab-content space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900">Gestión de Preguntas Frecuentes</h2>
+                        <p class="text-slate-500 text-sm">Administra los textos del acordeón de soporte de la Landing Page. <span class="font-bold text-cyan-600">(Límite: 6 preguntas)</span></p>
+                    </div>
+                    <button onclick="abrirModalPregunta()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold px-5 py-2.5 rounded-xl transition-colors shadow-sm cursor-pointer whitespace-nowrap">
+                        + Nueva Pregunta
+                    </button>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
+                                    <th class="p-4 w-16 text-center">ID</th>
+                                    <th class="p-4">Pregunta</th>
+                                    <th class="p-4">Respuesta de la Plantilla</th>
+                                    <th class="p-4 text-center w-32">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-preguntas-body" class="divide-y divide-slate-100">
+                                </tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
@@ -939,6 +972,123 @@
                 alert(mensaje);
             }
         }
+
+    //preguntas    
+        // 1. Función para navegar entre secciones (Asegúrate de tener esta lógica)
+    function cambiarPestana(idPestana, boton) {
+        // Ocultar todas las secciones
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        // Quitar clase activa de botones
+        document.querySelectorAll('.sidebar-btn').forEach(el => el.classList.remove('active'));
+        
+        // Mostrar la seleccionada
+        document.getElementById(idPestana).classList.add('active');
+        boton.classList.add('active');
+
+        // Si es la pestaña de preguntas, cargamos los datos
+        if (idPestana === 'tab-preguntas') {
+            cargarPreguntasAdmin();
+        }
+    }
+
+    // 2. Cargar preguntas desde el backend
+    async function cargarPreguntasAdmin() {
+        try {
+            const res = await fetch('/api/faqs');
+            const preguntas = await res.json();
+            const tbody = document.getElementById('tabla-preguntas-body');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            if (preguntas.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-400 font-medium">No hay preguntas registradas.</td></tr>`;
+                return;
+            }
+
+            preguntas.forEach(p => {
+                // Escapar comillas para evitar errores al pasar el texto al onclick
+                const preguntaEscapada = p.pregunta.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+                const respuestaEscapada = p.respuesta.replace(/'/g, "&#39;").replace(/"/g, "&quot;");
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50/80 transition-colors">
+                        <td class="p-4 text-center font-bold text-slate-400">${p.id}</td>
+                        <td class="p-4 font-semibold text-slate-800">${p.pregunta}</td>
+                        <td class="p-4 text-slate-500 max-w-xs truncate">${p.respuesta}</td>
+                        <td class="p-4">
+                            <div class="flex items-center justify-center gap-2">
+                                <button onclick="editarPregunta(${p.id}, '${preguntaEscapada}', '${respuestaEscapada}')" class="p-2 text-slate-400 hover:text-cyan-600 hover:bg-cyan-50 rounded-lg transition-all cursor-pointer">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                </button>
+                                <button onclick="eliminarPregunta(${p.id})" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all cursor-pointer">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch (err) { console.error("Error al cargar preguntas:", err); }
+    }
+
+    // 3. Abrir Modal
+    function abrirModalPregunta() {
+        document.getElementById('form-pregunta').reset();
+        document.getElementById('pregunta-id').value = '';
+        document.getElementById('modal-pregunta-titulo').innerText = "Nueva Pregunta";
+        document.getElementById('modal-pregunta').classList.replace('hidden', 'flex');
+    }
+
+    // 4. Cerrar Modal
+    function cerrarModalPregunta() {
+        document.getElementById('modal-pregunta').classList.replace('flex', 'hidden');
+    }
+
+    // 5. Cargar datos en Modal para editar
+    function editarPregunta(id, pregunta, respuesta) {
+        document.getElementById('pregunta-id').value = id;
+        document.getElementById('pregunta-texto').value = pregunta;
+        document.getElementById('pregunta-respuesta').value = respuesta;
+        document.getElementById('modal-pregunta-titulo').innerText = "Modificar Pregunta";
+        document.getElementById('modal-pregunta').classList.replace('hidden', 'flex');
+    }
+
+    // 6. Guardar Cambios (Crea o Edita)
+    async function guardarPregunta(e) {
+        e.preventDefault();
+        const id = document.getElementById('pregunta-id').value;
+        const pregunta = document.getElementById('pregunta-texto').value;
+        const respuesta = document.getElementById('pregunta-respuesta').value;
+
+        const url = id ? `/api/faqs/${id}` : '/api/faqs';
+        const method = id ? 'PUT' : 'POST';
+
+        try {
+            const res = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pregunta, respuesta })
+            });
+            
+            const data = await res.json();
+            if (!res.ok) {
+                alert(data.error || "Error al guardar");
+                return;
+            }
+
+            cerrarModalPregunta();
+            cargarPreguntasAdmin();
+        } catch (err) { console.error(err); }
+    }
+
+    // 7. Eliminar pregunta
+    async function eliminarPregunta(id) {
+        if (!confirm("¿Seguro que deseas eliminar esta pregunta?")) return;
+        try {
+            const res = await fetch(`/api/faqs/${id}`, { method: 'DELETE' });
+            if (res.ok) cargarPreguntasAdmin();
+        } catch (err) { console.error(err); }
+    }
 </script>
 </body>
 </html>

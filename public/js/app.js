@@ -432,3 +432,57 @@ document.addEventListener('DOMContentLoaded', function () {
             });
     }
 });
+
+//preguntas
+
+document.addEventListener('DOMContentLoaded', () => {
+    cargarPreguntasDinamicas();
+});
+
+async function cargarPreguntasDinamicas() {
+    const contenedor = document.getElementById('contenedor-preguntas');
+    if (!contenedor) return;
+
+    try {
+        const response = await fetch('/api/faqs');
+        if (!response.ok) throw new Error('Error al obtener las preguntas');
+        
+        const preguntas = await response.json();
+
+        // Recorremos las preguntas al revés o de forma normal para insertarlas arriba de la tarjeta
+        preguntas.forEach((item, index) => {
+            // El primer elemento se puede renderizar abierto ('show') y los demás colapsados, o todos colapsados.
+            // Para mantener la plantilla original, el primero suele llevar la clase 'show' y no tener la clase 'collapsed'
+            const esPrimero = index === 0;
+            
+            const htmlPregunta = `
+                <div class="accordion_component-item">
+                    <div class="item-wrapper d-flex flex-column justify-content-between">
+                        <h4
+                            class="accordion_component-item_header d-flex justify-content-between align-items-center ${esPrimero ? '' : 'collapsed'}"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#item-bd-${item.id}"
+                            aria-expanded="${esPrimero ? 'true' : 'false'}"
+                        >
+                            ${item.pregunta}
+                            <span class="wrapper">
+                                <i class="icon-chevron_down icon transform"></i>
+                            </span>
+                        </h4>
+                        <div id="item-bd-${item.id}" class="accordion-collapse collapse ${esPrimero ? 'show' : ''}">
+                            <div class="accordion_component-item_body">
+                                ${item.respuesta}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Insertamos los elementos al inicio del contenedor (antes de la tarjeta de "Do you have any questions?")
+            contenedor.insertAdjacentHTML('afterbegin', htmlPregunta);
+        });
+
+    } catch (error) {
+        console.error('Error cargando el catálogo de preguntas:', error);
+    }
+}
