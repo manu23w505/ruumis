@@ -13,13 +13,31 @@
 
         <link rel="stylesheet" href="css/contacts.min.css" />
 
-        <style>
-            #contenedor-preguntas {
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-                gap: 30px; /* Ajusta este valor al gusto para separar las tarjetas */
-            }
-        </style>
-        
+<style>
+    /* Aseguramos que el contenedor use el grid de la plantilla */
+    #contenedor-preguntas {
+        display: grid !important; /* Forzamos el comportamiento de grid de la plantilla */
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Ajuste adaptable */
+        gap: 30px;
+        margin-top: 30px;
+    }
+
+    /* Estilos para que los textos no se desborden y luzcan uniformes */
+    .about_faq-main_card .title {
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+    
+    .about_faq-main_card .text {
+        color: #666; /* Color estándar de texto de la plantilla */
+        line-height: 1.6;
+    }
+
+    .accordion_component-item {
+    margin-bottom: 20px; /* Separación entre cada pregunta */
+    }
+</style>
+
     </head>
     <body>
         <header class="header d-flex align-items-center" data-page="contacts01">

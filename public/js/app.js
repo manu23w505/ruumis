@@ -453,14 +453,29 @@ async function cargarPreguntasDinamicas() {
         // Limpiamos el contenedor, pero conservamos la tarjeta original al final
         contenedor.innerHTML = ''; 
 
-        preguntas.forEach((p) => {
+        preguntas.forEach((p, index) => {
             const div = document.createElement('div');
-            // Usamos las clases que definen el estilo de cada ítem de FAQ en tu plantilla
-            div.className = 'about_faq-main_card d-flex flex-column justify-content-between';
+            // Esta clase es la que le da el estilo de "tarjeta" en tu plantilla
+            div.className = 'accordion_component-item';
             
+            // Esta estructura es la que usa Bootstrap y tu plantilla Hosteller para los acordeones
             div.innerHTML = `
-                <h4 class="title">${p.pregunta}</h4>
-                <p class="text flex-grow-1">${p.respuesta}</p>
+                <div class="item-wrapper d-flex flex-column justify-content-between">
+                    <h4 class="accordion_component-item_header d-flex justify-content-between align-items-center ${index !== 0 ? 'collapsed' : ''}"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#item-${p.id}"
+                        aria-expanded="${index === 0 ? 'true' : 'false'}">
+                        ${p.pregunta}
+                        <span class="wrapper">
+                            <i class="icon-chevron_down icon transform"></i>
+                        </span>
+                    </h4>
+                    <div id="item-${p.id}" class="accordion-collapse collapse ${index === 0 ? 'show' : ''}">
+                        <div class="accordion_component-item_body">
+                            ${p.respuesta}
+                        </div>
+                    </div>
+                </div>
             `;
             contenedor.appendChild(div);
         });
