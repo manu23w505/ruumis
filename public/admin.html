@@ -58,19 +58,19 @@
                 
                 <nav class="p-4 space-y-1">
                     <button onclick="cambiarPestana('tab-habitaciones', this)" class="sidebar-btn active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-all text-left">
-                        🛏️ Habitaciones
+                        Habitaciones
                     </button>
                     <button onclick="cambiarPestana('tab-ubicaciones', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-all text-left">
-                        📍 Ubicaciones / Mapas
+                        Ubicaciones / Mapas
                     </button>
                     <button onclick="cambiarPestana('tab-categorias', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-all text-left">
-                        🏷️ Tipos de Propiedad
+                        Tipos de Propiedad
                     </button>
                     
                     <div class="pt-4 border-t border-slate-100 my-2">
                         <span class="px-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Próximamente</span>
                         <button disabled class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-slate-300 text-left cursor-not-allowed">
-                            🔒 Ajustes del Sistema
+                            Ajustes del Sistema
                         </button>
                     </div>
                 </nav>
@@ -292,7 +292,7 @@
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Ciudad</label>
                         <div class="flex gap-2">
-                            <select id="ubicacion-ciudad-select" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-cyan-500"></select>
+                            <select id="ubicacion-ciudad-select" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-cyan-500" onchange="cambiarZonasPorCiudadAdmin(this.value)"></select>
                             <button type="button" onclick="mostrarInputNuevaCiudad()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold rounded-lg cursor-pointer transition-colors whitespace-nowrap">
                                 + Nueva
                             </button>
@@ -303,7 +303,16 @@
 
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Zona / Colonia</label>
-                        <input type="text" id="ubicacion-zona" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-cyan-500" placeholder="Ej. Centro, Las Lomas">
+                        <div class="flex gap-2">
+                            <select id="ubicacion-zona-select" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-cyan-500">
+                                <option value="">Selecciona una zona...</option>
+                            </select>
+                            <button type="button" onclick="mostrarInputNuevaZona()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold rounded-lg cursor-pointer transition-colors whitespace-nowrap">
+                                + Nueva
+                            </button>
+                        </div>
+                        <input type="text" id="ubicacion-zona-nuevo" class="hidden mt-2 w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-cyan-500" placeholder="Ej. Centro, Jardines">
+                        <button type="button" id="btn-cancelar-nueva-zona" onclick="ocultarInputNuevaZona()" class="hidden text-[11px] text-red-500 mt-1 hover:underline cursor-pointer">Cancelar nueva zona</button>
                     </div>
                 </div>
 
@@ -350,6 +359,7 @@
         let todasLasUbicaciones = []; 
 
         let creandoNuevaCiudad = false;
+        let creandoNuevaZona = false;
 
         // FUNCIÓN NUEVA: Maneja el intercambio visual entre pestañas del sidebar
         function cambiarPestana(tabId, boton) {
@@ -425,6 +435,23 @@
             document.getElementById('btn-cancelar-nueva-ciudad').classList.add('hidden');
             document.getElementById('ubicacion-ciudad-nuevo').required = false;
             document.getElementById('ubicacion-ciudad-nuevo').value = '';
+        }
+
+        function mostrarInputNuevaZona() {
+            creandoNuevaZona = true;
+            document.getElementById('ubicacion-zona-select').classList.add('hidden');
+            document.getElementById('ubicacion-zona-nuevo').classList.remove('hidden');
+            document.getElementById('btn-cancelar-nueva-zona').classList.remove('hidden');
+            document.getElementById('ubicacion-zona-nuevo').required = true;
+        }
+
+        function ocultarInputNuevaZona() {
+            creandoNuevaZona = false;
+            document.getElementById('ubicacion-zona-select').classList.remove('hidden');
+            document.getElementById('ubicacion-zona-nuevo').classList.add('hidden');
+            document.getElementById('btn-cancelar-nueva-zona').classList.add('hidden');
+            document.getElementById('ubicacion-zona-nuevo').required = false;
+            document.getElementById('ubicacion-zona-nuevo').value = '';
         }
 
         document.getElementById('form-login').addEventListener('submit', async (e) => {
@@ -524,6 +551,28 @@
                 const opt = document.createElement('option');
                 opt.value = z.zona || z.nombre; 
                 opt.textContent = z.zona || z.nombre;
+                selectZona.appendChild(opt);
+            });
+        }
+
+        function cambiarZonasPorCiudadAdmin(ciudadSeleccionada) {
+            const selectZona = document.getElementById('ubicacion-zona-select');
+            selectZona.innerHTML = '<option value="">Selecciona una zona...</option>';
+            
+            if (!ciudadSeleccionada) return;
+
+            // Filtramos las zonas que correspondan a esa ciudad en base al listado global
+            const zonasFiltradas = todasLasUbicaciones.filter(u => 
+                (u.ciudad || u.ciudad_nombre) === ciudadSeleccionada
+            );
+
+            // Evitamos duplicar nombres visualmente en el dropdown
+            const nombresZonasUnicas = [...new Set(zonasFiltradas.map(z => z.zona || z.nombre))].filter(Boolean);
+
+            nombresZonasUnicas.forEach(zonaNombre => {
+                const opt = document.createElement('option');
+                opt.value = zonaNombre;
+                opt.textContent = zonaNombre;
                 selectZona.appendChild(opt);
             });
         }
@@ -797,21 +846,27 @@
         document.getElementById('form-ubicacion').addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('ubicacion-id').value;
-            const zona = document.getElementById('ubicacion-zona').value.trim();
             
-            // OBTENER VALORES DE LOS NUEVOS CAMPOS AGREGADOS
+            // Capturar valor de Ciudad según el modo
+            let ciudad = creandoNuevaCiudad 
+                ? document.getElementById('ubicacion-ciudad-nuevo').value.trim() 
+                : document.getElementById('ubicacion-ciudad-select').value;
+
+            // Capturar valor de Zona según el modo
+            let zona = creandoNuevaZona 
+                ? document.getElementById('ubicacion-zona-nuevo').value.trim() 
+                : document.getElementById('ubicacion-zona-select').value;
+
+            if (!ciudad || !zona) {
+                alert("Por favor selecciona o ingresa tanto la ciudad como la zona.");
+                return;
+            }
+
             const nombre_complejo = document.getElementById('ubicacion-nombre-complejo').value.trim();
             const direccion = document.getElementById('ubicacion-direccion').value.trim();
             const link_maps = document.getElementById('ubicacion-link-maps').value.trim();
             const iframe = document.getElementById('ubicacion-iframe').value.trim();
-            const especificaciones = document.getElementById('ubicacion-especificaciones').value.trim();
-
-            let ciudad = "";
-            if (creandoNuevaCiudad) {
-                ciudad = document.getElementById('ubicacion-ciudad-nuevo').value.trim();
-            } else {
-                ciudad = document.getElementById('ubicacion-ciudad-select').value;
-            }
+            const specifications = document.getElementById('ubicacion-especificaciones').value.trim();
 
             let url = '/api/ubicaciones';
             let metodo = 'POST';
@@ -822,7 +877,6 @@
             }
 
             try {
-                // AQUÍ SE ENVIARÁN LOS NUEVOS ATRIBUTOS AL BACKEND CUANDO ACTUALICES TU API
                 const res = await fetch(url, {
                     method: metodo,
                     headers: { 'Content-Type': 'application/json' },
@@ -833,7 +887,7 @@
                         direccion_completa: direccion,
                         link_google_maps: link_maps,
                         iframe_mapa: iframe,
-                        especificaciones
+                        especificaciones: specifications
                     })
                 });
                 
@@ -849,25 +903,52 @@
             }
         });
 
+        function abrirModalUbicacion() {
+            modoEdicionUbicacion = false;
+            document.getElementById('form-ubicacion').reset();
+            document.getElementById('ubicacion-id').value = '';
+            
+            ocultarInputNuevaCiudad();
+            ocultarInputNuevaZona(); // Limpiamos el estado manual de la zona
+
+            cargarCiudadesEnSelect().then(() => {
+                const primerCiudad = document.getElementById('ubicacion-ciudad-select').value;
+                cambiarZonasPorCiudadAdmin(primerCiudad);
+            }); 
+            
+            document.getElementById('modal-ubicacion-titulo').innerText = "Agregar Ubicación";
+            document.getElementById('modal-ubicacion').classList.replace('hidden', 'flex');
+        }
+
         function abrirModalEditarUbicacion(u) {
             modoEdicionUbicacion = true;
             document.getElementById('ubicacion-id').value = u.id; 
-            document.getElementById('ubicacion-zona').value = u.zona || u.nombre || '';
             
-            // Llenar los campos nuevos si la API ya los retorna en el objeto 'u'
+            // Llenar los campos de detalles de la ubicación
             document.getElementById('ubicacion-nombre-complejo').value = u.nombre_complejo || u.nombre || '';
             document.getElementById('ubicacion-direccion').value = u.direccion_completa || '';
             document.getElementById('ubicacion-link-maps').value = u.link_google_maps || '';
             document.getElementById('ubicacion-iframe').value = u.iframe_mapa || '';
             document.getElementById('ubicacion-especificaciones').value = u.especificaciones || '';
 
+            // Restablecer estados de creación manual para inputs nuevos
             creandoNuevaCiudad = false;
             document.getElementById('ubicacion-ciudad-select').classList.remove('hidden');
             document.getElementById('ubicacion-ciudad-nuevo').classList.add('hidden');
             document.getElementById('btn-cancelar-nueva-ciudad').classList.add('hidden');
             
+            ocultarInputNuevaZona(); // Aseguramos que se muestre el select de zonas
+
+            // Cargar ciudades y sincronizar cascada de select de zonas
             cargarCiudadesEnSelect().then(() => {
-                document.getElementById('ubicacion-ciudad-select').value = u.ciudad || u.ciudad_nombre || '';
+                const ciudadActual = u.ciudad || u.ciudad_nombre || '';
+                document.getElementById('ubicacion-ciudad-select').value = ciudadActual;
+                
+                // Forzamos a que se carguen las zonas correspondientes a esta ciudad
+                cambiarZonasPorCiudadAdmin(ciudadActual);
+                
+                // Seleccionamos la zona exacta que tiene asignada la ubicación
+                document.getElementById('ubicacion-zona-select').value = u.zona || u.nombre || '';
             });
 
             document.getElementById('modal-ubicacion-titulo').innerText = "Modificar Ubicación";
