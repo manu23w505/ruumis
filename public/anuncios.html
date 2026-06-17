@@ -8,154 +8,146 @@
     <link rel="stylesheet" href="css/style.min.css" />
     
     <style>
-            .dia-pasado {
-                background-color: #f8fafc;
-                color: #cbd5e1;
-                cursor: not-allowed;
-                text-decoration: line-through;
-            }
-            .marcador-llegada {
-                background-color: #0ea5e9 !important; 
-                color: white !important;
-                border-color: #0369a1 !important;
-            }
-            .marcador-salida {
-                background-color: #10b981 !important; 
-                color: white !important;
-                border-color: #059669 !important;
-            }
-            .mitad-ocupado-der {
-                background: linear-gradient(to right, transparent 50%, #f1f5f9 50%) !important;
-            }
-            .mitad-ocupado-izq {
-                background: linear-gradient(to right, #f1f5f9 50%, transparent 50%) !important;
-            }
-            .marcador-activo {
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-                border: 2px solid #0891b2 !important; 
-                transform: scale(1.1); 
-            }
-            /* Ajustes de compatibilidad de inputs estilo plantilla */
-            .form-control-custom {
-                width: 100%;
-                background: #fff;
-                border: 1px solid #e2e8f0;
-                padding: 10px 15px;
-                border-radius: 8px;
-                font-size: 14px;
-                color: #1e293b;
-                transition: border-color .3s ease;
-            }
-            .form-control-custom:focus {
-                outline: none;
-                border-color: #0ea5e9;
-            }
-            .modal-custom-backdrop {
-                position: fixed;
-                inset: 0;
-                background: rgba(0,0,0,0.5);
-                backdrop-filter: blur(4px);
-                z-index: 1050;
-                display: none;
-                align-items: center;
-                justify-content: center;
-                padding: 20px;
-            }
-            .modal-custom-backdrop.flex-active {
-                display: flex !important;
-            }
+        /* Estados específicos del calendario interactivo integrados con tu paleta */
+        .dia-pasado {
+            background-color: #f7fafd; /* Fondo claro de contraste nativo */
+            color: #808385; /* Gris de placeholders */
+            cursor: not-allowed;
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+        .marcador-llegada {
+            background-color: #235784 !important; /* Azul Accent de la plantilla */
+            color: white !important;
+            border-color: #040b11 !important;
+        }
+        .marcador-salida {
+            background-color: #2c3c4a !important; /* Gris Oscuro/Texto principal */
+            color: white !important;
+            border-color: #040b11 !important;
+        }
+        .mitad-ocupado-der {
+            background: linear-gradient(to right, transparent 50%, #f7fafd 50%) !important;
+        }
+        .mitad-ocupado-izq {
+            background: linear-gradient(to right, #f7fafd 50%, transparent 50%) !important;
+        }
+        .marcador-activo {
+            box-shadow: 0 4px 15px rgba(35, 87, 132, 0.3);
+            border: 2px solid #235784 !important; 
+            transform: scale(1.05); 
+            transition: all 0.2s ease;
+        }
+        
+        /* Modales personalizados compatibles con la animación de blur de Hosteller */
+        .modal-custom-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(4, 11, 17, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1050;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-custom-backdrop.flex-active {
+            display: flex !important;
+        }
     </style>
 </head>
-<body class="bg-white text-slate-900 min-h-screen font-sans">
+<body class="bg-white">
     
-    <!-- Header Estilo Plantilla -->
     <header class="header" data-header="sticky">
         <div class="container d-flex justify-content-between align-items-center py-4">
-            <h1 class="logo h2" style="margin: 0; color: #0ea5e9; letter-spacing: 2px;">RUUMIS</h1>
-            <div class="d-flex align-items-center" style="gap: 15px;">
-                <span class="text-sm bg-light px-3 py-1 rounded-pill border">Prueba de Concepto</span>
-                <a href="admin.html" class="link font-semibold hover:text-cyan-600 transition-colors" style="color: #1e293b; text-decoration: none;">Panel Admin</a>
+            <h1 class="logo h2 text-uppercase font-weight-bold" style="margin:0;">
+                <span class="theme-element--accent" style="color: #235784; letter-spacing: 2px;">Ruumis</span>
+            </h1>
+            <div class="d-flex align-items-center" style="gap: 20px;">
+                <span class="text-sm theme-element theme-element--light btn" style="padding: 5px 15px; font-size: 14px; pointer-events: none;">
+                    Prueba de Concepto
+                </span>
+                <a href="admin.html" class="underlined underlined--accent font-weight-bold" style="color: #2c3c4a; text-decoration: none;">
+                    Panel Admin
+                </a>
             </div>
         </div>
     </header>
 
     <main class="container py-5">
-        <!-- Encabezado de la Sección -->
-        <div class="text-center mb-5">
-            <h2 class="h1" data-aos="fade-up" style="font-weight: 800; margin-bottom: 10px;">Habitaciones Disponibles</h2>
-            <p class="text" data-aos="fade-up" data-aos-delay="50" style="max-width: 600px; margin: 0 auto; color: #64748b;">
+        <div class="text-center mb-5 section">
+            <h2 class="h1 font-weight-bold mb-3" data-aos="fade-up" style="font-family: 'Mulish', sans-serif; color: #040b11;">
+                Habitaciones Disponibles
+            </h2>
+            <p class="text" data-aos="fade-up" data-aos-delay="50" style="max-width: 600px; margin: 0 auto; color: #2c3c4a;">
                 Encuentra tu espacio ideal. Habitaciones totalmente amuebladas y listas para mudarte hoy mismo.
             </p>
         </div>
 
-        <!-- Barra de Filtros Integrada al diseño -->
-        <div class="p-4 rounded-3 mb-5 shadow-sm border bg-light">
+        <div class="promo p-4 rounded mb-5 border" style="background-color: #f7fafd;">
             <div class="row g-3 align-items-end mb-3">
-                <div class="col-12 col-md-4">
-                    <label class="d-block text-uppercase text-muted small fw-bold mb-2">¿Qué estás buscando?</label>
-                    <input type="text" id="filtro-busqueda" placeholder="Ej. Loft, Alberca, Amueblado..." class="form-control-custom">
+                <div class="col-12 col-md-4 field">
+                    <label class="d-block text-uppercase small font-weight-bold mb-2" style="color: #2c3c4a; letter-spacing: 1px;">¿Qué estás buscando?</label>
+                    <input type="text" id="filtro-busqueda" placeholder="Ej. Loft, Alberca, Amueblado..." class="field__input">
                 </div>
 
-                <div class="col-12 col-md-4">
-                    <label class="d-block text-uppercase text-muted small fw-bold mb-2">Ciudad</label>
-                    <select id="filtro-ciudad" class="form-control-custom" style="cursor: pointer;">
+                <div class="col-12 col-md-4 field">
+                    <label class="d-block text-uppercase small font-weight-bold mb-2" style="color: #2c3c4a; letter-spacing: 1px;">Ciudad</label>
+                    <select id="filtro-ciudad" class="field__input" style="cursor: pointer; height: auto;">
                         <option value="">Todas las ciudades</option>
                     </select>
                 </div>
 
-                <div class="col-12 col-md-4">
-                    <label class="d-block text-uppercase text-muted small fw-bold mb-2">Zona / Colonia</label>
-                    <select id="filtro-zona" disabled class="form-control-custom" style="background-color: #f1f5f9; color: #94a3b8;">
+                <div class="col-12 col-md-4 field">
+                    <label class="d-block text-uppercase small font-weight-bold mb-2" style="color: #808385; letter-spacing: 1px;">Zona / Colonia</label>
+                    <select id="filtro-zona" disabled class="field__input" style="background-color: #e2e8f0; color: #808385;">
                         <option value="">Selecciona una ciudad primero</option>
                     </select>
                 </div>
             </div>
 
             <div class="row g-3 align-items-end">
-                <div class="col-12 col-md-3">
-                    <label class="d-block text-uppercase text-muted small fw-bold mb-2">Precio Mínimo (MXN)</label>
-                    <input type="number" id="filtro-precio-min" placeholder="Mínimo" class="form-control-custom">
+                <div class="col-12 col-md-3 field">
+                    <label class="d-block text-uppercase small font-weight-bold mb-2" style="color: #2c3c4a; letter-spacing: 1px;">Precio Mínimo (MXN)</label>
+                    <input type="number" id="filtro-precio-min" placeholder="Mínimo" class="field__input">
                 </div>
 
-                <div class="col-12 col-md-3">
-                    <label class="d-block text-uppercase text-muted small fw-bold mb-2">Precio Máximo (MXN)</label>
-                    <input type="number" id="filtro-precio-max" placeholder="Máximo" class="form-control-custom">
+                <div class="col-12 col-md-3 field">
+                    <label class="d-block text-uppercase small font-weight-bold mb-2" style="color: #2c3c4a; letter-spacing: 1px;">Precio Máximo (MXN)</label>
+                    <input type="number" id="filtro-precio-max" placeholder="Máximo" class="field__input">
                 </div>
 
-                <div class="col-12 col-md-3">
-                    <label class="d-block text-uppercase text-muted small fw-bold mb-2">Huéspedes</label>
-                    <div class="d-flex align-items-center justify-content-between form-control-custom bg-white">
-                        <button type="button" onclick="cambiarHuespedes(-1)" class="btn btn-sm btn-light rounded-circle fw-bold" style="width:30px; height:30px; padding:0; line-height:1;">-</button>
-                        <span id="display-huespedes" class="fw-bold text-dark">1</span>
-                        <button type="button" onclick="cambiarHuespedes(1)" class="btn btn-sm btn-light rounded-circle fw-bold" style="width:30px; height:30px; padding:0; line-height:1;">+</button>
+                <div class="col-12 col-md-3 field">
+                    <label class="d-block text-uppercase small font-weight-bold mb-2" style="color: #2c3c4a; letter-spacing: 1px;">Huéspedes</label>
+                    <div class="d-flex align-items-center justify-content-between field__input" style="background: #fff;">
+                        <button type="button" onclick="cambiarHuespedes(-1)" class="btn theme-element theme-element--light" style="width:30px; height:30px; padding:0; display:flex; align-items:center; justify-content:center; min-width:auto; border-radius:50%;">-</button>
+                        <span id="display-huespedes" class="font-weight-bold" style="color: #040b11;">1</span>
+                        <button type="button" onclick="cambiarHuespedes(1)" class="btn theme-element theme-element--light" style="width:30px; height:30px; padding:0; display:flex; align-items:center; justify-content:center; min-width:auto; border-radius:50%;">+</button>
                     </div>
                 </div>
 
                 <div class="col-12 col-md-3">
-                    <button id="btn-limpiar" class="btn theme-element theme-element--dark w-full py-2.5" style="border-radius: 8px; font-size: 14px;">
+                    <button id="btn-limpiar" class="theme-element theme-element--accent btn w-100 py-3 font-weight-bold" style="font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">
                         Limpiar Filtros
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Contenedor Dinámico de Anuncios -->
         <div id="contenedor-anuncios" class="row g-4">
             <div class="col-12 text-center py-5">
-                <p class="text-muted">Buscando habitaciones disponibles...</p>
+                <p style="color: #808385;">Buscando habitaciones disponibles...</p>
             </div>
         </div>
     </main>
     
-
-    <!-- MODAL 1: CALENDARIO -->
     <div id="modal-calendario" class="modal-custom-backdrop">
-        <div class="bg-white rounded-3 p-4 shadow-lg position-relative" style="max-width: 400px; w-full: 100%;">
-            <button onclick="document.getElementById('modal-calendario').classList.remove('flex-active')" class="position-absolute border-0 bg-transparent text-muted fw-bold" style="top: 15px; right: 20px; font-size: 20px; cursor: pointer;">✕</button>
+        <div class="bg-white rounded p-4 shadow position-relative" style="max-width: 400px; width: 100%; border-top: 4px solid #235784;">
+            <button onclick="document.getElementById('modal-calendario').classList.remove('flex-active')" class="position-absolute border-0 bg-transparent text-muted font-weight-bold" style="top: 15px; right: 20px; font-size: 20px; cursor: pointer; color: #2c3c4a;">✕</button>
             
-            <h3 class="h4 mb-3 text-dark fw-bold">Disponibilidad</h3>
+            <h3 class="h4 mb-4 font-weight-bold" style="font-family: 'Mulish', sans-serif; color: #040b11;">Disponibilidad</h3>
             
-            <div class="row row-cols-7 text-center fw-bold text-muted small mb-2 text-uppercase" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px;">
+            <div class="row row-cols-7 text-center font-weight-bold small mb-2 text-uppercase" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; color: #808385;">
                 <div>DO</div><div>LU</div><div>MA</div><div>MI</div><div>JU</div><div>VI</div><div>SA</div>
             </div>
             
@@ -164,51 +156,47 @@
         </div>
     </div>
 
-    <!-- MODAL 2: DETALLES DE LA HABITACIÓN -->
     <div id="modal-detalles" class="modal-custom-backdrop">
-        <div class="bg-white rounded-3 shadow-lg position-relative overflow-hidden" style="max-w-2xl: 700px; width: 100%; max-height: 90vh; display: flex; flex-direction: column;">
-            <button onclick="document.getElementById('modal-detalles').classList.remove('flex-active')" class="position-absolute bg-white text-dark border-0 rounded-circle d-flex align-items-center justify-content-center shadow" style="top: 15px; right: 15px; width: 32px; height: 32px; font-weight: bold; z-index: 10; cursor: pointer;">✕</button>
+        <div class="bg-white rounded shadow position-relative overflow-hidden" style="max-width: 750px; width: 100%; max-height: 90vh; display: flex; flex-direction: column;">
+            <button onclick="document.getElementById('modal-detalles').classList.remove('flex-active')" class="position-absolute bg-white text-dark border-0 rounded-circle d-flex align-items-center justify-content-center shadow" style="top: 15px; right: 15px; width: 35px; height: 35px; font-weight: bold; z-index: 10; cursor: pointer; border: 1px solid #808385;">✕</button>
             
             <div class="row g-0 style-content-wrapper" style="overflow-y: auto; height: 100%;">
-                <!-- Imagen -->
-                <div class="col-12 col-md-6 bg-dark d-flex align-items-center justify-content-center" style="min-height: 300px;">
+
+                <div class="col-12 col-md-6 bg-dark d-flex align-items-center justify-content-center" style="min-height: 300px; background-color: #040b11 !important;">
                     <img id="det-imagen" src="" class="img-fluid object-fit-contain" style="max-height: 450px;" alt="Habitación">
                 </div>
 
-                <!-- Cuerpo de Información -->
-                <div class="col-12 col-md-6 p-4 d-flex flex-column justify-content-between">
+                <div class="col-12 col-md-6 p-4 d-flex flex-column justify-content-between" style="background-color: #fff;">
                     <div>
                         <div class="mb-2">
-                            <span id="det-tipo" class="badge text-uppercase tracking-wider px-2 py-1" style="background-color: #ecfdf5; color: #059669; border: 1px solid #d1fae5; font-size: 11px;"></span>
+                            <span id="det-tipo" class="text-uppercase font-weight-bold px-2 py-1" style="background-color: #f7fafd; color: #235784; border: 1px solid #235784; font-size: 11px; display: inline-block; letter-spacing: 1px;"></span>
                         </div>
-                        <h3 id="det-titulo" class="h3 text-dark fw-bold mb-1"></h3>
-                        <p id="det-ubicacion" class="small text-muted mb-3"></p>
+                        <h3 id="det-titulo" class="h3 font-weight-bold mb-1" style="font-family: 'Mulish', sans-serif; color: #040b11;"></h3>
+                        <p id="det-ubicacion" class="small mb-3" style="color: #808385;"><i class="icon-location"></i> </p>
                         
-                        <!-- Amenidades Grid -->
-                        <div class="p-3 bg-light rounded-3 border mb-3 small text-secondary">
+                        <div class="p-3 rounded mb-3 small" style="background-color: #f7fafd; border: 1px solid rgba(35, 87, 132, 0.1); color: #2c3c4a;">
                             <div class="row row-cols-2 g-2">
-                                <div class="col"><span id="det-recamaras" class="fw-bold text-dark"></span> Recámaras</div>
-                                <div class="col"><span id="det-camas" class="fw-bold text-dark"></span> Camas</div>
-                                <div class="col"><span id="det-banos" class="fw-bold text-dark"></span> Baños</div>
-                                <div class="col">Máx. <span id="det-personas" class="fw-bold text-dark"></span> Huéspedes</div>
+                                <div class="col"><i class="icon-calendar"></i> <span id="det-recamaras" class="font-weight-bold" style="color: #040b11;"></span> Recámaras</div>
+                                <div class="col"><i class="icon-star"></i> <span id="det-camas" class="font-weight-bold" style="color: #040b11;"></span> Camas</div>
+                                <div class="col"><i class="icon-user"></i> <span id="det-banos" class="font-weight-bold" style="color: #040b11;"></span> Baños</div>
+                                <div class="col"><i class="icon-user"></i> Máx. <span id="det-personas" class="font-weight-bold" style="color: #040b11;"></span> Huéspedes</div>
                             </div>
                         </div>
 
-                        <h4 class="text-uppercase text-muted fw-bold small mb-1" style="font-size: 11px; letter-spacing: 1px;">Descripción</h4>
-                        <p id="det-descripcion" class="small text-secondary mb-3" style="line-height: 1.5;"></p>
+                        <h4 class="text-uppercase font-weight-bold small mb-1" style="font-size: 11px; letter-spacing: 1px; color: #808385;">Descripción</h4>
+                        <p id="det-descripcion" class="small mb-3" style="line-height: 1.5; color: #2c3c4a;"></p>
 
-                        <h4 class="text-uppercase text-muted fw-bold small mb-1" style="font-size: 11px; letter-spacing: 1px;">Amenidades</h4>
-                        <p id="det-amenidades" class="small text-secondary mb-3"></p>
+                        <h4 class="text-uppercase font-weight-bold small mb-1" style="font-size: 11px; letter-spacing: 1px; color: #808385;">Amenidades</h4>
+                        <p id="det-amenidades" class="small mb-3" style="color: #2c3c4a;"></p>
                     </div>
 
-                    <!-- Botón y Precio Fijo Abajo -->
-                    <div class="border-top pt-3 mt-2">
+                    <div class="border-top pt-3 mt-2" style="border-color: rgba(128, 131, 133, 0.2) !important;">
                         <div class="d-flex justify-content-between align-items-baseline mb-3">
-                            <span class="small text-muted">Precio por noche:</span>
-                            <span id="det-precio" class="h2 fw-black text-dark" style="margin: 0; font-weight: 900;"></span>
+                            <span class="small" style="color: #808385;">Precio por noche:</span>
+                            <span id="det-precio" class="h2 font-weight-bold" style="margin: 0; color: #040b11; font-family: 'Mulish', sans-serif;"></span>
                         </div>
-                        <a id="det-link-airbnb" href="#" target="_blank" class="btn theme-element theme-element--dark w-full text-center py-2.5" style="border-radius: 8px;">
-                            Reservar espacio externo
+                        <a id="det-link-airbnb" href="#" target="_blank" class="theme-element theme-element--accent btn w-100 text-center py-3 font-weight-bold link--arrow" style="font-size: 14px; text-transform: uppercase;">
+                            Reservar espacio externo <i class="icon-arrow_right"></i>
                         </a>
                     </div>
                 </div>
@@ -216,11 +204,6 @@
         </div>
     </div>
 
-    <!-- Script del Backend -->
     <script src="/js/app.js"></script>
-    
-    <!-- Para abrir los modales con tu JS actual sin romper Tailwind, usa este mapeo si cambiaste de clase:
-         document.getElementById('modal-id').classList.add('flex-active') 
-         en lugar de .classList.replace('hidden', 'flex') -->
 </body>
 </html>
