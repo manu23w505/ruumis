@@ -343,7 +343,7 @@
         </div>
     </div>
 
-    <script>
+<script>
         let modoEdicion = false;
         let modoEdicionTipo = false;
         let modoEdicionUbicacion = false;
@@ -453,18 +453,21 @@
                 .then(res => res.json())
                 .then(ubicaciones => {
                     const selectUbicacion = document.getElementById('anuncio-ubicacion-id');
+                    if (!selectUbicacion) return;
+
                     // Limpiar opciones manteniendo la primera
                     selectUbicacion.innerHTML = '<option value="">-- Selecciona un Complejo/Ubicación --</option>';
                     
                     ubicaciones.forEach(u => {
                         const option = document.createElement('option');
                         option.value = u.id; // ID de la ubicación física
-                        // Guardamos los IDs de ciudad y zona en atributos "data-" por si los necesitas
-                        option.setAttribute('data-zona', u.zona_id || '');
+                        option.setAttribute('data-zona', u.zona_id || u.id || '');
                         option.setAttribute('data-ciudad', u.ciudad_id || '');
                         
-                        // Texto legible para el administrador: "Nombre Complejo (Zona, Ciudad)"
-                        option.textContent = `${u.nombre} (${u.zona_nombre}, ${u.ciudad_nombre})`;
+                        // Texto legible: "Nombre Complejo (Zona, Ciudad)"
+                        const cNombre = u.ciudad_nombre || u.ciudad || 'Sin Ciudad';
+                        const zNombre = u.zona_nombre || u.zona || u.nombre || 'Sin Zona';
+                        option.textContent = `${u.nombre || 'Complejo'} (${zNombre}, ${cNombre})`;
                         selectUbicacion.appendChild(option);
                     });
                 })
@@ -514,31 +517,42 @@
 
         async function cargarCatalogos() {
             try {
+                // 1. Cargar tipos de propiedad
                 const resTipos = await fetch('/api/tipos-propiedad');
                 todosLosTipos = resTipos.ok ? await resTipos.json() : [];
                 
                 const selectTipo = document.getElementById('tipo_propiedad');
-                selectTipo.innerHTML = '<option value="">Selecciona un tipo...</option>';
-                todosLosTipos.forEach(t => {
-                    const opt = document.createElement('option');
-                    opt.value = t.id; 
-                    opt.textContent = t.nombre;
-                    selectTipo.appendChild(opt);
-                });
+                if (selectTipo) {
+                    selectTipo.innerHTML = '<option value="">Selecciona un tipo...</option>';
+                    todosLosTipos.forEach(t => {
+                        const opt = document.createElement('option');
+                        opt.value = t.id; 
+                        opt.textContent = t.nombre;
+                        selectTipo.appendChild(opt);
+                    });
+                }
                 renderTablaTipos();
 
+                // 2. Cargar ubicaciones globales
                 const resUbi = await fetch('/api/ubicaciones');
                 todasLasUbicaciones = resUbi.ok ? await resUbi.json() : [];
+                
+                // Actualizar también el select del formulario de anuncios
+                cargarUbicacionesEnAnuncios();
                 
                 llenarSelectCiudades();
                 renderTablaUbicaciones();
                 await cargarCiudadesEnSelect();
+
+                // Manejo seguro del antiguo selector de filtros por si aún existe en el HTML
                 const selectCiudad = document.getElementById('ciudad');
-                const nuevoSelectCiudad = selectCiudad.cloneNode(true);
-                selectCiudad.parentNode.replaceChild(nuevoSelectCiudad, selectCiudad);
-                nuevoSelectCiudad.addEventListener('change', (e) => {
-                    filtrarZonasPorCiudad(e.target.value);
-                });
+                if (selectCiudad) {
+                    const nuevoSelectCiudad = selectCiudad.cloneNode(true);
+                    selectCiudad.parentNode.replaceChild(nuevoSelectCiudad, selectCiudad);
+                    nuevoSelectCiudad.addEventListener('change', (e) => {
+                        filtrarZonasPorCiudad(e.target.value);
+                    });
+                }
 
             } catch (e) {
                 console.error("Error cargando catálogos secundarios:", e);
@@ -547,8 +561,9 @@
 
         function llenarSelectCiudades() {
             const selectCiudad = document.getElementById('ciudad');
+            if (!selectCiudad) return; // Validación defensiva
+
             selectCiudad.innerHTML = '<option value="">Selecciona una ciudad...</option>';
-            
             const ciudadesUnicas = [...new Set(todasLasUbicaciones.map(u => u.ciudad || u.ciudad_nombre))].filter(Boolean);
             
             ciudadesUnicas.forEach(ciudad => {
@@ -561,8 +576,9 @@
 
         function filtrarZonasPorCiudad(ciudadSeleccionada) {
             const selectZona = document.getElementById('zona');
+            if (!selectZona) return;
+
             selectZona.innerHTML = '<option value="">Selecciona una zona...</option>';
-            
             if (!ciudadSeleccionada) return;
 
             const zonasFiltradas = todasLasUbicaciones.filter(u => 
@@ -579,16 +595,15 @@
 
         function cambiarZonasPorCiudadAdmin(ciudadSeleccionada) {
             const selectZona = document.getElementById('ubicacion-zona-select');
+            if (!selectZona) return;
             selectZona.innerHTML = '<option value="">Selecciona una zona...</option>';
             
             if (!ciudadSeleccionada) return;
 
-            // Filtramos las zonas que correspondan a esa ciudad en base al listado global
             const zonasFiltradas = todasLasUbicaciones.filter(u => 
                 (u.ciudad || u.ciudad_nombre) === ciudadSeleccionada
             );
 
-            // Evitamos duplicar nombres visualmente en el dropdown
             const nombresZonasUnicas = [...new Set(zonasFiltradas.map(z => z.zona || z.nombre))].filter(Boolean);
 
             nombresZonasUnicas.forEach(zonaNombre => {
@@ -605,6 +620,7 @@
                 todosLosAnuncios = await res.json();
                 
                 const tbody = document.getElementById('tabla-anuncios-body');
+                if (!tbody) return;
                 tbody.innerHTML = '';
 
                 if(todosLosAnuncios.length === 0) {
@@ -615,7 +631,16 @@
                 todosLosAnuncios.forEach(anuncio => {
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-slate-50 transition-colors";
-                    const tagUbicacion = anuncio.zona && anuncio.ciudad ? `${anuncio.zona}, ${anuncio.ciudad}` : 'No asignada';
+                    
+                    // Mostrar complejo/nombre si está disponible, o zona/ciudad antigua
+                    let tagUbicacion = 'No asignada';
+                    if (anuncio.ubicacion_nombre) {
+                        tagUbicacion = anuncio.ubicacion_nombre;
+                    } else if (anuncio.zona && anuncio.ciudad) {
+                        tagUbicacion = `${anuncio.zona}, ${anuncio.ciudad}`;
+                    } else if (anuncio.zona_nombre || anuncio.ciudad_nombre) {
+                        tagUbicacion = `${anuncio.zona_nombre || ''} ${anuncio.ciudad_nombre || ''}`.trim();
+                    }
                     
                     tr.innerHTML = `
                         <td class="p-4 flex items-center gap-4">
@@ -643,21 +668,20 @@
             e.preventDefault();
             const id = document.getElementById('anuncio-id').value;
 
-            // 1. Obtenemos la ubicación seleccionada directamente del nuevo <select>
             const selectUbicacion = document.getElementById('anuncio-ubicacion-id');
-            const opcionSeleccionada = selectUbicacion.options[selectUbicacion.selectedIndex];
+            const opcionSeleccionada = selectUbicacion ? selectUbicacion.options[selectUbicacion.selectedIndex] : null;
 
             const formData = new FormData();
             formData.append('titulo', document.getElementById('titulo').value);
             formData.append('descripcion', document.getElementById('descripcion').value);
             
-            // 2. Extraemos los IDs guardados en los atributos data- del select
             if (opcionSeleccionada && selectUbicacion.value !== "") {
                 const ciudadId = opcionSeleccionada.getAttribute('data-ciudad');
                 const zonaId = opcionSeleccionada.getAttribute('data-zona');
 
                 formData.append('ciudad_id', ciudadId || '');
                 formData.append('zona_id', zonaId || ''); 
+                formData.append('ubicacion_id', selectUbicacion.value); // Opcional, por si tu backend lo asimila
             } else {
                 formData.append('ciudad_id', '');
                 formData.append('zona_id', '');
@@ -676,7 +700,7 @@
             formData.append('amenidades', document.getElementById('amenidades').value);
 
             const fileInput = document.getElementById('imagen');
-            if (fileInput.files[0]) {
+            if (fileInput && fileInput.files[0]) {
                 formData.append('imagen', fileInput.files[0]);
             }
 
@@ -714,7 +738,7 @@
             document.getElementById('form-anuncio').reset();
             document.getElementById('anuncio-id').value = '';
             document.getElementById('modal-titulo').innerText = "Registrar Propiedad";
-            document.getElementById('imagen').required = true;
+            if(document.getElementById('imagen')) document.getElementById('imagen').required = true;
             document.getElementById('modal-formulario').classList.replace('hidden', 'flex');
         }
 
@@ -724,15 +748,26 @@
             document.getElementById('titulo').value = anuncio.titulo;
             document.getElementById('descripcion').value = anuncio.descripcion;
             
-            document.getElementById('ciudad').value = anuncio.ciudad || '';
-            filtrarZonasPorCiudad(anuncio.ciudad || '');
-            document.getElementById('zona').value = anuncio.zona || '';
+            // CORRECCIÓN SELECCIÓN DE UBICACIÓN
+            const selectUbicacion = document.getElementById('anuncio-ubicacion-id');
+            if (selectUbicacion) {
+                let encontrado = false;
+                for (let i = 0; i < selectUbicacion.options.length; i++) {
+                    const opt = selectUbicacion.options[i];
+                    // Comparamos contra el zona_id guardado en el anuncio o su id de ubicación directa
+                    if (opt.getAttribute('data-zona') == anuncio.zona_id || opt.value == anuncio.ubicacion_id) {
+                        selectUbicacion.selectedIndex = i;
+                        encontrado = true;
+                        break;
+                    }
+                }
+                if (!encontrado) selectUbicacion.value = ""; 
+            }
             
             document.getElementById('precio').value = anuncio.precio;
-            document.getElementById('link_airbnb').value = anuncio.link_airbnb;
+            document.getElementById('link_airbnb').value = anuncio.link_airbnb || '';
             document.getElementById('link_calendario').value = anuncio.link_calendario || '';
             document.getElementById('descripcion_corta').value = anuncio.descripcion_corta || '';
-            
             document.getElementById('tipo_propiedad').value = anuncio.tipo_propiedad_id || '';
             
             document.getElementById('recamaras').value = anuncio.recamaras || 0;
@@ -742,7 +777,7 @@
             document.getElementById('amenidades').value = anuncio.amenidades || '';
 
             document.getElementById('modal-titulo').innerText = "Modificar Propiedad";
-            document.getElementById('imagen').required = false;
+            if(document.getElementById('imagen')) document.getElementById('imagen').required = false;
             document.getElementById('modal-formulario').classList.replace('hidden', 'flex');
         }
 
@@ -752,6 +787,7 @@
 
         function renderTablaTipos() {
             const tbody = document.getElementById('tabla-tipos-body');
+            if (!tbody) return;
             tbody.innerHTML = '';
             if (todosLosTipos.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="2" class="p-3 text-center text-slate-400 text-xs">Sin categorías.</td></tr>`;
@@ -828,6 +864,7 @@
 
         function renderTablaUbicaciones() {
             const tbody = document.getElementById('tabla-ubicaciones-body');
+            if (!tbody) return;
             tbody.innerHTML = '';
             if (todasLasUbicaciones.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="3" class="p-3 text-center text-slate-400 text-xs">Sin ubicaciones configuradas.</td></tr>`;
@@ -836,11 +873,11 @@
             todasLasUbicaciones.forEach(u => {
                 const tr = document.createElement('tr');
                 const ciudadNombre = u.ciudad || u.ciudad_nombre || 'Desconocida';
-                const zonaNombre = u.zona || u.nombre || 'Desconocida';
+                const zonaNombre = u.zona || u.zona_nombre || u.nombre || 'Desconocida';
                 
                 tr.innerHTML = `
                     <td class="p-3 font-medium text-slate-800">${ciudadNombre}</td>
-                    <td class="p-3 text-slate-600">${zonaNombre}</td>
+                    <td class="p-3 text-slate-600">${u.nombre || zonaNombre}</td>
                     <td class="p-3 text-right">
                         <button onclick='abrirModalEditarUbicacion(${JSON.stringify(u)})' class="text-[11px] text-amber-600 hover:underline mr-2 cursor-pointer">Editar</button>
                         <button onclick="eliminarUbicacion(${u.id})" class="text-[11px] text-red-600 hover:underline cursor-pointer">Borrar</button>
@@ -848,16 +885,6 @@
                 `;
                 tbody.appendChild(tr);
             });
-        }
-
-        function abrirModalUbicacion() {
-            modoEdicionUbicacion = false;
-            document.getElementById('form-ubicacion').reset();
-            document.getElementById('ubicacion-id').value = '';
-            ocultarInputNuevaCiudad();
-            cargarCiudadesEnSelect(); 
-            document.getElementById('modal-ubicacion-titulo').innerText = "Agregar Ubicación";
-            document.getElementById('modal-ubicacion').classList.replace('hidden', 'flex');
         }
 
         function cerrarModalUbicacion() {
@@ -868,12 +895,10 @@
             e.preventDefault();
             const id = document.getElementById('ubicacion-id').value;
             
-            // Capturar valor de Ciudad según el modo
             let ciudad = creandoNuevaCiudad 
                 ? document.getElementById('ubicacion-ciudad-nuevo').value.trim() 
                 : document.getElementById('ubicacion-ciudad-select').value;
 
-            // Capturar valor de Zona según el modo
             let zona = creandoNuevaZona 
                 ? document.getElementById('ubicacion-zona-nuevo').value.trim() 
                 : document.getElementById('ubicacion-zona-select').value;
@@ -930,11 +955,11 @@
             document.getElementById('ubicacion-id').value = '';
             
             ocultarInputNuevaCiudad();
-            ocultarInputNuevaZona(); // Limpiamos el estado manual de la zona
+            ocultarInputNuevaZona(); 
 
             cargarCiudadesEnSelect().then(() => {
-                const primerCiudad = document.getElementById('ubicacion-ciudad-select').value;
-                cambiarZonasPorCiudadAdmin(primerCiudad);
+                const selectC = document.getElementById('ubicacion-ciudad-select');
+                if (selectC) cambiarZonasPorCiudadAdmin(selectC.value);
             }); 
             
             document.getElementById('modal-ubicacion-titulo').innerText = "Agregar Ubicación";
@@ -945,31 +970,28 @@
             modoEdicionUbicacion = true;
             document.getElementById('ubicacion-id').value = u.id; 
             
-            // Llenar los campos de detalles de la ubicación
-            document.getElementById('ubicacion-nombre-complejo').value = u.nombre_complejo || u.nombre || '';
+            document.getElementById('ubicacion-nombre-complejo').value = u.nombre || u.nombre_complejo || '';
             document.getElementById('ubicacion-direccion').value = u.direccion_completa || '';
             document.getElementById('ubicacion-link-maps').value = u.link_google_maps || '';
             document.getElementById('ubicacion-iframe').value = u.iframe_mapa || '';
             document.getElementById('ubicacion-especificaciones').value = u.especificaciones || '';
 
-            // Restablecer estados de creación manual para inputs nuevos
             creandoNuevaCiudad = false;
             document.getElementById('ubicacion-ciudad-select').classList.remove('hidden');
             document.getElementById('ubicacion-ciudad-nuevo').classList.add('hidden');
             document.getElementById('btn-cancelar-nueva-ciudad').classList.add('hidden');
             
-            ocultarInputNuevaZona(); // Aseguramos que se muestre el select de zonas
+            ocultarInputNuevaZona(); 
 
-            // Cargar ciudades y sincronizar cascada de select de zonas
             cargarCiudadesEnSelect().then(() => {
                 const ciudadActual = u.ciudad || u.ciudad_nombre || '';
-                document.getElementById('ubicacion-ciudad-select').value = ciudadActual;
+                const selectC = document.getElementById('ubicacion-ciudad-select');
+                if(selectC) selectC.value = ciudadActual;
                 
-                // Forzamos a que se carguen las zonas correspondientes a esta ciudad
                 cambiarZonasPorCiudadAdmin(ciudadActual);
                 
-                // Seleccionamos la zona exacta que tiene asignada la ubicación
-                document.getElementById('ubicacion-zona-select').value = u.zona || u.nombre || '';
+                const selectZ = document.getElementById('ubicacion-zona-select');
+                if(selectZ) selectZ.value = u.zona || u.zona_nombre || u.nombre || '';
             });
 
             document.getElementById('modal-ubicacion-titulo').innerText = "Modificar Ubicación";
