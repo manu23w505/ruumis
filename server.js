@@ -134,6 +134,24 @@ app.get('/api/zonas', (req, res) => {
     });
 });
 
+app.get('/api/ubicaciones', (req, res) => {
+    const sql = `
+        SELECT u.*, c.nombre AS ciudad_nombre, z.nombre AS zona_nombre,
+               c.nombre AS ciudad, z.nombre AS zona
+        FROM ubicaciones u
+        LEFT JOIN zonas z ON u.zona_id = z.id
+        LEFT JOIN ciudades c ON z.ciudad_id = c.id
+        ORDER BY c.nombre ASC, z.nombre ASC
+    `;
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error("Error al obtener ubicaciones unificadas:", err);
+            return res.status(500).json({ error: 'Error al obtener ubicaciones' });
+        }
+        res.json(results);
+    });
+});
+
 app.get('/api/tipos-propiedad', (req, res) => {
     db.query('SELECT * FROM tipos_propiedad ORDER BY nombre ASC', (err, results) => {
         if (err) return res.status(500).json({ error: 'Error al obtener tipos de propiedad' });
@@ -173,40 +191,66 @@ app.delete('/api/tipos-propiedad/:id', (req, res) => {
     });
 });
 
-app.get('/api/ubicaciones', (req, res) => {
-    const sql = `
-        SELECT z.id AS id, c.nombre AS ciudad, z.nombre AS zona, z.ciudad_id
-        FROM zonas z
-        INNER JOIN ciudades c ON z.ciudad_id = c.id
-        ORDER BY c.nombre ASC, z.nombre ASC
-    `;
-    db.query(sql, (err, results) => {
-        if (err) {
-            console.error("Error al obtener ubicaciones unificadas:", err);
-            return res.status(500).json({ error: 'Error al obtener ubicaciones' });
-        }
-        res.json(results);
-    });
-});
-
 app.post('/api/ubicaciones', (req, res) => {
-    const { ciudad, zona } = req.body;
+    const { ciudad, zona, nombre, direccion_completa, link_google_maps, iframe_mapa, especificaciones } = req.body;
 
     if (!ciudad || !zona) {
         return res.status(400).json({ error: 'Ciudad y Zona son requeridas.' });
     }
 
+    // Paso 1: Asegurar que exista la Ciudad
     const sqlCiudad = 'SELECT id FROM ciudades WHERE nombre = ?';
     db.query(sqlCiudad, [ciudad.trim()], (err, ciudades) => {
         if (err) return res.status(500).json({ error: 'Error al buscar ciudad' });
 
+        const procesarZona = (ciudadId) => {
+            // Paso 2: Asegurar que exista la Zona ligada a esa Ciudad
+            const sqlZona = 'SELECT id FROM zonas WHERE nombre = ? AND ciudad_id = ?';
+            db.query(sqlZona, [zona.trim(), ciudadId], (err, zonas) => {
+                if (err) return res.status(500).json({ error: 'Error al buscar zona' });
+
+                const insertarFinalComplejo = (zonaId) => {
+                    // Paso 3: Insertar el registro final en tu nueva tabla 'ubicaciones'
+                    const sqlInsertUbicacion = `
+                        INSERT INTO ubicaciones 
+                        (nombre, direccion_completa, link_google_maps, iframe_mapa, especificaciones, zona_id) 
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    `;
+                    db.query(sqlInsertUbicacion, [
+                        nombre ? nombre.trim() : '',
+                        direccion_completa ? direccion_completa.trim() : '',
+                        link_google_maps ? link_google_maps.trim() : '',
+                        iframe_mapa ? iframe_mapa.trim() : '',
+                        especificaciones ? specifications : '',
+                        zonaId
+                    ], (err, resultUbicacion) => {
+                        if (err) {
+                            console.error("Error al insertar en tabla ubicaciones:", err);
+                            return res.status(500).json({ error: 'Error al registrar el complejo físico.' });
+                        }
+                        res.json({ success: true, message: 'Ubicación física guardada con éxito', id: resultUbicacion.insertId });
+                    });
+                };
+
+                if (zonas.length > 0) {
+                    insertarFinalComplejo(zonas[0].id);
+                } else {
+                    const sqlInsertZona = 'INSERT INTO zonas (nombre, ciudad_id) VALUES (?, ?)';
+                    db.query(sqlInsertZona, [zona.trim(), ciudadId], (err, resultZona) => {
+                        if (err) return res.status(500).json({ error: 'Error al crear nueva zona' });
+                        insertarFinalComplejo(resultZona.insertId);
+                    });
+                }
+            });
+        };
+
         if (ciudades.length > 0) {
-            insertarZona(ciudades[0].id, zona, res);
+            procesarZona(ciudades[0].id);
         } else {
             const sqlInsertCiudad = 'INSERT INTO ciudades (nombre) VALUES (?)';
             db.query(sqlInsertCiudad, [ciudad.trim()], (err, resultCiudad) => {
-                if (err) return res.status(500).json({ error: 'Error al registrar ciudad' });
-                insertarZona(resultCiudad.insertId, zona, res);
+                if (err) return res.status(500).json({ error: 'Error al registrar nueva ciudad' });
+                procesarZona(resultCiudad.insertId);
             });
         }
     });
@@ -214,7 +258,7 @@ app.post('/api/ubicaciones', (req, res) => {
 
 app.put('/api/ubicaciones/:id', (req, res) => {
     const { id } = req.params; 
-    const { ciudad, zona } = req.body;
+    const { ciudad, zona, nombre, direccion_completa, link_google_maps, iframe_mapa, especificaciones } = req.body;
 
     if (!ciudad || !zona) {
         return res.status(400).json({ error: 'Ciudad y Zona son requeridas.' });
@@ -224,21 +268,53 @@ app.put('/api/ubicaciones/:id', (req, res) => {
     db.query(sqlCiudad, [ciudad.trim()], (err, ciudades) => {
         if (err) return res.status(500).json({ error: 'Error al procesar ciudad en edición' });
 
-        const actualizarZona = (ciudadId) => {
-            const sqlUpdateZona = 'UPDATE zonas SET nombre = ?, ciudad_id = ? WHERE id = ?';
-            db.query(sqlUpdateZona, [zona.trim(), ciudadId, id], (err, result) => {
-                if (err) return res.status(500).json({ error: 'Error al actualizar la ubicación' });
-                res.json({ success: true, message: 'Ubicación modificada con éxito' });
+        const procesarZonaEdicion = (ciudadId) => {
+            const sqlZona = 'SELECT id FROM zonas WHERE nombre = ? AND ciudad_id = ?';
+            db.query(sqlZona, [zona.trim(), ciudadId], (err, zonas) => {
+                if (err) return res.status(500).json({ error: 'Error al procesar zona en edición' });
+
+                const actualizarUbicacionFinal = (zonaId) => {
+                    const sqlUpdate = `
+                        UPDATE ubicaciones 
+                        SET nombre = ?, direccion_completa = ?, link_google_maps = ?, iframe_mapa = ?, especificaciones = ?, zona_id = ? 
+                        WHERE id = ?
+                    `;
+                    db.query(sqlUpdate, [
+                        nombre ? nombre.trim() : '',
+                        direccion_completa ? direccion_completa.trim() : '',
+                        link_google_maps ? link_google_maps.trim() : '',
+                        iframe_mapa ? iframe_mapa.trim() : '',
+                        especificaciones ? especificaciones : '',
+                        zonaId,
+                        id
+                    ], (err, result) => {
+                        if (err) {
+                            console.error("Error SQL al actualizar la ubicación:", err);
+                            return res.status(500).json({ error: 'Error al actualizar la ubicación física' });
+                        }
+                        res.json({ success: true, message: 'Ubicación modificada con éxito' });
+                    });
+                };
+
+                if (zonas.length > 0) {
+                    actualizarUbicacionFinal(zonas[0].id);
+                } else {
+                    const sqlInsertZona = 'INSERT INTO zonas (nombre, ciudad_id) VALUES (?, ?)';
+                    db.query(sqlInsertZona, [zona.trim(), ciudadId], (err, resultZona) => {
+                        if (err) return res.status(500).json({ error: 'Error al crear zona en edición' });
+                        actualizarUbicacionFinal(resultZona.insertId);
+                    });
+                }
             });
         };
 
         if (ciudades.length > 0) {
-            actualizarZona(ciudades[0].id);
+            procesarZonaEdicion(ciudades[0].id);
         } else {
             const sqlInsertCiudad = 'INSERT INTO ciudades (nombre) VALUES (?)';
             db.query(sqlInsertCiudad, [ciudad.trim()], (err, resultCiudad) => {
                 if (err) return res.status(500).json({ error: 'Error al crear nueva ciudad en edición' });
-                actualizarZona(resultCiudad.insertId);
+                procesarZonaEdicion(resultCiudad.insertId);
             });
         }
     });
@@ -258,11 +334,11 @@ function insertarZona(ciudadId, nombreZona, res) {
 app.delete('/api/ubicaciones/:id', (req, res) => {
     const { id } = req.params;
     
-    const sql = 'DELETE FROM zonas WHERE id = ?';
+    const sql = 'DELETE FROM ubicaciones WHERE id = ?';
     db.query(sql, [id], (err, result) => {
         if (err) {
-            console.error("Error al eliminar zona:", err);
-            return res.status(500).json({ error: 'Error al eliminar la ubicación' });
+            console.error("Error al eliminar ubicación:", err);
+            return res.status(500).json({ error: 'Error al eliminar la ubicación física' });
         }
         res.json({ success: true, message: 'Ubicación eliminada con éxito' });
     });
