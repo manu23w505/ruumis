@@ -12,13 +12,21 @@ async function apiCall(endpoint) {
     }
 }
 
+
 async function inicializarPagina() {
-    const ciudades = await apiCall('/api/ciudades');
+    // Cambiamos al endpoint unificado que usamos en el admin
+    const ubicaciones = await apiCall('/api/ubicaciones');
     const selectCiudad = document.getElementById('filtro-ciudad');
-    if (selectCiudad && ciudades) {
+    
+    if (selectCiudad && ubicaciones) {
         selectCiudad.innerHTML = '<option value="">Todas las ciudades</option>';
-        ciudades.forEach(c => {
-            selectCiudad.innerHTML += `<option value="${c.id}">${c.nombre}</option>`;
+        
+        // Obtenemos solo los nombres de ciudades únicas
+        const ciudadesUnicas = [...new Set(ubicaciones.map(u => u.ciudad || u.ciudad_nombre))].filter(Boolean);
+        
+        ciudadesUnicas.forEach(ciudadNombre => {
+            // Guardamos el NOMBRE de la ciudad como el valor del select
+            selectCiudad.innerHTML += `<option value="${ciudadNombre}">${ciudadNombre}</option>`;
         });
     }
 
@@ -34,12 +42,12 @@ async function inicializarPagina() {
 }
 
 async function manejarCambioCiudad() {
-    const ciudadId = document.getElementById('filtro-ciudad').value;
+    const ciudadSeleccionada = document.getElementById('filtro-ciudad').value; // Ahora es un texto (ej: "Querétaro")
     const selectZona = document.getElementById('filtro-zona');
     
     if (!selectZona) return;
 
-    if (!ciudadId) {
+    if (!ciudadSeleccionada) {
         selectZona.innerHTML = '<option value="">Selecciona una ciudad primero</option>';
         selectZona.disabled = true;
         selectZona.classList.replace('bg-white', 'bg-slate-100');
@@ -47,13 +55,22 @@ async function manejarCambioCiudad() {
         return;
     }
 
-    const zonas = await apiCall(`/api/zonas?ciudad_id=${ciudadId}`);
+    // Traemos todas las ubicaciones para sacar las zonas de la ciudad elegida
+    const ubicaciones = await apiCall('/api/ubicaciones');
     
-    if (zonas && zonas.length > 0) {
+    if (ubicaciones) {
+        // Filtramos las ubicaciones que pertenecen a la ciudad seleccionada
+        const zonasFiltradas = ubicaciones.filter(u => (u.ciudad || u.ciudad_nombre) === ciudadSeleccionada);
+        
         selectZona.innerHTML = '<option value="">Todas las zonas</option>';
-        zonas.forEach(z => {
-            selectZona.innerHTML += `<option value="${z.id}">${z.nombre}</option>`;
+        
+        zonasFiltradas.forEach(u => {
+            const zNombre = u.zona || u.zona_nombre || 'Sin Zona';
+            const compNombre = u.nombre ? `${u.nombre} ` : '';
+            // Guardamos el texto de la zona/complejo para comparar directo
+            selectZona.innerHTML += `<option value="${zNombre}">${compNombre}(${zNombre})</option>`;
         });
+        
         selectZona.disabled = false;
         selectZona.className = selectZona.className.replace('bg-slate-100 text-slate-400', 'bg-white text-slate-900');
     } else {
@@ -62,6 +79,34 @@ async function manejarCambioCiudad() {
     }
 
     aplicarFiltros();
+}
+
+function aplicarFiltros() {
+    const busqueda = document.getElementById('filtro-busqueda')?.value.toLowerCase() || '';
+    const ciudad = document.getElementById('filtro-ciudad')?.value || ''; // Trae el nombre texto
+    const zona = document.getElementById('filtro-zona')?.value || ''; // Trae el nombre texto
+    const precioMin = parseFloat(document.getElementById('filtro-precio-min')?.value) || 0;
+    const precioMax = parseFloat(document.getElementById('filtro-precio-max')?.value) || Infinity;
+
+    const filtrados = todosLosAnuncios.filter(a => {
+        const coincideBusqueda = a.titulo.toLowerCase().includes(busqueda) || 
+                                 a.descripcion.toLowerCase().includes(busqueda) || 
+                                 (a.zona && a.zona.toLowerCase().includes(busqueda)) ||
+                                 (a.ubicacion_nombre && a.ubicacion_nombre.toLowerCase().includes(busqueda));
+                                 
+        // Comparamos el nombre de la ciudad directamente con lo que viene del JOIN en el anuncio
+        const coincideCiudad = ciudad === "" || (a.ciudad || a.ciudad_nombre) === ciudad;
+        
+        // Comparamos el nombre de la zona directamente
+        const coincideZona = zona === "" || (a.zona || a.zona_nombre) === zona;
+        
+        const coincidePrecio = a.precio >= precioMin && a.precio <= precioMax;
+        const coincideHuespedes = a.capacidad_personas ? (a.capacidad_personas >= contadorHuespedes) : true;
+
+        return coincideBusqueda && coincideCiudad && coincideZona && coincidePrecio && coincideHuespedes;
+    });
+
+    renderizarTarjetas(filtrados);
 }
 
 function renderizarTarjetas(lista) {
@@ -109,31 +154,6 @@ function renderizarTarjetas(lista) {
     });
 }
 
-function aplicarFiltros() {
-    const busqueda = document.getElementById('filtro-busqueda')?.value.toLowerCase() || '';
-    const ciudad = document.getElementById('filtro-ciudad')?.value || '';
-    const zona = document.getElementById('filtro-zona')?.value || '';
-    const precioMin = parseFloat(document.getElementById('filtro-precio-min')?.value) || 0;
-    const precioMax = parseFloat(document.getElementById('filtro-precio-max')?.value) || Infinity;
-
-        const filtrados = todosLosAnuncios.filter(a => {
-            const coincideBusqueda = a.titulo.toLowerCase().includes(busqueda) || 
-                                    a.descripcion.toLowerCase().includes(busqueda) || 
-                                    (a.zona && a.zona.toLowerCase().includes(busqueda)) ||
-                                    (a.ubicacion_nombre && a.ubicacion_nombre.toLowerCase().includes(busqueda));
-                                    
-            // Evaluamos usando las propiedades numéricas que devuelva el JOIN de la ubicación
-            const coincideCiudad = ciudad === "" || a.ciudad_id == ciudad;
-            const coincideZona = zona === "" || a.zona_id == zona;
-            
-            const coincidePrecio = a.precio >= precioMin && a.precio <= precioMax;
-            const coincideHuespedes = a.capacidad_personas ? (a.capacidad_personas >= contadorHuespedes) : true;
-
-            return coincideBusqueda && coincideCiudad && coincideZona && coincidePrecio && coincideHuespedes;
-        });
-
-    renderizarTarjetas(filtrados);
-}
 
 window.cambiarHuespedes = function(val) {
     contadorHuespedes = Math.max(1, contadorHuespedes + val);
