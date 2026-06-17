@@ -193,16 +193,10 @@
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="flex flex-col">
-                        <label for="ciudad" class="text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">Ciudad</label>
-                        <select id="ciudad" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-cyan-500 transition-all" onchange="filtrarZonasPorCiudad(this.value)">
-                            <option value="">Selecciona una ciudad...</option>
-                        </select>
-                    </div>
-                    <div class="flex flex-col">
-                        <label for="zona" class="text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">Zona / Colonia</label>
-                        <select id="zona" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-cyan-500 transition-all">
-                            <option value="">Selecciona una zona...</option>
+                    <div class="form-group">
+                        <label for="anuncio-ubicacion-id">Ubicación / Complejo:</label>
+                        <select id="anuncio-ubicacion-id" name="ubicacion_id" class="form-control" required>
+                            <option value="">-- Selecciona un Complejo/Ubicación --</option>
                         </select>
                     </div>
                     <div class="flex flex-col">
@@ -454,6 +448,34 @@
             document.getElementById('ubicacion-zona-nuevo').value = '';
         }
 
+        function cargarUbicacionesEnAnuncios() {
+            fetch('/api/ubicaciones')
+                .then(res => res.json())
+                .then(ubicaciones => {
+                    const selectUbicacion = document.getElementById('anuncio-ubicacion-id');
+                    // Limpiar opciones manteniendo la primera
+                    selectUbicacion.innerHTML = '<option value="">-- Selecciona un Complejo/Ubicación --</option>';
+                    
+                    ubicaciones.forEach(u => {
+                        const option = document.createElement('option');
+                        option.value = u.id; // ID de la ubicación física
+                        // Guardamos los IDs de ciudad y zona en atributos "data-" por si los necesitas
+                        option.setAttribute('data-zona', u.zona_id || '');
+                        option.setAttribute('data-ciudad', u.ciudad_id || '');
+                        
+                        // Texto legible para el administrador: "Nombre Complejo (Zona, Ciudad)"
+                        option.textContent = `${u.nombre} (${u.zona_nombre}, ${u.ciudad_nombre})`;
+                        selectUbicacion.appendChild(option);
+                    });
+                })
+                .catch(err => console.error('Error al cargar ubicaciones para anuncios:', err));
+        }
+
+        // Asegúrate de ejecutar esta función cuando cargue la página de administración
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarUbicacionesEnAnuncios();
+        });
+
         document.getElementById('form-login').addEventListener('submit', async (e) => {
             e.preventDefault();
             const usuario = document.getElementById('login-usuario').value;
@@ -621,22 +643,21 @@
             e.preventDefault();
             const id = document.getElementById('anuncio-id').value;
 
-            const txtCiudad = document.getElementById('ciudad').value;
-            const txtZona = document.getElementById('zona').value;
-            
-            const ubicacionEncontrada = todasLasUbicaciones.find(u => {
-                const nombreCiudadDB = u.ciudad || u.ciudad_nombre || '';
-                const nombreZonaDB = u.zona || u.nombre || '';
-                return nombreCiudadDB.trim() === txtCiudad.trim() && nombreZonaDB.trim() === txtZona.trim();
-            });
+            // 1. Obtenemos la ubicación seleccionada directamente del nuevo <select>
+            const selectUbicacion = document.getElementById('anuncio-ubicacion-id');
+            const opcionSeleccionada = selectUbicacion.options[selectUbicacion.selectedIndex];
 
             const formData = new FormData();
             formData.append('titulo', document.getElementById('titulo').value);
             formData.append('descripcion', document.getElementById('descripcion').value);
             
-            if (ubicacionEncontrada) {
-                formData.append('ciudad_id', ubicacionEncontrada.ciudad_id || '');
-                formData.append('zona_id', ubicacionEncontrada.id || ''); 
+            // 2. Extraemos los IDs guardados en los atributos data- del select
+            if (opcionSeleccionada && selectUbicacion.value !== "") {
+                const ciudadId = opcionSeleccionada.getAttribute('data-ciudad');
+                const zonaId = opcionSeleccionada.getAttribute('data-zona');
+
+                formData.append('ciudad_id', ciudadId || '');
+                formData.append('zona_id', zonaId || ''); 
             } else {
                 formData.append('ciudad_id', '');
                 formData.append('zona_id', '');
