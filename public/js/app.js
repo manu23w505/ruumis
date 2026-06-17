@@ -81,7 +81,7 @@ function renderizarTarjetas(lista) {
                 </div>
                 <h3 class="font-bold text-lg text-slate-900 mb-1 line-clamp-1">${anuncio.titulo}</h3>
                 <p class="text-sm text-slate-500 mb-3 flex items-center gap-1">
-                    <span>${anuncio.ciudad || 'Sin Ciudad'}</span> • <span>${anuncio.zona || 'Sin Zona'}</span>
+                    <span>${anuncio.ubicacion_nombre ? anuncio.ubicacion_nombre + ' • ' : ''}${anuncio.zona || 'Sin Zona'}, ${anuncio.ciudad || 'Sin Ciudad'}</span>
                 </p>
                 
                 <!-- Detalles de habitabilidad solicitados -->
@@ -116,17 +116,21 @@ function aplicarFiltros() {
     const precioMin = parseFloat(document.getElementById('filtro-precio-min')?.value) || 0;
     const precioMax = parseFloat(document.getElementById('filtro-precio-max')?.value) || Infinity;
 
-    const filtrados = todosLosAnuncios.filter(a => {
-        const coincideBusqueda = a.titulo.toLowerCase().includes(busqueda) || 
-                                 a.descripcion.toLowerCase().includes(busqueda) || 
-                                 (a.zona && a.zona.toLowerCase().includes(busqueda));
-        const coincideCiudad = ciudad === "" || a.ciudad_id == ciudad;
-        const coincideZona = zona === "" || a.zona_id == zona;
-        const coincidePrecio = a.precio >= precioMin && a.precio <= precioMax;
-        const coincideHuespedes = a.capacidad_personas ? (a.capacidad_personas >= contadorHuespedes) : true;
+        const filtrados = todosLosAnuncios.filter(a => {
+            const coincideBusqueda = a.titulo.toLowerCase().includes(busqueda) || 
+                                    a.descripcion.toLowerCase().includes(busqueda) || 
+                                    (a.zona && a.zona.toLowerCase().includes(busqueda)) ||
+                                    (a.ubicacion_nombre && a.ubicacion_nombre.toLowerCase().includes(busqueda));
+                                    
+            // Evaluamos usando las propiedades numéricas que devuelva el JOIN de la ubicación
+            const coincideCiudad = ciudad === "" || a.ciudad_id == ciudad;
+            const coincideZona = zona === "" || a.zona_id == zona;
+            
+            const coincidePrecio = a.precio >= precioMin && a.precio <= precioMax;
+            const coincideHuespedes = a.capacidad_personas ? (a.capacidad_personas >= contadorHuespedes) : true;
 
-        return coincideBusqueda && coincideCiudad && coincideZona && coincidePrecio && coincideHuespedes;
-    });
+            return coincideBusqueda && coincideCiudad && coincideZona && coincidePrecio && coincideHuespedes;
+        });
 
     renderizarTarjetas(filtrados);
 }
@@ -165,7 +169,7 @@ window.abrirModalDetalles = function(id) {
     document.getElementById('det-imagen').src = `/uploads/${anuncio.imagen || 'default.jpg'}`;
     document.getElementById('det-titulo').innerText = anuncio.titulo;
     document.getElementById('det-tipo').innerText = anuncio.tipo_propiedad || 'Habitación';
-    document.getElementById('det-ubicacion').innerText = `${anuncio.ciudad} • ${anuncio.zona}`;
+    document.getElementById('det-ubicacion').innerText = `${anuncio.ubicacion_nombre ? anuncio.ubicacion_nombre + ' • ' : ''}${anuncio.zona || ''}, ${anuncio.ciudad || ''}`;
     document.getElementById('det-precio').innerText = `$${anuncio.precio} MXN`;
     document.getElementById('det-recamaras').innerText = anuncio.recamaras || 1;
     document.getElementById('det-camas').innerText = anuncio.camas || 1;
