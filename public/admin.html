@@ -376,6 +376,37 @@
         </div>
     </div>
 
+    <div id="modal-pregunta" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-lg p-6 shadow-xl animate-in fade-in zoom-in-95 duration-150">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
+                <h3 id="modal-pregunta-titulo" class="font-black text-lg text-slate-900">Nueva Pregunta</h3>
+                <button onclick="cerrarModalPregunta()" class="text-slate-400 hover:text-slate-600 cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            
+            <form id="form-pregunta" onsubmit="guardarPregunta(event)">
+                <input type="hidden" id="pregunta-id">
+                
+                <div class="space-y-4 mb-6">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Pregunta</label>
+                        <input type="text" id="pregunta-texto" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-cyan-500 transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Respuesta</label>
+                        <textarea id="pregunta-respuesta" required rows="4" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-cyan-500 transition-colors resize-none"></textarea>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+                    <button type="button" onclick="cerrarModalPregunta()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 transition-colors cursor-pointer">Cancelar</button>
+                    <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs shadow-sm transition-colors cursor-pointer">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 <script>
         let modoEdicion = false;
         let modoEdicionTipo = false;
