@@ -13,23 +13,99 @@
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen font-sans">
-
-    <nav class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 transition-all">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-2 cursor-pointer" onclick="window.location.href='anuncios.html'">
-                <div class="w-9 h-9 bg-cyan-500 rounded-xl flex items-center justify-center shadow-md shadow-cyan-500/20">
-                    <span class="text-slate-950 font-black text-lg">R</span>
+    <header class="header d-flex align-items-center" data-page="locations">
+        <div class="container position-relative d-flex justify-content-between align-items-center">
+            <a class="brand d-flex align-items-center" href="index.html">
+                <span class="brand_logo theme-element">
+                    <svg id="brandHeader" width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            fill-rule="evenodd"
+                            clip-rule="evenodd"
+                            d="M7.03198 3.80281V7.07652L3.86083 9.75137L0.689673 12.4263L0.667474 6.56503C0.655304 3.34138 0.663875 0.654206 0.686587 0.593579C0.71907 0.506918 1.4043 0.488223 3.87994 0.506219L7.03198 0.529106V3.80281ZM21.645 4.36419V5.88433L17.0383 9.76316C14.5046 11.8966 11.2263 14.6552 9.75318 15.8934L7.07484 18.145V20.3225V22.5H3.85988H0.64502L0.667303 18.768L0.689673 15.036L2.56785 13.4609C3.60088 12.5946 6.85989 9.85244 9.81009 7.36726L15.1741 2.84867L18.4096 2.8464L21.645 2.84413V4.36419ZM21.645 15.5549V22.5H18.431H15.217V18.2638V14.0274L15.4805 13.7882C15.8061 13.4924 21.5939 8.61606 21.6236 8.61248C21.6353 8.61099 21.645 11.7351 21.645 15.5549Z"
+                            fill="currentColor"
+                        />
+                    </svg>
+                </span>
+                <span class="brand_name">Hosteller</span>
+            </a>
+            <div class="header_offcanvas offcanvas offcanvas-end" id="menuOffcanvas">
+                <div class="header_offcanvas-header d-flex justify-content-between align-content-center">
+                    <a class="brand d-flex align-items-center" href="index.html">
+                        <span class="brand_logo theme-element">
+                            <svg
+                                id="brandOffset"
+                                width="22"
+                                height="23"
+                                viewBox="0 0 22 23"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    fill-rule="evenodd"
+                                    clip-rule="evenodd"
+                                    d="M7.03198 3.80281V7.07652L3.86083 9.75137L0.689673 12.4263L0.667474 6.56503C0.655304 3.34138 0.663875 0.654206 0.686587 0.593579C0.71907 0.506918 1.4043 0.488223 3.87994 0.506219L7.03198 0.529106V3.80281ZM21.645 4.36419V5.88433L17.0383 9.76316C14.5046 11.8966 11.2263 14.6552 9.75318 15.8934L7.07484 18.145V20.3225V22.5H3.85988H0.64502L0.667303 18.768L0.689673 15.036L2.56785 13.4609C3.60088 12.5946 6.85989 9.85244 9.81009 7.36726L15.1741 2.84867L18.4096 2.8464L21.645 2.84413V4.36419ZM21.645 15.5549V22.5H18.431H15.217V18.2638V14.0274L15.4805 13.7882C15.8061 13.4924 21.5939 8.61606 21.6236 8.61248C21.6353 8.61099 21.645 11.7351 21.645 15.5549Z"
+                                    fill="currentColor"
+                                />
+                            </svg>
+                        </span>
+                        <span class="brand_name">Hosteller</span>
+                    </a>
+                    <button class="close" type="button" data-bs-dismiss="offcanvas">
+                        <i class="icon-close--entypo"></i>
+                    </button>
                 </div>
-                <span class="text-xl font-black bg-gradient-to-r region-title from-slate-900 to-slate-700 bg-clip-text text-transparent">Ruumis</span>
+                <nav class="header_nav">
+                    <ul class="header_nav-list">
+                        <li class="header_nav-list_item">
+                            <a class="nav-item" href="index.html" data-page="home">Home</a>
+                        </li>
+                        <li class="header_nav-list_item">
+                            <a class="nav-item" href="about.html" data-page="about">About</a>
+                        </li>
+                        <li class="header_nav-list_item">
+                            <a class="nav-item" href="rooms.html" data-page="rooms"> Rooms </a>
+                        </li>
+                        <li class="header_nav-list_item">
+                            <a class="nav-item" href="locations.html" data-page="locations">Locations </a>
+                        </li>
+                        <li class="header_nav-list_item">
+                            <a class="nav-link" href="contacts.html" data-page="contacts">Contacts</a>
+                        </li>
+                        <li class="header_nav-list_item">
+                            <a class="nav-link" href="admin.html" data-bs-toggle="admin">Admin</a>
+                        </li>
+                    </ul>
+                </nav>
+                <ul class="socials d-flex align-items-center">
+                    <li class="list-item">
+                        <a class="link" href="">
+                            <i class="icon-facebook"></i>
+                        </a>
+                    </li>
+                    <li class="list-item">
+                        <a class="link" href="">
+                            <i class="icon-instagram"></i>
+                        </a>
+                    </li>
+                    <li class="list-item">
+                        <a class="link" href="">
+                            <i class="icon-twitter"></i>
+                        </a>
+                    </li>
+                    <li class="list-item">
+                        <a class="link" href="">
+                            <i class="icon-whatsapp"></i>
+                        </a>
+                    </li>
+                </ul>
             </div>
-            <div class="flex items-center gap-4">
-                <a href="anuncios.html" class="text-sm font-semibold text-slate-600 hover:text-cyan-600 transition-colors">Ver Habitaciones</a>
-                <a href="admin.html" class="text-sm font-bold bg-slate-900 text-white px-4 py-2 rounded-xl hover:bg-slate-800 transition-all shadow-sm">Panel Admin</a>
-            </div>
+            <button class="header_trigger d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuOffcanvas">
+                <i class="icon-stream"></i>
+            </button>
         </div>
-    </nav>
+    </header>
 
-    <header class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-6">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
         <div class="max-w-2xl">
             <span class="text-xs font-bold uppercase tracking-widest text-cyan-600 bg-cyan-50 px-3 py-1 rounded-full border border-cyan-100">Explora Nuestras Zonas</span>
             <h1 class="text-4xl font-black text-slate-900 tracking-tight mt-3 mb-4">Nuestros Complejos y Completa Disponibilidad</h1>
@@ -49,9 +125,7 @@
                 Mostrando <span id="contador-ubicaciones" class="font-bold text-slate-800">0</span> ubicación(es)
             </div>
         </div>
-    </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
         <div id="contenedor-ubicaciones" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div class="col-span-full text-center py-16 text-slate-400">
                 <p class="animate-pulse font-medium">Cargando ubicaciones de Ruumis...</p>
@@ -196,5 +270,6 @@
             renderizarUbicaciones(filtradas);
         }
     </script>
+
 </body>
 </html>
