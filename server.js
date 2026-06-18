@@ -507,9 +507,19 @@ app.get('/api/anuncios/:id/calendario-capsula', (req, res) => {
     });
 });
 
+
+// index search
 app.get('/api/redirect-airbnb/:id', (req, res) => {
     const anuncioId = req.params.id;
-    const { check_in, check_out, guests, adults, children } = req.query;
+    // Si no vienen en la query (porque no usó el buscador), les asignamos un valor vacío o por defecto
+    const { 
+        check_in = '', 
+        check_out = '', 
+        guests = '1', 
+        adults = '1', 
+        children = '0' 
+    } = req.query;
+
     const sql = 'SELECT link_airbnb FROM anuncios WHERE id = ?';
     
     db.query(sql, [anuncioId], (err, results) => {
@@ -520,15 +530,24 @@ app.get('/api/redirect-airbnb/:id', (req, res) => {
         if (results.length === 0 || !results[0].link_airbnb) {
             return res.status(404).send('Lo sentimos, este anuncio no tiene un enlace de Airbnb configurado.');
         }
+        
         let urlBaseReal = results[0].link_airbnb;
         if (urlBaseReal.includes('?')) {
             urlBaseReal = urlBaseReal.split('?')[0];
         }
-        const urlFinal = `${urlBaseReal}?check_in=${check_in}&check_out=${check_out}&guests=${guests}&adults=${adults}&children=${children}`;
+        
+        // Construimos la URL final hacia Airbnb incluyendo los filtros si existen
+        let urlFinal = `${urlBaseReal}?adults=${adults}&children=${children}&guests=${guests}`;
+        if (check_in && check_out) {
+            urlFinal += `&check_in=${check_in}&check_out=${check_out}`;
+        }
+        
         return res.redirect(urlFinal);
     });
 });
 
+
+//otros 
 async function sincronizarCalendarios() {
     console.log('[iCal] Iniciando sincronización automática en el servidor...');
     
@@ -587,11 +606,9 @@ app.get('/api/anuncios-cards', (req, res) => {
     });
 });
 
-// ==========================================
-//          CRUD DE PREGUNTAS (PREGUNTAS)
-// ==========================================
 
-// 1. Obtener todas las preguntas
+// PREGUNTAS contacto
+
 app.get('/api/faqs', (req, res) => {
     db.query('SELECT * FROM preguntas ORDER BY id ASC', (err, results) => {
         if (err) return res.status(500).json({ error: 'Error al obtener las preguntas' });
@@ -599,7 +616,6 @@ app.get('/api/faqs', (req, res) => {
     });
 });
 
-// 2. Crear nueva pregunta (Con tope máximo de 6)
 app.post('/api/faqs', (req, res) => {
     const { pregunta, respuesta } = req.body;
     if (!pregunta || !respuesta) return res.status(400).json({ error: 'Campos requeridos vacíos' });
@@ -619,7 +635,6 @@ app.post('/api/faqs', (req, res) => {
     });
 });
 
-// 3. Modificar una pregunta existente
 app.put('/api/faqs/:id', (req, res) => {
     const { id } = req.params;
     const { pregunta, respuesta } = req.body;
@@ -630,7 +645,6 @@ app.put('/api/faqs/:id', (req, res) => {
     });
 });
 
-// 4. Eliminar una pregunta
 app.delete('/api/faqs/:id', (req, res) => {
     const { id } = req.params;
     db.query('DELETE FROM preguntas WHERE id = ?', [id], (err, result) => {
@@ -638,6 +652,7 @@ app.delete('/api/faqs/:id', (req, res) => {
         res.json({ success: true });
     });
 });
+
 
 cron.schedule('*/5 * * * *', () => {
     sincronizarCalendarios();

@@ -288,7 +288,6 @@ document.addEventListener('DOMContentLoaded', function () {
         formBuscador.addEventListener('submit', function (e) {
             e.preventDefault(); 
             
-            const anuncioId = document.getElementById('anuncio_id').value;
             const checkInRaw = document.getElementById('checkIn').value;
             const checkOutRaw = document.getElementById('checkOut').value;
 
@@ -296,6 +295,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert('Por favor, selecciona las fechas de Check-in y Check-out.');
                 return;
             }
+            
             const adultosInput = formBuscador.querySelector('input[name="adults"]');
             const niñosInput = formBuscador.querySelector('input[name="children"]');
 
@@ -306,9 +306,12 @@ document.addEventListener('DOMContentLoaded', function () {
             const checkIn = formatearFechaParaAirbnb(checkInRaw);
             const checkOut = formatearFechaParaAirbnb(checkOutRaw);
 
-            const urlRedireccion = `/api/redirect-airbnb/${anuncioId}?check_in=${checkIn}&check_out=${checkOut}&guests=${totalGuests}&adults=${adults}&children=${children}`;
+            // Redireccionamos LOCALMENTE a tu página de habitaciones mandando los filtros
+            // Cambia 'rooms.html' por tu ruta exacta si usas rutas limpias (ej. '/rooms')
+            const urlRedireccion = `rooms.html?check_in=${checkIn}&check_out=${checkOut}&guests=${totalGuests}&adults=${adults}&children=${children}`;
 
-            window.open(urlRedireccion, '_blank');
+            // Redirige en la misma pestaña para mantener la experiencia de usuario
+            window.location.href = urlRedireccion;
         });
     }
 });
@@ -416,58 +419,41 @@ async function cargarAnuncioHome() {
     }
 }
 
-// rooms.html
-
+// rooms.html filtrado
 document.addEventListener('DOMContentLoaded', function () {
-    const container = document.getElementById('anuncios-container');
-    const template = document.getElementById('room-template');
-    
-    if (container && template) {
-        fetch('/api/anuncios-cards')
-            .then(response => {
-                if (!response.ok) throw new Error('Error al obtener datos del servidor');
-                return response.json();
-            })
-            .then(anuncios => {
-                anuncios.forEach((anuncio, index) => {
-                    const clon = template.cloneNode(true);
-                    clon.removeAttribute('id');
-                    clon.style.removeProperty('display');
-                    
-                    clon.setAttribute('data-order', index + 1);
-                    
-                    clon.querySelector('.room-title').textContent = anuncio.titulo;
-                    clon.querySelector('.room-description').textContent = anuncio.descripcion || 'Sin descripción disponible';
-                    clon.querySelector('.room-capacity').textContent = anuncio.capacidad_personas || '2';
-                    clon.querySelector('.room-beds').textContent = anuncio.camas ? `${anuncio.camas} beds` : '1 bed';
-                    clon.querySelector('.room-price').textContent = `$${anuncio.precio}`;
-                    
-                    // --- CORRECCIÓN DE LA IMAGEN ---
-                    const imgElement = clon.querySelector('.room-image'); // O la clase que tenga tu <img> en el template
-                    if (imgElement && anuncio.imagen) {
-                        // Si la imagen ya es un link de internet, úsala directo. Si no, concatena la ruta.
-                        if (anuncio.imagen.startsWith('http://') || anuncio.imagen.startsWith('https://')) {
-                            imgElement.src = anuncio.imagen;
-                        } else {
-                            imgElement.src = `/uploads/${anuncio.imagen}`;
-                        }
-                    } else if (imgElement) {
-                        imgElement.src = '/uploads/default.jpg'; // Imagen por si no hay ninguna
-                    }
-                    // ---------------------------------
+    // 1. Obtener los parámetros de búsqueda de la URL actual
+    const urlParams = new URLSearchParams(window.location.search);
+    const checkIn = urlParams.get('check_in');
+    const checkOut = urlParams.get('check_out');
+    const guests = urlParams.get('guests');
+    const adults = urlParams.get('adults');
+    const children = urlParams.get('children');
 
-                    clon.querySelector('.room-link').href = `/api/redirect-airbnb/${anuncio.id}?check_in=&check_out=&guests=1&adults=1&children=0`;
-
-                    container.appendChild(clon);
-                });
-
-                if (typeof AOS !== 'undefined') {
-                    AOS.refresh();
+    // Si existen parámetros de búsqueda, significa que el usuario usó el buscador
+    if (checkIn && checkOut) {
+        console.log("Filtrando anuncios para las fechas:", checkIn, "al", checkOut);
+        
+        // AQUÍ: Si haces fetch a tu backend para traer cuartos, puedes pasarle los datos:
+        // fetch(`/api/anuncios?check_in=${checkIn}&check_out=${checkOut}...`)
+        
+        // 2. Modificar dinámicamente los botones de "Ver disponibilidad" / "Reservar" de cada cuarto
+        // Supongamos que tus botones tienen la clase '.btn-reservar' u otra similar:
+        setTimeout(() => { 
+            // Usamos un pequeño timeout por si tus cuartos cargan asíncronamente desde la base de datos
+            const botonesReserva = document.querySelectorAll('.media_card-btn, .btn-reservar'); 
+            
+            botonesReserva.forEach(boton => {
+                const urlOriginal = boton.getAttribute('href');
+                
+                // Si el botón apunta a tu endpoint de redirección (ej: /api/redirect-airbnb/3)
+                // Le concatenamos los filtros actuales de la URL
+                if (urlOriginal && urlOriginal.includes('/api/redirect-airbnb/')) {
+                    boton.setAttribute('href', `${urlOriginal}?check_in=${checkIn}&check_out=${checkOut}&guests=${guests}&adults=${adults}&children=${children}`);
+                    // Aseguramos que se abra en pestaña nueva al hacer clic final
+                    boton.setAttribute('target', '_blank');
                 }
-            })
-            .catch(error => {
-                console.error('Error cargando los anuncios dinámicos:', error);
             });
+        }, 500);
     }
 });
 
