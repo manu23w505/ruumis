@@ -14,18 +14,15 @@ async function apiCall(endpoint) {
 
 
 async function inicializarPagina() {
-    // Cambiamos al endpoint unificado que usamos en el admin
+    // 1. Cargamos los selectores de ubicación como ya lo hacías
     const ubicaciones = await apiCall('/api/ubicaciones');
     const selectCiudad = document.getElementById('filtro-ciudad');
     
     if (selectCiudad && ubicaciones) {
         selectCiudad.innerHTML = '<option value="">Todas las ciudades</option>';
-        
-        // Obtenemos solo los nombres de ciudades únicas
         const ciudadesUnicas = [...new Set(ubicaciones.map(u => u.ciudad || u.ciudad_nombre))].filter(Boolean);
         
         ciudadesUnicas.forEach(ciudadNombre => {
-            // Guardamos el NOMBRE de la ciudad como el valor del select
             selectCiudad.innerHTML += `<option value="${ciudadNombre}">${ciudadNombre}</option>`;
         });
     }
@@ -38,7 +35,24 @@ async function inicializarPagina() {
         return;
     }
     
-    renderizarTarjetas(todosLosAnuncios);
+    // ==========================================
+    // NUEVO: INTERCEPTAR PARÁMETROS DE LA URL (SEARCH)
+    // ==========================================
+    const urlParams = new URLSearchParams(window.location.search);
+    const guestsUrl = parseInt(urlParams.get('guests'));
+
+    if (guestsUrl) {
+        // 1. Sincronizamos tu variable global y el contador visual del HTML
+        contadorHuespedes = guestsUrl;
+        const displayHuespedes = document.getElementById('display-huespedes');
+        if (displayHuespedes) displayHuespedes.innerText = guestsUrl;
+
+        // 2. Ejecutamos directamente tu función de filtrar para que limpie la pantalla de inmediato
+        aplicarFiltros();
+    } else {
+        // Si entró directo sin buscar, renderiza todo normal
+        renderizarTarjetas(todosLosAnuncios);
+    }
 }
 
 async function manejarCambioCiudad() {
@@ -114,6 +128,10 @@ function renderizarTarjetas(lista) {
     if (!contenedor) return;
     contenedor.innerHTML = '';
     
+    // Capturamos los datos actuales de la URL para pasárselos a los botones
+    const urlParams = new URLSearchParams(window.location.search);
+    const queryParams = urlParams.toString() ? `?${urlParams.toString()}` : '';
+    
     lista.forEach(anuncio => {
         const tarjeta = document.createElement('div');
         tarjeta.className = 'bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between';
@@ -129,7 +147,6 @@ function renderizarTarjetas(lista) {
                     <span>${anuncio.ubicacion_nombre ? anuncio.ubicacion_nombre + ' • ' : ''}${anuncio.zona || 'Sin Zona'}, ${anuncio.ciudad || 'Sin Ciudad'}</span>
                 </p>
                 
-                <!-- Detalles de habitabilidad solicitados -->
                 <div class="grid grid-cols-2 gap-y-1.5 gap-x-2 text-xs text-slate-500 mb-4 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
                     <div class="flex items-center gap-1"><span>${anuncio.recamaras || 1} Recám.</span></div>
                     <div class="flex items-center gap-1"><span>${anuncio.camas || 1} Camas</span></div>
@@ -200,7 +217,12 @@ window.abrirModalDetalles = function(id) {
     
     const btnAirbnb = document.getElementById('det-link-airbnb');
     if(anuncio.link_airbnb) {
-        btnAirbnb.href = anuncio.link_airbnb;
+        // Obtenemos los filtros actuales de la barra del navegador
+        const parametrosActuales = window.location.search; 
+        
+        // Si el link original de la base de datos ya es un link directo o un endpoint local,
+        // lo redirigimos a través de tu API interna '/api/redirect-airbnb/:id' para no perder el control
+        btnAirbnb.href = `/api/redirect-airbnb/${anuncio.id}${parametrosActuales}`;
         btnAirbnb.classList.remove('hidden');
     } else {
         btnAirbnb.classList.add('hidden');
