@@ -377,6 +377,44 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+// find suitable index.html
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Si ya tienes otras funciones ejecutándose aquí, solo agrega esta abajo:
+    cargarAnuncioHome();
+});
+
+async function cargarAnuncioHome() {
+    try {
+        // Hacemos el fetch a tu API de anuncios
+        const response = await fetch('/api/anuncios'); 
+        const anuncios = await response.json();
+
+        // Tomamos el primer anuncio que encontremos o el que esté marcado como activo
+        if (anuncios && anuncios.length > 0) {
+            const promo = anuncios[0]; 
+
+            // Actualizamos los textos usando los IDs que añadimos al HTML
+            if(document.getElementById('anuncio-titulo')) {
+                document.getElementById('anuncio-titulo').innerText = promo.titulo;
+            }
+            if(document.getElementById('anuncio-descripcion')) {
+                document.getElementById('anuncio-descripcion').innerText = promo.descripcion;
+            }
+            if(document.getElementById('anuncio-habitacion')) {
+                document.getElementById('anuncio-habitacion').innerText = promo.pregunta || promo.titulo; 
+            }
+            if(document.getElementById('anuncio-precio')) {
+                document.getElementById('anuncio-precio').innerText = `$${promo.respuesta || promo.precio}`;
+            }
+            if(document.getElementById('anuncio-enlace') && promo.enlace) {
+                document.getElementById('anuncio-enlace').href = promo.enlace;
+            }
+        }
+    } catch (error) {
+        console.error('Error al cargar la información del anuncio:', error);
+    }
+}
 
 // rooms.html
 
