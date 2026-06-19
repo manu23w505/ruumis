@@ -405,15 +405,19 @@ document.addEventListener('DOMContentLoaded', function () {
 // find suitable index.html
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Si ya tienes otras funciones ejecutándose aquí, solo agrega esta abajo:
-    cargarAnuncioHome();
+    // Verificamos si la función existe antes de llamarla para evitar errores
+    if (typeof cargarAnunciosHome === 'function') {
+        cargarAnunciosHome();
+    }
 });
 
 async function cargarAnunciosHome() {
+    // Hacemos la petición al API (que ya trae el ORDER BY RAND() desde el backend)
     const anuncios = await apiCall('/api/anuncios');
     if (!anuncios || anuncios.length === 0) return;
 
-    // 1. Llenar los 2 o 3 cuadros estáticos superiores que tienen la clase .item-home-dinamico
+    // 1. Llenar los cuadros superiores de habitaciones (.item-home-dinamico)
+    // Esto funcionará tanto en index.html como en about.html
     const elementosDinamicos = document.querySelectorAll('.item-home-dinamico');
     elementosDinamicos.forEach((elemento, index) => {
         const anuncio = anuncios[index];
@@ -428,37 +432,38 @@ async function cargarAnunciosHome() {
         const title = elemento.querySelector('.home-room-title');
         if (title) {
             title.innerText = anuncio.titulo;
-            title.href = `rooms.html`; // Te manda al catálogo con todos
+            title.href = `rooms.html`; 
         }
 
         const capacity = elemento.querySelector('.home-room-capacity');
-        if (capacity) capacity.innerText = anuncio.capacidad_personas;
+        if (capacity) capacity.innerText = anuncio.capacidad_personas || anuncio.capacidad || '2';
 
         const beds = elemento.querySelector('.home-room-beds');
-        if (beds) beds.innerText = anuncio.camas;
+        if (beds) beds.innerText = anuncio.camas || '1';
 
         const link = elemento.querySelector('.home-room-link');
         if (link) link.href = `rooms.html`;
     });
 
-    // ================================================================
-    // NUEVO: SELECCIÓN ALEATORIA PARA LA SECCIÓN DE PROMO (Abajo de index.html)
-    // ================================================================
-    // Tomamos un anuncio completamente al azar de la lista para la promoción inferior
-    const anuncioPromo = anuncios[Math.floor(Math.random() * anuncios.length)];
-
+    // 2. Llenar la sección de promoción inferior (SOLO si existe en la página actual, ej. index.html)
     const promoTitulo = document.getElementById('anuncio-titulo');
-    const promoDescripcion = document.getElementById('anuncio-descripcion');
-    const promoHabitacion = document.getElementById('anuncio-habitacion');
-    const promoPrecio = document.getElementById('anuncio-precio');
-    const promoEnlace = document.getElementById('anuncio-enlace');
+    if (promoTitulo) { 
+        // Si encontramos el título de la promo, significa que estamos en index.html
+        // Elegimos un anuncio completamente al azar de la lista obtenida
+        const anuncioPromo = anuncios[Math.floor(Math.random() * anuncios.length)];
 
-    if (anuncioPromo) {
-        if (promoTitulo) promoTitulo.innerText = `¡Destacado! ${anuncioPromo.titulo}`;
-        if (promoDescripcion) promoDescripcion.innerText = anuncioPromo.descripcion_corta || 'Ven a conocer nuestro espacio ideal con excelentes amenidades y la comodidad que buscas.';
-        if (promoHabitacion) promoHabitacion.innerText = `${anuncioPromo.tipo_propiedad || 'Habitación'} en ${anuncioPromo.zona || 'Excelente Ubicación'}`;
-        if (promoPrecio) promoPrecio.innerText = `$${anuncioPromo.precio}`;
-        if (promoEnlace) promoEnlace.href = `rooms.html`;
+        if (anuncioPromo) {
+            const promoDescripcion = document.getElementById('anuncio-descripcion');
+            const promoHabitacion = document.getElementById('anuncio-habitacion');
+            const promoPrecio = document.getElementById('anuncio-precio');
+            const promoEnlace = document.getElementById('anuncio-enlace');
+
+            promoTitulo.innerText = `¡Destacado! ${anuncioPromo.titulo}`;
+            if (promoDescripcion) promoDescripcion.innerText = anuncioPromo.descripcion_corta || 'Ven a conocer nuestro espacio ideal con excelentes amenidades y la comodidad que buscas.';
+            if (promoHabitacion) promoHabitacion.innerText = `${anuncioPromo.tipo_propiedad || 'Habitación'} en ${anuncioPromo.zona || 'Excelente Ubicación'}`;
+            if (promoPrecio) promoPrecio.innerText = `$${anuncioPromo.precio}`;
+            if (promoEnlace) promoEnlace.href = `rooms.html`;
+        }
     }
 }
 
