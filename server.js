@@ -449,7 +449,17 @@ app.put('/api/anuncios/:id', (req, res) => {
             }
 
             let imagenPrincipal = currentData[0].imagen;
-            let imagenesAdicionales = currentData[0].imagenes_adicionales ? JSON.parse(currentData[0].imagenes_adicionales) : [];
+            let imagenesAdicionales = [];
+
+            // SOLUCIÓN: Try-Catch para evitar que JSON.parse rompa el servidor si el campo está vacío o corrupto
+            try {
+                if (currentData[0].imagenes_adicionales && currentData[0].imagenes_adicionales.trim() !== "") {
+                    imagenesAdicionales = JSON.parse(currentData[0].imagenes_adicionales);
+                }
+            } catch (e) {
+                console.warn("Advertencia: imagenes_adicionales no contenía un JSON válido, se inicializa como array vacío.");
+                imagenesAdicionales = [];
+            }
 
             // Si el usuario seleccionó archivos nuevos, los reemplazamos por completo
             if (req.files && req.files.length > 0) {
@@ -468,11 +478,11 @@ app.put('/api/anuncios/:id', (req, res) => {
                 WHERE id = ?`;
 
             const params = [
-                id_interno || null, titulo, descripcion || null, descripcion_corta || null, precio, 
-                precio_descuento ? parseFloat(precio_descuento) : null,
-                link_airbnb || null, link_calendario || null, parsedUbicacion, parsedTipo, recamaras, 
-                camas, banos, capacidad_personas, amenidades, destacado || 0,
-                imagenPrincipal, JSON.stringify(imagenesAdicionales), id
+                id_interno || null, titulo || null, descripcion || null, descripcion_corta || null, precio || 0, 
+                (precio_descuento && precio_descuento !== '') ? parseFloat(precio_descuento) : null,
+                link_airbnb || null, link_calendario || null, parsedUbicacion, parsedTipo, recamaras || 0, 
+                camas || 0, banos || 0, capacidad_personas || 0, amenidades || null, destacado || 0,
+                imagenPrincipal || null, JSON.stringify(imagenesAdicionales), id
             ];
 
             db.query(sql, params, (err, result) => {
@@ -480,8 +490,10 @@ app.put('/api/anuncios/:id', (req, res) => {
                     console.error("Error SQL detallado en PUT:", err);
                     return res.status(500).json({ error: 'Error al actualizar', sqlError: err.message });
                 }
-                res.json({ success: true, message: 'Anuncio actualizado con éxito' });
-                sincronizarCalendarios(); // Conservamos tu función original
+                res.json({ success: true, message: 'Anuncio updated con éxito' });
+                if (typeof sincronizarCalendarios === 'function') {
+                    sincronizarCalendarios(); 
+                }
             });
         });
     });
