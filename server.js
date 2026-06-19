@@ -362,30 +362,57 @@ app.get('/api/anuncios', (req, res) => {
     });
 });
 
-// MODIFICADO: Cambiado ciudad_id y zona_id por la nueva estructura de ubicacion_id
+// MODIFICADO: Adaptado para soportar múltiples imágenes, id_interno y precio_descuento sin perder campos anteriores
 app.post('/api/anuncios', (req, res) => {
-    upload.single('imagen')(req, res, (err) => {
+    // Cambiamos a upload.array para aceptar hasta 5 imágenes
+    upload.array('imagenes', 5)(req, res, (err) => {
         if (err) {
             console.error('Intento de subida bloqueado por seguridad:', err.message);
             return res.status(400).json({ success: false, error: err.message });
         }
 
         const { 
-            titulo, descripcion, descripcion_corta, precio, link_airbnb, link_calendario, usuario_id,
-            ubicacion_id, tipo_propiedad_id, recamaras, camas, banos, capacidad_personas, amenidades
+            id_interno, titulo, descripcion, descripcion_corta, precio, precio_descuento, link_airbnb, link_calendario, usuario_id,
+            ubicacion_id, tipo_propiedad_id, recamaras, camas, banos, capacidad_personas, amenidades, destacado
         } = req.body;
 
-        const nombreImagen = req.file ? req.file.filename : 'default.jpg';
-        
+        // Procesamos las imágenes subidas
+        let imagenPrincipal = 'default.jpg';
+        let imagenesAdicionales = [];
+
+        if (req.files && req.files.length > 0) {
+            // La primera imagen será la principal (portada)
+            imagenPrincipal = req.files[0].filename;
+            // Las demás van al arreglo de adicionales
+            for (let i = 1; i < req.files.length; i++) {
+                imagenesAdicionales.push(req.files[i].filename);
+            }
+        }
+
         const sql = `INSERT INTO anuncios 
-            (titulo, descripcion, descripcion_corta, precio, imagen, link_airbnb, link_calendario, usuario_id, ubicacion_id, tipo_propiedad_id, recamaras, camas, banos, capacidad_personas, amenidades) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            (id_interno, titulo, descripcion, descripcion_corta, precio, precio_descuento, imagen, imagenes_adicionales, link_airbnb, link_calendario, usuario_id, ubicacion_id, tipo_propiedad_id, recamaras, camas, banos, capacidad_personas, amenidades, destacado) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
             
         db.query(sql, [
-            titulo, descripcion, descripcion_corta, precio, nombreImagen, link_airbnb, link_calendario, usuario_id,
+            id_interno || null,
+            titulo, 
+            descripcion || null, 
+            descripcion_corta || null, 
+            precio, 
+            precio_descuento ? parseFloat(precio_descuento) : null,
+            imagenPrincipal, 
+            JSON.stringify(imagenesAdicionales),
+            link_airbnb || null, 
+            link_calendario || null, 
+            usuario_id,
             ubicacion_id ? parseInt(ubicacion_id) : null, 
             tipo_propiedad_id ? parseInt(tipo_propiedad_id) : null, 
-            recamaras || 1, camas || 1, banos || 1, capacidad_personas || 1, amenidades || ''
+            recamaras || 1, 
+            camas || 1, 
+            banos || 1, 
+            capacidad_personas || 1, 
+            amenidades || '',
+            destacado || 0
         ], (err, result) => {
             if (err) {
                 console.error(err);
@@ -393,14 +420,14 @@ app.post('/api/anuncios', (req, res) => {
             }
             
             res.json({ success: true, message: 'Anuncio guardado con éxito', id: result.insertId });
-            sincronizarCalendarios();
+            sincronizarCalendarios(); // Conservamos tu función original
         });
     });
 });
 
-// MODIFICADO: Ahora actualiza ubicacion_id y desecha los parámetros viejos
+// MODIFICADO: Edición con soporte de múltiples imágenes, id_interno y precio_descuento conservando lógica actual
 app.put('/api/anuncios/:id', (req, res) => {
-    upload.single('imagen')(req, res, (err) => {
+    upload.array('imagenes', 5)(req, res, (err) => {
         if (err) {
             console.error('Intento de modificación bloqueado por seguridad:', err.message);
             return res.status(400).json({ success: false, error: err.message });
@@ -408,46 +435,54 @@ app.put('/api/anuncios/:id', (req, res) => {
 
         const { id } = req.params;
         const { 
-            titulo, descripcion, descripcion_corta, precio, link_airbnb, link_calendario,
-            ubicacion_id, tipo_propiedad_id, recamaras, camas, banos, capacidad_personas, amenidades
+            id_interno, titulo, descripcion, descripcion_corta, precio, precio_descuento, link_airbnb, link_calendario,
+            ubicacion_id, tipo_propiedad_id, recamaras, camas, banos, capacidad_personas, amenidades, destacado
         } = req.body;
         
-        let sql;
-        let params;
-
         const parsedUbicacion = ubicacion_id ? parseInt(ubicacion_id) : null;
         const parsedTipo = tipo_propiedad_id ? parseInt(tipo_propiedad_id) : null;
 
-        if (req.file) {
-            sql = `UPDATE anuncios SET 
-                titulo = ?, descripcion = ?, descripcion_corta = ?, precio = ?, link_airbnb = ?, link_calendario = ?, 
-                ubicacion_id = ?, tipo_propiedad_id = ?, recamaras = ?, camas = ?, banos = ?, capacidad_personas = ?, amenidades = ?, 
-                imagen = ? 
-                WHERE id = ?`;
-            params = [
-                titulo, descripcion, descripcion_corta, precio, link_airbnb, link_calendario, 
-                parsedUbicacion, parsedTipo, recamaras, camas, banos, capacidad_personas, amenidades, 
-                req.file.filename, id
-            ];
-        } else {
-            sql = `UPDATE anuncios SET 
-                titulo = ?, descripcion = ?, descripcion_corta = ?, precio = ?, link_airbnb = ?, link_calendario = ?, 
-                ubicacion_id = ?, tipo_propiedad_id = ?, recamaras = ?, camas = ?, banos = ?, capacidad_personas = ?, amenidades = ? 
-                WHERE id = ?`;
-            params = [
-                titulo, descripcion, descripcion_corta, precio, link_airbnb, link_calendario, 
-                parsedUbicacion, parsedTipo, recamaras, camas, banos, capacidad_personas, amenidades, 
-                id
-            ];
-        }
-
-        db.query(sql, params, (err, result) => {
-            if (err) {
-                console.error("Error SQL detallado en PUT:", err);
-                return res.status(500).json({ error: 'Error al actualizar', sqlError: err.message });
+        // Primero consultamos los datos actuales para no borrar las imágenes si no sube archivos nuevos
+        db.query('SELECT imagen, imagenes_adicionales FROM anuncios WHERE id = ?', [id], (err, currentData) => {
+            if (err || currentData.length === 0) {
+                return res.status(500).json({ error: 'Anuncio no encontrado o error de consulta' });
             }
-            res.json({ success: true, message: 'Anuncio actualizado con éxito' });
-            sincronizarCalendarios();
+
+            let imagenPrincipal = currentData[0].imagen;
+            let imagenesAdicionales = currentData[0].imagenes_adicionales ? JSON.parse(currentData[0].imagenes_adicionales) : [];
+
+            // Si el usuario seleccionó archivos nuevos, los reemplazamos por completo
+            if (req.files && req.files.length > 0) {
+                imagenPrincipal = req.files[0].filename;
+                imagenesAdicionales = []; 
+                for (let i = 1; i < req.files.length; i++) {
+                    imagenesAdicionales.push(req.files[i].filename);
+                }
+            }
+
+            const sql = `UPDATE anuncios SET 
+                id_interno = ?, titulo = ?, descripcion = ?, descripcion_corta = ?, precio = ?, precio_descuento = ?, 
+                link_airbnb = ?, link_calendario = ?, ubicacion_id = ?, tipo_propiedad_id = ?, recamaras = ?, 
+                camas = ?, banos = ?, capacidad_personas = ?, amenidades = ?, destacado = ?, 
+                imagen = ?, imagenes_adicionales = ? 
+                WHERE id = ?`;
+
+            const params = [
+                id_interno || null, titulo, descripcion || null, descripcion_corta || null, precio, 
+                precio_descuento ? parseFloat(precio_descuento) : null,
+                link_airbnb || null, link_calendario || null, parsedUbicacion, parsedTipo, recamaras, 
+                camas, banos, capacidad_personas, amenidades, destacado || 0,
+                imagenPrincipal, JSON.stringify(imagenesAdicionales), id
+            ];
+
+            db.query(sql, params, (err, result) => {
+                if (err) {
+                    console.error("Error SQL detallado en PUT:", err);
+                    return res.status(500).json({ error: 'Error al actualizar', sqlError: err.message });
+                }
+                res.json({ success: true, message: 'Anuncio actualizado con éxito' });
+                sincronizarCalendarios(); // Conservamos tu función original
+            });
         });
     });
 });

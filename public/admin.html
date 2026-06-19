@@ -301,9 +301,15 @@
             <form id="form-anuncio" class="space-y-4" enctype="multipart/form-data">
                 <input type="hidden" id="anuncio-id">
                 
-                <div>
-                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Título del Anuncio</label>
-                    <input type="text" id="titulo" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">ID Interno (Código)</label>
+                        <input type="text" id="id_interno" placeholder="Ej: RM-101" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Título del Anuncio *</label>
+                        <input type="text" id="titulo" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                    </div>
                 </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -317,21 +323,21 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="form-group">
-                        <label for="anuncio-ubicacion-id">Ubicación / Complejo:</label>
-                        <select id="anuncio-ubicacion-id" name="ubicacion_id" class="form-control" required>
-                            <option value="">-- Selecciona un Complejo/Ubicación --</option>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="form-group sm:col-span-1">
+                        <label for="anuncio-ubicacion-id" class="block text-xs font-bold uppercase text-slate-500 mb-1">Ubicación / Complejo *</label>
+                        <select id="anuncio-ubicacion-id" name="ubicacion_id" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-cyan-500 transition-all" required>
+                            <option value="">Selecciona...</option>
                         </select>
                     </div>
-                    <div class="flex flex-col">
-                        <label for="tipo_propiedad" class="text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">Tipo de Propiedad</label>
-                        <select id="tipo_propiedad" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-cyan-500 transition-all">
-                            <option value="">Selecciona un tipo...</option>
+                    <div class="flex flex-col sm:col-span-1">
+                        <label for="tipo_propiedad" class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Tipo de Propiedad *</label>
+                        <select id="tipo_propiedad" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-cyan-500 transition-all" required>
+                            <option value="">Selecciona...</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Capacidad Personas</label>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Capacidad *</label>
                         <input type="number" id="capacidad_personas" min="1" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
                     </div>
                 </div>
@@ -353,13 +359,19 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Precio Diario ($ MXN)</label>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Precio Diario ($ MXN) *</label>
                         <input type="number" id="precio" step="0.01" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Foto de la Propiedad</label>
-                        <input type="file" id="imagen" accept="image/*" class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:bg-slate-200 file:text-slate-700 cursor-pointer">
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Precio Descuento (Opcional)</label>
+                        <input type="number" id="precio_descuento" step="0.01" placeholder="Ej: 1200" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
                     </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Imágenes de la Propiedad (Mín. 1, Máx. 5)</label>
+                    <input type="file" id="imagenes" name="imagenes" accept="image/*" multiple class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:bg-slate-200 file:text-slate-700 cursor-pointer">
+                    <p class="text-[10px] text-slate-400 mt-1">La primera imagen seleccionada se guardará como la portada principal.</p>
                 </div>
 
                 <div>
@@ -763,21 +775,25 @@
             }
         }
 
-        // MODIFICADO: Ahora envía de manera limpia el 'ubicacion_id' unificado al Backend
+        // MODIFICADO: Ahora procesa múltiples imágenes y los nuevos campos (id_interno, precio_descuento, destacado)
         document.getElementById('form-anuncio').addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('anuncio-id').value;
             const selectUbicacion = document.getElementById('anuncio-ubicacion-id');
 
             const formData = new FormData();
+            
+            // NUEVOS CAMPOS INTEGRADOS
+            formData.append('id_interno', document.getElementById('id_interno').value || '');
+            formData.append('precio_descuento', document.getElementById('precio_descuento').value || '');
+            formData.append('destacado', '0'); // Por defecto 0 si no se maneja un checkbox aún
+
+            // CAMPOS ANTERIORES CONSERVADOS AL 100%
             formData.append('titulo', document.getElementById('titulo').value);
             formData.append('descripcion', document.getElementById('descripcion').value);
             formData.append('descripcion_corta', document.getElementById('descripcion_corta').value);
-            
-            // Enviamos el ID de ubicación del select
             formData.append('ubicacion_id', selectUbicacion.value || '');
             formData.append('tipo_propiedad_id', document.getElementById('tipo_propiedad').value); 
-            
             formData.append('precio', document.getElementById('precio').value);
             formData.append('link_airbnb', document.getElementById('link_airbnb').value);
             formData.append('link_calendario', document.getElementById('link_calendario').value);
@@ -788,9 +804,17 @@
             formData.append('capacidad_personas', document.getElementById('capacidad_personas').value);
             formData.append('amenidades', document.getElementById('amenidades').value);
 
-            const fileInput = document.getElementById('imagen');
-            if (fileInput && fileInput.files[0]) {
-                formData.append('imagen', fileInput.files[0]);
+            // MODIFICADO: Validación y lectura de las múltiples imágenes (mínimo 1 si es creación, máximo 5)
+            const fileInput = document.getElementById('imagenes');
+            if (fileInput && fileInput.files.length > 0) {
+                if (fileInput.files.length > 5) {
+                    alert("Solo puedes subir un máximo de 5 imágenes.");
+                    return;
+                }
+                // Agregamos todas las imágenes seleccionadas bajo la clave 'imagenes'
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    formData.append('imagenes', fileInput.files[i]);
+                }
             }
 
             let url = '/api/anuncios';
@@ -805,9 +829,10 @@
                 const res = await fetch(url, { method: metodo, body: formData });
                 if (res.ok) {
                     cerrarModal();
-                    listarAnuncios();
+                    listarAnuncios(); // Conserva tu función para actualizar la tabla
                 } else {
-                    alert("El servidor rechazó los cambios del anuncio.");
+                    const data = await res.json();
+                    alert(data.error || "El servidor rechazó los cambios del anuncio.");
                 }
             } catch (err) {
                 console.error("Error al enviar formulario:", err);
@@ -827,16 +852,24 @@
             document.getElementById('form-anuncio').reset();
             document.getElementById('anuncio-id').value = '';
             document.getElementById('modal-titulo').innerText = "Registrar Propiedad";
-            if(document.getElementById('imagen')) document.getElementById('imagen').required = true;
+            
+            // El input múltiple se llama 'imagenes'
+            if(document.getElementById('imagenes')) document.getElementById('imagenes').required = true;
             document.getElementById('modal-formulario').classList.replace('hidden', 'flex');
         }
 
-        // MODIFICADO: Asigna correctamente el valor a 'anuncio-ubicacion-id'
+        // MODIFICADO: Mapea los nuevos campos al abrir el modal de edición
         function abrirModalEditar(anuncio) {
             modoEdicion = true;
-            document.getElementById('anuncio-id').value = anuncio.id;
-            document.getElementById('titulo').value = anuncio.titulo;
-            document.getElementById('descripcion').value = anuncio.descripcion;
+            document.getElementById('anuncio-id').value = `${anuncio.id}`;
+            
+            // Setear valores nuevos
+            document.getElementById('id_interno').value = anuncio.id_interno || '';
+            document.getElementById('precio_descuento').value = anuncio.precio_descuento || '';
+
+            // Setear valores anteriores sin perder nada
+            document.getElementById('titulo').value = anuncio.titulo || '';
+            document.getElementById('descripcion').value = anuncio.descripcion || '';
             document.getElementById('descripcion_corta').value = anuncio.descripcion_corta || '';
             
             const selectUbicacion = document.getElementById('anuncio-ubicacion-id');
@@ -844,7 +877,7 @@
                 selectUbicacion.value = anuncio.ubicacion_id || '';
             }
             
-            document.getElementById('precio').value = anuncio.precio;
+            document.getElementById('precio').value = anuncio.precio || '';
             document.getElementById('link_airbnb').value = anuncio.link_airbnb || '';
             document.getElementById('link_calendario').value = anuncio.link_calendario || '';
             document.getElementById('tipo_propiedad').value = anuncio.tipo_propiedad_id || '';
@@ -856,7 +889,7 @@
             document.getElementById('amenidades').value = anuncio.amenidades || '';
 
             document.getElementById('modal-titulo').innerText = "Modificar Propiedad";
-            if(document.getElementById('imagen')) document.getElementById('imagen').required = false;
+            if(document.getElementById('imagenes')) document.getElementById('imagenes').required = false;
             document.getElementById('modal-formulario').classList.replace('hidden', 'flex');
         }
 
@@ -1095,6 +1128,7 @@
                 alert(mensaje);
             }
         }
+
 
     //preguntas    
         // 1. Función para navegar entre secciones (Asegúrate de tener esta lógica)
