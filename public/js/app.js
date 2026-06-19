@@ -409,35 +409,56 @@ document.addEventListener('DOMContentLoaded', () => {
     cargarAnuncioHome();
 });
 
-async function cargarAnuncioHome() {
-    try {
-        // Hacemos el fetch a tu API de anuncios
-        const response = await fetch('/api/anuncios'); 
-        const anuncios = await response.json();
+async function cargarAnunciosHome() {
+    const anuncios = await apiCall('/api/anuncios');
+    if (!anuncios || anuncios.length === 0) return;
 
-        // Tomamos el primer anuncio que encontremos o el que esté marcado como activo
-        if (anuncios && anuncios.length > 0) {
-            const promo = anuncios[0]; 
+    // 1. Llenar los 2 o 3 cuadros estáticos superiores que tienen la clase .item-home-dinamico
+    const elementosDinamicos = document.querySelectorAll('.item-home-dinamico');
+    elementosDinamicos.forEach((elemento, index) => {
+        const anuncio = anuncios[index];
+        if (!anuncio) return;
 
-            // Actualizamos los textos usando los IDs que añadimos al HTML
-            if(document.getElementById('anuncio-titulo')) {
-                document.getElementById('anuncio-titulo').innerText = promo.titulo;
-            }
-            if(document.getElementById('anuncio-descripcion')) {
-                document.getElementById('anuncio-descripcion').innerText = promo.descripcion;
-            }
-            if(document.getElementById('anuncio-habitacion')) {
-                document.getElementById('anuncio-habitacion').innerText = promo.pregunta || promo.titulo; 
-            }
-            if(document.getElementById('anuncio-precio')) {
-                document.getElementById('anuncio-precio').innerText = `$${promo.respuesta || promo.precio}`;
-            }
-            if(document.getElementById('anuncio-enlace') && promo.enlace) {
-                document.getElementById('anuncio-enlace').href = promo.enlace;
-            }
+        const img = elemento.querySelector('.home-room-image');
+        if (img) img.src = `/uploads/${anuncio.imagen || 'placeholder.jpg'}`;
+
+        const price = elemento.querySelector('.home-room-price');
+        if (price) price.innerText = `$${anuncio.precio}`;
+
+        const title = elemento.querySelector('.home-room-title');
+        if (title) {
+            title.innerText = anuncio.titulo;
+            title.href = `rooms.html`; // Te manda al catálogo con todos
         }
-    } catch (error) {
-        console.error('Error al cargar la información del anuncio:', error);
+
+        const capacity = elemento.querySelector('.home-room-capacity');
+        if (capacity) capacity.innerText = anuncio.capacidad_personas;
+
+        const beds = elemento.querySelector('.home-room-beds');
+        if (beds) beds.innerText = anuncio.camas;
+
+        const link = elemento.querySelector('.home-room-link');
+        if (link) link.href = `rooms.html`;
+    });
+
+    // ================================================================
+    // NUEVO: SELECCIÓN ALEATORIA PARA LA SECCIÓN DE PROMO (Abajo de index.html)
+    // ================================================================
+    // Tomamos un anuncio completamente al azar de la lista para la promoción inferior
+    const anuncioPromo = anuncios[Math.floor(Math.random() * anuncios.length)];
+
+    const promoTitulo = document.getElementById('anuncio-titulo');
+    const promoDescripcion = document.getElementById('anuncio-descripcion');
+    const promoHabitacion = document.getElementById('anuncio-habitacion');
+    const promoPrecio = document.getElementById('anuncio-precio');
+    const promoEnlace = document.getElementById('anuncio-enlace');
+
+    if (anuncioPromo) {
+        if (promoTitulo) promoTitulo.innerText = `¡Destacado! ${anuncioPromo.titulo}`;
+        if (promoDescripcion) promoDescripcion.innerText = anuncioPromo.descripcion_corta || 'Ven a conocer nuestro espacio ideal con excelentes amenidades y la comodidad que buscas.';
+        if (promoHabitacion) promoHabitacion.innerText = `${anuncioPromo.tipo_propiedad || 'Habitación'} en ${anuncioPromo.zona || 'Excelente Ubicación'}`;
+        if (promoPrecio) promoPrecio.innerText = `$${anuncioPromo.precio}`;
+        if (promoEnlace) promoEnlace.href = `rooms.html`;
     }
 }
 
