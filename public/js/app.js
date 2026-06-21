@@ -132,7 +132,6 @@ function renderizarTarjetas(lista) {
         const tarjeta = document.createElement('div');
         tarjeta.className = 'bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative';
         
-        // Renderizado inteligente del precio con descuento
         let precioHTML = `<p class="text-xl font-black text-slate-900">$${anuncio.precio} <span class="text-xs font-normal text-slate-500">MXN / noche</span></p>`;
         let etiquetaOferta = '';
 
@@ -146,13 +145,21 @@ function renderizarTarjetas(lista) {
             `;
         }
 
-        // TOTALMENTE LIMPIO: Nombre directo del archivo sin carpetas ni barras raras
-        const rutaImagenPrincipal = anuncio.imagen ? anuncio.imagen.trim() : 'default.jpg';
+        // LIMPIEZA ABSOLUTA DE LA BD (Quitando comillas o corchetes remanentes)
+        let imagenLimpia = 'default.jpg';
+        if (anuncio.imagen) {
+            imagenLimpia = anuncio.imagen.replace(/[\[\]"']/g, '').trim();
+        }
 
         tarjeta.innerHTML = `
             ${etiquetaOferta}
             <div>
-                <img src="${rutaImagenPrincipal}" data-src="${rutaImagenPrincipal}" class="lazy w-full h-48 object-cover rounded-xl mb-4" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='default.jpg';">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'%3E%3C/svg%3E" 
+                     data-src="${imagenLimpia}" 
+                     class="lazy w-full h-48 object-cover rounded-xl mb-4" 
+                     alt="${anuncio.titulo}" 
+                     onerror="this.onerror=null; this.src='default.jpg';">
+                
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-xs font-bold uppercase tracking-wider text-cyan-600 bg-cyan-50 px-2.5 py-1 rounded-md border border-cyan-100">${anuncio.tipo_propiedad || 'Habitación'}</span>
                     <span class="text-xs text-slate-400 font-medium">ID: ${anuncio.id_interno || anuncio.id}</span>
@@ -185,6 +192,7 @@ function renderizarTarjetas(lista) {
         contenedor.appendChild(tarjeta);
     });
 
+    // Forzamos al script de lazyload a escanear e inyectar las imágenes recién añadidas
     if (window.lazyload && typeof window.lazyload === 'function') {
         window.lazyload();
     }
@@ -197,17 +205,22 @@ window.abrirModalDetalles = function(id) {
     const modal = document.getElementById('modal-detalles');
     if (!modal) return alert("Error: No se encontró la estructura de modal-detalles en el HTML.");
 
-    // Portada del modal directa sin prefijos
-    const rutaPortada = anuncio.imagen ? anuncio.imagen.trim() : 'default.jpg';
-    const imgPortada = document.getElementById('det-imagen');
-    if (imgPortada) {
-        imgPortada.src = rutaPortada;
-        imgPortada.setAttribute('data-src', rutaPortada);
+    // Resolución limpia de la portada
+    let imagenPortada = 'default.jpg';
+    if (anuncio.imagen) {
+        imagenPortada = anuncio.imagen.replace(/[\[\]"']/g, '').trim();
     }
 
-    // RECOLECCIÓN DIRECTA Y LIMPIEZA TOTAL DE IMÁGENES
+    const imgPortada = document.getElementById('det-imagen');
+    if (imgPortada) {
+        imgPortada.src = imagenPortada;
+    }
+
+    // RECOLECCIÓN Y LIMPIEZA COMPLETA DE IMÁGENES (PRINCIPALES Y ADICIONALES)
     let todasLasFotos = [];
-    if (anuncio.imagen) todasLasFotos.push(anuncio.imagen.trim());
+    if (anuncio.imagen) {
+        todasLasFotos.push(anuncio.imagen.replace(/[\[\]"']/g, '').trim());
+    }
     
     try {
         if (anuncio.imagenes_adicionales) {
@@ -217,7 +230,9 @@ window.abrirModalDetalles = function(id) {
             
             if (Array.isArray(extras)) {
                 extras.forEach(foto => { 
-                    if(foto) todasLasFotos.push(foto.trim()); 
+                    if(foto) {
+                        todasLasFotos.push(foto.replace(/[\[\]"']/g, '').trim()); 
+                    }
                 });
             }
         }
@@ -225,14 +240,23 @@ window.abrirModalDetalles = function(id) {
         console.error("Error al parsear fotos adicionales:", e); 
     }
 
-    // INYECCIÓN LIMPIA EN EL CAROUSEL DE SWIPER (SIN PREFIJOS)
+    // INYECCIÓN EN EL CARRUSEL CORRIGIENDO EL LAZYLOAD NATIVO
     const swiperWrapper = modal.querySelector('.swiper-wrapper');
     if (swiperWrapper) {
         swiperWrapper.innerHTML = todasLasFotos.map(foto => `
             <div class="swiper-slide">
-                <img src="${foto}" data-src="${foto}" class="lazy w-full h-72 md:h-96 object-cover rounded-2xl shadow-inner" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='default.jpg';">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'%3E%3C/svg%3E" 
+                     data-src="${foto}" 
+                     class="lazy w-full h-72 md:h-96 object-cover rounded-2xl shadow-inner" 
+                     alt="${anuncio.titulo}" 
+                     onerror="this.onerror=null; this.src='default.jpg';">
             </div>
         `).join('');
+
+        // Re-inicializamos el cargador perezoso para el contenido dinámico del modal
+        if (window.lazyload && typeof window.lazyload === 'function') {
+            window.lazyload();
+        }
 
         setTimeout(() => {
             if (window.swiperGaleria && typeof window.swiperGaleria.update === 'function') {
@@ -242,7 +266,7 @@ window.abrirModalDetalles = function(id) {
         }, 150);
     }
 
-    // Datos generales del modal
+    // Datos del resto del modal
     document.getElementById('det-titulo').innerText = anuncio.titulo;
     document.getElementById('det-tipo').innerText = anuncio.tipo_propiedad || 'Habitación';
     document.getElementById('det-ubicacion').innerText = `${anuncio.ubicacion_nombre ? anuncio.ubicacion_nombre + ' • ' : ''}${anuncio.zona || ''}, ${anuncio.ciudad || ''}`;
