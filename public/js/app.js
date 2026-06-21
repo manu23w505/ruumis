@@ -128,14 +128,29 @@ function renderizarTarjetas(lista) {
     if (!contenedor) return;
     contenedor.innerHTML = '';
     
-    // Capturamos los datos actuales de la URL para pasárselos a los botones
     const urlParams = new URLSearchParams(window.location.search);
     const queryParams = urlParams.toString() ? `?${urlParams.toString()}` : '';
     
     lista.forEach(anuncio => {
         const tarjeta = document.createElement('div');
-        tarjeta.className = 'bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between';
+        tarjeta.className = 'bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative';
+        
+        // Renderizado inteligente del precio con descuento
+        let precioHTML = `<p class="text-xl font-black text-slate-900">$${anuncio.precio} <span class="text-xs font-normal text-slate-500">MXN / noche</span></p>`;
+        let etiquetaOferta = '';
+
+        if (anuncio.precio_descuento && parseFloat(anuncio.precio_descuento) > 0) {
+            etiquetaOferta = `<span class="absolute top-6 left-6 bg-red-500 text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md shadow-sm z-10">Oferta</span>`;
+            precioHTML = `
+                <div class="text-right">
+                    <span class="text-xs text-slate-400 line-through block">$${anuncio.precio} MXN</span>
+                    <p class="text-xl font-black text-red-600">$${anuncio.precio_descuento} <span class="text-xs font-normal text-slate-500">MXN / noche</span></p>
+                </div>
+            `;
+        }
+
         tarjeta.innerHTML = `
+            ${etiquetaOferta}
             <div>
                 <img src="/uploads/${anuncio.imagen || 'default.jpg'}" class="w-full h-48 object-cover rounded-xl mb-4" alt="${anuncio.titulo}">
                 <div class="flex items-center justify-between mb-2">
@@ -159,7 +174,7 @@ function renderizarTarjetas(lista) {
             <div>
                 <div class="flex items-baseline justify-between border-t border-slate-100 pt-4 mb-4">
                     <span class="text-xs font-semibold text-slate-400">Desde</span>
-                    <p class="text-xl font-black text-slate-900">$${anuncio.precio} <span class="text-xs font-normal text-slate-500">MXN / noche</span></p>
+                    ${precioHTML}
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <button onclick="verCalendario(${anuncio.id})" class="w-full text-center bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition-colors cursor-pointer">Calendario</button>
@@ -170,6 +185,67 @@ function renderizarTarjetas(lista) {
         contenedor.appendChild(tarjeta);
     });
 }
+
+window.abrirModalDetalles = function(id) {
+    const anuncio = todosLosAnuncios.find(a => a.id === id);
+    if (!anuncio) return;
+
+    const modal = document.getElementById('modal-detalles');
+    if (!modal) return alert("Error: No se encontró la estructura de modal-detalles en el HTML.");
+
+    // 1. ASIGNACIÓN DE IMAGEN PRINCIPAL DE PORTADA
+    document.getElementById('det-imagen').src = `/uploads/${anuncio.imagen || 'default.jpg'}`;
+
+    // 2. LOGICA PARA IMPRIMIR LA GALERÍA COMPLETA SI EXISTE UN CONTENEDOR DE SLIDES O MINIATURAS
+    let todasLasFotos = [];
+    if (anuncio.imagen) todasLasFotos.push(anuncio.imagen);
+    try {
+        if (anuncio.imagenes_adicionales) {
+            const extras = typeof anuncio.imagenes_adicionales === 'string' 
+                ? JSON.parse(anuncio.imagenes_adicionales) 
+                : anuncio.imagenes_adicionales;
+            if (Array.isArray(extras)) todasLasFotos = todasLasFotos.concat(extras);
+        }
+    } catch (e) { console.error("Error al parsear fotos extra", e); }
+
+    // Si tienes un div para renderizar las fotos extra en miniatura dentro del modal, puedes rellenarlo así:
+    const contenedorFotos = document.getElementById('det-galeria-extras');
+    if (contenedorFotos) {
+        contenedorFotos.innerHTML = todasLasFotos.map(foto => `
+            <img src="/uploads/${foto}" class="w-20 h-20 object-cover rounded-lg border border-slate-200 cursor-pointer hover:opacity-80 transition-opacity" onclick="document.getElementById('det-imagen').src=this.src">
+        `).join('');
+    }
+
+    // Datos generales
+    document.getElementById('det-titulo').innerText = anuncio.titulo;
+    document.getElementById('det-tipo').innerText = anuncio.tipo_propiedad || 'Habitación';
+    document.getElementById('det-ubicacion').innerText = `${anuncio.ubicacion_nombre ? anuncio.ubicacion_nombre + ' • ' : ''}${anuncio.zona || ''}, ${anuncio.ciudad || ''}`;
+    
+    // Validamos precio con descuento en el modal
+    if (anuncio.precio_descuento && parseFloat(anuncio.precio_descuento) > 0) {
+        document.getElementById('det-precio').innerHTML = `<span class="text-sm text-slate-400 line-through mr-2">$${anuncio.precio}</span> $${anuncio.precio_descuento} MXN`;
+    } else {
+        document.getElementById('det-precio').innerText = `$${anuncio.precio} MXN`;
+    }
+
+    document.getElementById('det-recamaras').innerText = anuncio.recamaras || 1;
+    document.getElementById('det-camas').innerText = anuncio.camas || 1;
+    document.getElementById('det-banos').innerText = anuncio.banos || 1;
+    document.getElementById('det-personas').innerText = anuncio.capacidad_personas || 1;
+    document.getElementById('det-descripcion').innerText = anuncio.descripcion || 'Sin descripción detallada.';
+    document.getElementById('det-amenidades').innerText = anuncio.amenidades || 'Ninguna descrita.';
+    
+    const btnAirbnb = document.getElementById('det-link-airbnb');
+    if(anuncio.link_airbnb) {
+        const parametrosActuales = window.location.search; 
+        btnAirbnb.href = `/api/redirect-airbnb/${anuncio.id}${parametrosActuales}`;
+        btnAirbnb.classList.remove('hidden');
+    } else {
+        btnAirbnb.classList.add('hidden');
+    }
+
+    modal.classList.replace('hidden', 'flex');
+};
 
 
 window.cambiarHuespedes = function(val) {
@@ -195,41 +271,6 @@ function limpiarFiltros() {
     if(document.getElementById('display-huespedes')) document.getElementById('display-huespedes').innerText = '1';
     renderizarTarjetas(todosLosAnuncios);
 }
-
-window.abrirModalDetalles = function(id) {
-    const anuncio = todosLosAnuncios.find(a => a.id === id);
-    if (!anuncio) return;
-
-    const modal = document.getElementById('modal-detalles');
-    if (!modal) return alert("Error: No se encontró la estructura de modal-detalles en el HTML.");
-
-    document.getElementById('det-imagen').src = `/uploads/${anuncio.imagen || 'default.jpg'}`;
-    document.getElementById('det-titulo').innerText = anuncio.titulo;
-    document.getElementById('det-tipo').innerText = anuncio.tipo_propiedad || 'Habitación';
-    document.getElementById('det-ubicacion').innerText = `${anuncio.ubicacion_nombre ? anuncio.ubicacion_nombre + ' • ' : ''}${anuncio.zona || ''}, ${anuncio.ciudad || ''}`;
-    document.getElementById('det-precio').innerText = `$${anuncio.precio} MXN`;
-    document.getElementById('det-recamaras').innerText = anuncio.recamaras || 1;
-    document.getElementById('det-camas').innerText = anuncio.camas || 1;
-    document.getElementById('det-banos').innerText = anuncio.banos || 1;
-    document.getElementById('det-personas').innerText = anuncio.capacidad_personas || 1;
-    document.getElementById('det-descripcion').innerText = anuncio.descripcion || 'Sin descripción detallada.';
-    document.getElementById('det-amenidades').innerText = anuncio.amenidades || 'Ninguna descrita.';
-    
-    const btnAirbnb = document.getElementById('det-link-airbnb');
-    if(anuncio.link_airbnb) {
-        // Obtenemos los filtros actuales de la barra del navegador
-        const parametrosActuales = window.location.search; 
-        
-        // Si el link original de la base de datos ya es un link directo o un endpoint local,
-        // lo redirigimos a través de tu API interna '/api/redirect-airbnb/:id' para no perder el control
-        btnAirbnb.href = `/api/redirect-airbnb/${anuncio.id}${parametrosActuales}`;
-        btnAirbnb.classList.remove('hidden');
-    } else {
-        btnAirbnb.classList.add('hidden');
-    }
-
-    modal.classList.replace('hidden', 'flex');
-};
 
 window.verCalendario = async function(id) {
     const modal = document.getElementById('modal-calendario');
