@@ -145,21 +145,22 @@ function renderizarTarjetas(lista) {
             `;
         }
 
-        // LIMPIEZA ABSOLUTA DE LA BD (Quitando comillas o corchetes remanentes)
-        let imagenLimpia = 'default.jpg';
+        // LIMPIEZA Y FORMATEO DE RUTA CON /uploads/ (Requerido por Express para public/uploads)
+        let rutaImagenPrincipal = 'default.jpg'; 
         if (anuncio.imagen) {
-            imagenLimpia = anuncio.imagen.replace(/[\[\]"']/g, '').trim();
+            // Quitamos corchetes [ ] o comillas " ' que puedan venir de la BD
+            let imgClean = anuncio.imagen.replace(/[\[\]"']/g, '').trim();
+            if (imgClean.startsWith('http://') || imgClean.startsWith('https://')) {
+                rutaImagenPrincipal = imgClean;
+            } else {
+                rutaImagenPrincipal = imgClean.startsWith('/uploads/') ? imgClean : `/uploads/${imgClean}`;
+            }
         }
 
         tarjeta.innerHTML = `
             ${etiquetaOferta}
             <div>
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'%3E%3C/svg%3E" 
-                     data-src="${imagenLimpia}" 
-                     class="lazy w-full h-48 object-cover rounded-xl mb-4" 
-                     alt="${anuncio.titulo}" 
-                     onerror="this.onerror=null; this.src='default.jpg';">
-                
+                <img src="${rutaImagenPrincipal}" class="w-full h-48 object-cover rounded-xl mb-4" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='default.jpg';">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-xs font-bold uppercase tracking-wider text-cyan-600 bg-cyan-50 px-2.5 py-1 rounded-md border border-cyan-100">${anuncio.tipo_propiedad || 'Habitación'}</span>
                     <span class="text-xs text-slate-400 font-medium">ID: ${anuncio.id_interno || anuncio.id}</span>
@@ -191,11 +192,6 @@ function renderizarTarjetas(lista) {
         `;
         contenedor.appendChild(tarjeta);
     });
-
-    // Forzamos al script de lazyload a escanear e inyectar las imágenes recién añadidas
-    if (window.lazyload && typeof window.lazyload === 'function') {
-        window.lazyload();
-    }
 }
 
 window.abrirModalDetalles = function(id) {
@@ -205,10 +201,11 @@ window.abrirModalDetalles = function(id) {
     const modal = document.getElementById('modal-detalles');
     if (!modal) return alert("Error: No se encontró la estructura de modal-detalles en el HTML.");
 
-    // Resolución limpia de la portada
+    // Resolución limpia de la portada del Modal
     let imagenPortada = 'default.jpg';
     if (anuncio.imagen) {
-        imagenPortada = anuncio.imagen.replace(/[\[\]"']/g, '').trim();
+        let imgClean = anuncio.imagen.replace(/[\[\]"']/g, '').trim();
+        imagenPortada = (imgClean.startsWith('http://') || imgClean.startsWith('https://') || imgClean.startsWith('/uploads/')) ? imgClean : `/uploads/${imgClean}`;
     }
 
     const imgPortada = document.getElementById('det-imagen');
@@ -216,7 +213,7 @@ window.abrirModalDetalles = function(id) {
         imgPortada.src = imagenPortada;
     }
 
-    // RECOLECCIÓN Y LIMPIEZA COMPLETA DE IMÁGENES (PRINCIPALES Y ADICIONALES)
+    // RECOLECCIÓN Y LIMPIEZA DE CADA UNA DE LAS IMÁGENES
     let todasLasFotos = [];
     if (anuncio.imagen) {
         todasLasFotos.push(anuncio.imagen.replace(/[\[\]"']/g, '').trim());
@@ -240,23 +237,17 @@ window.abrirModalDetalles = function(id) {
         console.error("Error al parsear fotos adicionales:", e); 
     }
 
-    // INYECCIÓN EN EL CARRUSEL CORRIGIENDO EL LAZYLOAD NATIVO
+    // INYECCIÓN DE IMÁGENES EN EL CARRUSEL CON EL PREFIJO CORRECTO
     const swiperWrapper = modal.querySelector('.swiper-wrapper');
     if (swiperWrapper) {
-        swiperWrapper.innerHTML = todasLasFotos.map(foto => `
-            <div class="swiper-slide">
-                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 3 2'%3E%3C/svg%3E" 
-                     data-src="${foto}" 
-                     class="lazy w-full h-72 md:h-96 object-cover rounded-2xl shadow-inner" 
-                     alt="${anuncio.titulo}" 
-                     onerror="this.onerror=null; this.src='default.jpg';">
-            </div>
-        `).join('');
-
-        // Re-inicializamos el cargador perezoso para el contenido dinámico del modal
-        if (window.lazyload && typeof window.lazyload === 'function') {
-            window.lazyload();
-        }
+        swiperWrapper.innerHTML = todasLasFotos.map(foto => {
+            let urlFoto = (foto.startsWith('http://') || foto.startsWith('https://') || foto.startsWith('/uploads/')) ? foto : `/uploads/${foto}`;
+            return `
+                <div class="swiper-slide">
+                    <img src="${urlFoto}" class="w-full h-72 md:h-96 object-cover rounded-2xl shadow-inner" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='default.jpg';">
+                </div>
+            `;
+        }).join('');
 
         setTimeout(() => {
             if (window.swiperGaleria && typeof window.swiperGaleria.update === 'function') {
@@ -266,7 +257,7 @@ window.abrirModalDetalles = function(id) {
         }, 150);
     }
 
-    // Datos del resto del modal
+    // Carga de datos de texto normales del modal
     document.getElementById('det-titulo').innerText = anuncio.titulo;
     document.getElementById('det-tipo').innerText = anuncio.tipo_propiedad || 'Habitación';
     document.getElementById('det-ubicacion').innerText = `${anuncio.ubicacion_nombre ? anuncio.ubicacion_nombre + ' • ' : ''}${anuncio.zona || ''}, ${anuncio.ciudad || ''}`;
