@@ -128,9 +128,6 @@ function renderizarTarjetas(lista) {
     if (!contenedor) return;
     contenedor.innerHTML = '';
     
-    const urlParams = new URLSearchParams(window.location.search);
-    const queryParams = urlParams.toString() ? `?${urlParams.toString()}` : '';
-    
     lista.forEach(anuncio => {
         const tarjeta = document.createElement('div');
         tarjeta.className = 'bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative';
@@ -149,13 +146,14 @@ function renderizarTarjetas(lista) {
             `;
         }
 
-        // CORREGIDO: Eliminamos '/uploads/' ya que las imágenes se sirven desde la raíz o ruta base directamente
-        const rutaImagenPrincipal = anuncio.imagen ? `${anuncio.imagen}` : 'default.jpg';
+        // CORREGIDO: Se usa la barra '/' al inicio para buscar en la raíz pública directamente
+        // Ejemplo: Si en BD es '1782004522757.jpg', cargará '/1782004522757.jpg'
+        const rutaImagenPrincipal = anuncio.imagen ? `/${anuncio.imagen}` : '/default.jpg';
 
         tarjeta.innerHTML = `
             ${etiquetaOferta}
             <div>
-                <img src="${rutaImagenPrincipal}" class="w-full h-48 object-cover rounded-xl mb-4" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='default.jpg';">
+                <img src="${rutaImagenPrincipal}" class="w-full h-48 object-cover rounded-xl mb-4" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='/default.jpg';">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-xs font-bold uppercase tracking-wider text-cyan-600 bg-cyan-50 px-2.5 py-1 rounded-md border border-cyan-100">${anuncio.tipo_propiedad || 'Habitación'}</span>
                     <span class="text-xs text-slate-400 font-medium">ID: ${anuncio.id_interno || anuncio.id}</span>
@@ -196,13 +194,13 @@ window.abrirModalDetalles = function(id) {
     const modal = document.getElementById('modal-detalles');
     if (!modal) return alert("Error: No se encontró la estructura de modal-detalles en el HTML.");
 
-    // ASIGNACIÓN SEGURA DE LA IMAGEN DE PORTADA SIN PREFIJO
+    // ASIGNACIÓN DE PORTADA DE RESPALDO CON LA BARRA INICIAL '/'
     const imgPortada = document.getElementById('det-imagen');
     if (imgPortada) {
-        imgPortada.src = anuncio.imagen ? `${anuncio.imagen}` : 'default.jpg';
+        imgPortada.src = anuncio.imagen ? `/${anuncio.imagen}` : '/default.jpg';
     }
 
-    // RECOLECCIÓN DE TODAS LAS FOTOS (PRINCIPAL + ADICIONALES)
+    // RECOLECCIÓN Y LIMPIEZA DE RUTAS PARA EL CARRUSEL
     let todasLasFotos = [];
     if (anuncio.imagen) todasLasFotos.push(anuncio.imagen);
     
@@ -219,16 +217,17 @@ window.abrirModalDetalles = function(id) {
         console.error("Error al parsear fotos adicionales:", e); 
     }
 
-    // INYECCIÓN DE SLIDES EN EL CAROUSEL DE SWIPER (SIN '/uploads/')
+    // INYECCIÓN DE IMÁGENES APUNTANDO DIRECTAMENTE A LA RAÍZ DEL SERVIDOR EN EL CARRUSEL DE SWIPER
     const swiperWrapper = modal.querySelector('.swiper-wrapper');
     if (swiperWrapper) {
+        // CORREGIDO: Se antepone '/' a cada elemento dinámico numérico
         swiperWrapper.innerHTML = todasLasFotos.map(foto => `
             <div class="swiper-slide">
-                <img src="${foto}" class="w-full h-72 md:h-96 object-cover rounded-2xl shadow-inner" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='default.jpg';">
+                <img src="/${foto}" class="w-full h-72 md:h-96 object-cover rounded-2xl shadow-inner" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='/default.jpg';">
             </div>
         `).join('');
 
-        // Forzar actualización de Swiper para que registre las imágenes inyectadas
+        // Forzar actualización del Swiper para que registre las imágenes inyectadas desde la raíz
         setTimeout(() => {
             if (window.swiperGaleria && typeof window.swiperGaleria.update === 'function') {
                 window.swiperGaleria.update();
