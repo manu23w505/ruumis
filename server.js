@@ -433,50 +433,55 @@ app.put('/api/anuncios/:id', (req, res) => {
         const { id } = req.params;
         const { 
             id_interno, titulo, descripcion, descripcion_corta, precio, precio_descuento, link_airbnb, link_calendario,
-            ubicacion_id, tipo_propiedad_id, recamaras, camas, banos, capacidad_personas, amenidades, destacado
-        } = req.body;
+            ubicacion_id, tipo_propiedad_id, recamaras, camas, banos, capacidad_personas, amenidades
+        } = req.body; // Removido 'destacado' por completo
         
-        // PARSEO DE NÚMEROS SEGURO (Evita que strings vacíos rompan las columnas numéricas de MySQL)
+        // PARSEO SEGURO DE TIPOS DE DATOS DE TU TABLA
         const parsedUbicacion = ubicacion_id ? parseInt(ubicacion_id) : null;
         const parsedTipo = tipo_propiedad_id ? parseInt(tipo_propiedad_id) : null;
         const parsedPrecio = precio ? parseFloat(precio) : 0;
+        const parsedPrecioDescuento = (precio_descuento && precio_descuento !== '') ? parseFloat(precio_descuento) : null;
         const parsedRecamaras = recamaras ? parseInt(recamaras) : 0;
         const parsedCamas = camas ? parseInt(camas) : 0;
-        const parsedBanos = banos ? parseInt(banos) : 0;
+        const parsedBanos = banos ? parseFloat(banos) : 0.0; // Cambiado a float porque en tu tabla es decimal(3,1)
         const parsedCapacidad = capacidad_personas ? parseInt(capacidad_personas) : 0;
-        const parsedDestacado = destacado ? parseInt(destacado) : 0; // Se convierte a entero (0 o 1)
 
-        // Primero consultamos los datos actuales para no borrar las imágenes si no sube archivos nuevos
+        // Consultamos los valores actuales para conservar las imágenes viejas si el usuario no sube archivos nuevos
         db.query('SELECT imagen, imagenes_adicionales FROM anuncios WHERE id = ?', [id], (err, currentData) => {
             if (err || currentData.length === 0) {
                 return res.status(500).json({ error: 'Anuncio no encontrado o error de consulta' });
             }
 
             let imagenPrincipal = currentData[0].imagen;
-            let imagenesAdicionales = [];
+            let imagenesAdicionalesArray = [];
 
+            // Extraemos de forma segura el JSON actual de imágenes adicionales
             try {
-                if (currentData[0].imagenes_adicionales && currentData[0].imagenes_adicionales.trim() !== "") {
-                    imagenesAdicionales = JSON.parse(currentData[0].imagenes_adicionales);
+                if (currentData[0].imagenes_adicionales) {
+                    imagenesAdicionalesArray = typeof currentData[0].imagenes_adicionales === 'string' 
+                        ? JSON.parse(currentData[0].imagenes_adicionales) 
+                        : currentData[0].imagenes_adicionales;
                 }
             } catch (e) {
-                console.warn("Advertencia: imagenes_adicionales no contenía un JSON válido, se inicializa como un array vacío.");
-                imagenesAdicionales = [];
+                imagenesAdicionalesArray = [];
             }
 
-            // Si el usuario seleccionó archivos nuevos, los reemplazamos por completo
+            // Si el usuario seleccionó archivos nuevos, actualizamos la estructura de fotos
             if (req.files && req.files.length > 0) {
-                imagenPrincipal = req.files[0].filename;
-                imagenesAdicionales = []; 
+                imagenPrincipal = req.files[0].filename; // La primera foto va a 'imagen'
+                imagenesAdicionalesArray = []; // Limpiamos las extras viejas
+                
+                // Las fotos restantes (de la 2da en adelante) van al array secundario
                 for (let i = 1; i < req.files.length; i++) {
-                    imagenesAdicionales.push(req.files[i].filename);
+                    imagenesAdicionalesArray.push(req.files[i].filename);
                 }
             }
 
+            // QUERY REFORMADO: Ajustado exactamente a tus columnas reales
             const sql = `UPDATE anuncios SET 
                 id_interno = ?, titulo = ?, descripcion = ?, descripcion_corta = ?, precio = ?, precio_descuento = ?, 
                 link_airbnb = ?, link_calendario = ?, ubicacion_id = ?, tipo_propiedad_id = ?, recamaras = ?, 
-                camas = ?, banos = ?, capacidad_personas = ?, amenidades = ?, destacado = ?, 
+                camas = ?, banos = ?, capacidad_personas = ?, amenidades = ?, 
                 imagen = ?, imagenes_adicionales = ? 
                 WHERE id = ?`;
 
@@ -486,7 +491,7 @@ app.put('/api/anuncios/:id', (req, res) => {
                 descripcion || null, 
                 descripcion_corta || null, 
                 parsedPrecio, 
-                (precio_descuento && precio_descuento !== '') ? parseFloat(precio_descuento) : null,
+                parsedPrecioDescuento,
                 link_airbnb || null, 
                 link_calendario || null, 
                 parsedUbicacion, 
@@ -496,18 +501,17 @@ app.put('/api/anuncios/:id', (req, res) => {
                 parsedBanos, 
                 parsedCapacidad, 
                 amenidades || null, 
-                parsedDestacado,
-                imagenPrincipal || null, 
-                JSON.stringify(imagenesAdicionales), 
+                imagenPrincipal, 
+                JSON.stringify(imagenesAdicionalesArray), // Mandamos el string JSON correcto
                 id
             ];
 
             db.query(sql, params, (err, result) => {
                 if (err) {
-                    console.error("====== ERROR REAL EN BASE DE DATOS ======");
+                    console.error("====== ERROR CRÍTICO SQL ======");
                     console.error("Mensaje:", err.message);
                     console.error("Código SQL:", err.code);
-                    console.error("=========================================");
+                    console.error("===============================");
                     return res.status(500).json({ error: `Error en Base de Datos: ${err.message}` });
                 }
                 res.json({ success: true, message: 'Anuncio actualizado con éxito' });
