@@ -149,10 +149,14 @@ function renderizarTarjetas(lista) {
             `;
         }
 
+        // CORRECCIÓN DE RUTA DE IMAGEN PRINCIPAL: 
+        // Si tus imágenes en Railway se guardan en public/uploads, se accede mediante /uploads/nombre.jpg
+        const rutaImagenPrincipal = anuncio.imagen ? `/uploads/${anuncio.imagen}` : '/uploads/default.jpg';
+
         tarjeta.innerHTML = `
             ${etiquetaOferta}
             <div>
-                <img src="/uploads/${anuncio.imagen || 'default.jpg'}" class="w-full h-48 object-cover rounded-xl mb-4" alt="${anuncio.titulo}">
+                <img src="${rutaImagenPrincipal}" class="w-full h-48 object-cover rounded-xl mb-4" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='/uploads/default.jpg';">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-xs font-bold uppercase tracking-wider text-cyan-600 bg-cyan-50 px-2.5 py-1 rounded-md border border-cyan-100">${anuncio.tipo_propiedad || 'Habitación'}</span>
                     <span class="text-xs text-slate-400 font-medium">ID: ${anuncio.id_interno || anuncio.id}</span>
@@ -193,13 +197,13 @@ window.abrirModalDetalles = function(id) {
     const modal = document.getElementById('modal-detalles');
     if (!modal) return alert("Error: No se encontró la estructura de modal-detalles en el HTML.");
 
-    // 1. ASIGNACIÓN DE IMAGEN DE PORTADA ESTÁTICA (Respaldo por si falla el Swiper)
+    // ASIGNACIÓN SEGURA DE LA IMAGEN DE RESPALDO
     const imgPortada = document.getElementById('det-imagen');
     if (imgPortada) {
-        imgPortada.src = `/uploads/${anuncio.imagen || 'default.jpg'}`;
+        imgPortada.src = anuncio.imagen ? `/uploads/${anuncio.imagen}` : '/uploads/default.jpg';
     }
 
-    // 2. CORREGIDO: LÓGICA PARA INYECTAR LAS IMÁGENES DENTRO DEL SWIPER WRAPPER DE ROOMS.HTML
+    // RECOLECCIÓN DE TODAS LAS FOTOS (PRINCIPAL + ADICIONALES)
     let todasLasFotos = [];
     if (anuncio.imagen) todasLasFotos.push(anuncio.imagen);
     
@@ -216,31 +220,30 @@ window.abrirModalDetalles = function(id) {
         console.error("Error al parsear fotos adicionales:", e); 
     }
 
-    // Buscamos el contenedor real de Swiper que está en tu archivo rooms.html (.swiper-wrapper)
+    // INYECCIÓN DE SLIDES EN EL CAROUSEL DE SWIPER (.swiper-wrapper) DE ROOMS.HTML
     const swiperWrapper = modal.querySelector('.swiper-wrapper');
     if (swiperWrapper) {
-        // Mapeamos todas las imágenes recolectadas en slides de Swiper reales
         swiperWrapper.innerHTML = todasLasFotos.map(foto => `
             <div class="swiper-slide">
-                <img src="/uploads/${foto}" class="w-full h-72 md:h-96 object-cover rounded-2xl shadow-inner" alt="${anuncio.titulo}">
+                <img src="/uploads/${foto}" class="w-full h-72 md:h-96 object-cover rounded-2xl shadow-inner" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='/uploads/default.jpg';">
             </div>
         `).join('');
 
-        // Re-inicializamos o actualizamos Swiper dinámicamente si la instancia global existe
+        // Actualiza el componente Swiper de tu plantilla para que reconozca los nuevos elementos
         setTimeout(() => {
             if (window.swiperGaleria && typeof window.swiperGaleria.update === 'function') {
                 window.swiperGaleria.update();
                 window.swiperGaleria.slideTo(0, 0);
             }
-        }, 100);
+        }, 150);
     }
 
-    // Datos generales
+    // Datos generales del modal
     document.getElementById('det-titulo').innerText = anuncio.titulo;
     document.getElementById('det-tipo').innerText = anuncio.tipo_propiedad || 'Habitación';
     document.getElementById('det-ubicacion').innerText = `${anuncio.ubicacion_nombre ? anuncio.ubicacion_nombre + ' • ' : ''}${anuncio.zona || ''}, ${anuncio.ciudad || ''}`;
     
-    // Validamos precio con descuento en el modal
+    // Validación de precios
     if (anuncio.precio_descuento && parseFloat(anuncio.precio_descuento) > 0) {
         document.getElementById('det-precio').innerHTML = `<span class="text-sm text-slate-400 line-through mr-2">$${anuncio.precio}</span> $${anuncio.precio_descuento} MXN`;
     } else {
