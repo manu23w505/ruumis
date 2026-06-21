@@ -155,7 +155,7 @@ function renderizarTarjetas(lista) {
                 <img src="/uploads/${anuncio.imagen || 'default.jpg'}" class="w-full h-48 object-cover rounded-xl mb-4" alt="${anuncio.titulo}">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-xs font-bold uppercase tracking-wider text-cyan-600 bg-cyan-50 px-2.5 py-1 rounded-md border border-cyan-100">${anuncio.tipo_propiedad || 'Habitación'}</span>
-                    <span class="text-xs text-slate-400 font-medium">ID: ${anuncio.id}</span>
+                    <span class="text-xs text-slate-400 font-medium">ID: ${anuncio.id_interno || anuncio.id}</span>
                 </div>
                 <h3 class="font-bold text-lg text-slate-900 mb-1 line-clamp-1">${anuncio.titulo}</h3>
                 <p class="text-sm text-slate-500 mb-3 flex items-center gap-1">
@@ -193,27 +193,46 @@ window.abrirModalDetalles = function(id) {
     const modal = document.getElementById('modal-detalles');
     if (!modal) return alert("Error: No se encontró la estructura de modal-detalles en el HTML.");
 
-    // 1. ASIGNACIÓN DE IMAGEN PRINCIPAL DE PORTADA
-    document.getElementById('det-imagen').src = `/uploads/${anuncio.imagen || 'default.jpg'}`;
+    // 1. ASIGNACIÓN DE IMAGEN DE PORTADA ESTÁTICA (Respaldo por si falla el Swiper)
+    const imgPortada = document.getElementById('det-imagen');
+    if (imgPortada) {
+        imgPortada.src = `/uploads/${anuncio.imagen || 'default.jpg'}`;
+    }
 
-    // 2. LOGICA PARA IMPRIMIR LA GALERÍA COMPLETA SI EXISTE UN CONTENEDOR DE SLIDES O MINIATURAS
+    // 2. CORREGIDO: LÓGICA PARA INYECTAR LAS IMÁGENES DENTRO DEL SWIPER WRAPPER DE ROOMS.HTML
     let todasLasFotos = [];
     if (anuncio.imagen) todasLasFotos.push(anuncio.imagen);
+    
     try {
         if (anuncio.imagenes_adicionales) {
             const extras = typeof anuncio.imagenes_adicionales === 'string' 
                 ? JSON.parse(anuncio.imagenes_adicionales) 
                 : anuncio.imagenes_adicionales;
-            if (Array.isArray(extras)) todasLasFotos = todasLasFotos.concat(extras);
+            if (Array.isArray(extras)) {
+                todasLasFotos = todasLasFotos.concat(extras);
+            }
         }
-    } catch (e) { console.error("Error al parsear fotos extra", e); }
+    } catch (e) { 
+        console.error("Error al parsear fotos adicionales:", e); 
+    }
 
-    // Si tienes un div para renderizar las fotos extra en miniatura dentro del modal, puedes rellenarlo así:
-    const contenedorFotos = document.getElementById('det-galeria-extras');
-    if (contenedorFotos) {
-        contenedorFotos.innerHTML = todasLasFotos.map(foto => `
-            <img src="/uploads/${foto}" class="w-20 h-20 object-cover rounded-lg border border-slate-200 cursor-pointer hover:opacity-80 transition-opacity" onclick="document.getElementById('det-imagen').src=this.src">
+    // Buscamos el contenedor real de Swiper que está en tu archivo rooms.html (.swiper-wrapper)
+    const swiperWrapper = modal.querySelector('.swiper-wrapper');
+    if (swiperWrapper) {
+        // Mapeamos todas las imágenes recolectadas en slides de Swiper reales
+        swiperWrapper.innerHTML = todasLasFotos.map(foto => `
+            <div class="swiper-slide">
+                <img src="/uploads/${foto}" class="w-full h-72 md:h-96 object-cover rounded-2xl shadow-inner" alt="${anuncio.titulo}">
+            </div>
         `).join('');
+
+        // Re-inicializamos o actualizamos Swiper dinámicamente si la instancia global existe
+        setTimeout(() => {
+            if (window.swiperGaleria && typeof window.swiperGaleria.update === 'function') {
+                window.swiperGaleria.update();
+                window.swiperGaleria.slideTo(0, 0);
+            }
+        }, 100);
     }
 
     // Datos generales
