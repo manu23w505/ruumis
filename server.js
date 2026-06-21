@@ -6,6 +6,7 @@ const multer = require('multer');
 const ical = require('node-ical');
 const cron = require('node-cron');
 const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer');
 
 const app = express();
 app.use(cors());
@@ -725,6 +726,50 @@ app.delete('/api/faqs/:id', (req, res) => {
     });
 });
 
+// form
+
+const nodemailer = require('nodemailer');
+
+// Ruta dedicada para el formulario de contacto (Feedback)
+app.post('/api/contacto', async (req, res) => {
+    const { feedbackName, feedbackEmail, feedbackMessage } = req.body;
+
+    // Validación rápida para asegurar que no vengan vacíos
+    if (!feedbackName || !feedbackEmail || !feedbackMessage) {
+        return res.status(400).send('<div style="color:red; font-weight:bold;">Todos los campos son obligatorios.</div>');
+    }
+
+    // Configuración del servicio de correos (Ejemplo básico con Gmail)
+    // NOTA: Recuerda activar una "Contraseña de aplicación" en tu cuenta de Google para ponerla aquí
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'tu-correo-ruumis@gmail.com', // Pon tu correo real aquí
+            pass: 'tu-contraseña-de-aplicacion' // Pon tu contraseña de aplicación de 16 letras aquí
+        }
+    });
+
+    // Cuerpo del correo idéntico al formato que tenías en el archivo PHP
+    const mailOptions = {
+        from: `"${feedbackName}" <${feedbackEmail}>`,
+        to: 'tu-correo-destino@domain.com', // El correo donde quieres recibir las notificaciones
+        subject: 'Contact Us - Ruumis Feedback',
+        html: `
+            <p><strong>Name:</strong> ${feedbackName}</p>
+            <p><strong>Email:</strong> ${feedbackEmail}</p>
+            <p><strong>Message:</strong> ${feedbackMessage}</p>
+        `
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        // Enviamos una respuesta visual idéntica o amigable para el diseño de tu plantilla
+        res.send('<div style="color:green; font-weight:bold;">¡Email enviado con éxito! Nos pondremos en contacto contigo pronto.</div>');
+    } catch (error) {
+        console.error('Error al enviar correo con Nodemailer:', error);
+        res.status(500).send('<div style="color:red; font-weight:bold;">Failed: Email not Sent.</div>');
+    }
+});
 
 cron.schedule('*/5 * * * *', () => {
     sincronizarCalendarios();
