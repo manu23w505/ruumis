@@ -17,6 +17,7 @@
     "multer": "^2.2.0",
     "mysql2": "^3.22.5",
     "node-cron": "^4.2.1",
-    "node-ical": "^0.26.1"
+    "node-ical": "^0.26.1",
+    "nodemailer": "^9.0.1"
   }
 }
