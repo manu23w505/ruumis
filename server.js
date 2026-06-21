@@ -726,10 +726,6 @@ app.delete('/api/faqs/:id', (req, res) => {
     });
 });
 
-// form
-
-const nodemailer = require('nodemailer');
-
 // Ruta dedicada para el formulario de contacto (Feedback)
 app.post('/api/contacto', async (req, res) => {
     const { feedbackName, feedbackEmail, feedbackMessage } = req.body;
