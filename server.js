@@ -341,7 +341,6 @@ app.delete('/api/ubicaciones/:id', (req, res) => {
     });
 });
 
-// MODIFICADO: Ahora hace LEFT JOIN a ubicaciones para obtener la información correcta
 app.get('/api/anuncios', (req, res) => {
     const sql = `
         SELECT a.*, 
@@ -362,7 +361,6 @@ app.get('/api/anuncios', (req, res) => {
     });
 });
 
-// MODIFICADO: Adaptado para soportar múltiples imágenes, id_interno y precio_descuento sin perder campos anteriores
 app.post('/api/anuncios', (req, res) => {
     // Cambiamos a upload.array para aceptar hasta 5 imágenes
     upload.array('imagenes', 5)(req, res, (err) => {
@@ -425,7 +423,6 @@ app.post('/api/anuncios', (req, res) => {
     });
 });
 
-// MODIFICADO: Edición con soporte de múltiples imágenes, id_interno y precio_descuento conservando lógica actual
 app.put('/api/anuncios/:id', (req, res) => {
     upload.array('imagenes', 5)(req, res, (err) => {
         if (err) {
@@ -439,8 +436,15 @@ app.put('/api/anuncios/:id', (req, res) => {
             ubicacion_id, tipo_propiedad_id, recamaras, camas, banos, capacidad_personas, amenidades, destacado
         } = req.body;
         
+        // PARSEO DE NÚMEROS SEGURO (Evita que strings vacíos rompan las columnas numéricas de MySQL)
         const parsedUbicacion = ubicacion_id ? parseInt(ubicacion_id) : null;
         const parsedTipo = tipo_propiedad_id ? parseInt(tipo_propiedad_id) : null;
+        const parsedPrecio = precio ? parseFloat(precio) : 0;
+        const parsedRecamaras = recamaras ? parseInt(recamaras) : 0;
+        const parsedCamas = camas ? parseInt(camas) : 0;
+        const parsedBanos = banos ? parseInt(banos) : 0;
+        const parsedCapacidad = capacidad_personas ? parseInt(capacidad_personas) : 0;
+        const parsedDestacado = destacado ? parseInt(destacado) : 0; // Se convierte a entero (0 o 1)
 
         // Primero consultamos los datos actuales para no borrar las imágenes si no sube archivos nuevos
         db.query('SELECT imagen, imagenes_adicionales FROM anuncios WHERE id = ?', [id], (err, currentData) => {
@@ -451,13 +455,12 @@ app.put('/api/anuncios/:id', (req, res) => {
             let imagenPrincipal = currentData[0].imagen;
             let imagenesAdicionales = [];
 
-            // SOLUCIÓN: Try-Catch para evitar que JSON.parse rompa el servidor si el campo está vacío o corrupto
             try {
                 if (currentData[0].imagenes_adicionales && currentData[0].imagenes_adicionales.trim() !== "") {
                     imagenesAdicionales = JSON.parse(currentData[0].imagenes_adicionales);
                 }
             } catch (e) {
-                console.warn("Advertencia: imagenes_adicionales no contenía un JSON válido, se inicializa como array vacío.");
+                console.warn("Advertencia: imagenes_adicionales no contenía un JSON válido, se inicializa como un array vacío.");
                 imagenesAdicionales = [];
             }
 
@@ -478,19 +481,36 @@ app.put('/api/anuncios/:id', (req, res) => {
                 WHERE id = ?`;
 
             const params = [
-                id_interno || null, titulo || null, descripcion || null, descripcion_corta || null, precio || 0, 
+                id_interno || null, 
+                titulo || null, 
+                descripcion || null, 
+                descripcion_corta || null, 
+                parsedPrecio, 
                 (precio_descuento && precio_descuento !== '') ? parseFloat(precio_descuento) : null,
-                link_airbnb || null, link_calendario || null, parsedUbicacion, parsedTipo, recamaras || 0, 
-                camas || 0, banos || 0, capacidad_personas || 0, amenidades || null, destacado || 0,
-                imagenPrincipal || null, JSON.stringify(imagenesAdicionales), id
+                link_airbnb || null, 
+                link_calendario || null, 
+                parsedUbicacion, 
+                parsedTipo, 
+                parsedRecamaras, 
+                parsedCamas, 
+                parsedBanos, 
+                parsedCapacidad, 
+                amenidades || null, 
+                parsedDestacado,
+                imagenPrincipal || null, 
+                JSON.stringify(imagenesAdicionales), 
+                id
             ];
 
             db.query(sql, params, (err, result) => {
                 if (err) {
-                    console.error("Error SQL detallado en PUT:", err);
-                    return res.status(500).json({ error: 'Error al actualizar', sqlError: err.message });
+                    console.error("====== ERROR REAL EN BASE DE DATOS ======");
+                    console.error("Mensaje:", err.message);
+                    console.error("Código SQL:", err.code);
+                    console.error("=========================================");
+                    return res.status(500).json({ error: `Error en Base de Datos: ${err.message}` });
                 }
-                res.json({ success: true, message: 'Anuncio updated con éxito' });
+                res.json({ success: true, message: 'Anuncio actualizado con éxito' });
                 if (typeof sincronizarCalendarios === 'function') {
                     sincronizarCalendarios(); 
                 }
