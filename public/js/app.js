@@ -146,14 +146,23 @@ function renderizarTarjetas(lista) {
             `;
         }
 
-        // CORREGIDO: Se usa la barra '/' al inicio para buscar en la raíz pública directamente
-        // Ejemplo: Si en BD es '1782004522757.jpg', cargará '/1782004522757.jpg'
-        const rutaImagenPrincipal = anuncio.imagen ? `/${anuncio.imagen}` : '/default.jpg';
+        // VALIDACIÓN DE IMAGEN IGUAL QUE EN EL HOME:
+        let rutaImagenPrincipal = '/default.jpg';
+        if (anuncio.imagen) {
+            const imgClean = anuncio.imagen.trim();
+            if (imgClean.startsWith('http://') || imgClean.startsWith('https://')) {
+                rutaImagenPrincipal = imgClean;
+            } else {
+                // Si solo contiene el número, aseguramos que busque en la carpeta configurada /uploads/ o raíz
+                rutaImagenPrincipal = imgClean.startsWith('/') ? imgClean : `/uploads/${imgClean}`;
+            }
+        }
 
+        // CORRECCIÓN LAZYLOAD: Se inyectan tanto 'src' como 'data-src' con la clase 'lazy' para que la plantilla la pinte
         tarjeta.innerHTML = `
             ${etiquetaOferta}
             <div>
-                <img src="${rutaImagenPrincipal}" class="w-full h-48 object-cover rounded-xl mb-4" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='/default.jpg';">
+                <img src="${rutaImagenPrincipal}" data-src="${rutaImagenPrincipal}" class="lazy w-full h-48 object-cover rounded-xl mb-4" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='/default.jpg';">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-xs font-bold uppercase tracking-wider text-cyan-600 bg-cyan-50 px-2.5 py-1 rounded-md border border-cyan-100">${anuncio.tipo_propiedad || 'Habitación'}</span>
                     <span class="text-xs text-slate-400 font-medium">ID: ${anuncio.id_interno || anuncio.id}</span>
@@ -185,6 +194,11 @@ function renderizarTarjetas(lista) {
         `;
         contenedor.appendChild(tarjeta);
     });
+
+    // Opcional: Si tu tema usa un inicializador global para revivir imágenes perezosas dinámicas
+    if (window.lazyload && typeof window.lazyload === 'function') {
+        window.lazyload();
+    }
 }
 
 window.abrirModalDetalles = function(id) {
@@ -194,15 +208,22 @@ window.abrirModalDetalles = function(id) {
     const modal = document.getElementById('modal-detalles');
     if (!modal) return alert("Error: No se encontró la estructura de modal-detalles en el HTML.");
 
-    // ASIGNACIÓN DE PORTADA DE RESPALDO CON LA BARRA INICIAL '/'
-    const imgPortada = document.getElementById('det-imagen');
-    if (imgPortada) {
-        imgPortada.src = anuncio.imagen ? `/${anuncio.imagen}` : '/default.jpg';
+    // Resolución de la ruta para la portada del Modal
+    let rutaPortada = '/default.jpg';
+    if (anuncio.imagen) {
+        const imgClean = anuncio.imagen.trim();
+        rutaPortada = (imgClean.startsWith('http://') || imgClean.startsWith('https://') || imgClean.startsWith('/')) ? imgClean : `/uploads/${imgClean}`;
     }
 
-    // RECOLECCIÓN Y LIMPIEZA DE RUTAS PARA EL CARRUSEL
+    const imgPortada = document.getElementById('det-imagen');
+    if (imgPortada) {
+        imgPortada.src = rutaPortada;
+        imgPortada.setAttribute('data-src', rutaPortada);
+    }
+
+    // Recolección y limpieza total de las fotos del Carrusel
     let todasLasFotos = [];
-    if (anuncio.imagen) todasLasFotos.push(anuncio.imagen);
+    if (anuncio.imagen) todasLasFotos.push(anuncio.imagen.trim());
     
     try {
         if (anuncio.imagenes_adicionales) {
@@ -210,24 +231,25 @@ window.abrirModalDetalles = function(id) {
                 ? JSON.parse(anuncio.imagenes_adicionales) 
                 : anuncio.imagenes_adicionales;
             if (Array.isArray(extras)) {
-                todasLasFotos = todasLasFotos.concat(extras);
+                extras.forEach(foto => { if(foto) todasLasFotos.push(foto.trim()); });
             }
         }
     } catch (e) { 
         console.error("Error al parsear fotos adicionales:", e); 
     }
 
-    // INYECCIÓN DE IMÁGENES APUNTANDO DIRECTAMENTE A LA RAÍZ DEL SERVIDOR EN EL CARRUSEL DE SWIPER
+    // Inyección en Swiper respetando atributos de Lazy Loading
     const swiperWrapper = modal.querySelector('.swiper-wrapper');
     if (swiperWrapper) {
-        // CORREGIDO: Se antepone '/' a cada elemento dinámico numérico
-        swiperWrapper.innerHTML = todasLasFotos.map(foto => `
-            <div class="swiper-slide">
-                <img src="/${foto}" class="w-full h-72 md:h-96 object-cover rounded-2xl shadow-inner" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='/default.jpg';">
-            </div>
-        `).join('');
+        swiperWrapper.innerHTML = todasLasFotos.map(foto => {
+            let urlFoto = (foto.startsWith('http://') || foto.startsWith('https://') || foto.startsWith('/')) ? foto : `/uploads/${foto}`;
+            return `
+                <div class="swiper-slide">
+                    <img src="${urlFoto}" data-src="${urlFoto}" class="lazy w-full h-72 md:h-96 object-cover rounded-2xl shadow-inner" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='/default.jpg';">
+                </div>
+            `;
+        }).join('');
 
-        // Forzar actualización del Swiper para que registre las imágenes inyectadas desde la raíz
         setTimeout(() => {
             if (window.swiperGaleria && typeof window.swiperGaleria.update === 'function') {
                 window.swiperGaleria.update();
@@ -241,7 +263,6 @@ window.abrirModalDetalles = function(id) {
     document.getElementById('det-tipo').innerText = anuncio.tipo_propiedad || 'Habitación';
     document.getElementById('det-ubicacion').innerText = `${anuncio.ubicacion_nombre ? anuncio.ubicacion_nombre + ' • ' : ''}${anuncio.zona || ''}, ${anuncio.ciudad || ''}`;
     
-    // Validación de precios
     if (anuncio.precio_descuento && parseFloat(anuncio.precio_descuento) > 0) {
         document.getElementById('det-precio').innerHTML = `<span class="text-sm text-slate-400 line-through mr-2">$${anuncio.precio}</span> $${anuncio.precio_descuento} MXN`;
     } else {
