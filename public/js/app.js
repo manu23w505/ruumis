@@ -149,14 +149,13 @@ function renderizarTarjetas(lista) {
             `;
         }
 
-        // CORRECCIÓN DE RUTA DE IMAGEN PRINCIPAL: 
-        // Si tus imágenes en Railway se guardan en public/uploads, se accede mediante /uploads/nombre.jpg
-        const rutaImagenPrincipal = anuncio.imagen ? `/uploads/${anuncio.imagen}` : '/uploads/default.jpg';
+        // CORREGIDO: Eliminamos '/uploads/' ya que las imágenes se sirven desde la raíz o ruta base directamente
+        const rutaImagenPrincipal = anuncio.imagen ? `${anuncio.imagen}` : 'default.jpg';
 
         tarjeta.innerHTML = `
             ${etiquetaOferta}
             <div>
-                <img src="${rutaImagenPrincipal}" class="w-full h-48 object-cover rounded-xl mb-4" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='/uploads/default.jpg';">
+                <img src="${rutaImagenPrincipal}" class="w-full h-48 object-cover rounded-xl mb-4" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='default.jpg';">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-xs font-bold uppercase tracking-wider text-cyan-600 bg-cyan-50 px-2.5 py-1 rounded-md border border-cyan-100">${anuncio.tipo_propiedad || 'Habitación'}</span>
                     <span class="text-xs text-slate-400 font-medium">ID: ${anuncio.id_interno || anuncio.id}</span>
@@ -197,10 +196,10 @@ window.abrirModalDetalles = function(id) {
     const modal = document.getElementById('modal-detalles');
     if (!modal) return alert("Error: No se encontró la estructura de modal-detalles en el HTML.");
 
-    // ASIGNACIÓN SEGURA DE LA IMAGEN DE RESPALDO
+    // ASIGNACIÓN SEGURA DE LA IMAGEN DE PORTADA SIN PREFIJO
     const imgPortada = document.getElementById('det-imagen');
     if (imgPortada) {
-        imgPortada.src = anuncio.imagen ? `/uploads/${anuncio.imagen}` : '/uploads/default.jpg';
+        imgPortada.src = anuncio.imagen ? `${anuncio.imagen}` : 'default.jpg';
     }
 
     // RECOLECCIÓN DE TODAS LAS FOTOS (PRINCIPAL + ADICIONALES)
@@ -220,16 +219,16 @@ window.abrirModalDetalles = function(id) {
         console.error("Error al parsear fotos adicionales:", e); 
     }
 
-    // INYECCIÓN DE SLIDES EN EL CAROUSEL DE SWIPER (.swiper-wrapper) DE ROOMS.HTML
+    // INYECCIÓN DE SLIDES EN EL CAROUSEL DE SWIPER (SIN '/uploads/')
     const swiperWrapper = modal.querySelector('.swiper-wrapper');
     if (swiperWrapper) {
         swiperWrapper.innerHTML = todasLasFotos.map(foto => `
             <div class="swiper-slide">
-                <img src="/uploads/${foto}" class="w-full h-72 md:h-96 object-cover rounded-2xl shadow-inner" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='/uploads/default.jpg';">
+                <img src="${foto}" class="w-full h-72 md:h-96 object-cover rounded-2xl shadow-inner" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='default.jpg';">
             </div>
         `).join('');
 
-        // Actualiza el componente Swiper de tu plantilla para que reconozca los nuevos elementos
+        // Forzar actualización de Swiper para que registre las imágenes inyectadas
         setTimeout(() => {
             if (window.swiperGaleria && typeof window.swiperGaleria.update === 'function') {
                 window.swiperGaleria.update();
@@ -268,7 +267,6 @@ window.abrirModalDetalles = function(id) {
 
     modal.classList.replace('hidden', 'flex');
 };
-
 
 window.cambiarHuespedes = function(val) {
     contadorHuespedes = Math.max(1, contadorHuespedes + val);
