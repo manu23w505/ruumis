@@ -826,23 +826,35 @@ app.post('/api/feedback', (req, res) => {
     });
 });
 
-app.get('/api/contactos', (req, res) => {
-    db.query('SELECT * FROM contactos ORDER BY fecha DESC', (err, results) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: 'Error al obtener mensajes' });
+app.get('/api/correo', (req, res) => {
+    db.query("SELECT valor FROM configuracion WHERE clave = 'correo_destino'", (err, results) => {
+        if (err) return res.status(500).json({ error: 'Error al obtener el correo' });
+        
+        let correo = 'Sin configurar';
+        if (results.length > 0 && results[0].valor) {
+            correo = results[0].valor;
         }
-        res.json(results);
+        res.json({ correo });
     });
 });
 
-app.put('/api/config/correo', (req, res) => {
+app.put('/api/correo', (req, res) => {
     const { correo } = req.body;
     if (!correo) return res.status(400).json({ error: 'El correo es requerido' });
 
-    db.query("UPDATE configuracion SET valor = ? WHERE clave = 'correo_destino'", [correo], (err, result) => {
-        if (err) return res.status(500).json({ error: 'Error al actualizar el correo en la base de datos' });
-        res.json({ success: true, message: 'Correo de destino actualizado correctamente' });
+    // Hacemos un UPSERT (Actualizar si existe, insertar si no existe)
+    db.query("SELECT * FROM configuracion WHERE clave = 'correo_destino'", (err, results) => {
+        if (results.length > 0) {
+            db.query("UPDATE configuracion SET valor = ? WHERE clave = 'correo_destino'", [correo], (errUpdate) => {
+                if (errUpdate) return res.status(500).json({ error: 'Error al actualizar' });
+                res.json({ success: true, message: 'Correo de destino actualizado' });
+            });
+        } else {
+            db.query("INSERT INTO configuracion (clave, valor) VALUES ('correo_destino', ?)", [correo], (errInsert) => {
+                if (errInsert) return res.status(500).json({ error: 'Error al insertar' });
+                res.json({ success: true, message: 'Correo de destino guardado' });
+            });
+        }
     });
 });
 

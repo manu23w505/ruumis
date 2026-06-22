@@ -1504,12 +1504,21 @@ async function obtenerDatosHeaderAdmin() {
         if (!response.ok) return;
         const data = await response.json();
 
-        // COREGIDO: Cambiado data.config por data.visuales para que coincida con server.js
-        const visuales = data.visuales || {};
+        // CORRECCIÓN 1: El servidor manda 'data.config', no 'data.visuales'
+        const visuales = data.config || {};
+        
+        // A) Llenar los inputs ocultos del modal
         document.getElementById('inputNombreMarca').value = visuales.nombre_marca || '';
         document.getElementById('inputLogoSvg').value = visuales.logo_svg || '';
 
-        // El mapeo de las páginas
+        // B) Llenar la vista previa del panel (quitar el "Cargando...")
+        const vistaNombre = document.getElementById('vista-nombre-marca');
+        if(vistaNombre) vistaNombre.innerText = visuales.nombre_marca || 'Sin nombre';
+        
+        const vistaLogo = document.getElementById('vista-logo-svg');
+        if(vistaLogo) vistaLogo.innerText = visuales.logo_svg || 'Sin logo';
+
+        // CORRECCIÓN 2: El mapeo de las páginas
         const tbody = document.getElementById('tablaPaginasMenu');
         if (tbody) {
             tbody.innerHTML = '';
@@ -1537,19 +1546,36 @@ async function obtenerDatosHeaderAdmin() {
             });
         }
 
-        // El mapeo de las redes sociales
-        const contenedorRedes = document.getElementById('contenedorRedes');
-        if (contenedorRedes) {
-            contenedorRedes.innerHTML = '';
-            data.redes.forEach(red => {
-                const div = document.createElement('div');
-                div.innerHTML = `
-                    <label class="block text-xs font-medium text-slate-500 mb-1 capitalize">Enlace de ${red.red}</label>
-                    <input type="url" class="input-red-social w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all" data-id="${red.id}" value="${red.url || ''}" placeholder="https://...">
+        // CORRECCIÓN 3: Separar la Vista y los Inputs de las Redes Sociales
+        const contenedorVista = document.getElementById('contenedorRedesVista');
+        const contenedorInputs = document.getElementById('contenedorRedesInputs');
+        
+        if (contenedorVista) contenedorVista.innerHTML = '';
+        if (contenedorInputs) contenedorInputs.innerHTML = '';
+
+        data.redes.forEach(red => {
+            // Llenar lo que el Admin VE en la pantalla principal
+            if (contenedorVista) {
+                contenedorVista.innerHTML += `
+                    <div>
+                        <span class="block text-xs font-semibold text-slate-400 capitalize">${red.red}:</span>
+                        <p class="font-medium text-slate-800 mt-1 truncate">
+                            ${red.url ? `<a href="${red.url}" target="_blank" class="text-cyan-600 hover:underline">${red.url}</a>` : 'No configurada'}
+                        </p>
+                    </div>
                 `;
-                contenedorRedes.appendChild(div);
-            });
-        }
+            }
+
+            // Llenar los inputs dentro del MODAL de edición
+            if (contenedorInputs) {
+                contenedorInputs.innerHTML += `
+                    <div>
+                        <label class="block text-xs font-medium text-slate-500 mb-1 capitalize">Enlace de ${red.red}</label>
+                        <input type="url" class="input-red-social w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all" data-id="${red.id}" value="${red.url || ''}" placeholder="https://...">
+                    </div>
+                `;
+            }
+        });
 
     } catch (error) {
         console.error('Error al obtener datos del header en admin:', error);
@@ -1680,6 +1706,5 @@ async function enviarCambiosPagina(e) {
 }
 
 </script>
-
 </body>
 </html>
