@@ -778,19 +778,26 @@ app.post('/api/feedback', (req, res) => {
         return res.status(400).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Todos los campos son obligatorios.</div>');
     }
 
-    // Guardamos el mensaje directamente en la base de datos MySQL
-    // Nota: Asegúrate de tener una tabla 'contactos' o 'feedback' con estas columnas
-    const query = "INSERT INTO contactos (nombre, email, mensaje, fecha) VALUES (?, ?, ?, NOW())";
+    // Creamos un objeto con los datos del mensaje y lo convertimos a texto estructurado
+    const datosMensaje = JSON.stringify({
+        nombre: feedbackName,
+        email: feedbackEmail,
+        mensaje: feedbackMessage,
+        fecha: new Date().toISOString()
+    });
+
+    // Usamos una clave única basada en el tiempo para no encimar los mensajes
+    const claveUnica = `msg_${Date.now()}`;
+
+    const query = "INSERT INTO configuracion (clave, valor) VALUES (?, ?)";
     
-    db.query(query, [feedbackName, feedbackEmail, feedbackMessage], (err, result) => {
+    db.query(query, [claveUnica, datosMensaje], (err, result) => {
         if (err) {
-            console.error('Error al guardar el mensaje de contacto en la BD:', err);
-            // Si la tabla no existe aún, puedes dejar que responda éxito para no romper la experiencia del usuario mientras la creas
-            return res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error al procesar el mensaje. Inténtalo más tarde.</div>');
+            console.error('Error al guardar el feedback en la tabla configuracion:', err);
+            return res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error interno al procesar el mensaje.</div>');
         }
 
-        // Respondemos con éxito visual directo a la plantilla pública
-        res.send('<div style="color:green; font-weight:bold; font-family:sans-serif; padding:20px;">¡Mensaje recibido con éxito! El administrador revisará tu solicitud pronto.</div>');
+        res.send('<div style="color:green; font-weight:bold; font-family:sans-serif; padding:20px;">¡Mensaje recibido con éxito! Guardado en el sistema.</div>');
     });
 });
 
