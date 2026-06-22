@@ -728,36 +728,44 @@ app.delete('/api/faqs/:id', (req, res) => {
 
 // Ruta dedicada para el formulario de contacto (Feedback)
 app.post('/api/contacto', (req, res) => {
-    const { feedbackName, feedbackEmail, feedbackMessage } = req.body;
+    try {
+        const { feedbackName, feedbackEmail, feedbackMessage } = req.body;
 
-    // Validación de datos por si acaso
-    if (!feedbackName || !feedbackEmail || !feedbackMessage) {
-        return res.status(400).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Todos los campos son obligatorios.</div>');
-    }
-
-    // Unimos los datos del remitente en un formato de texto limpio o JSON estructurado para la columna 'valor'
-    const datosEstructurados = JSON.stringify({
-        nombre: feedbackName,
-        email: feedbackEmail,
-        mensaje: feedbackMessage,
-        fecha: new Date().toISOString()
-    });
-
-    // Creamos una clave única usando el timestamp para que no se dupliquen ni reemplacen los mensajes anteriores
-    const claveUnica = `feedback_${Date.now()}`;
-
-    // Insertamos directamente en tu tabla real usando sus dos columnas: clave y valor
-    const query = "INSERT INTO configuracion (clave, valor) VALUES (?, ?)";
-    
-    db.query(query, [claveUnica, datosEstructurados], (err, result) => {
-        if (err) {
-            console.error('Error al guardar en la tabla configuracion:', err);
-            return res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error interno al guardar tu mensaje.</div>');
+        // 1. Validamos que los datos no lleguen vacíos
+        if (!feedbackName || !feedbackEmail || !feedbackMessage) {
+            return res.status(400).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Todos los campos son obligatorios.</div>');
         }
 
-        // Enviamos la respuesta exitosa para tu plantilla
-        res.send('<div style="color:green; font-weight:bold; font-family:sans-serif; padding:20px;">¡Mensaje recibido con éxito! Guardado en el sistema de administración.</div>');
-    });
+        // 2. Estructuramos el mensaje como texto limpio para guardarlo en la columna 'valor'
+        const datosEstructurados = JSON.stringify({
+            nombre: feedbackName,
+            email: feedbackEmail,
+            mensaje: feedbackMessage,
+            fecha: new Date().toISOString()
+        });
+
+        // 3. Generamos una clave única forzada usando un número aleatorio + timestamp millonario
+        // Esto garantiza que la Primary Key (clave) jamás se repita
+        const claveUnica = `fb_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+
+        const query = "INSERT INTO configuracion (clave, valor) VALUES (?, ?)";
+        
+        db.query(query, [claveUnica, datosEstructurados], (err, result) => {
+            if (err) {
+                // Si la consulta falla (ej. problemas de conexión), lo capturamos aquí sin tirar el servidor
+                console.error('Error detallado de MySQL:', err);
+                return res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error al guardar el mensaje en la base de datos.</div>');
+            }
+
+            // Respuesta exitosa que tu archivo common.min.js espera renderizar
+            res.send('<div style="color:green; font-weight:bold; font-family:sans-serif; padding:20px;">¡Mensaje recibido con éxito! Guardado en el sistema de administración.</div>');
+        });
+
+    } catch (expressError) {
+        // Un bloque catch general para que la app jamás responda con un 500 crudo
+        console.error('Error crítico en el hilo de la ruta:', expressError);
+        res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error inesperado en el servidor.</div>');
+    }
 });
 
 app.post('/api/feedback', (req, res) => {
