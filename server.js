@@ -729,26 +729,34 @@ app.delete('/api/faqs/:id', (req, res) => {
 // Ruta dedicada para el formulario de contacto 
 app.post('/api/contacto', (req, res) => {
     try {
-        // Capturamos todas las posibles variantes que puede enviar la plantilla
-        const nombre = req.body.name || req.body.feedbackName || req.body.nombre || "Remitente Anónimo";
-        const email = req.body.email || req.body.feedbackEmail || "sin-correo@ruumis.com";
-        const mensaje = req.body.message || req.body.feedbackMessage || req.body.mensaje || "Sin mensaje.";
+        // Capturamos las variables que manda estrictamente el script common.min.js
+        const nombre = req.body.feedbackName || req.body.name || req.body.nombre;
+        const email = req.body.feedbackEmail || req.body.email;
+        const mensaje = req.body.feedbackMessage || req.body.message || req.body.mensaje;
 
-        // ⚠️ Asegúrate de que la palabra 'contactos' sea el nombre exacto de tu tabla en Railway
+        // Validación de seguridad para evitar enviar valores vacíos o NULL al MySQL
+        if (!nombre || !email || !mensaje) {
+            console.log("Campos faltantes recibidos en el servidor:", req.body);
+            return res.status(400).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Todos los campos son obligatorios.</div>');
+        }
+
+        // ⚠️ IMPORTANTE: Asegúrate de que la palabra 'contactos' sea el nombre exacto de tu tabla en MySQL
         const query = "INSERT INTO contactos (nombre, email, mensaje, fecha) VALUES (?, ?, ?, NOW())";
         
         db.query(query, [nombre, email, mensaje], (err, result) => {
             if (err) {
-                console.error('Error detallado de MySQL al insertar:', err);
-                return res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error al registrar en la base de datos. Asegúrate de que el nombre de la tabla sea correcto.</div>');
+                // Si la consulta falla por el nombre de la tabla o conexión, lo verás en los logs de Railway
+                console.error('Error interno de MySQL al insertar contacto:', err);
+                return res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error al registrar el mensaje en la base de datos.</div>');
             }
 
-            res.send('<div style="color:green; font-weight:bold; font-family:sans-serif; padding:20px;">¡Mensaje recibido con éxito! Guardado en la base de datos vacía.</div>');
+            // Respuesta limpia en texto/HTML que common.min.js inyectará con éxito en la página
+            res.send('<div style="color:green; font-weight:bold; font-family:sans-serif; padding:20px;">¡Mensaje recibido con éxito! El administrador lo revisará pronto.</div>');
         });
 
     } catch (errorCritico) {
-        console.error('Error crítico en el catch de /api/contacto:', errorCritico);
-        res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error inesperado del servidor.</div>');
+        console.error('Error crítico en el hilo de /api/contacto:', errorCritico);
+        res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error inesperado en el servidor.</div>');
     }
 });
 
