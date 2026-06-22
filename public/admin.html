@@ -722,6 +722,17 @@
             
             document.getElementById(tabId).classList.add('active');
             boton.classList.add('active');
+
+            // ESTO ES LO ÚNICO NUEVO QUE AGREGAMOS:
+            if (tabId === 'tab-preguntas') {
+                cargarPreguntasAdmin();
+            }
+            else if (tabId === 'tab-contacto') {
+                cargarCorreoDestino();
+            } 
+            else if (tabId === 'tab-header') {
+                obtenerDatosHeaderAdmin(); 
+            }
         }
 
         // Cierre de sesión
