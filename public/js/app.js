@@ -656,3 +656,93 @@ async function cargarPreguntasDinamicas() {
         console.error('Error cargando las preguntas:', error);
     }
 }
+
+// CARGAR HEADER DESDE LA BD
+async function cargarHeaderDinamico() {
+    try {
+        const response = await fetch('/api/header-completo');
+        if (!response.ok) throw new Error('No se pudo obtener la configuración del header');
+        const data = await response.json();
+
+        const { config, paginas, redes } = data;
+
+        // 1. ACTUALIZAR EL LOGO Y EL NOMBRE DE LA MARCA (En el header principal)
+        const brandHeader = document.querySelector('.header .brand');
+        if (brandHeader && config) {
+            brandHeader.innerHTML = `
+                <span class="brand_logo theme-element">
+                    ${config.logo_svg || ''}
+                </span>
+                <span class="brand_name">${config.nombre_marca || 'Hosteller'}</span>
+            `;
+            // El link siempre apunta a la raíz '/' dinámica
+            brandHeader.setAttribute('href', '/');
+        }
+
+        // 2. ACTUALIZAR EL LOGO Y NOMBRE DENTRO DEL MENÚ DESPLEGABLE (Móviles / Offcanvas)
+        const brandOffset = document.querySelector('.header_offcanvas-header .brand');
+        if (brandOffset && config) {
+            // Reemplazamos el id del SVG interno para que sea 'brandOffset' si viene en texto plano
+            let logoSvgOffset = config.logo_svg || '';
+            logoSvgOffset = logoSvgOffset.replace('id="brandHeader"', 'id="brandOffset"');
+
+            brandOffset.innerHTML = `
+                <span class="brand_logo theme-element">
+                    ${logoSvgOffset}
+                </span>
+                <span class="brand_name">${config.nombre_marca || 'Hosteller'}</span>
+            `;
+            brandOffset.setAttribute('href', '/');
+        }
+
+        // 3. RENDERIZAR LAS PÁGINAS DEL NAV (MENÚ DINÁMICO)
+        const navList = document.querySelector('.header_nav-list');
+        if (navList && paginas) {
+            navList.innerHTML = ''; // Limpiamos los enlaces estáticos antiguos
+
+            paginas.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'header_nav-list_item';
+
+                // Comprobamos cuál es la página activa basándonos en la URL actual del navegador
+                const esActiva = window.location.pathname === item.url_estetica ? 'active' : '';
+
+                // Usamos la url_estetica (ej: /acerca-de-nosotros o /) en lugar del archivo físico .html
+                li.innerHTML = `
+                    <a class="nav-item ${esActiva}" href="${item.url_estetica}">
+                        ${item.nombre_visible}
+                    </a>
+                `;
+                navList.appendChild(li);
+            });
+        }
+
+        // 4. ACTUALIZAR LOS ENLACES DE LAS REDES SOCIALES
+        const socialsList = document.querySelector('.header_offcanvas .socials');
+        if (socialsList && redes) {
+            socialsList.innerHTML = ''; // Limpiamos las redes estáticas
+
+            redes.forEach(red => {
+                // Solo mostramos la red social si tiene una URL configurada en el panel
+                if (red.url && red.url.trim() !== '') {
+                    const li = document.createElement('li');
+                    li.className = 'list-item';
+                    li.innerHTML = `
+                        <a class="link" href="${red.url}" target="_blank" rel="noopener noreferrer">
+                            <i class="${red.icono}"></i>
+                        </a>
+                    `;
+                    socialsList.appendChild(li);
+                }
+            });
+        }
+
+    } catch (error) {
+        console.error('Error al renderizar el header dinámico:', error);
+    }
+}
+
+// Aseguramos que la función corra automáticamente en cuanto cargue el DOM de cualquier página
+document.addEventListener('DOMContentLoaded', () => {
+    cargarHeaderDinamico();
+});

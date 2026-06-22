@@ -167,6 +167,13 @@
                         Configurar Contacto
                     </button>
 
+                    <button onclick="switchTab('tab-header')" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 text-sm text-slate-600 hover:bg-slate-100 rounded-xl transition-all duration-200">
+                        <svg class="w-5 height-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                        <span>Configurar Header</span>
+                    </button>
+
                     <div class="pt-4 border-t border-slate-100 my-2">
                         <span class="px-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Próximamente</span>
                         <button disabled class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-slate-300 text-left cursor-not-allowed">
@@ -311,6 +318,62 @@
                 </div>
             </section>
 
+            <section id="tab-header" class="tab-content bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <div class="border-b border-slate-100 pb-4 mb-6">
+                    <h2 class="text-xl font-bold text-slate-900">Control de Header y Enrutamiento</h2>
+                    <p class="text-xs text-slate-500 mt-1">Modifica la identidad visual del sitio y personaliza las URLs estéticas (Clean URLs).</p>
+                </div>
+
+                <form id="formMarcaLogo" class="space-y-4 pb-6 border-b border-slate-100">
+                    <h3 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                        <span>⚙️ Identidad Visual</span>
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Nombre de la Marca</label>
+                            <input type="text" id="inputNombreMarca" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all" placeholder="Ej: Hosteller">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Código SVG del Logotipo</label>
+                            <textarea id="inputLogoSvg" rows="1" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all font-mono text-xs" placeholder="<svg ...>...</svg>"></textarea>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm shadow-cyan-100">
+                            Guardar Identidad
+                        </button>
+                    </div>
+                </form>
+
+                <div class="mt-6 pb-6 border-b border-slate-100">
+                    <h3 class="text-sm font-semibold text-slate-700 mb-4">📄 Enlaces del Menú y URLs Limpias</h3>
+                    <div class="overflow-x-auto rounded-xl border border-slate-200">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-500 text-xs font-semibold uppercase border-b border-slate-200">
+                                    <th class="px-4 py-3">Archivo Real (Físico)</th>
+                                    <th class="px-4 py-3">Nombre en el Menú</th>
+                                    <th class="px-4 py-3">URL Estética (En el Navegador)</th>
+                                    <th class="px-4 py-3 text-center">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaPaginasMenu" class="divide-y divide-slate-100 text-slate-700">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <form id="formRedesSociales" class="mt-6">
+                    <h3 class="text-sm font-semibold text-slate-700 mb-4">📱 Redes Sociales del Header</h3>
+                    <div id="contenedorRedes" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        </div>
+                    <div class="mt-6 text-right">
+                        <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm shadow-emerald-100">
+                            Actualizar Redes Sociales
+                        </button>
+                    </div>
+                </form>
+            </section>
         </main>
     </div>
 
@@ -1597,6 +1660,134 @@
         const modal = document.getElementById('modal-contacto');
         modal.classList.replace('flex', 'hidden');
     }
+
+
+// CONTROLADOR DEL HEADER EN EL PANEL DE ADMIN
+
+// 1. Cargar todos los datos actuales desde la Base de Datos e inyectarlos en la interfaz
+async function obtenerDatosHeaderAdmin() {
+    try {
+        const response = await fetch('/api/header-completo');
+        if (!response.ok) return;
+        const data = await response.json();
+
+        // Asignar los valores a los campos de Nombre de la Marca y SVG del Logo
+        document.getElementById('inputNombreMarca').value = data.config.nombre_marca || '';
+        document.getElementById('inputLogoSvg').value = data.config.logo_svg || '';
+
+        // AQUÍ VA EL MAPEO DE LAS PÁGINAS QUE ME PASASTE:
+        const tbody = document.getElementById('tablaPaginasMenu');
+        tbody.innerHTML = '';
+        data.paginas.forEach(p => {
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-50/50 transition-colors";
+            tr.innerHTML = `
+                <td class="px-4 py-3 font-mono text-xs font-bold text-red-500">${p.archivo_real}</td>
+                <td class="px-4 py-3">
+                    <input type="text" class="px-2 py-1 bg-white border border-slate-200 rounded-lg text-sm w-full focus:outline-none focus:ring-1 focus:ring-cyan-500" id="nombre-${p.id}" value="${p.nombre_visible}">
+                </td>
+                <td class="px-4 py-3">
+                    <div class="flex items-center">
+                        <span class="px-2 py-1 bg-slate-100 border border-r-0 border-slate-200 rounded-l-lg text-slate-400 text-sm">/</span>
+                        <input type="text" class="px-2 py-1 bg-white border border-slate-200 rounded-r-lg text-sm w-full focus:outline-none focus:ring-1 focus:ring-cyan-500" id="url-${p.id}" value="${p.url_estetica.replace(/^\//, '')}">
+                    </div>
+                </td>
+                <td class="px-4 py-3 text-center">
+                    <button type="button" onclick="guardarCambiosPagina(${p.id})" class="px-3 py-1 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-cyan-600 shadow-sm transition-all">
+                        Actualizar
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // AQUÍ VA EL MAPEO DE LAS REDES SOCIALES QUE ME PASASTE:
+        const contenedorRedes = document.getElementById('contenedorRedes');
+        contenedorRedes.innerHTML = '';
+        data.redes.forEach(red => {
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <label class="block text-xs font-medium text-slate-500 mb-1 capitalize">Enlace de ${red.red}</label>
+                <input type="url" class="input-red-social w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all" data-id="${red.id}" value="${red.url}" placeholder="https://...">
+            `;
+            contenedorRedes.appendChild(div);
+        });
+
+    } catch (error) {
+        console.error('Error al obtener datos del header en admin:', error);
+    }
+}
+
+// 2. Procesar el envío del Formulario de Identidad (Marca y Logo)
+document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const nombre_marca = document.getElementById('inputNombreMarca').value;
+    const logo_svg = document.getElementById('inputLogoSvg').value;
+
+    try {
+        const res = await fetch('/api/header/config', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nombre_marca, logo_svg })
+        });
+        const data = await res.json();
+        if (data.success) alert('¡Identidad de marca y logo actualizados!');
+    } catch (err) {
+        alert('Error al guardar la configuración de marca.');
+    }
+});
+
+// 3. Función para actualizar una página individual de la tabla
+async function guardarCambiosPagina(id) {
+    const nombre_visible = document.getElementById(`nombre-${id}`).value;
+    let url_estetica = document.getElementById(`url-${id}`).value;
+
+    try {
+        const res = await fetch(`/api/header/pagina/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nombre_visible, url_estetica })
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert('¡Enlace y nombre del menú actualizados!');
+            obtenerDatosHeaderAdmin(); // Recarga los datos para normalizar la barra "/"
+        }
+    } catch (err) {
+        alert('Error al actualizar la página.');
+    }
+}
+
+// 4. Procesar la actualización en lote de todas las Redes Sociales
+document.getElementById('formRedesSociales')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const inputs = document.querySelectorAll('.input-red-social');
+    const enlaces = [];
+
+    inputs.forEach(input => {
+        enlaces.push({
+            id: input.getAttribute('data-id'),
+            url: input.value
+        });
+    });
+
+    try {
+        const res = await fetch('/api/header/redes', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enlaces })
+        });
+        const data = await res.json();
+        if (data.success) alert('¡Enlaces de redes sociales actualizados!');
+    } catch (err) {
+        alert('Error al guardar las redes sociales.');
+    }
+});
+
+// 5. Asegurar que carguen los datos al entrar al panel de administración
+document.addEventListener('DOMContentLoaded', () => {
+    obtenerDatosHeaderAdmin();
+});
 
 </script>
 

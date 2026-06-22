@@ -846,6 +846,119 @@ app.put('/api/config/correo', (req, res) => {
     });
 });
 
+// PARA CONTROLAR TODO EL HEADER (PANEL DE ADMIN)
+
+// Obtener toda la información estructurada para armar el Header dinámico
+app.get('/api/header-completo', (req, res) => {
+    // Usamos consultas paralelas para traer todo al mismo tiempo de manera eficiente
+    const qGeneral = "SELECT clave, valor FROM configuracion_general";
+    const qMenu = "SELECT * FROM menu_paginas ORDER BY orden ASC";
+    const qRedes = "SELECT * FROM redes_sociales";
+
+    db.query(qGeneral, (errGen, resGen) => {
+        if (errGen) return res.status(500).json({ error: 'Error al obtener config general' });
+
+        db.query(qMenu, (errMenu, resMenu) => {
+            if (errMenu) return res.status(500).json({ error: 'Error al obtener páginas del menú' });
+
+            db.query(qRedes, (errRedes, resRedes) => {
+                if (errRedes) return res.status(500).json({ error: 'Error al obtener redes sociales' });
+
+                // Estructuramos la respuesta convirtiendo la config general en un objeto limpio
+                const configObj = {};
+                resGen.forEach(item => { configObj[item.clave] = item.valor; });
+
+                res.json({
+                    config: configObj,
+                    paginas: resMenu,
+                    redes: resRedes
+                });
+            });
+        });
+    });
+});
+
+// Actualizar Configuración General (Nombre de Marca y SVG del Logo)
+app.put('/api/header/config', (req, res) => {
+    const { nombre_marca, logo_svg } = req.body;
+    
+    const queryMarca = "UPDATE configuracion_general SET valor = ? WHERE clave = 'nombre_marca'";
+    const queryLogo = "UPDATE configuracion_general SET valor = ? WHERE clave = 'logo_svg'";
+
+    db.query(queryMarca, [nombre_marca], (err) => {
+        if (err) return res.status(500).json({ error: 'Error al actualizar el nombre de la marca' });
+        
+        db.query(queryLogo, [logo_svg], (err2) => {
+            if (err2) return res.status(500).json({ error: 'Error al actualizar el SVG del logo' });
+            res.json({ success: true, message: 'Configuración general del header actualizada' });
+        });
+    });
+});
+
+// Actualizar una página específica del menú (Nombre visible y su URL estética)
+app.put('/api/header/pagina/:id', (req, res) => {
+    const { id } = req.params;
+    const { nombre_visible, url_estetica } = req.body;
+
+    // Normalizar la URL: Asegurar que comience con '/' y formatear espacios como guiones
+    let urlLimpia = url_estetica.trim().toLowerCase();
+    if (!urlLimpia.startsWith('/')) {
+        urlLimpia = '/' + urlLimpia;
+    }
+    urlLimpia = urlLimpia.replace(/\s+/g, '-');
+
+    const query = "UPDATE menu_paginas SET nombre_visible = ?, url_estetica = ? WHERE id = ?";
+    db.query(query, [nombre_visible, urlLimpia, id], (err, result) => {
+        if (err) return res.status(500).json({ error: 'Error al actualizar la página en la base de datos' });
+        res.json({ success: true, message: 'Página actualizada con éxito' });
+    });
+});
+
+// Actualizar los enlaces de las Redes Sociales
+app.put('/api/header/redes', (req, res) => {
+    const { enlaces } = req.body; // Se espera un arreglo de objetos [{ id: 1, url: '...' }]
+    
+    if (!Array.isArray(enlaces)) return res.status(400).json({ error: 'Formato de datos inválido' });
+
+    let errores = 0;
+    enlaces.forEach(red => {
+        db.query("UPDATE redes_sociales SET url = ? WHERE id = ?", [red.url, red.id], (err) => {
+            if (err) errores++;
+        });
+    });
+
+    setTimeout(() => {
+        if (errores > 0) return res.status(500).json({ error: 'Ocurrieron algunos errores al actualizar las redes' });
+        res.json({ success: true, message: 'Redes sociales actualizadas correctamente' });
+    }, 400); // Pequeña espera para asegurar la ejecución de los queries distribuidos
+});
+
+// URLS DINÁMICAS
+
+// Captura cualquier ruta limpia escrita en el navegador (ej: /acerca-de-nosotros, /habitaciones)
+app.get('/:pageSlug', (req, res, next) => {
+    const slug = '/' + req.params.pageSlug;
+
+    // Buscamos si el slug escrito coincide con alguna 'url_estetica' de la base de datos
+    db.query('SELECT archivo_real FROM menu_paginas WHERE url_estetica = ?', [slug], (err, results) => {
+        if (!err && results && results.length > 0) {
+            // ¡Magia! El cliente ve la URL limpia, pero el servidor responde mandando el archivo HTML original
+            return res.sendFile(path.join(__dirname, 'public', results[0].archivo_real));
+        }
+        // Si no existe en la base de datos, deja que Express continúe buscando en sus archivos estáticos u otras rutas
+        next();
+    });
+});
+
+// Ruta raíz especial (/) para renderizar dinámicamente la página de inicio original
+app.get('/', (req, res) => {
+    db.query("SELECT archivo_real FROM menu_paginas WHERE url_estetica = '/'", (err, results) => {
+        const archivo = (results && results.length > 0) ? results[0].archivo_real : 'index.html';
+        res.sendFile(path.join(__dirname, 'public', archivo));
+    });
+});
+
+
 cron.schedule('*/5 * * * *', () => {
     sincronizarCalendarios();
 });
