@@ -726,38 +726,29 @@ app.delete('/api/faqs/:id', (req, res) => {
     });
 });
 
-// Ruta dedicada para el formulario de contacto (Feedback)
+// Ruta dedicada para el formulario de contacto 
 app.post('/api/contacto', (req, res) => {
     try {
-        // Capturamos los datos soportando tanto el formato estructurado como el nativo de la plantilla
-        const nombre = req.body.feedbackName || req.body.name || req.body.nombre;
-        const email = req.body.feedbackEmail || req.body.email;
-        const mensaje = req.body.feedbackMessage || req.body.message || req.body.mensaje;
+        // Capturamos todas las posibles variantes que puede enviar la plantilla
+        const nombre = req.body.name || req.body.feedbackName || req.body.nombre || "Remitente Anónimo";
+        const email = req.body.email || req.body.feedbackEmail || "sin-correo@ruumis.com";
+        const mensaje = req.body.message || req.body.feedbackMessage || req.body.mensaje || "Sin mensaje.";
 
-        // Validamos que no vengan vacíos
-        if (!nombre || !email || !mensaje) {
-            console.log("Campos incompletos recibidos:", req.body);
-            return res.status(400).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Todos los campos son obligatorios.</div>');
-        }
-
-        // ⚠️ IMPORTANTE: Cambia 'contactos' por el nombre exacto que le pusiste a tu tabla en Workbench
-        // Si tu tabla se llama exactamente 'contactos', déjalo así.
+        // ⚠️ Asegúrate de que la palabra 'contactos' sea el nombre exacto de tu tabla en Railway
         const query = "INSERT INTO contactos (nombre, email, mensaje, fecha) VALUES (?, ?, ?, NOW())";
         
         db.query(query, [nombre, email, mensaje], (err, result) => {
             if (err) {
-                console.error('Error interno de MySQL al insertar contacto:', err);
-                // Si la consulta falla por el nombre de la tabla, devolvemos un mensaje claro en la consola de Railway
-                return res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error al registrar el mensaje en la base de datos.</div>');
+                console.error('Error detallado de MySQL al insertar:', err);
+                return res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error al registrar en la base de datos. Asegúrate de que el nombre de la tabla sea correcto.</div>');
             }
 
-            // Respuesta limpia en formato HTML que tu common.min.js inyectará con éxito en la página
-            res.send('<div style="color:green; font-weight:bold; font-family:sans-serif; padding:20px;">¡Mensaje recibido con éxito! El administrador se pondrá en contacto pronto.</div>');
+            res.send('<div style="color:green; font-weight:bold; font-family:sans-serif; padding:20px;">¡Mensaje recibido con éxito! Guardado en la base de datos vacía.</div>');
         });
 
     } catch (errorCritico) {
-        console.error('Error crítico en el hilo de /api/contacto:', errorCritico);
-        res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error inesperado en el servidor.</div>');
+        console.error('Error crítico en el catch de /api/contacto:', errorCritico);
+        res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error inesperado del servidor.</div>');
     }
 });
 
