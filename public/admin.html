@@ -1493,47 +1493,52 @@ async function obtenerDatosHeaderAdmin() {
         if (!response.ok) return;
         const data = await response.json();
 
-        // Asignar los valores a los campos de Nombre de la Marca y SVG del Logo
-        document.getElementById('inputNombreMarca').value = data.config.nombre_marca || '';
-        document.getElementById('inputLogoSvg').value = data.config.logo_svg || '';
+        // COREGIDO: Cambiado data.config por data.visuales para que coincida con server.js
+        const visuales = data.visuales || {};
+        document.getElementById('inputNombreMarca').value = visuales.nombre_marca || '';
+        document.getElementById('inputLogoSvg').value = visuales.logo_svg || '';
 
-        // Mapeo directo en las filas de la tabla
+        // El mapeo de las páginas
         const tbody = document.getElementById('tablaPaginasMenu');
-        tbody.innerHTML = '';
-        data.paginas.forEach(p => {
-            const tr = document.createElement('tr');
-            tr.className = "hover:bg-slate-50/50 transition-colors";
-            tr.innerHTML = `
-                <td class="px-4 py-3 font-mono text-xs font-bold text-red-500">${p.archivo_real}</td>
-                <td class="px-4 py-3">
-                    <input type="text" class="px-2 py-1 bg-white border border-slate-200 rounded-lg text-sm w-full focus:outline-none focus:ring-1 focus:ring-cyan-500" id="nombre-${p.id}" value="${p.nombre_visible}">
-                </td>
-                <td class="px-4 py-3">
-                    <div class="flex items-center">
-                        <span class="px-2 py-1 bg-slate-100 border border-r-0 border-slate-200 rounded-l-lg text-slate-400 text-sm">/</span>
-                        <input type="text" class="px-2 py-1 bg-white border border-slate-200 rounded-r-lg text-sm w-full focus:outline-none focus:ring-1 focus:ring-cyan-500" id="url-${p.id}" value="${p.url_estetica.replace(/^\//, '')}">
-                    </div>
-                </td>
-                <td class="px-4 py-3 text-center">
-                    <button type="button" onclick="guardarCambiosPagina(${p.id})" class="px-3 py-1 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-cyan-600 shadow-sm transition-all cursor-pointer">
-                        Actualizar
-                    </button>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
+        if (tbody) {
+            tbody.innerHTML = '';
+            data.paginas.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/50 transition-colors";
+                tr.innerHTML = `
+                    <td class="px-4 py-3 font-mono text-xs font-bold text-red-500">${p.archivo_real}</td>
+                    <td class="px-4 py-3">
+                        <input type="text" class="px-2 py-1 bg-white border border-slate-200 rounded-lg text-sm w-full focus:outline-none focus:ring-1 focus:ring-cyan-500" id="nombre-${p.id}" value="${p.nombre_visible}">
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center">
+                            <span class="px-2 py-1 bg-slate-100 border border-r-0 border-slate-200 rounded-l-lg text-slate-400 text-sm">/</span>
+                            <input type="text" class="px-2 py-1 bg-white border border-slate-200 rounded-r-lg text-sm w-full focus:outline-none focus:ring-1 focus:ring-cyan-500" id="url-${p.id}" value="${p.url_estetica.replace(/^\//, '')}">
+                        </div>
+                    </td>
+                    <td class="px-4 py-3 text-center">
+                        <button type="button" onclick="guardarCambiosPagina(${p.id})" class="px-3 py-1 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-cyan-600 shadow-sm transition-all cursor-pointer">
+                            Actualizar
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
 
-        // Mapeo dinámico de las Redes Sociales
+        // El mapeo de las redes sociales
         const contenedorRedes = document.getElementById('contenedorRedes');
-        contenedorRedes.innerHTML = '';
-        data.redes.forEach(red => {
-            const div = document.createElement('div');
-            div.innerHTML = `
-                <label class="block text-xs font-medium text-slate-500 mb-1 capitalize">Enlace de ${red.red}</label>
-                <input type="url" class="input-red-social w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all" data-id="${red.id}" value="${red.url || ''}" placeholder="https://...">
-            `;
-            contenedorRedes.appendChild(div);
-        });
+        if (contenedorRedes) {
+            contenedorRedes.innerHTML = '';
+            data.redes.forEach(red => {
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <label class="block text-xs font-medium text-slate-500 mb-1 capitalize">Enlace de ${red.red}</label>
+                    <input type="url" class="input-red-social w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all" data-id="${red.id}" value="${red.url || ''}" placeholder="https://...">
+                `;
+                contenedorRedes.appendChild(div);
+            });
+        }
 
     } catch (error) {
         console.error('Error al obtener datos del header en admin:', error);
@@ -1552,8 +1557,13 @@ document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) =
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ nombre_marca, logo_svg })
         });
-        const data = await res.json();
-        if (data.success) alert('¡Identidad de marca y logo actualizados!');
+        // CORREGIDO: Tu endpoint responde con un OK limpio o un mensaje si todo sale bien
+        if (res.ok) {
+            alert('¡Identidad de marca y logo actualizados!');
+            obtenerDatosHeaderAdmin();
+        } else {
+            alert('Error al actualizar los datos en el servidor.');
+        }
     } catch (err) {
         alert('Error al guardar la configuración de marca.');
     }
@@ -1570,10 +1580,12 @@ async function guardarCambiosPagina(id) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ nombre_visible, url_estetica })
         });
-        const data = await res.json();
-        if (data.success) {
+        // CORREGIDO: Cambiado de data.success a res.ok
+        if (res.ok) {
             alert('¡Enlace y nombre del menú actualizados!');
             obtenerDatosHeaderAdmin(); 
+        } else {
+            alert('No se pudo actualizar el enlace.');
         }
     } catch (err) {
         alert('Error al actualizar la página.');
@@ -1599,8 +1611,13 @@ document.getElementById('formRedesSociales')?.addEventListener('submit', async (
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ enlaces })
         });
-        const data = await res.json();
-        if (data.success) alert('¡Enlaces de redes sociales actualizados!');
+        // CORREGIDO: Cambiado de data.success a res.ok
+        if (res.ok) {
+            alert('¡Enlaces de redes sociales actualizados!');
+            obtenerDatosHeaderAdmin();
+        } else {
+            alert('No se pudieron guardar las redes.');
+        }
     } catch (err) {
         alert('Error al guardar las redes sociales.');
     }
