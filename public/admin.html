@@ -167,11 +167,8 @@
                         Configurar Contacto
                     </button>
 
-                    <button onclick="abrirModalHeader()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-all text-left cursor-pointer">
-                        <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                        </svg>
-                        <span>Configurar Header</span>
+                    <button onclick="cambiarPestana('tab-header', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-all text-left">
+                        Configurar Header
                     </button>
 
                     <div class="pt-4 border-t border-slate-100 my-2">
@@ -302,85 +299,82 @@
             </section>
 
             <section id="tab-contacto" class="tab-content space-y-6">
-                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                    <div class="mb-4">
-                        <h2 class="text-xl font-bold text-slate-900">Configuración de Mensajes de Contacto</h2>
-                        <p class="text-slate-500 text-sm mt-0.5">Define a qué correo electrónico llegarán los formularios de contacto rellenados por los usuarios.</p>
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900">Configuración de Mensajes de Contacto</h2>
+                        <p class="text-slate-500 text-sm">Define y administra el correo electrónico al cual llegarán las notificaciones del sitio.</p>
                     </div>
-                    
-                    <div class="max-w-md space-y-4">
-                        <div>
-                            <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Correo Electrónico de Destino</label>
-                            <div class="flex gap-2">
-                                <input type="email" id="config-email-destino" disabled placeholder="ejemplo@correo.com" 
-                                    class="flex-1 bg-slate-100 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 focus:outline-none focus:border-cyan-500 disabled:opacity-70 transition-all">
-                                
-                                <button type="button" id="btn-editar-correo" onclick="toggleEditarCorreo()" 
-                                        class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold transition-colors cursor-pointer">
-                                    Editar
-                                </button>
-                            </div>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm max-w-2xl">
+                    <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-3">Correo configurado actualmente</h3>
+                    <div class="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl p-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">📩</span>
+                            <input type="email" id="vista-email-actual" readonly class="bg-transparent border-none text-slate-800 font-semibold text-sm focus:outline-none w-64" value="Cargando...">
                         </div>
+                        <button onclick="abrirModalEditarCorreo()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 text-xs font-bold px-4 py-2 rounded-xl transition-colors shadow-sm cursor-pointer">
+                            Modificar Correo
+                        </button>
                     </div>
                 </div>
             </section>
 
-            <section id="tab-header" class="tab-content bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                <div class="border-b border-slate-100 pb-4 mb-6">
-                    <h2 class="text-xl font-bold text-slate-900">Control de Header y Enrutamiento</h2>
-                    <p class="text-xs text-slate-500 mt-1">Modifica la identidad visual del sitio y personaliza las URLs estéticas (Clean URLs).</p>
+            <section id="tab-header" class="tab-content space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900">Control de Header y Enrutamiento</h2>
+                        <p class="text-slate-500 text-sm">Administra la identidad de marca, los enlaces del menú y tus enlaces estéticos de navegación.</p>
+                    </div>
                 </div>
 
-                <form id="formMarcaLogo" class="space-y-4 pb-6 border-b border-slate-100">
-                    <h3 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                        <span>⚙️ Identidad Visual</span>
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                        <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">⚙️ Identidad Visual</h3>
+                        <button onclick="abrirModalMarca()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg transition-all">Editar Identidad</button>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                         <div>
-                            <label class="block text-xs font-medium text-slate-500 mb-1">Nombre de la Marca</label>
-                            <input type="text" id="inputNombreMarca" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all" placeholder="Ej: Hosteller">
+                            <span class="block text-xs font-semibold text-slate-400">Nombre de la Marca:</span>
+                            <p id="vista-nombre-marca" class="font-medium text-slate-800 mt-1">Cargando...</p>
                         </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-xs font-medium text-slate-500 mb-1">Código SVG del Logotipo</label>
-                            <textarea id="inputLogoSvg" rows="1" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all font-mono text-xs" placeholder="<svg ...>...</svg>"></textarea>
+                        <div>
+                            <span class="block text-xs font-semibold text-slate-400">Logotipo (SVG):</span>
+                            <p class="font-mono text-xs text-slate-500 mt-1 truncate max-w-xs" id="vista-logo-svg">Cargando...</p>
                         </div>
                     </div>
-                    <div class="text-right">
-                        <button type="submit" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm shadow-cyan-100">
-                            Guardar Identidad
-                        </button>
-                    </div>
-                </form>
+                </div>
 
-                <div class="mt-6 pb-6 border-b border-slate-100">
-                    <h3 class="text-sm font-semibold text-slate-700 mb-4">📄 Enlaces del Menú y URLs Limpias</h3>
-                    <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                    <div class="p-4 border-b border-slate-100 bg-slate-50/50">
+                        <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">📄 Enlaces del Menú y URLs Limpias</h3>
+                    </div>
+                    <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
-                                <tr class="bg-slate-50 text-slate-500 text-xs font-semibold uppercase border-b border-slate-200">
-                                    <th class="px-4 py-3">Archivo Real (Físico)</th>
-                                    <th class="px-4 py-3">Nombre en el Menú</th>
-                                    <th class="px-4 py-3">URL Estética (En el Navegador)</th>
-                                    <th class="px-4 py-3 text-center">Acción</th>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
+                                    <th class="p-4">Archivo Físico</th>
+                                    <th class="p-4">Nombre en Menú</th>
+                                    <th class="p-4">URL Estética</th>
+                                    <th class="p-4 text-center w-32">Acción</th>
                                 </tr>
                             </thead>
-                            <tbody id="tablaPaginasMenu" class="divide-y divide-slate-100 text-slate-700">
+                            <tbody id="tablaPaginasMenu" class="divide-y divide-slate-100">
                                 </tbody>
                         </table>
                     </div>
                 </div>
 
-                <form id="formRedesSociales" class="mt-6">
-                    <h3 class="text-sm font-semibold text-slate-700 mb-4">📱 Redes Sociales del Header</h3>
-                    <div id="contenedorRedes" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        </div>
-                    <div class="mt-6 text-right">
-                        <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm shadow-emerald-100">
-                            Actualizar Redes Sociales
-                        </button>
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-3 mb-4">
+                        <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">📱 Redes Sociales</h3>
+                        <button onclick="abrirModalRedes()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg transition-all">Modificar Redes</button>
                     </div>
-                </form>
+                    <div id="contenedorRedesVista" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600">
+                        </div>
+                </div>
             </section>
+
         </main>
     </div>
 
@@ -602,118 +596,106 @@
         </div>
     </div>
 
-    <div id="modal-contacto" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar animate-in fade-in zoom-in-95 duration-150">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
-            <div>
-                <h3 class="font-black text-xl text-slate-900">Detalles del Mensaje</h3>
-                <p class="text-slate-400 text-xs mt-0.5" id="contacto-fecha">Recibido el: --/--/----</p>
-            </div>
-            <button onclick="cerrarModalContacto()" class="text-slate-400 hover:text-slate-600 cursor-pointer">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-        </div>
-        
-        <div class="space-y-4 mb-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Nombre del Remitente</label>
-                    <div id="contacto-nombre" class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-sm text-slate-800 font-medium"></div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Correo Electrónico</label>
-                    <div id="contacto-email" class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-2.5 text-sm text-slate-800 font-medium break-all"></div>
-                </div>
-            </div>
-            
-            <div>
-                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Mensaje enviado</label>
-                <div id="contacto-mensaje" class="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm text-slate-700 whitespace-pre-line min-h-[120px]"></div>
-            </div>
-        </div>
-        
-        <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
-            <button type="button" onclick="cerrarModalContacto()" class="px-5 py-2 rounded-xl text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer">Cerrar</button>
-            <a id="btn-responder-contacto" href="#" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold px-5 py-2 rounded-xl text-sm shadow-sm transition-colors cursor-pointer inline-flex items-center gap-1.5">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 002-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                </svg>
-                Responder por Correo
-            </a>
-        </div>
-    </div>
-    </div>
-
-    <div id="modal-header" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden justify-center items-center z-50 p-4 transition-all">
-        <div class="bg-white rounded-2xl w-full max-w-4xl shadow-xl border border-slate-100 max-h-[90vh] flex flex-col" onclick="event.stopPropagation()">
-            
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-900 text-white rounded-t-2xl">
-                <div>
-                    <h2 class="text-lg font-bold">Control de Header y Enrutamiento</h2>
-                    <p class="text-xs text-slate-400 mt-0.5">Modifica la identidad visual del sitio y las URLs estéticas.</p>
-                </div>
-                <button onclick="cerrarModalHeader()" class="text-slate-400 hover:text-white transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
+    <div id="modal-editar-correo" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-lg p-6 shadow-xl">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
+                <h3 class="font-black text-lg text-slate-900">Modificar Correo de Destino</h3>
+                <button onclick="cerrarModalEditarCorreo()" class="text-slate-400 hover:text-slate-600 cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
-
-            <div class="p-6 overflow-y-auto space-y-6 custom-scrollbar flex-1">
-                
-                <form id="formMarcaLogo" class="space-y-4 pb-6 border-b border-slate-100">
-                    <h3 class="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                        <span> Identidad Visual</span>
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-xs font-medium text-slate-500 mb-1">Nombre de la Marca</label>
-                            <input type="text" id="inputNombreMarca" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all" placeholder="Ej: Hosteller">
-                        </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-xs font-medium text-slate-500 mb-1">Código SVG del Logotipo</label>
-                            <textarea id="inputLogoSvg" rows="1" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all font-mono text-xs" placeholder="<svg ...>...</svg>"></textarea>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <button type="submit" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm">
-                            Guardar Identidad
-                        </button>
-                    </div>
-                </form>
-
-                <div class="pb-6 border-b border-slate-100">
-                    <h3 class="text-sm font-semibold text-slate-700 mb-4">Enlaces del Menú y URLs Limpias</h3>
-                    <div class="overflow-x-auto rounded-xl border border-slate-200">
-                        <table class="w-full text-left border-collapse text-sm">
-                            <thead>
-                                <tr class="bg-slate-50 text-slate-500 text-xs font-semibold uppercase border-b border-slate-200">
-                                    <th class="px-4 py-3">Archivo Real (Físico)</th>
-                                    <th class="px-4 py-3">Nombre en el Menú</th>
-                                    <th class="px-4 py-3">URL Estética (En el Navegador)</th>
-                                    <th class="px-4 py-3 text-center">Acción</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tablaPaginasMenu" class="divide-y divide-slate-100 text-slate-700">
-                                </tbody>
-                        </table>
+            
+            <form onsubmit="guardarCorreoDestinoNuevo(event)">
+                <div class="space-y-4 mb-6">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Nuevo Correo Electrónico</label>
+                        <input type="email" id="config-email-destino-nuevo" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-cyan-500 transition-colors">
                     </div>
                 </div>
+                
+                <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+                    <button type="button" onclick="cerrarModalEditarCorreo()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 transition-colors cursor-pointer">Cancelar</button>
+                    <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs shadow-sm transition-colors cursor-pointer">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-                <form id="formRedesSociales">
-                    <h3 class="text-sm font-semibold text-slate-700 mb-4">Redes Sociales del Header</h3>
-                    <div id="contenedorRedes" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        </div>
-                    <div class="mt-6 text-right">
-                        <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm">
-                            Actualizar Redes Sociales
-                        </button>
-                    </div>
-                </form>
-
+    <div id="modal-header-marca" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-lg p-6 shadow-xl">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
+                <h3 class="font-black text-lg text-slate-900">Editar Marca e Identidad</h3>
+                <button onclick="cerrarModalMarca()" class="text-slate-400 hover:text-slate-600 cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
             </div>
+            <form id="formMarcaLogo">
+                <div class="space-y-4 mb-6">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Nombre de la Marca</label>
+                        <input type="text" id="inputNombreMarca" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-cyan-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Código SVG del Logotipo</label>
+                        <textarea id="inputLogoSvg" required rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-mono focus:outline-none focus:border-cyan-500 resize-none"></textarea>
+                    </div>
+                </div>
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+                    <button type="button" onclick="cerrarModalMarca()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100">Cancelar</button>
+                    <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs shadow-sm">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-header-pagina" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-lg p-6 shadow-xl">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
+                <h3 class="font-black text-lg text-slate-900">Editar Configuración de Enlace</h3>
+                <button onclick="cerrarModalPagina()" class="text-slate-400 hover:text-slate-600 cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <form id="form-editar-pagina" onsubmit="enviarCambiosPagina(event)">
+                <input type="hidden" id="edit-pagina-id">
+                <div class="space-y-4 mb-6">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Archivo Real</label>
+                        <input type="text" id="edit-pagina-archivo" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Nombre en Menú</label>
+                        <input type="text" id="edit-pagina-nombre" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-cyan-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">URL Estética</label>
+                        <input type="text" id="edit-pagina-url" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-cyan-500">
+                    </div>
+                </div>
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+                    <button type="button" onclick="cerrarModalPagina()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100">Cancelar</button>
+                    <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs shadow-sm">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-header-redes" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-xl p-6 shadow-xl">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
+                <h3 class="font-black text-lg text-slate-900">Modificar Enlaces de Redes Sociales</h3>
+                <button onclick="cerrarModalRedes()" class="text-slate-400 hover:text-slate-600 cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <form id="formRedesSociales">
+                <div id="contenedorRedesInputs" class="space-y-4 mb-6 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
+                    </div>
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+                    <button type="button" onclick="cerrarModalRedes()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100">Cancelar</button>
+                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2.5 rounded-xl text-xs shadow-sm">Actualizar Todo</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -1453,137 +1435,54 @@
         } catch (err) { console.error(err); }
     }
 
-    function abrirModalContacto(nombre, email, mensaje, fecha) {
-    document.getElementById('contacto-nombre').innerText = nombre;
-    document.getElementById('contacto-email').innerText = email;
-    document.getElementById('contacto-mensaje').innerText = mensaje;
-    if(fecha) {
-        document.getElementById('contacto-fecha').innerText = `Recibido el: ${new Date(fecha).toLocaleString()}`;
-    }
-    
-    // Configura el botón de responder para que abra el cliente de correo del admin listo para escribirle
-    document.getElementById('btn-responder-contacto').href = `mailto:${email}?subject=RE: Contacto Ruumis`;
-
-    const modal = document.getElementById('modal-contacto');
-    modal.classList.replace('hidden', 'flex');
-}
-
     // --- FUNCIONES DE CONFIGURACIÓN DE CORREO DESTINO ---
-
 async function cargarCorreoDestino() {
     try {
         const res = await fetch('/api/config/correo');
         const data = await res.json();
         if (data.correo) {
-            document.getElementById('config-email-destino').value = data.correo;
+            document.getElementById('vista-email-actual').value = data.correo;
+            document.getElementById('config-email-destino-nuevo').value = data.correo;
         }
     } catch (err) {
         console.error("Error al cargar el correo de configuración:", err);
     }
 }
 
-// 🔀 Alternar dinámicamente entre el modo visual de Lectura (Editar) y de Envío (Guardar)
-async function toggleEditarCorreo() {
-    const inputCorreo = document.getElementById('config-email-destino');
-    const btnEditar = document.getElementById('btn-editar-correo');
-
-    // 1. Si el input está "disabled", el usuario quiere EDITARLO
-    if (inputCorreo.disabled) {
-        inputCorreo.disabled = false;
-        // Cambiamos el fondo grisáceo por uno blanco para notar la edición
-        inputCorreo.classList.remove('bg-slate-50', 'text-slate-600');
-        inputCorreo.classList.add('bg-white', 'text-slate-900', 'border-cyan-500');
-        inputCorreo.focus();
-        
-        // Convertimos el botón visualmente a estado de guardado activo (Estilo Cyan)
-        btnEditar.innerText = "Guardar";
-        btnEditar.classList.remove('bg-slate-900', 'text-white');
-        btnEditar.classList.add('bg-cyan-500', 'text-slate-950');
-    } 
-    // 2. Si el input ya estaba editable, significa que al darle clic quieren GUARDAR en la base de datos
-    else {
-        const correo = inputCorreo.value.trim();
-        if (!correo) return alert("El correo electrónico es requerido.");
-
-        try {
-            // Reutilizamos tu fetch original exacto
-            const res = await fetch('/api/config/correo', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ correo })
-            });
-            const data = await res.json();
-            
-            if (res.ok) {
-                alert("¡Correo de destino actualizado correctamente!");
-                
-                // Volvemos a bloquear el input para que quede protegido en modo lectura
-                inputCorreo.disabled = true;
-                inputCorreo.classList.remove('bg-white', 'text-slate-900', 'border-cyan-500');
-                inputCorreo.classList.add('bg-slate-50', 'text-slate-600');
-                
-                // Restauramos el botón a su diseño original oscuro de "Editar"
-                btnEditar.innerText = "Editar";
-                btnEditar.classList.remove('bg-cyan-500', 'text-slate-950');
-                btnEditar.classList.add('bg-slate-900', 'text-white');
-            } else {
-                alert(data.error || "Error al actualizar");
-            }
-        } catch (err) {
-            console.error("Error al guardar configuración:", err);
-            alert("Ocurrió un error al conectar con el servidor.");
-        }
-    }
+function abrirModalEditarCorreo() {
+    const correoActual = document.getElementById('vista-email-actual').value;
+    document.getElementById('config-email-destino-nuevo').value = correoActual;
+    document.getElementById('modal-editar-correo').classList.replace('hidden', 'flex');
 }
 
-async function guardarCorreoDestino(e) {
-        e.preventDefault();
-        const correo = document.getElementById('config-email-destino').value;
-        
-        try {
-            const res = await fetch('/api/config/correo', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ correo })
-            });
-            const data = await res.json();
-            if (res.ok) {
-                alert("¡Correo de destino actualizado correctamente!");
-            } else {
-                alert(data.error || "Error al actualizar");
-            }
-        } catch (err) {
-            console.error("Error al guardar configuración:", err);
-        }
+function cerrarModalEditarCorreo() {
+    document.getElementById('modal-editar-correo').classList.replace('flex', 'hidden');
 }
 
-    function abrirModalContacto(nombre, email, mensaje, fecha) {
-        document.getElementById('contacto-nombre').innerText = nombre;
-        document.getElementById('contacto-email').innerText = email;
-        document.getElementById('contacto-mensaje').innerText = mensaje;
-        if(fecha) {
-            document.getElementById('contacto-fecha').innerText = `Recibido el: ${new Date(fecha).toLocaleString()}`;
-        }
-        document.getElementById('btn-responder-contacto').href = `mailto:${email}?subject=RE: Contacto Ruumis`;
-
-        const modal = document.getElementById('modal-contacto');
-        modal.classList.replace('hidden', 'flex');
-    }
-
-    function cerrarModalContacto() {
-        const modal = document.getElementById('modal-contacto');
-        modal.classList.replace('flex', 'hidden');
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-    // 1. Carga los mensajes de la tabla (tu función existente)
-    if (typeof cargarMensajes === 'function') {
-        cargarMensajes(); 
-    }
+async function guardarCorreoDestinoNuevo(e) {
+    e.preventDefault();
+    const correo = document.getElementById('config-email-destino-nuevo').value;
     
-    // 2. Carga el correo actual de la BD en el input bloqueado
-    cargarCorreoDestino(); 
-    });
+    try {
+        const res = await fetch('/api/config/correo', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ correo })
+        });
+        const data = await res.json();
+        if (res.ok) {
+            alert("¡Correo de destino actualizado correctamente!");
+            cerrarModalEditarCorreo();
+            cargarCorreoDestino(); // Recarga la vista base
+        } else {
+            alert(data.error || "Error al actualizar");
+        }
+    } catch (err) {
+        console.error("Error al guardar configuración:", err);
+    }
+}
+
+
 
 // CONTROLADOR DEL HEADER EN EL PANEL DE ADMIN
 
@@ -1598,7 +1497,7 @@ async function obtenerDatosHeaderAdmin() {
         document.getElementById('inputNombreMarca').value = data.config.nombre_marca || '';
         document.getElementById('inputLogoSvg').value = data.config.logo_svg || '';
 
-        // AQUÍ VA EL MAPEO DE LAS PÁGINAS QUE ME PASASTE:
+        // Mapeo directo en las filas de la tabla
         const tbody = document.getElementById('tablaPaginasMenu');
         tbody.innerHTML = '';
         data.paginas.forEach(p => {
@@ -1616,7 +1515,7 @@ async function obtenerDatosHeaderAdmin() {
                     </div>
                 </td>
                 <td class="px-4 py-3 text-center">
-                    <button type="button" onclick="guardarCambiosPagina(${p.id})" class="px-3 py-1 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-cyan-600 shadow-sm transition-all">
+                    <button type="button" onclick="guardarCambiosPagina(${p.id})" class="px-3 py-1 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-cyan-600 shadow-sm transition-all cursor-pointer">
                         Actualizar
                     </button>
                 </td>
@@ -1624,14 +1523,14 @@ async function obtenerDatosHeaderAdmin() {
             tbody.appendChild(tr);
         });
 
-        // AQUÍ VA EL MAPEO DE LAS REDES SOCIALES QUE ME PASASTE:
+        // Mapeo dinámico de las Redes Sociales
         const contenedorRedes = document.getElementById('contenedorRedes');
         contenedorRedes.innerHTML = '';
         data.redes.forEach(red => {
             const div = document.createElement('div');
             div.innerHTML = `
                 <label class="block text-xs font-medium text-slate-500 mb-1 capitalize">Enlace de ${red.red}</label>
-                <input type="url" class="input-red-social w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all" data-id="${red.id}" value="${red.url}" placeholder="https://...">
+                <input type="url" class="input-red-social w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all" data-id="${red.id}" value="${red.url || ''}" placeholder="https://...">
             `;
             contenedorRedes.appendChild(div);
         });
@@ -1674,7 +1573,7 @@ async function guardarCambiosPagina(id) {
         const data = await res.json();
         if (data.success) {
             alert('¡Enlace y nombre del menú actualizados!');
-            obtenerDatosHeaderAdmin(); // Recarga los datos para normalizar la barra "/"
+            obtenerDatosHeaderAdmin(); 
         }
     } catch (err) {
         alert('Error al actualizar la página.');
@@ -1706,25 +1605,6 @@ document.getElementById('formRedesSociales')?.addEventListener('submit', async (
         alert('Error al guardar las redes sociales.');
     }
 });
-
-// 5. Asegurar que carguen los datos al entrar al panel de administración
-document.addEventListener('DOMContentLoaded', () => {
-    obtenerDatosHeaderAdmin();
-});
-
-function abrirModalHeader() {
-    // 1. Mandamos llamar a la función que ya tienes para traer la información actualizada
-    obtenerDatosHeaderAdmin(); 
-    
-    // 2. Quitamos la clase 'hidden' y añadimos 'flex' para centrarlo en pantalla
-    const modal = document.getElementById('modal-header');
-    modal.classList.replace('hidden', 'flex');
-}
-
-function cerrarModalHeader() {
-    const modal = document.getElementById('modal-header');
-    modal.classList.replace('flex', 'hidden');
-}
 
 </script>
 
