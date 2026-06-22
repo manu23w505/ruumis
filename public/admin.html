@@ -163,7 +163,7 @@
                         Preguntas Frecuentes
                     </button>
                     
-                    <button onclick="switchTab('tab-contacto'); cargarCorreoDestino();" class="sidebar-btn w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 transition-colors text-slate-600 hover:bg-slate-100 text-sm font-medium">
+                    <button onclick="cambiarPestana('tab-contacto', this); cargarCorreoDestino();" class="sidebar-btn w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 transition-colors text-slate-600 hover:bg-slate-50 text-sm">
                         Configurar Contacto
                     </button>
 
@@ -295,32 +295,18 @@
             </section>
 
             <section id="tab-contacto" class="tab-content space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-900">Configuración del Formulario de Contacto</h2>
-                        <p class="text-slate-500 text-sm">Establece a qué correo electrónico llegarán las notificaciones y mensajes que manden los usuarios desde la página.</p>
-                    </div>
-                </div>
-
-                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm max-w-xl">
-                    <form id="form-correo-config" onsubmit="event.preventDefault(); guardarCorreoDestino();" class="space-y-4">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <h2 class="text-xl font-bold text-slate-900 mb-2">Configuración de Mensajes de Contacto</h2>
+                    <p class="text-slate-500 text-sm mb-6">Define a qué correo electrónico llegarán los formularios de contacto rellenados por los usuarios.</p>
+                    
+                    <form onsubmit="guardarCorreoDestino(event)" class="max-w-md space-y-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2" for="config-email-destino">
-                                Correo Electrónico de Destino
-                            </label>
-                            <input 
-                                type="email" 
-                                id="config-email-destino" 
-                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-cyan-500 transition-colors text-slate-900" 
-                                placeholder="ejemplo@correo.com" 
-                                required
-                            >
+                            <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Correo Electrónico de Destino</label>
+                            <input type="email" id="config-email-destino" required placeholder="ejemplo@correo.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
                         </div>
-                        <div class="flex justify-start">
-                        <button onclick="cambiarPestana('tab-contacto', this); cargarCorreoDestino();" class="sidebar-btn w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 transition-colors text-slate-600 hover:bg-slate-50 text-sm">
-                            Configurar Contacto
+                        <button type="submit" class="px-5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-600 text-slate-950 text-sm font-semibold transition-colors cursor-pointer">
+                            Guardar Configuración
                         </button>
-                        </div>
                     </form>
                 </div>
             </section>
@@ -1559,30 +1545,58 @@
     modal.classList.replace('hidden', 'flex');
 }
 
-    //correo
+    // --- FUNCIONES DE CONFIGURACIÓN DE CORREO DESTINO ---
+
     async function cargarCorreoDestino() {
-    try {
-        const res = await fetch('/api/config/correo');
-        const data = await res.json();
-        if (data.correo) {
-            document.getElementById('config-email-destino').value = data.correo;
+            try {
+                const res = await fetch('/api/config/correo');
+                const data = await res.json();
+                if (data.correo) {
+                    document.getElementById('config-email-destino').value = data.correo;
+                }
+            } catch (err) {
+                console.error("Error al cargar el correo de configuración:", err);
+            }
         }
-    } catch (err) {
-        console.error("Error al cargar el correo de configuración:", err);
+
+    async function guardarCorreoDestino(e) {
+            e.preventDefault();
+            const correo = document.getElementById('config-email-destino').value;
+            
+            try {
+                const res = await fetch('/api/config/correo', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ correo })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert("¡Correo de destino actualizado correctamente!");
+                } else {
+                    alert(data.error || "Error al actualizar");
+                }
+            } catch (err) {
+                console.error("Error al guardar configuración:", err);
+            }
     }
+
+    function abrirModalContacto(nombre, email, mensaje, fecha) {
+        document.getElementById('contacto-nombre').innerText = nombre;
+        document.getElementById('contacto-email').innerText = email;
+        document.getElementById('contacto-mensaje').innerText = mensaje;
+        if(fecha) {
+            document.getElementById('contacto-fecha').innerText = `Recibido el: ${new Date(fecha).toLocaleString()}`;
+        }
+        document.getElementById('btn-responder-contacto').href = `mailto:${email}?subject=RE: Contacto Ruumis`;
+
+        const modal = document.getElementById('modal-contacto');
+        modal.classList.replace('hidden', 'flex');
     }
 
     function cerrarModalContacto() {
         const modal = document.getElementById('modal-contacto');
         modal.classList.replace('flex', 'hidden');
     }
-
-    app.get('/api/contactos', (req, res) => {
-    db.query('SELECT * FROM contactos ORDER BY fecha DESC', (err, results) => {
-        if (err) return res.status(500).json({ error: 'Error al obtener mensajes' });
-        res.json(results);
-        });
-    });
 
 </script>
 
