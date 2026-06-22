@@ -727,47 +727,36 @@ app.delete('/api/faqs/:id', (req, res) => {
 });
 
 // Ruta dedicada para el formulario de contacto (Feedback)
-app.post('/api/contacto', async (req, res) => {
+app.post('/api/contacto', (req, res) => {
     const { feedbackName, feedbackEmail, feedbackMessage } = req.body;
 
+    // Validación de datos por si acaso
     if (!feedbackName || !feedbackEmail || !feedbackMessage) {
-        return res.status(400).send('<div style="color:red; font-weight:bold;">Todos los campos son obligatorios.</div>');
+        return res.status(400).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Todos los campos son obligatorios.</div>');
     }
 
-    // 1. Buscamos cuál es el correo de destino guardado en Workbench
-    db.query("SELECT valor FROM configuracion WHERE clave = 'correo_destino'", async (err, results) => {
-        let correoDestinoFinal = 'tu-correo-destino@domain.com'; // Respaldo por si la BD no responde
-        if (!err && results.length > 0) {
-            correoDestinoFinal = results[0].valor;
+    // Unimos los datos del remitente en un formato de texto limpio o JSON estructurado para la columna 'valor'
+    const datosEstructurados = JSON.stringify({
+        nombre: feedbackName,
+        email: feedbackEmail,
+        mensaje: feedbackMessage,
+        fecha: new Date().toISOString()
+    });
+
+    // Creamos una clave única usando el timestamp para que no se dupliquen ni reemplacen los mensajes anteriores
+    const claveUnica = `feedback_${Date.now()}`;
+
+    // Insertamos directamente en tu tabla real usando sus dos columnas: clave y valor
+    const query = "INSERT INTO configuracion (clave, valor) VALUES (?, ?)";
+    
+    db.query(query, [claveUnica, datosEstructurados], (err, result) => {
+        if (err) {
+            console.error('Error al guardar en la tabla configuracion:', err);
+            return res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error interno al guardar tu mensaje.</div>');
         }
 
-        // 2. Configuración del transportador de Nodemailer
-        const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: 'tu-correo-ruumis@gmail.com', // Tu correo emisor real
-                pass: 'tu-contraseña-de-aplicacion' // Tu contraseña de aplicación de 16 letras
-            }
-        });
-
-        const mailOptions = {
-            from: `"${feedbackName}" <${feedbackEmail}>`,
-            to: correoDestinoFinal, // <--- ¡AQUÍ YA ES DINÁMICO!
-            subject: 'Contact Us - Ruumis Feedback',
-            html: `
-                <p><strong>Name:</strong> ${feedbackName}</p>
-                <p><strong>Email:</strong> ${feedbackEmail}</p>
-                <p><strong>Message:</strong> ${feedbackMessage}</p>
-            `
-        };
-
-        try {
-            await transporter.sendMail(mailOptions);
-            res.send('<div style="color:green; font-weight:bold; font-family:sans-serif; padding:20px;">¡Email enviado con éxito! Nos pondremos en contacto contigo pronto.</div>');
-        } catch (error) {
-            console.error('Error al enviar correo con Nodemailer:', error);
-            res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Failed: Email not Sent.</div>');
-        }
+        // Enviamos la respuesta exitosa para tu plantilla
+        res.send('<div style="color:green; font-weight:bold; font-family:sans-serif; padding:20px;">¡Mensaje recibido con éxito! Guardado en el sistema de administración.</div>');
     });
 });
 
