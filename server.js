@@ -730,41 +730,65 @@ app.delete('/api/faqs/:id', (req, res) => {
 app.post('/api/contacto', async (req, res) => {
     const { feedbackName, feedbackEmail, feedbackMessage } = req.body;
 
-    // Validación rápida para asegurar que no vengan vacíos
     if (!feedbackName || !feedbackEmail || !feedbackMessage) {
         return res.status(400).send('<div style="color:red; font-weight:bold;">Todos los campos son obligatorios.</div>');
     }
 
-    // Configuración del servicio de correos (Ejemplo básico con Gmail)
-    // NOTA: Recuerda activar una "Contraseña de aplicación" en tu cuenta de Google para ponerla aquí
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'tu-correo-ruumis@gmail.com', // Pon tu correo real aquí
-            pass: 'tu-contraseña-de-aplicacion' // Pon tu contraseña de aplicación de 16 letras aquí
+    // 1. Buscamos cuál es el correo de destino guardado en Workbench
+    db.query("SELECT valor FROM configuracion WHERE clave = 'correo_destino'", async (err, results) => {
+        let correoDestinoFinal = 'tu-correo-destino@domain.com'; // Respaldo por si la BD no responde
+        if (!err && results.length > 0) {
+            correoDestinoFinal = results[0].valor;
+        }
+
+        // 2. Configuración del transportador de Nodemailer
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: 'tu-correo-ruumis@gmail.com', // Tu correo emisor real
+                pass: 'tu-contraseña-de-aplicacion' // Tu contraseña de aplicación de 16 letras
+            }
+        });
+
+        const mailOptions = {
+            from: `"${feedbackName}" <${feedbackEmail}>`,
+            to: correoDestinoFinal, // <--- ¡AQUÍ YA ES DINÁMICO!
+            subject: 'Contact Us - Ruumis Feedback',
+            html: `
+                <p><strong>Name:</strong> ${feedbackName}</p>
+                <p><strong>Email:</strong> ${feedbackEmail}</p>
+                <p><strong>Message:</strong> ${feedbackMessage}</p>
+            `
+        };
+
+        try {
+            await transporter.sendMail(mailOptions);
+            res.send('<div style="color:green; font-weight:bold; font-family:sans-serif; padding:20px;">¡Email enviado con éxito! Nos pondremos en contacto contigo pronto.</div>');
+        } catch (error) {
+            console.error('Error al enviar correo con Nodemailer:', error);
+            res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Failed: Email not Sent.</div>');
         }
     });
+});
 
-    // Cuerpo del correo idéntico al formato que tenías en el archivo PHP
-    const mailOptions = {
-        from: `"${feedbackName}" <${feedbackEmail}>`,
-        to: 'tu-correo-destino@domain.com', // El correo donde quieres recibir las notificaciones
-        subject: 'Contact Us - Ruumis Feedback',
-        html: `
-            <p><strong>Name:</strong> ${feedbackName}</p>
-            <p><strong>Email:</strong> ${feedbackEmail}</p>
-            <p><strong>Message:</strong> ${feedbackMessage}</p>
-        `
-    };
+app.get('/api/config/correo', (req, res) => {
+    db.query("SELECT valor FROM configuracion WHERE clave = 'correo_destino'", (err, results) => {
+        if (err) return res.status(500).json({ error: 'Error al obtener el correo de la base de datos' });
+        if (results.length === 0) {
+            return res.json({ correo: 'tu-correo-destino@domain.com' });
+        }
+        res.json({ correo: results[0].valor });
+    });
+});
 
-    try {
-        await transporter.sendMail(mailOptions);
-        // Enviamos una respuesta visual idéntica o amigable para el diseño de tu plantilla
-        res.send('<div style="color:green; font-weight:bold;">¡Email enviado con éxito! Nos pondremos en contacto contigo pronto.</div>');
-    } catch (error) {
-        console.error('Error al enviar correo con Nodemailer:', error);
-        res.status(500).send('<div style="color:red; font-weight:bold;">Failed: Email not Sent.</div>');
-    }
+app.put('/api/config/correo', (req, res) => {
+    const { correo } = req.body;
+    if (!correo) return res.status(400).json({ error: 'El correo es requerido' });
+
+    db.query("UPDATE configuracion SET valor = ? WHERE clave = 'correo_destino'", [correo], (err, result) => {
+        if (err) return res.status(500).json({ error: 'Error al actualizar el correo en la base de datos' });
+        res.json({ success: true, message: 'Correo de destino actualizado correctamente' });
+    });
 });
 
 cron.schedule('*/5 * * * *', () => {
