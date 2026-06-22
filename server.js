@@ -771,13 +771,36 @@ app.post('/api/contacto', async (req, res) => {
     });
 });
 
-app.get('/api/config/correo', (req, res) => {
-    db.query("SELECT valor FROM configuracion WHERE clave = 'correo_destino'", (err, results) => {
-        if (err) return res.status(500).json({ error: 'Error al obtener el correo de la base de datos' });
-        if (results.length === 0) {
-            return res.json({ correo: 'tu-correo-destino@domain.com' });
+app.post('/api/feedback', (req, res) => {
+    const { feedbackName, feedbackEmail, feedbackMessage } = req.body;
+
+    if (!feedbackName || !feedbackEmail || !feedbackMessage) {
+        return res.status(400).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Todos los campos son obligatorios.</div>');
+    }
+
+    // Guardamos el mensaje directamente en la base de datos MySQL
+    // Nota: Asegúrate de tener una tabla 'contactos' o 'feedback' con estas columnas
+    const query = "INSERT INTO contactos (nombre, email, mensaje, fecha) VALUES (?, ?, ?, NOW())";
+    
+    db.query(query, [feedbackName, feedbackEmail, feedbackMessage], (err, result) => {
+        if (err) {
+            console.error('Error al guardar el mensaje de contacto en la BD:', err);
+            // Si la tabla no existe aún, puedes dejar que responda éxito para no romper la experiencia del usuario mientras la creas
+            return res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error al procesar el mensaje. Inténtalo más tarde.</div>');
         }
-        res.json({ correo: results[0].valor });
+
+        // Respondemos con éxito visual directo a la plantilla pública
+        res.send('<div style="color:green; font-weight:bold; font-family:sans-serif; padding:20px;">¡Mensaje recibido con éxito! El administrador revisará tu solicitud pronto.</div>');
+    });
+});
+
+app.get('/api/contactos', (req, res) => {
+    db.query('SELECT * FROM contactos ORDER BY fecha DESC', (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Error al obtener mensajes' });
+        }
+        res.json(results);
     });
 });
 
