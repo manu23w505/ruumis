@@ -729,33 +729,70 @@ app.delete('/api/faqs/:id', (req, res) => {
 // Ruta dedicada para el formulario de contacto 
 app.post('/api/contacto', upload.none(), (req, res) => {
     try {
-        // Ahora req.body ya NO llegará vacío gracias a upload.none()
+        // Capturamos lo que envía el formulario a través de common.min.js
         const nombre = req.body.feedbackName || req.body.name || req.body.nombre;
         const email = req.body.feedbackEmail || req.body.email;
         const mensaje = req.body.feedbackMessage || req.body.message || req.body.mensaje;
 
-        // Validación de respaldo para asegurarnos de que no entren nulos a la BD
         if (!nombre || !email || !mensaje) {
-            console.log("Campos incompletos en req.body:", req.body);
             return res.status(400).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Todos los campos son obligatorios.</div>');
         }
 
-        // Consulta de inserción en tu tabla (Asegúrate de que se llame 'contactos')
-        const query = "INSERT INTO contactos (nombre, email, mensaje, fecha) VALUES (?, ?, ?, NOW())";
-        
-        db.query(query, [nombre, email, mensaje], (err, result) => {
-            if (err) {
-                console.error('Error de MySQL al insertar:', err);
-                return res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error interno al guardar en la base de datos.</div>');
-            }
+        // 1. Opcional: Guardamos en tu tabla contactos para tener un respaldo físico
+        const queryGuardar = "INSERT INTO contactos (nombre, email, mensaje, fecha) VALUES (?, ?, ?, NOW())";
+        db.query(queryGuardar, [nombre, email, mensaje], (errInsert) => {
+            if (errInsert) console.error('Nota: No se pudo respaldar en la tabla contactos:', errInsert.message);
+            
+            // 2. CONSULTAMOS EL CORREO DESTINO QUE SE CONFIGURÓ EN EL PANEL DE ADMIN
+            db.query("SELECT valor FROM configuracion WHERE clave = 'correo_destino'", async (errQuery, results) => {
+                
+                // Correo de respaldo si por alguna razón la tabla configuración estuviera vacía
+                let correoDestinoDinamico = 'tu-correo-propio-de-respaldo@gmail.com'; 
+                
+                if (!errQuery && results.length > 0 && results[0].valor) {
+                    correoDestinoDinamico = results[0].valor; // 👈 ¡Aquí tomamos el del panel!
+                }
 
-            // Respuesta exitosa en HTML que common.min.js espera inyectar en la página
-            res.send('<div style="color:green; font-weight:bold; font-family:sans-serif; padding:20px;">¡Mensaje recibido con éxito! El administrador lo revisará pronto.</div>');
+                // 3. CONFIGURAMOS EL TRANSPORTE DE NODEMAILER USANDO LAS VARIABLES DE RAILWAY
+                const transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: process.env.EMAIL_USER, // 🔒 Secreto de Railway
+                        pass: process.env.EMAIL_PASS  // 🔒 Secreto de Railway
+                    }
+                });
+
+                const mailOptions = {
+                    from: `"${nombre}" <${email}>`,
+                    to: correoDestinoDinamico, // 🎯 ¡Se envía al correo dinámico del Panel de Admin!
+                    subject: 'Nuevo mensaje de contacto - Ruumis',
+                    html: `
+                        <div style="font-family: sans-serif; padding: 20px; color: #333;">
+                            <h2 style="color: #0891b2;">¡Tienes un nuevo mensaje de contacto!</h2>
+                            <p><strong>Nombre del interesado:</strong> ${nombre}</p>
+                            <p><strong>Correo electrónico:</strong> ${email}</p>
+                            <p><strong>Mensaje enviado:</strong></p>
+                            <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; font-style: italic; margin-top: 10px;">
+                                "${mensaje}"
+                            </div>
+                        </div>
+                    `
+                };
+
+                try {
+                    await transporter.sendMail(mailOptions);
+                    // Respuesta exitosa que common.min.js inyectará visualmente
+                    res.send('<div style="color:green; font-weight:bold; font-family:sans-serif; padding:20px;">¡Mensaje enviado con éxito al administrador!</div>');
+                } catch (mailError) {
+                    console.error('Error de Nodemailer:', mailError);
+                    res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error al despachar el correo electrónico. Verifique la configuración.</div>');
+                }
+            });
         });
 
     } catch (errorCritico) {
-        console.error('Error crítico en la ruta /api/contacto:', errorCritico);
-        res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error inesperado en el servidor.</div>');
+        console.error('Error crítico en /api/contacto:', errorCritico);
+        res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error inesperado del servidor.</div>');
     }
 });
 
