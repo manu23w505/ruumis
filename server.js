@@ -729,41 +729,34 @@ app.delete('/api/faqs/:id', (req, res) => {
 // Ruta dedicada para el formulario de contacto (Feedback)
 app.post('/api/contacto', (req, res) => {
     try {
-        const { feedbackName, feedbackEmail, feedbackMessage } = req.body;
+        // Capturamos los datos soportando tanto el formato estructurado como el nativo de la plantilla
+        const nombre = req.body.feedbackName || req.body.name || req.body.nombre;
+        const email = req.body.feedbackEmail || req.body.email;
+        const mensaje = req.body.feedbackMessage || req.body.message || req.body.mensaje;
 
-        // 1. Validamos que los datos no lleguen vacíos
-        if (!feedbackName || !feedbackEmail || !feedbackMessage) {
+        // Validamos que no vengan vacíos
+        if (!nombre || !email || !mensaje) {
+            console.log("Campos incompletos recibidos:", req.body);
             return res.status(400).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Todos los campos son obligatorios.</div>');
         }
 
-        // 2. Estructuramos el mensaje como texto limpio para guardarlo en la columna 'valor'
-        const datosEstructurados = JSON.stringify({
-            nombre: feedbackName,
-            email: feedbackEmail,
-            mensaje: feedbackMessage,
-            fecha: new Date().toISOString()
-        });
-
-        // 3. Generamos una clave única forzada usando un número aleatorio + timestamp millonario
-        // Esto garantiza que la Primary Key (clave) jamás se repita
-        const claveUnica = `fb_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
-
-        const query = "INSERT INTO configuracion (clave, valor) VALUES (?, ?)";
+        // ⚠️ IMPORTANTE: Cambia 'contactos' por el nombre exacto que le pusiste a tu tabla en Workbench
+        // Si tu tabla se llama exactamente 'contactos', déjalo así.
+        const query = "INSERT INTO contactos (nombre, email, mensaje, fecha) VALUES (?, ?, ?, NOW())";
         
-        db.query(query, [claveUnica, datosEstructurados], (err, result) => {
+        db.query(query, [nombre, email, mensaje], (err, result) => {
             if (err) {
-                // Si la consulta falla (ej. problemas de conexión), lo capturamos aquí sin tirar el servidor
-                console.error('Error detallado de MySQL:', err);
-                return res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error al guardar el mensaje en la base de datos.</div>');
+                console.error('Error interno de MySQL al insertar contacto:', err);
+                // Si la consulta falla por el nombre de la tabla, devolvemos un mensaje claro en la consola de Railway
+                return res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error al registrar el mensaje en la base de datos.</div>');
             }
 
-            // Respuesta exitosa que tu archivo common.min.js espera renderizar
-            res.send('<div style="color:green; font-weight:bold; font-family:sans-serif; padding:20px;">¡Mensaje recibido con éxito! Guardado en el sistema de administración.</div>');
+            // Respuesta limpia en formato HTML que tu common.min.js inyectará con éxito en la página
+            res.send('<div style="color:green; font-weight:bold; font-family:sans-serif; padding:20px;">¡Mensaje recibido con éxito! El administrador se pondrá en contacto pronto.</div>');
         });
 
-    } catch (expressError) {
-        // Un bloque catch general para que la app jamás responda con un 500 crudo
-        console.error('Error crítico en el hilo de la ruta:', expressError);
+    } catch (errorCritico) {
+        console.error('Error crítico en el hilo de /api/contacto:', errorCritico);
         res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error inesperado en el servidor.</div>');
     }
 });
