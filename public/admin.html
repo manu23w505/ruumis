@@ -1438,7 +1438,9 @@
     // --- FUNCIONES DE CONFIGURACIÓN DE CORREO DESTINO ---
 async function cargarCorreoDestino() {
     try {
-        const res = await fetch('/api/config/correo');
+        // CORREGIDO: quitamos "/config" para que coincida con tu server.js
+        const res = await fetch('/api/correo'); 
+        if (!res.ok) return;
         const data = await res.json();
         if (data.correo) {
             document.getElementById('vista-email-actual').value = data.correo;
@@ -1446,6 +1448,30 @@ async function cargarCorreoDestino() {
         }
     } catch (err) {
         console.error("Error al cargar el correo de configuración:", err);
+    }
+}
+
+async function guardarCorreoDestinoNuevo(e) {
+    e.preventDefault();
+    const correo = document.getElementById('config-email-destino-nuevo').value;
+    
+    try {
+        // CORREGIDO: quitamos "/config" para que coincida con tu server.js
+        const res = await fetch('/api/correo', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ correo })
+        });
+        const data = await res.json();
+        if (res.ok) {
+            alert("¡Correo de destino actualizado correctamente!");
+            cerrarModalEditarCorreo();
+            cargarCorreoDestino();
+        } else {
+            alert(data.error || "Error al actualizar");
+        }
+    } catch (err) {
+        console.error("Error al guardar configuración:", err);
     }
 }
 
@@ -1458,30 +1484,6 @@ function abrirModalEditarCorreo() {
 function cerrarModalEditarCorreo() {
     document.getElementById('modal-editar-correo').classList.replace('flex', 'hidden');
 }
-
-async function guardarCorreoDestinoNuevo(e) {
-    e.preventDefault();
-    const correo = document.getElementById('config-email-destino-nuevo').value;
-    
-    try {
-        const res = await fetch('/api/config/correo', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ correo })
-        });
-        const data = await res.json();
-        if (res.ok) {
-            alert("¡Correo de destino actualizado correctamente!");
-            cerrarModalEditarCorreo();
-            cargarCorreoDestino(); // Recarga la vista base
-        } else {
-            alert(data.error || "Error al actualizar");
-        }
-    } catch (err) {
-        console.error("Error al guardar configuración:", err);
-    }
-}
-
 
 
 // CONTROLADOR DEL HEADER EN EL PANEL DE ADMIN
