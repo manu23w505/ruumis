@@ -727,35 +727,34 @@ app.delete('/api/faqs/:id', (req, res) => {
 });
 
 // Ruta dedicada para el formulario de contacto 
-app.post('/api/contacto', (req, res) => {
+app.post('/api/contacto', upload.none(), (req, res) => {
     try {
-        // Capturamos las variables que manda estrictamente el script common.min.js
+        // Ahora req.body ya NO llegará vacío gracias a upload.none()
         const nombre = req.body.feedbackName || req.body.name || req.body.nombre;
         const email = req.body.feedbackEmail || req.body.email;
         const mensaje = req.body.feedbackMessage || req.body.message || req.body.mensaje;
 
-        // Validación de seguridad para evitar enviar valores vacíos o NULL al MySQL
+        // Validación de respaldo para asegurarnos de que no entren nulos a la BD
         if (!nombre || !email || !mensaje) {
-            console.log("Campos faltantes recibidos en el servidor:", req.body);
+            console.log("Campos incompletos en req.body:", req.body);
             return res.status(400).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Todos los campos son obligatorios.</div>');
         }
 
-        // ⚠️ IMPORTANTE: Asegúrate de que la palabra 'contactos' sea el nombre exacto de tu tabla en MySQL
+        // Consulta de inserción en tu tabla (Asegúrate de que se llame 'contactos')
         const query = "INSERT INTO contactos (nombre, email, mensaje, fecha) VALUES (?, ?, ?, NOW())";
         
         db.query(query, [nombre, email, mensaje], (err, result) => {
             if (err) {
-                // Si la consulta falla por el nombre de la tabla o conexión, lo verás en los logs de Railway
-                console.error('Error interno de MySQL al insertar contacto:', err);
-                return res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error al registrar el mensaje en la base de datos.</div>');
+                console.error('Error de MySQL al insertar:', err);
+                return res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error interno al guardar en la base de datos.</div>');
             }
 
-            // Respuesta limpia en texto/HTML que common.min.js inyectará con éxito en la página
+            // Respuesta exitosa en HTML que common.min.js espera inyectar en la página
             res.send('<div style="color:green; font-weight:bold; font-family:sans-serif; padding:20px;">¡Mensaje recibido con éxito! El administrador lo revisará pronto.</div>');
         });
 
     } catch (errorCritico) {
-        console.error('Error crítico en el hilo de /api/contacto:', errorCritico);
+        console.error('Error crítico en la ruta /api/contacto:', errorCritico);
         res.status(500).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Error inesperado en el servidor.</div>');
     }
 });
