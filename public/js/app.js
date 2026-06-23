@@ -746,3 +746,38 @@ async function cargarHeaderDinamico() {
 document.addEventListener('DOMContentLoaded', () => {
     cargarHeaderDinamico();
 });
+
+//footer 
+
+async function cargarFooterPublico() {
+    try {
+        const response = await fetch('/api/footer');
+        const datos = await response.json();
+        if (!datos) return;
+
+        // 1. Cambiar descripción de marca en el footer público
+        const descFooter = document.getElementById('public-footer-descripcion');
+        if (descFooter) descFooter.innerText = datos.footer_descripcion;
+
+        // 2. Cambiar títulos de las columnas si tus elementos tienen estas IDs
+        if (document.getElementById('public-footer-title-links')) {
+            document.getElementById('public-footer-title-links').innerText = datos.footer_titulo_links;
+        }
+
+        // 3. Cambiar los textos del Copyright en index.html
+        const copyrightContainer = document.querySelector('.footer_copyright-text');
+        if (copyrightContainer) {
+            copyrightContainer.innerHTML = `
+                <span class="linebreak">${datos.footer_copyright_linea1}</span>
+                <span class="linebreak">${datos.footer_copyright_linea2}</span>
+            `;
+        }
+    } catch (error) {
+        console.error('Error al pintar el footer dinámico:', error);
+    }
+}
+
+// Lo ejecutas automáticamente cuando cargue la página web
+document.addEventListener('DOMContentLoaded', () => {
+    cargarFooterPublico();
+});

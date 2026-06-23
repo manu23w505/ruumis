@@ -970,6 +970,68 @@ app.get('/', (req, res) => {
     });
 });
 
+// footer 
+
+// GET: Obtener toda la información necesaria para armar el Footer
+app.get('/api/footer-completo', (req, res) => {
+    const queryConfig = "SELECT clave, valor FROM configuracion_general";
+    const queryMenu = "SELECT * FROM menu_paginas ORDER BY orden ASC";
+    const queryRedes = "SELECT * FROM redes_sociales";
+
+    db.query(queryConfig, (err, resConfig) => {
+        if (err) return res.status(500).json({ error: 'Error en configuraciones del footer' });
+        db.query(queryMenu, (err2, resMenu) => {
+            if (err2) return res.status(500).json({ error: 'Error en menú del footer' });
+            db.query(queryRedes, (err3, resRedes) => {
+                if (err3) return res.status(500).json({ error: 'Error en redes del footer' });
+
+                // Mapeamos las configuraciones clave-valor a un objeto limpio
+                const configObj = {};
+                resConfig.forEach(row => {
+                    configObj[row.clave] = row.valor;
+                });
+
+                res.json({
+                    config: configObj,
+                    paginas: resMenu,
+                    redes: resRedes
+                });
+            });
+        });
+    });
+});
+
+// PUT: Actualizar todos los textos editables del footer de manera directa
+app.put('/api/footer/textos', (req, res) => {
+    const textos = req.body; // Recibe un JSON con { clave: valor }
+    
+    if (!textos || Object.keys(textos).length === 0) {
+        return res.status(400).json({ error: 'No se recibieron datos para actualizar' });
+    }
+
+    const keys = Object.keys(textos);
+    let queriesCompletadas = 0;
+    let huboError = false;
+
+    keys.forEach(clave => {
+        const valor = textos[clave];
+        // UPSERT nativo de MySQL
+        db.query(
+            "INSERT INTO configuracion_general (clave, valor) VALUES (?, ?) ON DUPLICATE KEY UPDATE valor = ?",
+            [clave, valor, valor],
+            (err) => {
+                if (err && !huboError) {
+                    huboError = true;
+                    return res.status(500).json({ error: `Error al actualizar la clave: ${clave}` });
+                }
+                queriesCompletadas++;
+                if (queriesCompletadas === keys.length && !huboError) {
+                    res.json({ success: true, message: '¡Textos del footer actualizados exitosamente!' });
+                }
+            }
+        );
+    });
+});
 
 cron.schedule('*/5 * * * *', () => {
     sincronizarCalendarios();
