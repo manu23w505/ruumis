@@ -831,6 +831,8 @@
         let todosLosAnuncios = []; 
         let todosLosTipos = [];
         let todasLasUbicaciones = []; 
+        
+        let datosFooterActual = null;
 
         let creandoNuevaCiudad = false;
         let creandoNuevaZona = false;
@@ -1838,17 +1840,18 @@ async function enviarCambiosPagina(e) {
 
 //Footer
 
-// Variable global para retener en memoria los textos activos
-let datosFooterActual = null;
-
 // 1. Cargar datos del footer en la tabla informativa
 async function cargarFooterAdmin() {
     try {
-        const res = await fetch('/api/footer');
-        if (!res.ok) throw new Error("No se pudieron obtener los datos del footer.");
+        const res = await fetch('/api/footer'); // Apunta a la misma URL unificada
+        
+        if (!res.ok) {
+            throw new Error(`El servidor respondió con código de estado: ${res.status}`);
+        }
+        
         const datos = await res.json();
         
-        // Coloca los datos guardados dentro de cada input del formulario para que el admin los vea
+        // Distribuimos los valores protegiendo los inputs contra valores nulos/undefined
         if (document.getElementById('footer-descripcion')) document.getElementById('footer-descripcion').value = datos.footer_descripcion || '';
         if (document.getElementById('footer-titulo-links')) document.getElementById('footer-titulo-links').value = datos.footer_titulo_links || '';
         if (document.getElementById('footer-titulo-contacto')) document.getElementById('footer-titulo-contacto').value = datos.footer_titulo_contacto || '';
@@ -1862,7 +1865,8 @@ async function cargarFooterAdmin() {
         if (document.getElementById('footer-copyright-linea2')) document.getElementById('footer-copyright-linea2').value = datos.footer_copyright_linea2 || '';
         
     } catch (err) {
-        console.error("Error al cargar el resumen del footer:", err);
+        console.error("Error crítico al cargar interfaz del footer:", err);
+        alert("Atención: No se pudieron obtener los datos del Footer. Verifica que la base de datos esté activa.");
     }
 }
 

@@ -752,28 +752,29 @@ document.addEventListener('DOMContentLoaded', () => {
 async function cargarFooterPublico() {
     try {
         const response = await fetch('/api/footer');
+        if (!response.ok) throw new Error(`Estado de respuesta inválido: ${response.status}`);
+        
         const datos = await response.json();
         if (!datos) return;
 
-        // 1. Cambiar descripción de marca en el footer público
+        // 1. Cambiar descripción de marca
         const descFooter = document.getElementById('public-footer-descripcion');
-        if (descFooter) descFooter.innerText = datos.footer_descripcion;
+        if (descFooter) descFooter.innerText = datos.footer_descripcion || '';
 
-        // 2. Cambiar títulos de las columnas si tus elementos tienen estas IDs
-        if (document.getElementById('public-footer-title-links')) {
-            document.getElementById('public-footer-title-links').innerText = datos.footer_titulo_links;
-        }
+        // 2. Cambiar títulos de columnas
+        const titleLinks = document.getElementById('public-footer-title-links');
+        if (titleLinks) titleLinks.innerText = datos.footer_titulo_links || '';
 
-        // 3. Cambiar los textos del Copyright en index.html
+        // 3. Cambiar la estructura de Copyright de manera segura
         const copyrightContainer = document.querySelector('.footer_copyright-text');
         if (copyrightContainer) {
             copyrightContainer.innerHTML = `
-                <span class="linebreak">${datos.footer_copyright_linea1}</span>
-                <span class="linebreak">${datos.footer_copyright_linea2}</span>
+                <span class="linebreak">${datos.footer_copyright_linea1 || ''}</span>
+                <span class="linebreak">${datos.footer_copyright_linea2 || ''}</span>
             `;
         }
     } catch (error) {
-        console.error('Error al pintar el footer dinámico:', error);
+        console.error('Error al renderizar los componentes del footer público:', error);
     }
 }
 

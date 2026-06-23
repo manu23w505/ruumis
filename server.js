@@ -973,23 +973,29 @@ app.get('/', (req, res) => {
 
 // RUTAS PARA EL FOOTER
 
-// GET: Obtiene las filas de configuracion_general y las une en un solo objeto limpio
+// GET: Obtiene los textos guardados en la tabla general
 app.get('/api/footer', (req, res) => {
     db.query("SELECT clave, valor FROM configuracion_general WHERE clave LIKE 'footer_%'", (err, results) => {
-        if (err) return res.status(500).json({ error: err.message });
-        
-        // TRANSFORMACIÓN CRÍTICA: Convertimos [{clave: 'footer_descripcion', valor: 'Hola'}] en { footer_descripcion: 'Hola' }
+        // SOLUCIÓN AL CUELGUE: Si falla la BD, avisamos de inmediato para desbloquear el Front-End
+        if (err) {
+            console.error("Error interno de MySQL en Footer:", err);
+            return res.status(500).json({ error: "Error al leer la base de datos", detalle: err.message });
+        }
+
+        // Convertimos el Array de filas de la BD en un único objeto limpio para el Front
         const datosPlanos = {};
-        results.forEach(fila => {
-            datosPlanos[fila.clave] = fila.valor;
-        });
+        if (results && results.length > 0) {
+            results.forEach(fila => {
+                datosPlanos[fila.clave] = fila.valor;
+            });
+        }
         
-        res.json(datosPlanos); // Ahora el front-end recibirá exactamente lo que sabe leer
+        return res.json(datosPlanos); // Envía {} si está vacío, pero NUNCA se queda colgado
     });
 });
 
-// PUT: Guarda o actualiza masivamente los campos enviados desde admin.html
-app.put('/api/footer', (req, res) => { // <-- CORREGIDO: Se quitó /textos para alinearse con admin.html
+// PUT: Guarda o actualiza los textos enviados desde el panel
+app.put('/api/footer', (req, res) => { // <-- ALINEADO: Se quitó el '/textos' sobrante
     const textos = req.body; 
     
     if (!textos || Object.keys(textos).length === 0) {
@@ -1002,23 +1008,29 @@ app.put('/api/footer', (req, res) => { // <-- CORREGIDO: Se quitó /textos para 
 
     keys.forEach(clave => {
         const valor = textos[clave];
-        // UPSERT: Si la clave existe la actualiza, si no, la crea
         db.query(
             "INSERT INTO configuracion_general (clave, valor) VALUES (?, ?) ON DUPLICATE KEY UPDATE valor = ?",
             [clave, valor, valor],
             (err) => {
-                if (err && !huboError) {
-                    huboError = true;
-                    return res.status(500).json({ error: `Error al actualizar la clave: ${clave}` });
+                if (err) {
+                    console.error(`Error al actualizar clave ${clave}:`, err);
+                    if (!huboError) {
+                        huboError = true;
+                        return res.status(500).json({ error: "Error al procesar la actualización en lote" });
+                    }
+                    return;
                 }
+                
                 queriesCompletadas++;
                 if (queriesCompletadas === keys.length && !huboError) {
-                    res.json({ success: true, message: '¡Textos del footer actualizados exitosamente!' });
+                    return res.json({ success: true, message: '¡Textos del footer actualizados exitosamente!' });
                 }
             }
         );
     });
 });
+
+
 
 
 cron.schedule('*/5 * * * *', () => {
