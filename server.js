@@ -970,40 +970,27 @@ app.get('/', (req, res) => {
     });
 });
 
-// footer 
 
-// GET: Obtener toda la información necesaria para armar el Footer
-app.get('/api/footer-completo', (req, res) => {
-    const queryConfig = "SELECT clave, valor FROM configuracion_general";
-    const queryMenu = "SELECT * FROM menu_paginas ORDER BY orden ASC";
-    const queryRedes = "SELECT * FROM redes_sociales";
+// RUTAS PARA EL FOOTER
 
-    db.query(queryConfig, (err, resConfig) => {
-        if (err) return res.status(500).json({ error: 'Error en configuraciones del footer' });
-        db.query(queryMenu, (err2, resMenu) => {
-            if (err2) return res.status(500).json({ error: 'Error en menú del footer' });
-            db.query(queryRedes, (err3, resRedes) => {
-                if (err3) return res.status(500).json({ error: 'Error en redes del footer' });
-
-                // Mapeamos las configuraciones clave-valor a un objeto limpio
-                const configObj = {};
-                resConfig.forEach(row => {
-                    configObj[row.clave] = row.valor;
-                });
-
-                res.json({
-                    config: configObj,
-                    paginas: resMenu,
-                    redes: resRedes
-                });
-            });
+// GET: Obtiene las filas de configuracion_general y las une en un solo objeto limpio
+app.get('/api/footer', (req, res) => {
+    db.query("SELECT clave, valor FROM configuracion_general WHERE clave LIKE 'footer_%'", (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        
+        // TRANSFORMACIÓN CRÍTICA: Convertimos [{clave: 'footer_descripcion', valor: 'Hola'}] en { footer_descripcion: 'Hola' }
+        const datosPlanos = {};
+        results.forEach(fila => {
+            datosPlanos[fila.clave] = fila.valor;
         });
+        
+        res.json(datosPlanos); // Ahora el front-end recibirá exactamente lo que sabe leer
     });
 });
 
-// PUT: Actualizar todos los textos editables del footer de manera directa
-app.put('/api/footer/textos', (req, res) => {
-    const textos = req.body; // Recibe un JSON con { clave: valor }
+// PUT: Guarda o actualiza masivamente los campos enviados desde admin.html
+app.put('/api/footer', (req, res) => { // <-- CORREGIDO: Se quitó /textos para alinearse con admin.html
+    const textos = req.body; 
     
     if (!textos || Object.keys(textos).length === 0) {
         return res.status(400).json({ error: 'No se recibieron datos para actualizar' });
@@ -1015,7 +1002,7 @@ app.put('/api/footer/textos', (req, res) => {
 
     keys.forEach(clave => {
         const valor = textos[clave];
-        // UPSERT nativo de MySQL
+        // UPSERT: Si la clave existe la actualiza, si no, la crea
         db.query(
             "INSERT INTO configuracion_general (clave, valor) VALUES (?, ?) ON DUPLICATE KEY UPDATE valor = ?",
             [clave, valor, valor],
@@ -1032,6 +1019,7 @@ app.put('/api/footer/textos', (req, res) => {
         );
     });
 });
+
 
 cron.schedule('*/5 * * * *', () => {
     sincronizarCalendarios();

@@ -1843,44 +1843,26 @@ let datosFooterActual = null;
 
 // 1. Cargar datos del footer en la tabla informativa
 async function cargarFooterAdmin() {
-    const tbody = document.getElementById('tabla-footer-body');
-    if (!tbody) return;
-
     try {
         const res = await fetch('/api/footer');
-        if (!res.ok) throw new Error("No se pudieron obtener los datos del footer");
+        if (!res.ok) throw new Error("No se pudieron obtener los datos del footer.");
+        const datos = await res.json();
         
-        datosFooterActual = await res.json();
-
-        // Mapeo amigable para renderizar los datos estructuradamente en la tabla de resumen
-        const camposMapeados = [
-            { etiqueta: "Descripción Corta", valor: datosFooterActual.footer_descripcion },
-            { etiqueta: "Título Columna Enlaces", valor: datosFooterActual.footer_titulo_links },
-            { etiqueta: "Título Columna Contacto", valor: datosFooterActual.footer_titulo_contacto },
-            { etiqueta: "Título Columna Redes", valor: datosFooterActual.footer_titulo_redes },
-            { etiqueta: "Dirección - Línea 1", valor: datosFooterActual.footer_direccion_linea1 },
-            { etiqueta: "Dirección - Línea 2", valor: datosFooterActual.footer_direccion_linea2 || "<i>(No configurada)</i>" },
-            { etiqueta: "Teléfono Principal", valor: datosFooterActual.footer_telefono1 },
-            { etiqueta: "Teléfono Secundario", valor: datosFooterActual.footer_telefono2 || "<i>(No configurado)</i>" },
-            { etiqueta: "Subtexto de Redes", valor: datosFooterActual.footer_texto_redes },
-            { etiqueta: "Copyright - Línea 1", valor: datosFooterActual.footer_copyright_linea1 },
-            { etiqueta: "Copyright - Línea 2", valor: datosFooterActual.footer_copyright_linea2 }
-        ];
-
-        tbody.innerHTML = '';
-        camposMapeados.forEach(c => {
-            const tr = document.createElement('tr');
-            tr.className = "hover:bg-slate-50/50 transition-colors text-xs sm:text-sm";
-            tr.innerHTML = `
-                <td class="p-4 font-semibold text-slate-500">${c.etiqueta}</td>
-                <td class="p-4 text-slate-800">${c.valor}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-
+        // Coloca los datos guardados dentro de cada input del formulario para que el admin los vea
+        if (document.getElementById('footer-descripcion')) document.getElementById('footer-descripcion').value = datos.footer_descripcion || '';
+        if (document.getElementById('footer-titulo-links')) document.getElementById('footer-titulo-links').value = datos.footer_titulo_links || '';
+        if (document.getElementById('footer-titulo-contacto')) document.getElementById('footer-titulo-contacto').value = datos.footer_titulo_contacto || '';
+        if (document.getElementById('footer-titulo-redes')) document.getElementById('footer-titulo-redes').value = datos.footer_titulo_redes || '';
+        if (document.getElementById('footer-direccion-linea1')) document.getElementById('footer-direccion-linea1').value = datos.footer_direccion_linea1 || '';
+        if (document.getElementById('footer-direccion-linea2')) document.getElementById('footer-direccion-linea2').value = datos.footer_direccion_linea2 || '';
+        if (document.getElementById('footer-telefono1')) document.getElementById('footer-telefono1').value = datos.footer_telefono1 || '';
+        if (document.getElementById('footer-telefono2')) document.getElementById('footer-telefono2').value = datos.footer_telefono2 || '';
+        if (document.getElementById('footer-texto-redes')) document.getElementById('footer-texto-redes').value = datos.footer_texto_redes || '';
+        if (document.getElementById('footer-copyright-linea1')) document.getElementById('footer-copyright-linea1').value = datos.footer_copyright_linea1 || '';
+        if (document.getElementById('footer-copyright-linea2')) document.getElementById('footer-copyright-linea2').value = datos.footer_copyright_linea2 || '';
+        
     } catch (err) {
-        console.error(err);
-        tbody.innerHTML = `<tr><td colspan="2" class="p-4 text-red-500 text-center font-bold">Error al conectar con la API de Footer.</td></tr>`;
+        console.error("Error al cargar el resumen del footer:", err);
     }
 }
 
