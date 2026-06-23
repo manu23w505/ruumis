@@ -757,16 +757,47 @@ async function cargarFooterPublico() {
         const datos = await response.json();
         if (!datos) return;
 
-        // 1. Cambiar descripción de marca
+        // 1. Cambiar descripción de marca en el footer
         const descFooter = document.getElementById('public-footer-descripcion');
         if (descFooter) descFooter.innerText = datos.footer_descripcion || '';
 
-        // 2. Cambiar títulos de columnas
+        // 2. Cambiar título de la columna de enlaces
         const titleLinks = document.getElementById('public-footer-title-links');
         if (titleLinks) titleLinks.innerText = datos.footer_titulo_links || '';
 
-        // 3. Cambiar la estructura de Copyright de manera segura
-        const copyrightContainer = document.querySelector('.footer_copyright-text');
+        // 3. Cambiar título de columna contacto y líneas de dirección de forma segura
+        const titleContacto = document.getElementById('public-footer-title-contacto');
+        if (titleContacto) titleContacto.innerText = datos.footer_titulo_contacto || '';
+
+        const direccionContainer = document.getElementById('public-footer-direccion');
+        if (direccionContainer) {
+            direccionContainer.innerHTML = `
+                <span class="linebreak">${datos.footer_direccion_linea1 || ''}</span>
+                <span class="linebreak">${datos.footer_direccion_linea2 || ''}</span>
+            `;
+        }
+
+        // 4. Cambiar teléfonos con etiquetas <a> manteniendo estilos correctos
+        const telefonosContainer = document.getElementById('public-footer-telefonos');
+        if (telefonosContainer) {
+            telefonosContainer.innerHTML = '';
+            if (datos.footer_telefono1 && datos.footer_telefono1.trim() !== '') {
+                telefonosContainer.innerHTML += `<a class="link" href="tel:${datos.footer_telefono1.replace(/\s+/g, '')}">${datos.footer_telefono1}</a>`;
+            }
+            if (datos.footer_telefono2 && datos.footer_telefono2.trim() !== '') {
+                telefonosContainer.innerHTML += `<a class="link" href="tel:${datos.footer_telefono2.replace(/\s+/g, '')}">${datos.footer_telefono2}</a>`;
+            }
+        }
+
+        // 5. Cambiar título y texto del bloque de redes sociales
+        const titleRedes = document.getElementById('public-footer-title-redes');
+        if (titleRedes) titleRedes.innerText = datos.footer_titulo_redes || '';
+
+        const textoRedes = document.getElementById('public-footer-texto-redes');
+        if (textoRedes) textoRedes.innerText = datos.footer_texto_redes || '';
+
+        // 6. Cambiar la estructura de Copyright manteniendo el formato original
+        const copyrightContainer = document.getElementById('public-footer-copyright') || document.querySelector('.footer_copyright-text');
         if (copyrightContainer) {
             copyrightContainer.innerHTML = `
                 <span class="linebreak">${datos.footer_copyright_linea1 || ''}</span>
