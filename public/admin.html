@@ -1840,16 +1840,20 @@ async function enviarCambiosPagina(e) {
 
 //Footer
 
-// 1. Cargar datos del footer en la tabla informativa
+// 1. Cargar datos del footer en la tabla informativa / inputs
 async function cargarFooterAdmin() {
     try {
-        const res = await fetch('/api/footer'); // Apunta a la misma URL unificada
+        const res = await fetch('/api/footer'); // Apunta a tu URL unificada
         
         if (!res.ok) {
             throw new Error(`El servidor respondió con código de estado: ${res.status}`);
         }
         
         const datos = await res.json();
+        
+        // ¡CORRECCIÓN CLAVE!: Guardamos los datos en la variable global 
+        // para que las funciones de abrir el modal puedan usarlos.
+        datosFooterActual = datos; 
         
         // Distribuimos los valores protegiendo los inputs contra valores nulos/undefined
         if (document.getElementById('footer-descripcion')) document.getElementById('footer-descripcion').value = datos.footer_descripcion || '';
@@ -1864,20 +1868,22 @@ async function cargarFooterAdmin() {
         if (document.getElementById('footer-copyright-linea1')) document.getElementById('footer-copyright-linea1').value = datos.footer_copyright_linea1 || '';
         if (document.getElementById('footer-copyright-linea2')) document.getElementById('footer-copyright-linea2').value = datos.footer_copyright_linea2 || '';
         
+        console.log("Datos del Footer cargados en memoria correctamente.");
     } catch (err) {
         console.error("Error crítico al cargar interfaz del footer:", err);
-        alert("Atención: No se pudieron obtener los datos del Footer. Verifica que la base de datos esté activa.");
     }
 }
 
-// 2. Controladores de Apertura y Cierre del modal respetando las clases CSS del panel
+// 2. Controladores de Apertura y Cierre del modal
 function abrirModalFooter() {
+    // Si entras muy rápido y el servidor no ha respondido, intentamos cargar de nuevo
     if (!datosFooterActual) {
-        alert("Espera a que los datos se terminen de descargar del servidor.");
+        alert("Cargando datos del servidor... Por favor intenta abrirlo de nuevo en un segundo.");
+        cargarFooterAdmin();
         return;
     }
 
-    // Rellenamos los inputs con los valores actuales en la BD antes de mostrar el modal
+    // Rellenamos los inputs con los valores actuales antes de mostrar el modal
     document.getElementById('footer-descripcion').value = datosFooterActual.footer_descripcion || '';
     document.getElementById('footer-titulo-links').value = datosFooterActual.footer_titulo_links || '';
     document.getElementById('footer-titulo-contacto').value = datosFooterActual.footer_titulo_contacto || '';
@@ -1890,7 +1896,7 @@ function abrirModalFooter() {
     document.getElementById('footer-copyright-linea1').value = datosFooterActual.footer_copyright_linea1 || '';
     document.getElementById('footer-copyright-linea2').value = datosFooterActual.footer_copyright_linea2 || '';
 
-    // Mostramos el modal reemplazando clases tal como en el módulo de Marca
+    // Mostramos el modal
     document.getElementById('modal-footer').classList.replace('hidden', 'flex');
 }
 
@@ -1930,7 +1936,7 @@ async function guardarFooter(e) {
 
         alert("¡Textos generales del Footer actualizados correctamente!");
         cerrarModalFooter();
-        cargarFooterAdmin(); // Recarga la tabla de resumen visualizada en la sección
+        cargarFooterAdmin(); // Recarga los datos inmediatamente
         
     } catch (err) {
         alert(err.message);
@@ -1938,6 +1944,16 @@ async function guardarFooter(e) {
     }
 }
 
+
+// Al fondo de tu script en admin.html:
+document.addEventListener('DOMContentLoaded', () => {
+    // Estas funciones corren en paralelo inmediatamente al abrir la página:
+    obtenerDatosHeaderAdmin(); 
+    cargarFooterAdmin();       // <-- Esto hace que el footer cargue SOLO sin pedir clicks previos
+    
+    // Si tienes un formulario para el footer, asegúrate de asignarle el evento submit:
+    document.getElementById('formFooter')?.addEventListener('submit', guardarFooter);
+});
 
 </script>
 </body>
