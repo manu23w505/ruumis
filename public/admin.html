@@ -310,7 +310,7 @@
                     <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-3">Correo configurado actualmente</h3>
                     <div class="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl p-4">
                         <div class="flex items-center gap-3">
-                            <span class="text-xl">📩</span>
+                            <span class="text-xl"></span>
                             <input type="email" id="vista-email-actual" readonly class="bg-transparent border-none text-slate-800 font-semibold text-sm focus:outline-none w-64" value="Cargando...">
                         </div>
                         <button onclick="abrirModalEditarCorreo()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 text-xs font-bold px-4 py-2 rounded-xl transition-colors shadow-sm cursor-pointer">
@@ -1554,28 +1554,27 @@ async function obtenerDatosHeaderAdmin() {
         if (contenedorInputs) contenedorInputs.innerHTML = '';
 
         data.redes.forEach(red => {
-            // Llenar lo que el Admin VE en la pantalla principal
+            // Ahora inyectamos los INPUTS directamente en la vista principal
             if (contenedorVista) {
                 contenedorVista.innerHTML += `
-                    <div>
-                        <span class="block text-xs font-semibold text-slate-400 capitalize">${red.red}:</span>
-                        <p class="font-medium text-slate-800 mt-1 truncate">
-                            ${red.url ? `<a href="${red.url}" target="_blank" class="text-cyan-600 hover:underline">${red.url}</a>` : 'No configurada'}
-                        </p>
-                    </div>
-                `;
-            }
-
-            // Llenar los inputs dentro del MODAL de edición
-            if (contenedorInputs) {
-                contenedorInputs.innerHTML += `
-                    <div>
-                        <label class="block text-xs font-medium text-slate-500 mb-1 capitalize">Enlace de ${red.red}</label>
-                        <input type="url" class="input-red-social w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all" data-id="${red.id}" value="${red.url || ''}" placeholder="https://...">
+                    <div class="mb-3">
+                        <label class="block text-xs font-semibold text-slate-500 capitalize mb-1">${red.red}</label>
+                        <input type="url" class="input-red-social w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all shadow-sm" data-id="${red.id}" value="${red.url || ''}" placeholder="https://...">
                     </div>
                 `;
             }
         });
+
+        // Agregamos el botón de guardar directamente al final de los inputs en la vista principal
+        if (contenedorVista) {
+            contenedorVista.innerHTML += `
+                <div class="mt-4 pt-3 border-t border-slate-100 text-right">
+                    <button type="button" onclick="guardarRedesDirecto()" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg text-sm font-medium shadow-sm transition-colors">
+                        Actualizar Redes
+                    </button>
+                </div>
+            `;
+        }
 
     } catch (error) {
         console.error('Error al obtener datos del header en admin:', error);
