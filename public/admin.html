@@ -1851,11 +1851,10 @@ async function cargarFooterAdmin() {
         
         const datos = await res.json();
         
-        // ¡CORRECCIÓN CLAVE!: Guardamos los datos en la variable global 
-        // para que las funciones de abrir el modal puedan usarlos.
+        // Guardamos los datos en la variable global para los modales
         datosFooterActual = datos; 
         
-        // Distribuimos los valores protegiendo los inputs contra valores nulos/undefined
+        // 1. DISTRIBUIR EN LOS INPUTS DEL MODAL (Evita valores nulos/undefined)
         if (document.getElementById('footer-descripcion')) document.getElementById('footer-descripcion').value = datos.footer_descripcion || '';
         if (document.getElementById('footer-titulo-links')) document.getElementById('footer-titulo-links').value = datos.footer_titulo_links || '';
         if (document.getElementById('footer-titulo-contacto')) document.getElementById('footer-titulo-contacto').value = datos.footer_titulo_contacto || '';
@@ -1868,9 +1867,58 @@ async function cargarFooterAdmin() {
         if (document.getElementById('footer-copyright-linea1')) document.getElementById('footer-copyright-linea1').value = datos.footer_copyright_linea1 || '';
         if (document.getElementById('footer-copyright-linea2')) document.getElementById('footer-copyright-linea2').value = datos.footer_copyright_linea2 || '';
         
-        console.log("Datos del Footer cargados en memoria correctamente.");
+        // =========================================================
+        // 2. CORRECCIÓN: INYECTAR LAS FILAS DINÁMICAS EN LA TABLA
+        // =========================================================
+        const tablaBody = document.getElementById('tabla-footer-body');
+        if (tablaBody) {
+            // Mapeamos las variables de tu Base de Datos a nombres elegantes en español
+            const diccionarioCampos = {
+                'footer_descripcion': 'Descripción de la Marca',
+                'footer_titulo_links': 'Título de Enlaces',
+                'footer_titulo_contacto': 'Título de Contacto',
+                'footer_titulo_redes': 'Título de Redes Sociales',
+                'footer_direccion_linea1': 'Dirección (Línea 1)',
+                'footer_direccion_linea2': 'Dirección (Línea 2)',
+                'footer_telefono1': 'Teléfono Principal',
+                'footer_telefono2': 'Teléfono Alternativo',
+                'footer_texto_redes': 'Texto de Redes Sociales',
+                'footer_copyright_linea1': 'Copyright (Línea 1)',
+                'footer_copyright_linea2': 'Copyright (Línea 2)'
+            };
+
+            let filasHTML = '';
+
+            // Recorremos el diccionario para armar cada fila estructural de la tabla
+            Object.keys(diccionarioCampos).forEach(clave => {
+                const nombreCampo = diccionarioCampos[clave];
+                // Si el valor está vacío, muestra un aviso estilizado en amarillo
+                const valorCampo = datos[clave] ? datos[clave] : '<span class="text-amber-500 italic font-medium">No configurado</span>';
+
+                filasHTML += `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-4 font-medium text-slate-900">${nombreCampo}</td>
+                        <td class="p-4 text-slate-600 break-words">${valorCampo}</td>
+                    </tr>
+                `;
+            });
+
+            // Reemplazamos el "Cargando..." por nuestras nuevas filas
+            tablaBody.innerHTML = filasHTML;
+        }
+
+        console.log("Datos del Footer cargados en memoria y tabla de resumen actualizada.");
     } catch (err) {
         console.error("Error crítico al cargar interfaz del footer:", err);
+        // Si hay error, le avisamos al usuario directamente en la tabla
+        const tablaBody = document.getElementById('tabla-footer-body');
+        if (tablaBody) {
+            tablaBody.innerHTML = `
+                <tr>
+                    <td class="p-4 font-medium text-rose-600" colspan="2">Error al conectar con el servidor para traer los datos.</td>
+                </tr>
+            `;
+        }
     }
 }
 
