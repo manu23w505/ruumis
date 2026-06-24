@@ -42,11 +42,12 @@ const upload = multer({
 });
 
 const db = mysql.createConnection({
-    host: process.env.MYSQLHOST || 'localhost',
-    user: process.env.MYSQLUSER || 'root',
-    password: process.env.MYSQLPASSWORD || '1234',
-    database: process.env.MYSQLDATABASE || 'ruumis_db',
-    port: process.env.MYSQLPORT || 3306
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER || 'avnadmin',
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME || 'plantilla',
+    port: process.env.DB_PORT || 3306,
+    ssl: { rejectUnauthorized: false } 
 });
 
 db.connect((err) => {
