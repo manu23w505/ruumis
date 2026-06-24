@@ -625,7 +625,8 @@ app.get('/api/redirect-airbnb/:id', (req, res) => {
 async function sincronizarCalendarios() {
     console.log('[iCal] Iniciando sincronización automática en el servidor...');
     
-    db.query('SELECT id, link_calendario FROM anuncios WHERE link_calendario IS NOT NULL AND link_calendario != ""', async (err, anuncios) => {
+    // ⬇️ Línea modificada aquí abajo ⬇️
+    db.query('SELECT id, link_calendario FROM anuncios WHERE link_calendario IS NOT NULL AND LENGTH(link_calendario) > 0', async (err, anuncios) => {
         if (err) return console.error('[iCal] Error de Base de Datos:', err);
 
         if (anuncios.length === 0) {
