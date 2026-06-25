@@ -882,8 +882,6 @@
         let todasLasUbicaciones = []; 
         
         let datosFooterActual = null;
-        const textos = req.body;
-        const keys = Object.keys(textos);
 
         let creandoNuevaCiudad = false;
         let creandoNuevaZona = false;
@@ -1891,6 +1889,9 @@ async function enviarCambiosPagina(e) {
 
 
 //FOOTER
+
+const textos = req.body;
+const keys = Object.keys(textos);
 
 // 1. Cargar datos del footer en la tabla informativa / inputs
 async function cargarFooterAdmin() {
