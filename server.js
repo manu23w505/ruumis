@@ -67,7 +67,7 @@ const { usuario, contrasena, recaptchaToken } = req.body;
         return res.status(400).json({ success: false, error: 'Por favor, completa el CAPTCHA de seguridad.' });
     }
 
-    const RECAPTCHA_SECRET_KEY = '6Le08yItAAAAAN8_0xuqc0u3kFRz5R5W79vSU4gM'; 
+    const RECAPTCHA_SECRET_KEY = '6Le-wzQtAAAAAPvV_hOyRHqEVn35nUmObCeuOqLl'; 
 
     try {
         const respuestaGoogle = await fetch(`https://www.google.com/recaptcha/api/siteverify`, {
