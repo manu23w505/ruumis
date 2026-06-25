@@ -427,24 +427,24 @@
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Columna 1: Enlaces Rápidos</label>
                             <div class="flex gap-2">
-                                <input type="text" id="footer-title-links" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
-                                <button onclick="guardarDatoIndividual('footer_title_links', 'footer-title-links')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                <input type="text" id="footer-titulo-links" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                                <button onclick="guardarDatoIndividual('footer_titulo_links', 'footer-titulo-links')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Columna 2: Contacto</label>
                             <div class="flex gap-2">
-                                <input type="text" id="footer-title-contacto" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
-                                <button onclick="guardarDatoIndividual('footer_title_contacto', 'footer-title-contacto')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                <input type="text" id="footer-titulo-contacto" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                                <button onclick="guardarDatoIndividual('footer_titulo_contacto', 'footer-titulo-contacto')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Columna 3: Redes Sociales</label>
                             <div class="flex gap-2">
-                                <input type="text" id="footer-title-redes" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
-                                <button onclick="guardarDatoIndividual('footer_title_redes', 'footer-title-redes')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                <input type="text" id="footer-titulo-redes" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                                <button onclick="guardarDatoIndividual('footer_titulo_redes', 'footer-titulo-redes')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
                             </div>
                         </div>
                     </div>
@@ -455,10 +455,18 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Dirección Física (Soporta Saltos de Línea)</label>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Dirección Física - Línea 1</label>
                             <div class="flex gap-2">
-                                <textarea id="footer-direccion" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500 resize-none"></textarea>
-                                <button onclick="guardarDatoIndividual('footer_direccion', 'footer-direccion')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all flex items-center justify-center shadow-sm">Actualizar</button>
+                                <input type="text" id="footer-direccion-linea1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                                <button onclick="guardarDatoIndividual('footer_direccion_linea1', 'footer-direccion-linea1')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Dirección Física - Línea 2</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="footer-direccion-linea2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                                <button onclick="guardarDatoIndividual('footer_direccion_linea2', 'footer-direccion-linea2')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
                             </div>
                         </div>
                         
@@ -1941,20 +1949,25 @@ async function cargarFooterAdmin() {
         if (!res.ok) throw new Error("Error al obtener datos del footer");
         const datos = await res.json();
 
-        // 1. Población de campos editables individuales
-        document.getElementById('footer-descripcion').value   = datos.footer_descripcion || '';
-        document.getElementById('footer-title-links').value   = datos.footer_title_links || '';
-        document.getElementById('footer-title-contacto').value= datos.footer_title_contacto || '';
-        document.getElementById('footer-title-redes').value   = datos.footer_title_redes || '';
-        document.getElementById('footer-direccion').value     = datos.footer_direccion || '';
-        document.getElementById('footer-telefono1').value     = datos.footer_telefono1 || '';
-        document.getElementById('footer-telefono2').value     = datos.footer_telefono2 || '';
-        document.getElementById('footer-texto-redes').value   = datos.footer_texto_redes || '';
-        document.getElementById('footer-copyright-linea1').value = datos.footer_copyright_linea1 || '';
-        document.getElementById('footer-copyright-linea2').value = datos.footer_copyright_linea2 || '';
+        // 1. Población de campos editables individuales (ACTUALIZADO)
+        document.getElementById('footer-descripcion').value        = datos.footer_descripcion || '';
+        
+        // Corregido de 'title' a 'titulo' para que coincida con la BD y no queden vacíos
+        document.getElementById('footer-titulo-links').value       = datos.footer_titulo_links || '';
+        document.getElementById('footer-titulo-contacto').value    = datos.footer_titulo_contacto || '';
+        document.getElementById('footer-titulo-redes').value       = datos.footer_titulo_redes || '';
+        
+        // Dividido en dos líneas para mapear correctamente las dos filas de la BD
+        document.getElementById('footer-direccion-linea1').value  = datos.footer_direccion_linea1 || '';
+        document.getElementById('footer-direccion-linea2').value  = datos.footer_direccion_linea2 || '';
+        
+        document.getElementById('footer-telefono1').value          = datos.footer_telefono1 || '';
+        document.getElementById('footer-telefono2').value          = datos.footer_telefono2 || '';
+        document.getElementById('footer-texto-redes').value        = datos.footer_texto_redes || '';
+        document.getElementById('footer-copyright-linea1').value  = datos.footer_copyright_linea1 || '';
+        document.getElementById('footer-copyright-linea2').value  = datos.footer_copyright_linea2 || '';
 
         // 2. Población de datos compartidos (Duplicados del Header para Solo Lectura)
-        // Nota: Asegúrate de que este sea tu endpoint correcto del header para traer la marca y el logo actual
         const resHeader = await fetch('/api/header-completo'); 
         if (resHeader.ok) {
             const datosHeader = await resHeader.json();
@@ -1999,12 +2012,11 @@ async function guardarDatoIndividual(claveBD, idInputHTML) {
     }
 }
 
-// Inicialización al cargar el DOM
+// Inicialización del DOM
 document.addEventListener('DOMContentLoaded', () => {
     obtenerDatosHeaderAdmin(); 
-    cargarFooterAdmin(); // Carga de forma automática todos tus campos individuales
+    cargarFooterAdmin(); // Carga de forma automática todos tus campos individuales sin clicks previos
 });
-
 
 </script>
 </body>
