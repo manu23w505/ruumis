@@ -41,13 +41,26 @@ const upload = multer({
     }
 });
 
-const db = mysql.createConnection({
+const db = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER || 'avnadmin',
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME || 'plantilla',
-    port: process.env.DB_PORT || 3306,
-    ssl: { rejectUnauthorized: false } 
+    port: process.env.DB_PORT || 18515,
+    ssl: { rejectUnauthorized: false },
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+});
+
+// Verificar la conexión inicial del Pool
+db.getConnection((err, connection) => {
+    if (err) {
+        console.error('Error al conectar a la base de datos:', err);
+    } else {
+        console.log('Conectado con éxito a la base de datos mediante Pool');
+        connection.release(); // Libera la conexión para que otros la usen
+    }
 });
 
 db.connect((err) => {
