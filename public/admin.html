@@ -386,75 +386,125 @@
             </section>
 
             <section id="tab-footer" class="tab-content space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-900">Personalización del Footer</h2>
-                        <p class="text-slate-500 text-sm">Administra la información de contacto, textos informativos y propiedad de derechos de autor en el pie de página.</p>
-                    </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900">Personalización del Footer</h2>
+                    <p class="text-slate-500 text-sm">Administra y actualiza de forma individual cada sección, textos y títulos que componen el pie de página público.</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
                     
-                    <div class="space-y-6">
-                        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-                            <div>
-                                <div class="flex justify-between items-center border-b border-slate-100 pb-3 mb-4">
-                                    <div class="flex items-center gap-2">
-                                        <span class="icon-phone text-indigo-500 font-bold"></span>
-                                        <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Información de Contacto</h3>
-                                    </div>
-                                    <button onclick="abrirModalSeccionFooter('contacto')" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg transition-all">Editar Contacto</button>
-                                </div>
-                                <div class="space-y-3 text-sm">
-                                    <div>
-                                        <span class="block text-xs font-semibold text-slate-400">Teléfono Principal:</span>
-                                        <p id="vista-footer-telefono1" class="font-medium text-slate-800 mt-1">Cargando...</p>
-                                    </div>
-                                    <div>
-                                        <span class="block text-xs font-semibold text-slate-400">Teléfono Secundario:</span>
-                                        <p id="vista-footer-telefono2" class="font-medium text-slate-800 mt-1">Cargando...</p>
-                                    </div>
-                                </div>
+                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+                        <div class="border-b border-slate-100 pb-2">
+                            <h3 class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Identidad Corporativa</h3>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Nombre de la Marca <span class="text-slate-400 font-normal italic">(Se edita en Header)</span></label>
+                            <input type="text" id="footer-vista-marca" readonly class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-500 cursor-not-allowed">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Logotipo Corporativo (SVG) <span class="text-slate-400 font-normal italic">(Se edita en Header)</span></label>
+                            <div class="flex gap-2">
+                                <textarea id="footer-vista-logo" readonly rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-mono text-slate-400 cursor-not-allowed resize-none"></textarea>
                             </div>
                         </div>
 
-                        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-                            <div>
-                                <div class="flex justify-between items-center border-b border-slate-100 pb-3 mb-4">
-                                    <div class="flex items-center gap-2">
-                                        <span class="icon-share text-indigo-500 font-bold"></span>
-                                        <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Sección de Redes</h3>
-                                    </div>
-                                    <button onclick="abrirModalSeccionFooter('redes')" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg transition-all">Modificar Texto</button>
-                                </div>
-                                <div class="text-sm">
-                                    <span class="block text-xs font-semibold text-slate-400">Texto Invitación a Redes:</span>
-                                    <p id="vista-footer-texto-redes" class="font-medium text-slate-800 mt-1 italic text-slate-600">Cargando...</p>
-                                </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Descripción del Footer</label>
+                            <div class="flex gap-2">
+                                <textarea id="footer-descripcion" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+                                <button onclick="guardarDatoIndividual('footer_descripcion', 'footer-descripcion')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all flex items-center justify-center shadow-sm">Actualizar</button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="space-y-6">
-                        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between h-full">
-                            <div>
-                                <div class="flex justify-between items-center border-b border-slate-100 pb-3 mb-4">
-                                    <div class="flex items-center gap-2">
-                                        <span class="icon-file-text text-indigo-500 font-bold"></span>
-                                        <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Copyright y Propiedad</h3>
-                                    </div>
-                                    <button onclick="abrirModalSeccionFooter('copyright')" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg transition-all">Actualizar Copyright</button>
-                                </div>
-                                <div class="space-y-4 text-sm">
-                                    <div>
-                                        <span class="block text-xs font-semibold text-slate-400">Línea de Copyright 1:</span>
-                                        <p id="vista-footer-copyright-linea1" class="font-medium text-slate-800 mt-1">Cargando...</p>
-                                    </div>
-                                    <div>
-                                        <span class="block text-xs font-semibold text-slate-400">Línea de Copyright 2:</span>
-                                        <p id="vista-footer-copyright-linea2" class="font-medium text-slate-800 mt-1">Cargando...</p>
-                                    </div>
-                                </div>
+                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+                        <div class="border-b border-slate-100 pb-2">
+                            <h3 class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Encabezados de Columnas</h3>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Columna 1: Enlaces Rápidos</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="footer-title-links" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                                <button onclick="guardarDatoIndividual('footer_title_links', 'footer-title-links')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Columna 2: Contacto</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="footer-title-contacto" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                                <button onclick="guardarDatoIndividual('footer_title_contacto', 'footer-title-contacto')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Columna 3: Redes Sociales</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="footer-title-redes" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                                <button onclick="guardarDatoIndividual('footer_title_redes', 'footer-title-redes')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+                        <div class="border-b border-slate-100 pb-2">
+                            <h3 class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Información de Contacto y Redes</h3>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Dirección Física (Soporta Saltos de Línea)</label>
+                            <div class="flex gap-2">
+                                <textarea id="footer-direccion" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+                                <button onclick="guardarDatoIndividual('footer_direccion', 'footer-direccion')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all flex items-center justify-center shadow-sm">Actualizar</button>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Teléfono Principal</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="footer-telefono1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                                <button onclick="guardarDatoIndividual('footer_telefono1', 'footer-telefono1')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Teléfono Secundario</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="footer-telefono2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                                <button onclick="guardarDatoIndividual('footer_telefono2', 'footer-telefono2')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Subtexto Redes Sociales</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="footer-texto-redes" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                                <button onclick="guardarDatoIndividual('footer_texto_redes', 'footer-texto-redes')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+                        <div class="border-b border-slate-100 pb-2">
+                            <h3 class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Derechos de Autor</h3>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Línea de Copyright 1 (ej. Merkulove &copy; Hosteller)</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="footer-copyright-linea1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                                <button onclick="guardarDatoIndividual('footer_copyright_linea1', 'footer-copyright-linea1')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Línea de Copyright 2 (ej. All rights reserved 2026)</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="footer-copyright-linea2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
+                                <button onclick="guardarDatoIndividual('footer_copyright_linea2', 'footer-copyright-linea2')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
                             </div>
                         </div>
                     </div>
@@ -1884,7 +1934,6 @@ async function enviarCambiosPagina(e) {
 
 //FOOTER
 
-
 // 1. Cargar datos del footer en la tabla informativa / inputs
 async function cargarFooterAdmin() {
     try {
@@ -1892,70 +1941,42 @@ async function cargarFooterAdmin() {
         if (!res.ok) throw new Error("Error al obtener datos del footer");
         const datos = await res.json();
 
-        // Mapear valores a las vistas previas en las tarjetas
-        document.getElementById('vista-footer-telefono1').textContent = datos.footer_telefono1 || 'No asignado';
-        document.getElementById('vista-footer-telefono2').textContent = datos.footer_telefono2 || 'No asignado';
-        document.getElementById('vista-footer-texto-redes').textContent = datos.footer_texto_redes || 'No asignado';
-        document.getElementById('vista-footer-copyright-linea1').textContent = datos.footer_copyright_linea1 || 'No asignado';
-        document.getElementById('vista-footer-copyright-linea2').textContent = datos.footer_copyright_linea2 || 'No asignado';
-
-        // Sincronizar también los inputs internos del modal para cuando se abra
-        document.getElementById('footer-telefono1').value = datos.footer_telefono1 || '';
-        document.getElementById('footer-telefono2').value = datos.footer_telefono2 || '';
-        document.getElementById('footer-texto-redes').value = datos.footer_texto_redes || '';
+        // 1. Población de campos editables individuales
+        document.getElementById('footer-descripcion').value   = datos.footer_descripcion || '';
+        document.getElementById('footer-title-links').value   = datos.footer_title_links || '';
+        document.getElementById('footer-title-contacto').value= datos.footer_title_contacto || '';
+        document.getElementById('footer-title-redes').value   = datos.footer_title_redes || '';
+        document.getElementById('footer-direccion').value     = datos.footer_direccion || '';
+        document.getElementById('footer-telefono1').value     = datos.footer_telefono1 || '';
+        document.getElementById('footer-telefono2').value     = datos.footer_telefono2 || '';
+        document.getElementById('footer-texto-redes').value   = datos.footer_texto_redes || '';
         document.getElementById('footer-copyright-linea1').value = datos.footer_copyright_linea1 || '';
         document.getElementById('footer-copyright-linea2').value = datos.footer_copyright_linea2 || '';
+
+        // 2. Población de datos compartidos (Duplicados del Header para Solo Lectura)
+        // Nota: Asegúrate de que este sea tu endpoint correcto del header para traer la marca y el logo actual
+        const resHeader = await fetch('/api/header-completo'); 
+        if (resHeader.ok) {
+            const datosHeader = await resHeader.json();
+            document.getElementById('footer-vista-marca').value = datosHeader.nombre_marca || 'No asignada';
+            document.getElementById('footer-vista-logo').value  = datosHeader.logo_svg || 'No asignado';
+        }
 
     } catch (err) {
         console.error("Error crítico al cargar interfaz del footer:", err);
     }
 }
 
-// Abrir el modal dinámicamente según la sección elegida
-function abrirModalSeccionFooter(seccion) {
-    const modal = document.getElementById('modal-editar-footer');
-    const titulo = document.getElementById('titulo-modal-footer');
-    document.getElementById('edit-footer-bloque').value = seccion;
 
-    // Ocultar todos los grupos primero
-    document.getElementById('grupo-contacto').classList.add('hidden');
-    document.getElementById('grupo-redes').classList.add('hidden');
-    document.getElementById('grupo-copyright').classList.add('hidden');
+async function guardarDatoIndividual(claveBD, idInputHTML) {
+    const inputElement = document.getElementById(idInputHTML);
+    if (!inputElement) return;
 
-    // Mostrar solo el grupo solicitado y cambiar título
-    if (seccion === 'contacto') {
-        titulo.textContent = 'Editar Información de Contacto';
-        document.getElementById('grupo-contacto').classList.remove('hidden');
-    } else if (seccion === 'redes') {
-        titulo.textContent = 'Editar Sección de Redes';
-        document.getElementById('grupo-redes').classList.remove('hidden');
-    } else if (seccion === 'copyright') {
-        titulo.textContent = 'Editar Copyright y Propiedad';
-        document.getElementById('grupo-copyright').classList.remove('hidden');
-    }
+    const valor = inputElement.value;
 
-    modal.classList.replace('hidden', 'flex');
-}
-
-function cerrarModalEditarFooter() {
-    document.getElementById('modal-editar-footer').classList.replace('flex', 'hidden');
-}
-
-// Enviar los cambios únicamente de la sección editada
-async function enviarCambiosFooter(event) {
-    event.preventDefault();
-    const bloque = document.getElementById('edit-footer-bloque').value;
+    // Construimos dinámicamente el payload con una sola clave/valor
     const payload = {};
-
-    if (bloque === 'contacto') {
-        payload.footer_telefono1 = document.getElementById('footer-telefono1').value;
-        payload.footer_telefono2 = document.getElementById('footer-telefono2').value;
-    } else if (bloque === 'redes') {
-        payload.footer_texto_redes = document.getElementById('footer-texto-redes').value;
-    } else if (bloque === 'copyright') {
-        payload.footer_copyright_linea1 = document.getElementById('footer-copyright-linea1').value;
-        payload.footer_copyright_linea2 = document.getElementById('footer-copyright-linea2').value;
-    }
+    payload[claveBD] = valor;
 
     try {
         const res = await fetch('/api/footer', {
@@ -1964,26 +1985,25 @@ async function enviarCambiosFooter(event) {
             body: JSON.stringify(payload)
         });
 
-        if (!res.ok) throw new Error("No se pudieron guardar los cambios de la sección.");
+        if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.error || "No se pudo actualizar el dato.");
+        }
 
-        alert("¡Sección del Footer actualizada correctamente!");
-        cerrarModalEditarFooter();
-        cargarFooterAdmin(); // Recargar las vistas previas fijas
+        alert("¡Propiedad actualizada correctamente!");
+        cargarFooterAdmin(); // Volver a consultar para asegurar sincronía de datos
+        
     } catch (err) {
         alert(err.message);
+        console.error(`Error al intentar actualizar la clave [${claveBD}]:`, err);
     }
 }
 
-// Al fondo de tu script en admin.html:
+// Inicialización al cargar el DOM
 document.addEventListener('DOMContentLoaded', () => {
-    // Estas funciones corren en paralelo inmediatamente al abrir la página:
     obtenerDatosHeaderAdmin(); 
-    cargarFooterAdmin();       // <-- Esto hace que el footer cargue SOLO sin pedir clicks previos
-    
-    // Si tienes un formulario para el footer, asegúrate de asignarle el evento submit:
-    document.getElementById('formFooter')?.addEventListener('submit', guardarFooter);
+    cargarFooterAdmin(); // Carga de forma automática todos tus campos individuales
 });
-
 
 
 </script>
