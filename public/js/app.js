@@ -657,88 +657,92 @@ async function cargarPreguntasDinamicas() {
     }
 }
 
-// CARGAR HEADER DESDE LA BD
+// CARGAR DATOS (HEADER Y FOOTER) 
 async function cargarHeaderDinamico() {
     try {
         const response = await fetch('/api/header-completo');
-        if (!response.ok) throw new Error('No se pudo obtener la configuración del header');
+        if (!response.ok) throw new Error('No se pudo obtener la configuración global');
         const data = await response.json();
 
         const { config, paginas, redes } = data;
 
-        // 1. ACTUALIZAR EL LOGO Y EL NOMBRE DE LA MARCA (En el header principal)
-        const brandHeader = document.querySelector('.header .brand');
-        if (brandHeader && config) {
-            brandHeader.innerHTML = `
-                <span class="brand_logo theme-element">
-                    ${config.logo_svg || ''}
-                </span>
-                <span class="brand_name">${config.nombre_marca || 'Hosteller'}</span>
-            `;
-            // El link siempre apunta a la raíz '/' dinámica
-            brandHeader.setAttribute('href', '/');
-        }
+        // ========================================================
+        // 1. ACTUALIZAR EL LOGO Y NOMBRE DE LA MARCA EN TODOS LADOS
+        // ========================================================
+        if (config) {
+            // Reemplaza todos los SVG (Header, Offcanvas, Footer)
+            document.querySelectorAll('.brand_logo').forEach(contenedorLogo => {
+                contenedorLogo.innerHTML = config.logo_svg || '';
+            });
 
-        // 2. ACTUALIZAR EL LOGO Y NOMBRE DENTRO DEL MENÚ DESPLEGABLE (Móviles / Offcanvas)
-        const brandOffset = document.querySelector('.header_offcanvas-header .brand');
-        if (brandOffset && config) {
-            // Reemplazamos el id del SVG interno para que sea 'brandOffset' si viene en texto plano
-            let logoSvgOffset = config.logo_svg || '';
-            logoSvgOffset = logoSvgOffset.replace('id="brandHeader"', 'id="brandOffset"');
-
-            brandOffset.innerHTML = `
-                <span class="brand_logo theme-element">
-                    ${logoSvgOffset}
-                </span>
-                <span class="brand_name">${config.nombre_marca || 'Hosteller'}</span>
-            `;
-            brandOffset.setAttribute('href', '/');
-        }
-
-        // 3. RENDERIZAR LAS PÁGINAS DEL NAV (MENÚ DINÁMICO)
-        const navList = document.querySelector('.header_nav-list');
-        if (navList && paginas) {
-            navList.innerHTML = ''; // Limpiamos los enlaces estáticos antiguos
-
-            paginas.forEach(item => {
-                const li = document.createElement('li');
-                li.className = 'header_nav-list_item';
-
-                // Comprobamos cuál es la página activa basándonos en la URL actual del navegador
-                const esActiva = window.location.pathname === item.url_estetica ? 'active' : '';
-
-                // Usamos la url_estetica (ej: /acerca-de-nosotros o /) en lugar del archivo físico .html
-                li.innerHTML = `
-                    <a class="nav-item ${esActiva}" href="${item.url_estetica}">
-                        ${item.nombre_visible}
-                    </a>
-                `;
-                navList.appendChild(li);
+            // Reemplaza el texto "Hosteller" en todos lados
+            document.querySelectorAll('.brand_name').forEach(contenedorNombre => {
+                contenedorNombre.textContent = config.nombre_marca || 'Hosteller';
+            });
+            
+            // Asegura que todos los contenedores de marca lleven al inicio
+            document.querySelectorAll('.brand').forEach(enlaceMarca => {
+                enlaceMarca.setAttribute('href', '/');
             });
         }
 
-        // 4. ACTUALIZAR LOS ENLACES DE LAS REDES SOCIALES
-        const socialsList = document.querySelector('.header_offcanvas .socials');
-        if (socialsList && redes) {
-            socialsList.innerHTML = ''; // Limpiamos las redes estáticas
+        // ========================================================
+        // 2. RENDERIZAR LAS PÁGINAS DEL MENÚ (ARRIBA Y ABAJO)
+        // ========================================================
+        if (paginas) {
+            // A) Construir e inyectar en el Header
+            const navList = document.querySelector('.header_nav-list');
+            if (navList) {
+                navList.innerHTML = ''; 
+                paginas.forEach(item => {
+                    const esActiva = window.location.pathname === item.url_estetica ? 'active' : '';
+                    navList.innerHTML += `
+                        <li class="header_nav-list_item">
+                            <a class="nav-item ${esActiva}" href="${item.url_estetica}">${item.nombre_visible}</a>
+                        </li>`;
+                });
+            }
 
+            // B) Construir e inyectar en el Footer (Quick Links)
+            const footerNav = document.querySelector('.footer_main-block_nav');
+            if (footerNav) {
+                footerNav.innerHTML = '';
+                paginas.forEach(item => {
+                    footerNav.innerHTML += `
+                        <li class="list-item">
+                            <a class="link underlined underlined--white nav-item" href="${item.url_estetica}">${item.nombre_visible}</a>
+                        </li>`;
+                });
+            }
+        }
+
+        // ========================================================
+        // 3. ACTUALIZAR ENLACES DE REDES SOCIALES (ARRIBA Y ABAJO)
+        // ========================================================
+        if (redes) {
+            let redesHTML = '';
             redes.forEach(red => {
-                // Solo mostramos la red social si tiene una URL configurada en el panel
                 if (red.url && red.url.trim() !== '') {
-                    const li = document.createElement('li');
-                    li.className = 'list-item';
-                    li.innerHTML = `
-                        <a class="link" href="${red.url}" target="_blank" rel="noopener noreferrer">
-                            <i class="${red.icono}"></i>
-                        </a>
-                    `;
-                    socialsList.appendChild(li);
+                    redesHTML += `
+                        <li class="list-item">
+                            <a class="link" href="${red.url}" target="_blank" rel="noopener noreferrer">
+                                <i class="${red.icono}"></i>
+                            </a>
+                        </li>`;
                 }
             });
+
+            // Inyectar en el menú lateral desplegable (Offcanvas)
+            const socialsListHeader = document.querySelector('.header_offcanvas .socials');
+            if (socialsListHeader) socialsListHeader.innerHTML = redesHTML;
+
+            // Inyectar en la sección "Follow Us" del Footer
+            const socialsListFooter = document.querySelector('.footer_main-block--follow .socials');
+            if (socialsListFooter) socialsListFooter.innerHTML = redesHTML;
         }
 
     } catch (error) {
-        console.error('Error al renderizar el header dinámico:', error);
+        console.error('Error al renderizar los datos dinámicos:', error);
     }
 }
 
