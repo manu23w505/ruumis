@@ -882,6 +882,8 @@
         let todasLasUbicaciones = []; 
         
         let datosFooterActual = null;
+        const textos = req.body;
+        const keys = Object.keys(textos);
 
         let creandoNuevaCiudad = false;
         let creandoNuevaZona = false;
@@ -2004,10 +2006,7 @@ function cerrarModalFooter() {
 
 // 3. Procesar y enviar los datos del formulario al backend (PUT)
 async function guardarSeccionFooter(camposAEnviar) {
-    // Generamos un payload base que se rellenará dinámicamente
     const payload = {};
-
-    // Mapeo entre las propiedades de la API y los IDs del HTML
     const mapaCampos = {
         footer_telefono1: 'footer-telefono1',
         footer_telefono2: 'footer-telefono2',
@@ -2016,10 +2015,10 @@ async function guardarSeccionFooter(camposAEnviar) {
         footer_copyright_linea2: 'footer-copyright-linea2'
     };
 
-    // Solo extraemos los valores de los elementos que pertenecen al bloque del botón cliqueado
     for (const propiedad in mapaCampos) {
         if (camposAEnviar.includes(propiedad)) {
-            payload[propiedad] = document.getElementById(mapaCampos[propiedad]).value;
+            const elemento = document.getElementById(mapaCampos[propiedad]);
+            if (elemento) payload[propiedad] = elemento.value;
         }
     }
 
@@ -2036,7 +2035,7 @@ async function guardarSeccionFooter(camposAEnviar) {
         }
 
         alert("¡Sección del Footer actualizada correctamente!");
-        cargarFooterAdmin(); // Recarga los datos inmediatamente para verificar
+        cargarFooterAdmin(); 
         
     } catch (err) {
         alert(err.message);
