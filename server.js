@@ -63,15 +63,6 @@ db.getConnection((err, connection) => {
     }
 });
 
-db.connect((err) => {
-    if (err) {
-        console.error('Error al conectar a la base de datos:', err);
-    } else {
-        console.log('Conectado con éxito a la base de datos');
-        sincronizarCalendarios();
-    }
-});
-
 
 app.post('/api/login', async (req, res) => {
 const { usuario, contrasena, recaptchaToken } = req.body;
