@@ -197,12 +197,16 @@ app.delete('/api/tipos-propiedad/:id', (req, res) => {
     });
 });
 
-app.post('/api/ubicaciones', (req, res) => {
+app.post('/api/ubicaciones', upload.single('imagen_ubicacion'), (req, res) => {
+    // Multer procesa el FormData y nos llena req.body con los textos
     const { ciudad, zona, nombre, direccion_completa, link_google_maps, iframe_mapa, especificaciones } = req.body;
 
     if (!ciudad || !zona) {
         return res.status(400).json({ error: 'Ciudad y Zona son requeridas.' });
     }
+
+    // Si el usuario subió una imagen, estructuramos la ruta web pública
+    const rutaImagen = req.file ? `/uploads/${req.file.filename}` : null;
 
     const sqlCiudad = 'SELECT id FROM ciudades WHERE nombre = ?';
     db.query(sqlCiudad, [ciudad.trim()], (err, ciudades) => {
@@ -214,10 +218,11 @@ app.post('/api/ubicaciones', (req, res) => {
                 if (err) return res.status(500).json({ error: 'Error al buscar zona' });
 
                 const insertarFinalComplejo = (zonaId) => {
+                    // CAMBIO AQUÍ: Agregamos la columna 'imagen' al INSERT
                     const sqlInsertUbicacion = `
                         INSERT INTO ubicaciones 
-                        (nombre, direccion_completa, link_google_maps, iframe_mapa, especificaciones, zona_id) 
-                        VALUES (?, ?, ?, ?, ?, ?)
+                        (nombre, direccion_completa, link_google_maps, iframe_mapa, especificaciones, zona_id, imagen) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
                     `;
                     db.query(sqlInsertUbicacion, [
                         nombre ? nombre.trim() : '',
@@ -225,7 +230,8 @@ app.post('/api/ubicaciones', (req, res) => {
                         link_google_maps ? link_google_maps.trim() : '',
                         iframe_mapa ? iframe_mapa.trim() : '',
                         especificaciones ? especificaciones : '', 
-                        zonaId
+                        zonaId,
+                        rutaImagen // <--- Pasamos la ruta del archivo aquí
                     ], (err, resultUbicacion) => {
                         if (err) {
                             console.error("Error al insertar en tabla ubicaciones:", err);
@@ -259,7 +265,7 @@ app.post('/api/ubicaciones', (req, res) => {
     });
 });
 
-app.put('/api/ubicaciones/:id', (req, res) => {
+app.put('/api/ubicaciones/:id', upload.single('imagen_ubicacion'), (req, res) => {
     const { id } = req.params; 
     const { ciudad, zona, nombre, direccion_completa, link_google_maps, iframe_mapa, especificaciones } = req.body;
 
@@ -277,20 +283,34 @@ app.put('/api/ubicaciones/:id', (req, res) => {
                 if (err) return res.status(500).json({ error: 'Error al procesar zona en edición' });
 
                 const actualizarUbicacionFinal = (zonaId) => {
-                    const sqlUpdate = `
+                    // CAMBIO AQUÍ: Construimos la query dinámicamente.
+                    // Si el administrador subió una foto nueva, la actualizamos. 
+                    // Si no subió nada, mantenemos intacta la foto anterior para no borrarla.
+                    let sqlUpdate = `
                         UPDATE ubicaciones 
-                        SET nombre = ?, direccion_completa = ?, link_google_maps = ?, iframe_mapa = ?, especificaciones = ?, zona_id = ? 
-                        WHERE id = ?
+                        SET nombre = ?, direccion_completa = ?, link_google_maps = ?, iframe_mapa = ?, especificaciones = ?, zona_id = ?
                     `;
-                    db.query(sqlUpdate, [
+                    
+                    let params = [
                         nombre ? nombre.trim() : '',
                         direccion_completa ? direccion_completa.trim() : '',
                         link_google_maps ? link_google_maps.trim() : '',
                         iframe_mapa ? iframe_mapa.trim() : '',
                         especificaciones ? especificaciones : '',
-                        zonaId,
-                        id
-                    ], (err, result) => {
+                        zonaId
+                    ];
+
+                    if (req.file) {
+                        // Si hay nueva imagen, agregamos la columna al UPDATE
+                        sqlUpdate += `, imagen = ? WHERE id = ?`;
+                        params.push(`/uploads/${req.file.filename}`, id);
+                    } else {
+                        // Si no hay nueva imagen, cerramos la sentencia conservando el archivo actual
+                        sqlUpdate += ` WHERE id = ?`;
+                        params.push(id);
+                    }
+
+                    db.query(sqlUpdate, params, (err, result) => {
                         if (err) {
                             console.error("Error SQL al actualizar la ubicación:", err);
                             return res.status(500).json({ error: 'Error al actualizar la ubicación física' });

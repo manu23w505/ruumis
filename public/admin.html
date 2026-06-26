@@ -608,10 +608,24 @@
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Imágenes de la Propiedad (Mín. 1, Máx. 5)</label>
-                    <input type="file" id="imagenes" name="imagenes" accept="image/*" multiple class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:bg-slate-200 file:text-slate-700 cursor-pointer">
-                    <p class="text-[10px] text-slate-400 mt-1">La primera imagen seleccionada se guardará como la portada principal.</p>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Imágenes del Anuncio (Máximo 5)</label>
+                    
+                    <input 
+                        type="file" 
+                        id="imagenes" 
+                        name="imagenes" 
+                        multiple 
+                        accept="image/*"
+                        class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm"
+                        onchange="validarYPrevisualizarImagenes(this)"
+                    >
+                    
+                    <p id="error-limite-imagenes" class="text-red-500 text-xs font-semibold mt-1 hidden">
+                        Solo puedes seleccionar un máximo de 5 imágenes.
+                    </p>
+                    
+                    <div id="vista-previa-imagenes" class="flex flex-wrap gap-2 mt-3"></div>
                 </div>
                 <div>
                     <div class="flex items-center space-x-1.5 mb-1">
@@ -730,6 +744,21 @@
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Especificaciones del Complejo</label>
                     <textarea id="ubicacion-especificaciones" rows="2" placeholder="Ej. Portón eléctrico, CCTV, terraza compartida..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-cyan-500"></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Imagen de la Ubicación</label>
+                    <input 
+                        type="file" 
+                        id="ubicacion-imagen-file" 
+                        accept="image/*" 
+                        class="w-full px-3 py-2 border border-slate-300 rounded-xl text-sm"
+                        onchange="previsualizarImagenUbicacion(this)"
+                    >
+                    
+                    <div id="vista-previa-ubi-container" class="w-full h-32 border border-slate-200 rounded-xl overflow-hidden bg-slate-50 mt-2 flex items-center justify-center p-1 hidden">
+                        <img id="img-ubi-preview" class="w-full h-full object-cover rounded-lg">
+                    </div>
                 </div>
 
                 <div class="flex justify-end space-x-2 pt-4 border-t border-slate-100">
@@ -1460,27 +1489,38 @@
             const iframe = document.getElementById('ubicacion-iframe').value.trim();
             const specifications = document.getElementById('ubicacion-especificaciones').value.trim();
 
+            // ==========================================
+            // CAMBIO AQUÍ: De JSON plano a FormData
+            // ==========================================
+            const formData = new FormData();
+            formData.append('ciudad', ciudad);
+            formData.append('zona', zona);
+            formData.append('nombre', nombre_complejo);
+            formData.append('direccion_completa', direccion);
+            formData.append('link_google_maps', link_maps);
+            formData.append('iframe_mapa', iframe);
+            formData.append('especificaciones', specifications);
+
+            // Adjuntamos el archivo binario de la imagen si seleccionaron uno
+            const inputImagen = document.getElementById('ubicacion-imagen-file');
+            if (inputImagen && inputImagen.files.length > 0) {
+                formData.append('imagen_ubicacion', inputImagen.files[0]);
+            }
+
             let url = '/api/ubicaciones';
             let metodo = 'POST';
 
             if (modoEdicionUbicacion) {
                 url = `/api/ubicaciones/${id}`;
-                metodo = 'PUT';
+                metodo = 'PUT'; 
             }
 
             try {
                 const res = await fetch(url, {
                     method: metodo,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        ciudad, 
-                        zona,
-                        nombre: nombre_complejo,
-                        direccion_completa: direccion,
-                        link_google_maps: link_maps,
-                        iframe_mapa: iframe,
-                        especificaciones: specifications
-                    })
+                    // IMPORTANTE: Eliminamos el header 'Content-Type' para que 
+                    // el navegador configure automáticamente los límites (boundary) del FormData
+                    body: formData 
                 });
                 
                 if (res.ok) {
@@ -1499,6 +1539,14 @@
             modoEdicionUbicacion = false;
             document.getElementById('form-ubicacion').reset();
             document.getElementById('ubicacion-id').value = '';
+            
+            // ==========================================================
+            // CAMBIO AQUÍ: Limpiar el contenedor de vista previa al crear
+            // ==========================================================
+            const contenedorPreview = document.getElementById('vista-previa-ubi-container');
+            const imgPreview = document.getElementById('img-ubi-preview');
+            if (contenedorPreview) contenedorPreview.classList.add('hidden');
+            if (imgPreview) imgPreview.src = '';
             
             ocultarInputNuevaCiudad();
             ocultarInputNuevaZona(); 
@@ -1522,6 +1570,23 @@
             document.getElementById('ubicacion-iframe').value = u.iframe_mapa || '';
             document.getElementById('ubicacion-especificaciones').value = u.especificaciones || '';
 
+            // ==========================================================
+            // CAMBIO AQUÍ: Mostrar la imagen actual en el modal al editar
+            // ==========================================================
+            const contenedorPreview = document.getElementById('vista-previa-ubi-container');
+            const imgPreview = document.getElementById('img-ubi-preview');
+            
+            // Asumimos que tu base de datos devuelve la columna como 'imagen' o 'imagen_url'
+            const rutaImagenExistente = u.imagen || u.imagen_url || '';
+            
+            if (rutaImagenExistente && rutaImagenExistente.trim() !== '') {
+                if (imgPreview) imgPreview.src = rutaImagenExistente; // Ej: /uploads/17194000.png
+                if (contenedorPreview) contenedorPreview.classList.remove('hidden');
+            } else {
+                if (imgPreview) imgPreview.src = '';
+                if (contenedorPreview) contenedorPreview.classList.add('hidden');
+            }
+
             creandoNuevaCiudad = false;
             document.getElementById('ubicacion-ciudad-select').classList.remove('hidden');
             document.getElementById('ubicacion-ciudad-nuevo').classList.add('hidden');
@@ -1530,11 +1595,11 @@
             ocultarInputNuevaZona(); 
 
             cargarCiudadesEnSelect().then(() => {
-                const ciudadActual = u.ciudad || u.ciudad_nombre || '';
+                const cityActual = u.ciudad || u.ciudad_nombre || '';
                 const selectC = document.getElementById('ubicacion-ciudad-select');
-                if(selectC) selectC.value = ciudadActual;
+                if(selectC) selectC.value = cityActual;
                 
-                cambiarZonasPorCiudadAdmin(ciudadActual);
+                cambiarZonasPorCiudadAdmin(cityActual);
                 
                 const selectZ = document.getElementById('ubicacion-zona-select');
                 if(selectZ) selectZ.value = u.zona || u.zona_nombre || '';
@@ -1562,6 +1627,53 @@
             }
         }
 
+        function validarYPrevisualizarImagenes(input) {
+            const errorTxt = document.getElementById('error-limite-imagenes');
+            const contenedorVistaPrevia = document.getElementById('vista-previa-imagenes');
+            
+            // Limpiamos vistas previas y errores anteriores cada que seleccionan archivos nuevos
+            if (contenedorVistaPrevia) contenedorVistaPrevia.innerHTML = '';
+            if (errorTxt) errorTxt.classList.add('hidden');
+
+            // Validación en tiempo real: Comprobamos el límite estricto de 5 imágenes
+            if (input.files.length > 5) {
+                if (errorTxt) errorTxt.classList.remove('hidden');
+                input.value = ''; // Limpia el input por completo para obligar a elegir bien
+                alert("No puedes seleccionar más de 5 imágenes para los anuncios.");
+                return;
+            }
+
+            // Renderiza las miniaturas en pantalla usando FileReader
+            if (contenedorVistaPrevia && input.files.length > 0) {
+                Array.from(input.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const cajaMiniatura = document.createElement('div');
+                        // Estilos CSS rápidos para que se vean bonitas las miniaturas cuadradas
+                        cajaMiniatura.className = "relative w-16 h-16 border border-slate-200 rounded-lg overflow-hidden bg-slate-100 shadow-sm";
+                        cajaMiniatura.innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+                        contenedorVistaPrevia.appendChild(cajaMiniatura);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+
+        function previsualizarImagenUbicacion(input) {
+            const contenedor = document.getElementById('vista-previa-ubi-container');
+            const imagen = document.getElementById('img-ubi-preview');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagen.src = e.target.result;
+                    contenedor.classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                if (contenedor) contenedor.classList.add('hidden');
+            }
+        }
 
     //preguntas    
         // 1. Función para navegar entre secciones (Asegúrate de tener esta lógica)
