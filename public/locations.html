@@ -207,19 +207,23 @@
                 const linkMaps = ubi.link_google_maps || '#';
                 const especificaciones = ubi.especificaciones || 'Sin especificaciones o amenidades adicionales registradas.';
                 
+                // 1. MODIFICACIÓN: Detectar y estructurar la URL de la imagen
+                // Revisa si tu columna se llama 'imagen' o 'foto'. Si solo guardas 'nombre.jpg', le sumamos '/uploads/'
+                const nombreImagen = ubi.imagen || ubi.foto || 'placeholder.jpg'; 
+                const rutaImagen = (nombreImagen.startsWith('http') || nombreImagen.startsWith('/')) 
+                    ? nombreImagen 
+                    : `/uploads/${nombreImagen}`;
+
                 const tarjeta = document.createElement('div');
                 tarjeta.className = "bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between";
                 
                 // Procesar iframe seguro
                 let layoutMapa = `<div class="w-full h-44 bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-xs text-slate-400 mb-4 font-medium">Mapa no disponible para este complejo</div>`;
                 if (ubi.iframe_mapa && ubi.iframe_mapa.trim() !== '') {
-                    // Si el usuario guardó el tag completo <iframe>...
                     if(ubi.iframe_mapa.includes('<iframe')) {
-                        // Limpiamos clases de ancho/alto por defecto inyectándole clases de Tailwind de forma segura
                         let mapaLimpio = ubi.iframe_mapa.replace(/width="[^"]*"/, 'width="100%"').replace(/height="[^"]*"/, 'height="100%"');
                         layoutMapa = `<div class="w-full h-44 rounded-xl overflow-hidden border border-slate-200 mb-4 bg-slate-50">${mapaLimpio}</div>`;
                     } else {
-                        // Si guardó directo la URL src
                         layoutMapa = `
                             <div class="w-full h-44 rounded-xl overflow-hidden border border-slate-200 mb-4 bg-slate-50">
                                 <iframe src="${ubi.iframe_mapa}" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
@@ -227,8 +231,13 @@
                     }
                 }
 
+                // 2. MODIFICACIÓN: Añadir el bloque HTML de la imagen arriba de las etiquetas
                 tarjeta.innerHTML = `
                     <div>
+                        <div class="w-full h-48 rounded-xl overflow-hidden mb-4 bg-slate-100 border border-slate-200">
+                            <img src="${rutaImagen}" alt="${complejo}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" onerror="this.src='/uploads/placeholder.jpg'">
+                        </div>
+
                         <div class="flex items-center justify-between mb-3">
                             <span class="text-xs font-bold text-cyan-600 bg-cyan-50 px-2.5 py-1 rounded-md border border-cyan-100 uppercase tracking-wide">${ciudad}</span>
                             <span class="text-xs text-slate-400 font-semibold">${zona}</span>

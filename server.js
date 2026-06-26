@@ -368,6 +368,10 @@ app.delete('/api/ubicaciones/:id', (req, res) => {
 });
 
 app.get('/api/anuncios', (req, res) => {
+    // Si la petición viene desde el panel administrativo (?admin=true), 
+    // ordenamos por ID de forma fija. Si no, mantenemos el comportamiento aleatorio público.
+    const orden = req.query.admin === 'true' ? 'a.id DESC' : 'RAND()';
+
     const sql = `
         SELECT a.*, 
                u.nombre AS ubicacion_nombre,
@@ -379,7 +383,7 @@ app.get('/api/anuncios', (req, res) => {
         LEFT JOIN zonas z ON u.zona_id = z.id
         LEFT JOIN ciudades c ON z.ciudad_id = c.id
         LEFT JOIN tipos_propiedad t ON a.tipo_propiedad_id = t.id
-        ORDER BY RAND()
+        ORDER BY ${orden}
     `;
     db.query(sql, (err, results) => {
         if (err) return res.status(500).json({ error: 'Error al obtener anuncios' });
@@ -460,19 +464,18 @@ app.put('/api/anuncios/:id', (req, res) => {
         const { 
             id_interno, titulo, descripcion, descripcion_corta, precio, precio_descuento, link_airbnb, link_calendario,
             ubicacion_id, tipo_propiedad_id, recamaras, camas, banos, capacidad_personas, amenidades
-        } = req.body; // Removido 'destacado' por completo
+        } = req.body; 
         
-        // PARSEO SEGURO DE TIPOS DE DATOS DE TU TABLA
         const parsedUbicacion = ubicacion_id ? parseInt(ubicacion_id) : null;
         const parsedTipo = tipo_propiedad_id ? parseInt(tipo_propiedad_id) : null;
         const parsedPrecio = precio ? parseFloat(precio) : 0;
         const parsedPrecioDescuento = (precio_descuento && precio_descuento !== '') ? parseFloat(precio_descuento) : null;
         const parsedRecamaras = recamaras ? parseInt(recamaras) : 0;
         const parsedCamas = camas ? parseInt(camas) : 0;
-        const parsedBanos = banos ? parseFloat(banos) : 0.0; // Cambiado a float porque en tu tabla es decimal(3,1)
+        const parsedBanos = banos ? parseFloat(banos) : 0.0; 
         const parsedCapacidad = capacidad_personas ? parseInt(capacidad_personas) : 0;
 
-        // Consultamos los valores actuales para conservar las imágenes viejas si el usuario no sube archivos nuevos
+        // Consultamos los valores actuales para saber qué imágenes tiene antes de actualizar
         db.query('SELECT imagen, imagenes_adicionales FROM anuncios WHERE id = ?', [id], (err, currentData) => {
             if (err || currentData.length === 0) {
                 return res.status(500).json({ error: 'Anuncio no encontrado o error de consulta' });
@@ -481,7 +484,6 @@ app.put('/api/anuncios/:id', (req, res) => {
             let imagenPrincipal = currentData[0].imagen;
             let imagenesAdicionalesArray = [];
 
-            // Extraemos de forma segura el JSON actual de imágenes adicionales
             try {
                 if (currentData[0].imagenes_adicionales) {
                     imagenesAdicionalesArray = typeof currentData[0].imagenes_adicionales === 'string' 
@@ -492,18 +494,39 @@ app.put('/api/anuncios/:id', (req, res) => {
                 imagenesAdicionalesArray = [];
             }
 
-            // Si el usuario seleccionó archivos nuevos, actualizamos la estructura de fotos
+            // SI EL USUARIO SUBIÓ NUEVAS IMÁGENES: Procedemos a limpiar los archivos viejos físicos
             if (req.files && req.files.length > 0) {
-                imagenPrincipal = req.files[0].filename; // La primera foto va a 'imagen'
-                imagenesAdicionalesArray = []; // Limpiamos las extras viejas
+                const fs = require('fs');
+
+                // 1. Eliminar la portada anterior (siempre que no sea la default)
+                if (imagenPrincipal && imagenPrincipal !== 'default.jpg' && imagenPrincipal !== 'placeholder.jpg') {
+                    const rutaViejaPortada = path.join(__dirname, 'public/uploads', imagenPrincipal);
+                    if (fs.existsSync(rutaViejaPortada)) {
+                        fs.unlink(rutaViejaPortada, (err) => { if (err) console.error("Error al limpiar portada vieja:", err); });
+                    }
+                }
+
+                // 2. Eliminar las imágenes secundarias anteriores de la carpeta uploads
+                if (Array.isArray(imagenesAdicionalesArray)) {
+                    imagenesAdicionalesArray.forEach(img => {
+                        if (img && img !== 'default.jpg' && img !== 'placeholder.jpg') {
+                            const rutaViejaExtra = path.join(__dirname, 'public/uploads', img);
+                            if (fs.existsSync(rutaViejaExtra)) {
+                                fs.unlink(rutaViejaExtra, (err) => { if (err) console.error("Error al limpiar imagen extra vieja:", err); });
+                            }
+                        }
+                    });
+                }
+
+                // 3. Ahora sí, asignamos el nuevo set de imágenes subidas
+                imagenPrincipal = req.files[0].filename; 
+                imagenesAdicionalesArray = []; 
                 
-                // Las fotos restantes (de la 2da en adelante) van al array secundario
                 for (let i = 1; i < req.files.length; i++) {
                     imagenesAdicionalesArray.push(req.files[i].filename);
                 }
             }
 
-            // QUERY REFORMADO: Ajustado exactamente a tus columnas reales
             const sql = `UPDATE anuncios SET 
                 id_interno = ?, titulo = ?, descripcion = ?, descripcion_corta = ?, precio = ?, precio_descuento = ?, 
                 link_airbnb = ?, link_calendario = ?, ubicacion_id = ?, tipo_propiedad_id = ?, recamaras = ?, 
@@ -528,7 +551,7 @@ app.put('/api/anuncios/:id', (req, res) => {
                 parsedCapacidad, 
                 amenidades || null, 
                 imagenPrincipal, 
-                JSON.stringify(imagenesAdicionalesArray), // Mandamos el string JSON correcto
+                JSON.stringify(imagenesAdicionalesArray), 
                 id
             ];
 
@@ -536,11 +559,9 @@ app.put('/api/anuncios/:id', (req, res) => {
                 if (err) {
                     console.error("====== ERROR CRÍTICO SQL ======");
                     console.error("Mensaje:", err.message);
-                    console.error("Código SQL:", err.code);
-                    console.error("===============================");
                     return res.status(500).json({ error: `Error en Base de Datos: ${err.message}` });
                 }
-                res.json({ success: true, message: 'Anuncio actualizado con éxito' });
+                res.json({ success: true, message: 'Anuncio actualizado con éxito y archivos antiguos limpiados.' });
                 if (typeof sincronizarCalendarios === 'function') {
                     sincronizarCalendarios(); 
                 }
@@ -552,36 +573,40 @@ app.put('/api/anuncios/:id', (req, res) => {
 app.delete('/api/anuncios/:id', (req, res) => {
     const { id } = req.params;
 
-    // Primero buscamos los nombres de las imágenes para borrarlas
     db.query('SELECT imagen, imagenes_adicionales FROM anuncios WHERE id = ?', [id], (err, results) => {
         if (!err && results.length > 0) {
             const anuncio = results[0];
             const fs = require('fs');
             
-            // Borrar imagen principal
-            if (anuncio.imagen && anuncio.imagen !== 'default.jpg') {
+            // Borrado asíncrono para no congelar el servidor
+            if (anuncio.imagen && anuncio.imagen !== 'default.jpg' && anuncio.imagen !== 'placeholder.jpg') {
                 const rutaImg = path.join(__dirname, 'public/uploads', anuncio.imagen);
-                if (fs.existsSync(rutaImg)) fs.unlinkSync(rutaImg);
+                if (fs.existsSync(rutaImg)) {
+                    fs.unlink(rutaImg, (err) => { if (err) console.error("Error eliminando archivo físico de portada:", err); });
+                }
             }
 
-            // Borrar imágenes adicionales
             if (anuncio.imagenes_adicionales) {
                 try {
                     const extras = JSON.parse(anuncio.imagenes_adicionales);
                     if (Array.isArray(extras)) {
                         extras.forEach(img => {
-                            const rutaExtra = path.join(__dirname, 'public/uploads', img);
-                            if (fs.existsSync(rutaExtra)) fs.unlinkSync(rutaExtra);
+                            if (img && img !== 'default.jpg' && img !== 'placeholder.jpg') {
+                                const rutaExtra = path.join(__dirname, 'public/uploads', img);
+                                if (fs.existsSync(rutaExtra)) {
+                                    fs.unlink(rutaExtra, (err) => { if (err) console.error("Error eliminando archivo físico extra:", err); });
+                                }
+                            }
                         });
                     }
                 } catch(e) { console.error("Error limpiando imágenes extras:", e); }
             }
         }
 
-        // Finalmente borramos el registro de la BD
+        // Eliminar el registro de la BD
         db.query('DELETE FROM anuncios WHERE id = ?', [id], (err, result) => {
-            if (err) return res.status(500).json({ error: 'Error al eliminar' });
-            res.json({ success: true, message: 'Anuncio e imágenes eliminadas con éxito' });
+            if (err) return res.status(500).json({ error: 'Error al eliminar el registro' });
+            res.json({ success: true, message: 'Anuncio e imágenes eliminadas con éxito de forma segura' });
         });
     });
 });

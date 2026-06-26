@@ -123,6 +123,26 @@ function aplicarFiltros() {
     renderizarTarjetas(filtrados);
 }
 
+function extraerArregloImagenes(campo) {
+    if (!campo) return [];
+    if (Array.isArray(campo)) return campo.map(f => String(f).trim()).filter(Boolean);
+    
+    try {
+        // Si viene como string de un arreglo JSON: '["foto1.jpg", "foto2.jpg"]'
+        if (typeof campo === 'string' && (campo.startsWith('[') || campo.includes('"') || campo.includes("'"))) {
+            const parsed = JSON.parse(campo);
+            if (Array.isArray(parsed)) {
+                return parsed.map(f => String(f).trim()).filter(Boolean);
+            }
+        }
+    } catch (e) {
+        // Si falla el JSON.parse, continuará con la limpieza limpia por comas
+    }
+
+    // Si viene como string separado por comas o un solo archivo
+    return campo.replace(/[\[\]"']/g, '').split(',').map(f => f.trim()).filter(Boolean);
+}
+
 function renderizarTarjetas(lista) {
     const contenedor = document.getElementById('contenedor-anuncios');
     if (!contenedor) return;
@@ -145,24 +165,10 @@ function renderizarTarjetas(lista) {
             `;
         }
 
-        // --- EXTRACCIÓN Y CONFIGURACIÓN DE LA PORTADA ---
-        let primeraImagen = 'default.jpg';
-        let origenImagenes = anuncio.imagen || anuncio.imagenes_adicionales;
+        // --- CONSEGUIR SÓLO LA PRIMERA IMAGEN PARA LA PORTADA DE LA TARJETA ---
+        const fotosAd = extraerArregloImagenes(anuncio.imagen || anuncio.imagenes_adicionales);
+        let primeraImagen = fotosAd[0] || 'default.jpg';
 
-        if (origenImagenes) {
-            try {
-                const arregloFotos = typeof origenImagenes === 'string' ? JSON.parse(origenImagenes) : origenImagenes;
-                if (Array.isArray(arregloFotos) && arregloFotos.length > 0) {
-                    primeraImagen = arregloFotos[0].replace(/[\[\]"']/g, '').trim();
-                } else if (typeof origenImagenes === 'string' && origenImagenes.trim() !== '') {
-                    primeraImagen = origenImagenes.replace(/[\[\]"']/g, '').trim();
-                }
-            } catch (e) {
-                primeraImagen = origenImagenes.replace(/[\[\]"']/g, '').trim();
-            }
-        }
-
-        // Si es una imagen local, Express requiere el prefijo /uploads/
         let srcFinal = (primeraImagen.startsWith('http') || primeraImagen.startsWith('/uploads/')) 
             ? primeraImagen 
             : `/uploads/${primeraImagen}`;
@@ -170,7 +176,7 @@ function renderizarTarjetas(lista) {
         tarjeta.innerHTML = `
             ${etiquetaOferta}
             <div>
-                <img src="${srcFinal}" class="w-full h-48 object-cover rounded-xl mb-4" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='/default.jpg';">
+                <img src="${srcFinal}" class="w-full h-48 object-cover rounded-xl mb-4" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='/uploads/default.jpg';">
                 
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-xs font-bold uppercase tracking-wider text-cyan-600 bg-cyan-50 px-2.5 py-1 rounded-md border border-cyan-100">${anuncio.tipo_propiedad || 'Habitación'}</span>
@@ -212,54 +218,38 @@ window.abrirModalDetalles = function(id) {
     const modal = document.getElementById('modal-detalles');
     if (!modal) return alert("Error: No se encontró la estructura de modal-detalles en el HTML.");
 
-    let todasLasFotos = [];
-
-    // Procesamos el campo 'imagen'
-    if (anuncio.imagen) {
-        try {
-            const arr = typeof anuncio.imagen === 'string' ? JSON.parse(anuncio.imagen) : anuncio.imagen;
-            if (Array.isArray(arr)) {
-                arr.forEach(f => f && todasLasFotos.push(f.replace(/[\[\]"']/g, '').trim()));
-            } else {
-                todasLasFotos.push(anuncio.imagen.replace(/[\[\]"']/g, '').trim());
-            }
-        } catch(e) {
-            todasLasFotos.push(anuncio.imagen.replace(/[\[\]"']/g, '').trim());
-        }
-    }
-
-    // Procesamos el campo 'imagenes_adicionales'
-    if (anuncio.imagenes_adicionales) {
-        try {
-            const extras = typeof anuncio.imagenes_adicionales === 'string' ? JSON.parse(anuncio.imagenes_adicionales) : anuncio.imagenes_adicionales;
-            if (Array.isArray(extras)) {
-                extras.forEach(foto => { 
-                    if (foto) todasLasFotos.push(foto.replace(/[\[\]"']/g, '').trim()); 
-                });
-            }
-        } catch (e) { 
-            console.error("Error al parsear fotos adicionales:", e); 
-        }
-    }
+    // Unificamos todas las fotos disponibles del anuncio en una sola lista limpia
+    let todasLasFotos = [
+        ...extraerArregloImagenes(anuncio.imagen),
+        ...extraerArregloImagenes(anuncio.imagenes_adicionales)
+    ];
 
     if (todasLasFotos.length === 0) todasLasFotos.push('default.jpg');
 
-    // Asignar portada del modal
+    // 1. ASIGNAR PORTADA PRINCIPAL DEL MODAL (La primera del arreglo)
     const imgPortada = document.getElementById('det-imagen');
     if (imgPortada) {
         let pathPortada = (todasLasFotos[0].startsWith('http') || todasLasFotos[0].startsWith('/uploads/')) ? todasLasFotos[0] : `/uploads/${todasLasFotos[0]}`;
         imgPortada.src = pathPortada;
-        imgPortada.onerror = function() { this.src = '/default.jpg'; };
+        imgPortada.onerror = function() { this.src = '/uploads/default.jpg'; };
     }
 
-    // Renderizar Swiper con todas las fotos limpias
+    // 2. RENDERIZAR EN EL SWIPER ÚNICAMENTE "LAS DEMÁS IMÁGENES"
     const swiperWrapper = modal.querySelector('.swiper-wrapper');
     if (swiperWrapper) {
-        swiperWrapper.innerHTML = todasLasFotos.map(foto => {
+        // .slice(1) extrae desde la segunda foto en adelante (excluyendo la portada)
+        let fotosRestantes = todasLasFotos.slice(1);
+
+        // Salvavidas: si el anuncio NO tiene más imágenes, le dejamos la principal para que el carrusel Swiper no quede en blanco
+        if (fotosRestantes.length === 0) {
+            fotosRestantes = [todasLasFotos[0]];
+        }
+
+        swiperWrapper.innerHTML = fotosRestantes.map(foto => {
             let urlFoto = (foto.startsWith('http') || foto.startsWith('/uploads/')) ? foto : `/uploads/${foto}`;
             return `
                 <div class="swiper-slide">
-                    <img src="${urlFoto}" class="w-full h-72 md:h-96 object-cover rounded-2xl shadow-inner" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='/default.jpg';">
+                    <img src="${urlFoto}" class="w-full h-72 md:h-96 object-cover rounded-2xl shadow-inner" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='/uploads/default.jpg';">
                 </div>
             `;
         }).join('');
@@ -301,6 +291,20 @@ window.abrirModalDetalles = function(id) {
 
     modal.classList.replace('hidden', 'flex');
 };
+
+window.swiperGaleria = new Swiper('.swiper-galeria-modal', {
+    loop: false,
+    spaceBetween: 10,
+    slidesPerView: 1, // Puedes cambiarlo a 2 si las miniaturas son pequeñas
+    navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+    },
+    pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+    },
+});
 
 window.cambiarHuespedes = function(val) {
     contadorHuespedes = Math.max(1, contadorHuespedes + val);

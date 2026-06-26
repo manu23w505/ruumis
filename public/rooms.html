@@ -222,11 +222,27 @@
     </div>
 
     <div id="modal-detalles" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative flex flex-col md:flex-row">
-            <button onclick="document.getElementById('modal-detalles').classList.replace('flex', 'hidden')" class="absolute top-4 right-4 bg-white/80 text-slate-800 hover:bg-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-md shadow-md z-10 cursor-pointer">✕</button>
+        <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[95vh] overflow-y-auto shadow-2xl relative flex flex-col md:flex-row">
+            <button onclick="document.getElementById('modal-detalles').classList.replace('flex', 'hidden')" class="absolute top-4 right-4 bg-white/80 text-slate-800 hover:bg-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-md shadow-md z-30 cursor-pointer">✕</button>
             
-            <div class="md:w-1/2 w-full bg-slate-900 flex items-center justify-center min-h-[300px] md:min-h-[450px] rounded-t-2xl md:rounded-tr-none md:rounded-l-2xl overflow-hidden">
-                <img id="det-imagen" src="" class="w-full h-full object-contain max-h-[75vh]" alt="Habitación">
+            <div class="md:w-1/2 w-full bg-slate-950 flex flex-col p-4 justify-center gap-3 rounded-t-2xl md:rounded-tr-none md:rounded-l-2xl min-h-[400px] md:min-h-[500px]">
+                
+                <div class="w-full aspect-[4/3] md:h-56 flex items-center justify-center overflow-hidden rounded-xl bg-slate-900 border border-slate-800/60 shadow-inner">
+                    <img id="det-imagen" src="" class="w-full h-full object-cover" alt="Portada de la Habitación">
+                </div>
+                
+                <div class="w-full relative group">
+                    <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 px-1">Más fotos disponibles</h4>
+                    
+                    <div class="swiper swiper-galeria-modal rounded-xl overflow-hidden h-24 md:h-28 bg-slate-900/40">
+                        <div class="swiper-wrapper">
+                            </div>
+                        <div class="swiper-pagination !bottom-1"></div>
+                    </div>
+                    
+                    <div class="swiper-button-prev !w-7 !h-7 !text-cyan-500 after:!text-xs bg-white/90 rounded-full shadow hidden group-hover:flex items-center justify-center !left-2"></div>
+                    <div class="swiper-button-next !w-7 !h-7 !text-cyan-500 after:!text-xs bg-white/90 rounded-full shadow hidden group-hover:flex items-center justify-center !right-2"></div>
+                </div>
             </div>
 
             <div class="md:w-1/2 w-full p-6 flex flex-col justify-between">
