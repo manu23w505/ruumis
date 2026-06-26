@@ -14,11 +14,13 @@ async function apiCall(endpoint) {
 
 
 async function inicializarPagina() {
-    // 1. Cargamos los selectores de ubicación como ya lo hacías
+    console.log("Iniciando carga de componentes...");
+    
+    // Carga de ubicaciones (Esto ya te funciona correctamente)
     const ubicaciones = await apiCall('/api/ubicaciones');
     const selectCiudad = document.getElementById('filtro-ciudad');
     
-    if (selectCiudad && ubicaciones) {
+    if (selectCiudad && ubicaciones && Array.isArray(ubicaciones)) {
         selectCiudad.innerHTML = '<option value="">Todas las ciudades</option>';
         const ciudadesUnicas = [...new Set(ubicaciones.map(u => u.ciudad || u.ciudad_nombre))].filter(Boolean);
         
@@ -27,31 +29,37 @@ async function inicializarPagina() {
         });
     }
 
+    // Ubicamos el contenedor del HTML
     const contenedor = document.getElementById('contenedor-anuncios');
-    todosLosAnuncios = await apiCall('/api/anuncios');
-    
-    if (!todosLosAnuncios || todosLosAnuncios.length === 0) {
-        if (contenedor) contenedor.innerHTML = '<p class="text-slate-500 col-span-full text-center py-12">No hay habitaciones disponibles en este momento.</p>';
+    if (!contenedor) {
+        console.error("Error crítico: El contenedor con ID 'contenedor-anuncios' no existe en tu HTML.");
         return;
     }
-    
-    // ==========================================
-    // NUEVO: INTERCEPTAR PARÁMETROS DE LA URL (SEARCH)
-    // ==========================================
-    const urlParams = new URLSearchParams(window.location.search);
-    const guestsUrl = parseInt(urlParams.get('guests'));
 
-    if (guestsUrl) {
-        // 1. Sincronizamos tu variable global y el contador visual del HTML
-        contadorHuespedes = guestsUrl;
-        const displayHuespedes = document.getElementById('display-huespedes');
-        if (displayHuespedes) displayHuespedes.innerText = guestsUrl;
+    try {
+        // Consultamos los anuncios
+        todosLosAnuncios = await apiCall('/api/anuncios');
+        console.log("Datos de anuncios recibidos de la API:", todosLosAnuncios);
 
-        // 2. Ejecutamos directamente tu función de filtrar para que limpie la pantalla de inmediato
-        aplicarFiltros();
-    } else {
-        // Si entró directo sin buscar, renderiza todo normal
-        renderizarTarjetas(todosLosAnuncios);
+        // Validación A: Si la API falló por completo o no devolvió nada
+        if (!todosLosAnuncios) {
+            contenedor.innerHTML = '<p class="text-rose-500 col-span-full text-center py-8">⚠️ Error de red o el servidor no respondió.</p>';
+            return;
+        }
+
+        // Validación B: Si la respuesta no es un arreglo (Es decir, vino un objeto de error)
+        if (!Array.isArray(todosLosAnuncios)) {
+            console.error("La API no regresó un arreglo válido. Respuesta recibida:", todosLosAnuncios);
+            contenedor.innerHTML = `<p class="text-amber-500 col-span-full text-center py-8">⚠️ Formato de datos incorrecto recibido de la base de datos.</p>`;
+            return;
+        }
+
+        // Si todo está correcto, mandamos a renderizar de forma segura
+        renderizarAnunciosPublicos(todosLosAnuncios);
+
+    } catch (err) {
+        console.error("Error general al inicializar los anuncios:", err);
+        contenedor.innerHTML = '<p class="text-rose-500 col-span-full text-center py-8">⚠️ Ocurrió un error inesperado al procesar las habitaciones.</p>';
     }
 }
 
@@ -143,71 +151,81 @@ function extraerArregloImagenes(campo) {
     return campo.replace(/[\[\]"']/g, '').split(',').map(f => f.trim()).filter(Boolean);
 }
 
-function renderizarTarjetas(lista) {
+function renderizarAnunciosPublicos(anuncios) {
     const contenedor = document.getElementById('contenedor-anuncios');
-    if (!contenedor) return;
-    contenedor.innerHTML = '';
     
-    lista.forEach(anuncio => {
-        const tarjeta = document.createElement('div');
-        tarjeta.className = 'bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative';
-        
-        let precioHTML = `<p class="text-xl font-black text-slate-900">$${anuncio.precio} <span class="text-xs font-normal text-slate-500">MXN / noche</span></p>`;
-        let etiquetaOferta = '';
+    if (!anuncios || anuncios.length === 0) {
+        contenedor.innerHTML = '<p class="text-slate-500 col-span-full text-center py-8">No hay habitaciones disponibles en este momento.</p>';
+        return;
+    }
 
-        if (anuncio.precio_descuento && parseFloat(anuncio.precio_descuento) > 0) {
-            etiquetaOferta = `<span class="absolute top-6 left-6 bg-red-500 text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md shadow-sm z-10">Oferta</span>`;
-            precioHTML = `
-                <div class="text-right">
-                    <span class="text-xs text-slate-400 line-through block">$${anuncio.precio} MXN</span>
-                    <p class="text-xl font-black text-red-600">$${anuncio.precio_descuento} <span class="text-xs font-normal text-slate-500">MXN / noche</span></p>
+    contenedor.innerHTML = ''; // Limpiamos por completo el mensaje de "Cargando..."
+
+    anuncios.forEach(anuncio => {
+        try {
+            // PARSEO SEGURO DE IMÁGENES:
+            // Si llega a fallar el formato JSON, la página no se cae; usa una imagen por defecto.
+            let listaImagenes = [];
+            if (anuncio.imagenes) {
+                if (Array.isArray(anuncio.imagenes)) {
+                    listaImagenes = anuncio.imagenes;
+                } else {
+                    try {
+                        listaImagenes = JSON.parse(anuncio.imagenes);
+                    } catch (e) {
+                        console.warn(`Aviso: Error al parsear imágenes del anuncio ID ${anuncio.id}. Usando respaldo.`);
+                        listaImagenes = ['placeholder.jpg']; 
+                    }
+                }
+            }
+            
+            // Tomamos la primera imagen disponible o el placeholder
+            const fotoPortada = (listaImagenes && listaImagenes.length > 0) ? listaImagenes[0] : 'placeholder.jpg';
+            const rutaImagen = fotoPortada.startsWith('http') ? fotoPortada : `/uploads/${fotoPortada}`;
+
+            // Creamos la tarjeta cuidando de usar propiedades válidas de tu BD
+            const tarjeta = document.createElement('div');
+            tarjeta.className = "bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-md transition-shadow flex flex-col";
+            
+            tarjeta.innerHTML = `
+                <div class="relative aspect-[4/3] bg-slate-100 overflow-hidden">
+                    <img src="${rutaImagen}" class="w-full h-full object-cover" alt="${anuncio.titulo || 'Habitación'}" onerror="this.src='/uploads/placeholder.jpg'">
+                    <div class="absolute top-3 left-3">
+                        <span class="text-[10px] font-bold uppercase tracking-wider bg-white/90 backdrop-blur-sm text-slate-700 px-2 py-1 rounded-md shadow-sm border border-slate-100">
+                            ${anuncio.tipo || 'Recámara'}
+                        </span>
+                    </div>
+                </div>
+                <div class="p-4 flex flex-col flex-grow justify-between">
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-base mb-1 line-clamp-1">${anuncio.titulo || 'Sin título disponible'}</h3>
+                        <p class="text-xs text-slate-500 mb-3 flex items-center gap-1">
+                             ${anuncio.ciudad || anuncio.ciudad_nombre || 'Ubicación no especificada'}
+                        </p>
+                        <div class="flex items-center gap-3 text-xs text-slate-600 mb-4 bg-slate-50 p-2 rounded-xl border border-slate-100/60">
+                            <div><span class="font-bold text-slate-800">${anuncio.recamaras || 0}</span> Rec.</div>
+                            <div><span class="font-bold text-slate-800">${anuncio.banos || 0}</span> Baños</div>
+                            <div>Máx. <span class="font-bold text-slate-800">${anuncio.personas || 0}</span> Huéspedes</div>
+                        </div>
+                    </div>
+                    <div class="border-t border-slate-50 pt-3 flex items-center justify-between mt-auto">
+                        <div>
+                            <span class="text-xs text-slate-400 block">Por noche</span>
+                            <span class="font-black text-slate-900 text-lg">$${anuncio.precio || 0}</span>
+                        </div>
+                        <button onclick="abrirModalDetalles(${anuncio.id})" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 text-xs font-bold px-4 py-2 rounded-xl transition-colors shadow-sm cursor-pointer">
+                            Ver detalles
+                        </button>
+                    </div>
                 </div>
             `;
+            
+            contenedor.appendChild(tarjeta);
+
+        } catch (errorTarjeta) {
+            // Si una tarjeta específica falla por un dato corrupto particular, se salta e imprime las demás
+            console.error(`Error al procesar la tarjeta individual del anuncio ID ${anuncio.id}:`, errorTarjeta);
         }
-
-        // --- CONSEGUIR SÓLO LA PRIMERA IMAGEN PARA LA PORTADA DE LA TARJETA ---
-        const fotosAd = extraerArregloImagenes(anuncio.imagen || anuncio.imagenes_adicionales);
-        let primeraImagen = fotosAd[0] || 'default.jpg';
-
-        let srcFinal = (primeraImagen.startsWith('http') || primeraImagen.startsWith('/uploads/')) 
-            ? primeraImagen 
-            : `/uploads/${primeraImagen}`;
-
-        tarjeta.innerHTML = `
-            ${etiquetaOferta}
-            <div>
-                <img src="${srcFinal}" class="w-full h-48 object-cover rounded-xl mb-4" alt="${anuncio.titulo}" onerror="this.onerror=null; this.src='/uploads/default.jpg';">
-                
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-bold uppercase tracking-wider text-cyan-600 bg-cyan-50 px-2.5 py-1 rounded-md border border-cyan-100">${anuncio.tipo_propiedad || 'Habitación'}</span>
-                    <span class="text-xs text-slate-400 font-medium">ID: ${anuncio.id_interno || anuncio.id}</span>
-                </div>
-                <h3 class="font-bold text-lg text-slate-900 mb-1 line-clamp-1">${anuncio.titulo}</h3>
-                <p class="text-sm text-slate-500 mb-3 flex items-center gap-1">
-                    <span>${anuncio.ubicacion_nombre ? anuncio.ubicacion_nombre + ' • ' : ''}${anuncio.zona || 'Sin Zona'}, ${anuncio.ciudad || 'Sin Ciudad'}</span>
-                </p>
-                
-                <div class="grid grid-cols-2 gap-y-1.5 gap-x-2 text-xs text-slate-500 mb-4 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                    <div class="flex items-center gap-1"><span>${anuncio.recamaras || 1} Recám.</span></div>
-                    <div class="flex items-center gap-1"><span>${anuncio.camas || 1} Camas</span></div>
-                    <div class="flex items-center gap-1"><span>${anuncio.banos || 1} Baños</span></div>
-                    <div class="flex items-center gap-1"><span>Máx. ${anuncio.capacidad_personas || 1} pers.</span></div>
-                </div>
-
-                <p class="text-xs text-slate-400 line-clamp-2 mb-4">${anuncio.descripcion_corta || ''}</p>
-            </div>
-            <div>
-                <div class="flex items-baseline justify-between border-t border-slate-100 pt-4 mb-4">
-                    <span class="text-xs font-semibold text-slate-400">Desde</span>
-                    ${precioHTML}
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <button onclick="verCalendario(${anuncio.id})" class="w-full text-center bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition-colors cursor-pointer">Calendario</button>
-                    <button onclick="abrirModalDetalles(${anuncio.id})" class="w-full text-center bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition-colors cursor-pointer">Ver Detalles</button>
-                </div>
-            </div>
-        `;
-        contenedor.appendChild(tarjeta);
     });
 }
 
