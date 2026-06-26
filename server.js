@@ -531,9 +531,38 @@ app.put('/api/anuncios/:id', (req, res) => {
 
 app.delete('/api/anuncios/:id', (req, res) => {
     const { id } = req.params;
-    db.query('DELETE FROM anuncios WHERE id = ?', [id], (err, result) => {
-        if (err) return res.status(500).json({ error: 'Error al eliminar' });
-        res.json({ success: true, message: 'Anuncio eliminado con éxito' });
+
+    // Primero buscamos los nombres de las imágenes para borrarlas
+    db.query('SELECT imagen, imagenes_adicionales FROM anuncios WHERE id = ?', [id], (err, results) => {
+        if (!err && results.length > 0) {
+            const anuncio = results[0];
+            const fs = require('fs');
+            
+            // Borrar imagen principal
+            if (anuncio.imagen && anuncio.imagen !== 'default.jpg') {
+                const rutaImg = path.join(__dirname, 'public/uploads', anuncio.imagen);
+                if (fs.existsSync(rutaImg)) fs.unlinkSync(rutaImg);
+            }
+
+            // Borrar imágenes adicionales
+            if (anuncio.imagenes_adicionales) {
+                try {
+                    const extras = JSON.parse(anuncio.imagenes_adicionales);
+                    if (Array.isArray(extras)) {
+                        extras.forEach(img => {
+                            const rutaExtra = path.join(__dirname, 'public/uploads', img);
+                            if (fs.existsSync(rutaExtra)) fs.unlinkSync(rutaExtra);
+                        });
+                    }
+                } catch(e) { console.error("Error limpiando imágenes extras:", e); }
+            }
+        }
+
+        // Finalmente borramos el registro de la BD
+        db.query('DELETE FROM anuncios WHERE id = ?', [id], (err, result) => {
+            if (err) return res.status(500).json({ error: 'Error al eliminar' });
+            res.json({ success: true, message: 'Anuncio e imágenes eliminadas con éxito' });
+        });
     });
 });
 
@@ -1036,7 +1065,42 @@ app.put('/api/footer', (req, res) => { // <-- ALINEADO: Se quitó el '/textos' s
     });
 });
 
+//IMAGENES
 
+const fs = require('fs');
+
+// 1. Subir una imagen individual (ej. Logotipo)
+app.post('/api/upload-image', upload.single('imagen'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: 'No se recibió ningún archivo válido.' });
+    }
+    // Retornamos el nombre del archivo generado para que el Frontend lo guarde en la BD
+    res.json({ success: true, fileName: req.file.filename, url: `/uploads/${req.file.filename}` });
+});
+
+// 2. Eliminar una imagen física de la carpeta uploads
+app.delete('/api/delete-image', (req, res) => {
+    const { nombreArchivo } = req.body; 
+    
+    if (!nombreArchivo || nombreArchivo === 'default.jpg' || nombreArchivo === 'placeholder.jpg') {
+        return res.json({ success: true, message: 'No requiere borrado físico' });
+    }
+
+    const rutaArchivo = path.join(__dirname, 'public/uploads', nombreArchivo);
+
+    // Verificamos si el archivo existe antes de intentar borrarlo
+    if (fs.existsSync(rutaArchivo)) {
+        fs.unlink(rutaArchivo, (err) => {
+            if (err) {
+                console.error("Error al borrar la imagen física:", err);
+                return res.status(500).json({ error: 'Error al eliminar el archivo del servidor' });
+            }
+            res.json({ success: true, message: 'Archivo eliminado físicamente' });
+        });
+    } else {
+        res.json({ success: true, message: 'El archivo ya no existía en el servidor' });
+    }
+});
 
 
 cron.schedule('*/5 * * * *', () => {
