@@ -163,58 +163,99 @@ function renderizarAnunciosPublicos(anuncios) {
 
     anuncios.forEach(anuncio => {
         try {
-            // PARSEO SEGURO DE IMÁGENES:
-            // Si llega a fallar el formato JSON, la página no se cae; usa una imagen por defecto.
-            let listaImagenes = [];
-            if (anuncio.imagenes) {
-                if (Array.isArray(anuncio.imagenes)) {
-                    listaImagenes = anuncio.imagenes;
-                } else {
-                    try {
-                        listaImagenes = JSON.parse(anuncio.imagenes);
-                    } catch (e) {
-                        console.warn(`Aviso: Error al parsear imágenes del anuncio ID ${anuncio.id}. Usando respaldo.`);
-                        listaImagenes = ['placeholder.jpg']; 
+            // 1. ===============================================
+            // PARSEO SEGURO DE IMÁGENES HACIA /UPLOADS/
+            // ===============================================
+            let fotoPortada = 'placeholder.jpg';
+            
+            // Evaluamos si trae imagen única principal
+            if (anuncio.imagen && anuncio.imagen.trim() !== '') {
+                fotoPortada = anuncio.imagen.trim();
+            } else if (anuncio.imagenes_adicionales) {
+                // Si por alguna razón la imagen está en el JSON adicional
+                try {
+                    const arrayFotos = typeof anuncio.imagenes_adicionales === 'string' 
+                        ? JSON.parse(anuncio.imagenes_adicionales) 
+                        : anuncio.imagenes_adicionales;
+                    
+                    if (Array.isArray(arrayFotos) && arrayFotos.length > 0) {
+                        fotoPortada = arrayFotos[0].trim();
                     }
+                } catch (e) {
+                    console.warn(`Error parseando imágenes extra en anuncio ${anuncio.id}`);
                 }
             }
-            
-            // Tomamos la primera imagen disponible o el placeholder
-            const fotoPortada = (listaImagenes && listaImagenes.length > 0) ? listaImagenes[0] : 'placeholder.jpg';
-            const rutaImagen = fotoPortada.startsWith('http') ? fotoPortada : `/uploads/${fotoPortada}`;
 
-            // Creamos la tarjeta cuidando de usar propiedades válidas de tu BD
+            // Normalizamos para no sobreescribir si ya trae HTTP
+            const rutaImagen = (fotoPortada.startsWith('http') || fotoPortada.startsWith('/uploads/')) 
+                ? fotoPortada 
+                : `/uploads/${fotoPortada}`;
+
+            // 2. ===============================================
+            // ETIQUETAS DE PRECIO Y OFERTA
+            // ===============================================
+            let precioHTML = `<p class="text-xl font-black text-slate-900">$${anuncio.precio || 0} <span class="text-xs font-normal text-slate-500">MXN / noche</span></p>`;
+            let etiquetaOferta = '';
+
+            if (anuncio.precio_descuento && parseFloat(anuncio.precio_descuento) > 0) {
+                etiquetaOferta = `<span class="absolute top-6 left-6 bg-red-500 text-white text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md shadow-sm z-10">Oferta</span>`;
+                precioHTML = `
+                    <div class="text-right">
+                        <span class="text-xs text-slate-400 line-through block">$${anuncio.precio || 0} MXN</span>
+                        <p class="text-xl font-black text-red-600">$${anuncio.precio_descuento} <span class="text-xs font-normal text-slate-500">MXN / noche</span></p>
+                    </div>
+                `;
+            }
+
+            // 3. ===============================================
+            // ARMADO Y CREACIÓN DE LA TARJETA
+            // ===============================================
             const tarjeta = document.createElement('div');
-            tarjeta.className = "bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-md transition-shadow flex flex-col";
+            tarjeta.className = "bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative";
             
+            // Simplificamos la ubicación ahora que usas `ubicacion_id` y su JOIN (`ubicacion_nombre`)
+            const textoUbicacion = anuncio.ubicacion_nombre || 'Ubicación no especificada';
+
             tarjeta.innerHTML = `
-                <div class="relative aspect-[4/3] bg-slate-100 overflow-hidden">
-                    <img src="${rutaImagen}" class="w-full h-full object-cover" alt="${anuncio.titulo || 'Habitación'}" onerror="this.src='/uploads/placeholder.jpg'">
-                    <div class="absolute top-3 left-3">
-                        <span class="text-[10px] font-bold uppercase tracking-wider bg-white/90 backdrop-blur-sm text-slate-700 px-2 py-1 rounded-md shadow-sm border border-slate-100">
-                            ${anuncio.tipo || 'Recámara'}
+                ${etiquetaOferta}
+                <div>
+                    <div class="w-full h-48 rounded-xl overflow-hidden mb-4 bg-slate-100 border border-slate-200">
+                        <img src="${rutaImagen}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105" alt="${anuncio.titulo || 'Habitación'}" onerror="this.onerror=null; this.src='/uploads/placeholder.jpg';">
+                    </div>
+                    
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-cyan-600 bg-cyan-50 px-2.5 py-1 rounded-md border border-cyan-100">
+                            ${anuncio.tipo_propiedad || 'Habitación'}
                         </span>
+                        <span class="text-xs text-slate-400 font-medium">ID: ${anuncio.id_interno || anuncio.id}</span>
                     </div>
+                    
+                    <h3 class="font-bold text-lg text-slate-900 mb-1 line-clamp-1">${anuncio.titulo || 'Sin título'}</h3>
+                    <p class="text-sm text-slate-500 mb-3 flex items-center gap-1">
+                        <span>${textoUbicacion}</span>
+                    </p>
+                    
+                    <div class="grid grid-cols-2 gap-y-1.5 gap-x-2 text-xs text-slate-500 mb-4 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                        <div class="flex items-center gap-1"><span>${anuncio.recamaras || 1} Recám.</span></div>
+                        <div class="flex items-center gap-1"><span>${anuncio.camas || 1} Camas</span></div>
+                        <div class="flex items-center gap-1"><span>${anuncio.banos || 1} Baños</span></div>
+                        <div class="flex items-center gap-1"><span>Máx. ${anuncio.capacidad_personas || 1} pers.</span></div>
+                    </div>
+
+                    <p class="text-xs text-slate-400 line-clamp-2 mb-4">${anuncio.descripcion_corta || ''}</p>
                 </div>
-                <div class="p-4 flex flex-col flex-grow justify-between">
-                    <div>
-                        <h3 class="font-bold text-slate-900 text-base mb-1 line-clamp-1">${anuncio.titulo || 'Sin título disponible'}</h3>
-                        <p class="text-xs text-slate-500 mb-3 flex items-center gap-1">
-                             ${anuncio.ciudad || anuncio.ciudad_nombre || 'Ubicación no especificada'}
-                        </p>
-                        <div class="flex items-center gap-3 text-xs text-slate-600 mb-4 bg-slate-50 p-2 rounded-xl border border-slate-100/60">
-                            <div><span class="font-bold text-slate-800">${anuncio.recamaras || 0}</span> Rec.</div>
-                            <div><span class="font-bold text-slate-800">${anuncio.banos || 0}</span> Baños</div>
-                            <div>Máx. <span class="font-bold text-slate-800">${anuncio.personas || 0}</span> Huéspedes</div>
-                        </div>
+                
+                <div>
+                    <div class="flex items-baseline justify-between border-t border-slate-100 pt-4 mb-4">
+                        <span class="text-xs font-semibold text-slate-400">Desde</span>
+                        ${precioHTML}
                     </div>
-                    <div class="border-t border-slate-50 pt-3 flex items-center justify-between mt-auto">
-                        <div>
-                            <span class="text-xs text-slate-400 block">Por noche</span>
-                            <span class="font-black text-slate-900 text-lg">$${anuncio.precio || 0}</span>
-                        </div>
-                        <button onclick="abrirModalDetalles(${anuncio.id})" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 text-xs font-bold px-4 py-2 rounded-xl transition-colors shadow-sm cursor-pointer">
-                            Ver detalles
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="verCalendario(${anuncio.id})" class="w-full text-center bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition-colors cursor-pointer">
+                            Calendario
+                        </button>
+                        <button onclick="abrirModalDetalles(${anuncio.id})" class="w-full text-center bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition-colors cursor-pointer">
+                            Ver Detalles
                         </button>
                     </div>
                 </div>
@@ -223,7 +264,6 @@ function renderizarAnunciosPublicos(anuncios) {
             contenedor.appendChild(tarjeta);
 
         } catch (errorTarjeta) {
-            // Si una tarjeta específica falla por un dato corrupto particular, se salta e imprime las demás
             console.error(`Error al procesar la tarjeta individual del anuncio ID ${anuncio.id}:`, errorTarjeta);
         }
     });
