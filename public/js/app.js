@@ -255,10 +255,8 @@ window.abrirModalDetalles = function(id) {
     // 2. RENDERIZAR EN EL SWIPER ÚNICAMENTE "LAS DEMÁS IMÁGENES"
     const swiperWrapper = modal.querySelector('.swiper-wrapper');
     if (swiperWrapper) {
-        // .slice(1) extrae desde la segunda foto en adelante (excluyendo la portada)
         let fotosRestantes = todasLasFotos.slice(1);
 
-        // Salvavidas: si el anuncio NO tiene más imágenes, le dejamos la principal para que el carrusel Swiper no quede en blanco
         if (fotosRestantes.length === 0) {
             fotosRestantes = [todasLasFotos[0]];
         }
@@ -272,14 +270,31 @@ window.abrirModalDetalles = function(id) {
             `;
         }).join('');
 
+        // ==========================================================
+        // REEMPLAZA TU TIMEOUT POR ESTE BLOQUE:
+        // ==========================================================
         setTimeout(() => {
-            if (window.swiperGaleria && typeof window.swiperGaleria.update === 'function') {
-                window.swiperGaleria.update();
-                window.swiperGaleria.slideTo(0, 0);
+            // 1. Si ya existía un carrusel abierto antes, lo destruimos por completo
+            if (window.swiperGaleria && typeof window.swiperGaleria.destroy === 'function') {
+                window.swiperGaleria.destroy(true, true);
             }
+
+            // 2. Inicializamos el nuevo Swiper de forma limpia para estas fotos
+            window.swiperGaleria = new Swiper('.swiper-galeria-modal', {
+                loop: false,
+                spaceBetween: 10,
+                slidesPerView: 1, 
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+            });
         }, 150);
     }
-
     // Datos del resto del modal
     document.getElementById('det-titulo').innerText = anuncio.titulo;
     document.getElementById('det-tipo').innerText = anuncio.tipo_propiedad || 'Habitación';
@@ -310,19 +325,6 @@ window.abrirModalDetalles = function(id) {
     modal.classList.replace('hidden', 'flex');
 };
 
-window.swiperGaleria = new Swiper('.swiper-galeria-modal', {
-    loop: false,
-    spaceBetween: 10,
-    slidesPerView: 1, // Puedes cambiarlo a 2 si las miniaturas son pequeñas
-    navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-    },
-    pagination: {
-        el: '.swiper-pagination',
-        clickable: true,
-    },
-});
 
 window.cambiarHuespedes = function(val) {
     contadorHuespedes = Math.max(1, contadorHuespedes + val);
