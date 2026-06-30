@@ -840,8 +840,9 @@
                         <input type="text" id="inputNombreMarca" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-cyan-500">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Código SVG del Logotipo</label>
-                        <textarea id="inputLogoSvg" required rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-mono focus:outline-none focus:border-cyan-500 resize-none"></textarea>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Logotipo del Header (Opcional)</label>
+                        <input type="file" id="inputHeaderLogo" accept="image/jpeg, image/jpg, image/png, image/webp" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-cyan-500">
+                        <p class="text-[11px] text-slate-400 mt-1">Actual: <span id="span-header-actual" class="font-mono font-bold text-cyan-600">Por defecto</span></p>
                     </div>
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
@@ -917,6 +918,14 @@
                 <input type="hidden" id="edit-footer-bloque">
                 
                 <div class="space-y-4 mb-6">
+                    <div id="grupo-logo-footer" class="hidden space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Logotipo del Footer (Opcional)</label>
+                            <input type="file" id="inputFooterLogo" accept="image/jpeg, image/jpg, image/png, image/webp" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-indigo-500">
+                            <p class="text-[11px] text-slate-400 mt-1">Actual: <span id="span-footer-actual" class="font-mono font-bold text-indigo-600">Por defecto</span></p>
+                        </div>
+                    </div>
+
                     <div id="grupo-contacto" class="hidden space-y-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Teléfono Principal</label>
@@ -1852,21 +1861,26 @@ async function obtenerDatosHeaderAdmin() {
         if (!response.ok) return;
         const data = await response.json();
 
-        // CORRECCIÓN 1: El servidor manda 'data.config', no 'data.visuales'
+        // CORRECCIÓN 1: El servidor manda 'data.config'
         const visuales = data.config || {};
         
-        // A) Llenar los inputs ocultos del modal
+        // A) Llenar campos de texto y spans de archivos actuales (NUEVA MODIFICACIÓN)
         document.getElementById('inputNombreMarca').value = visuales.nombre_marca || '';
-        document.getElementById('inputLogoSvg').value = visuales.logo_svg || '';
+        document.getElementById('span-header-actual').innerText = visuales.header_logo || 'default-logo-header.png';
+        document.getElementById('span-footer-actual').innerText = visuales.footer_logo || 'default-logo-footer.png';
 
-        // B) Llenar la vista previa del panel (quitar el "Cargando...")
+        // B) Llenar vistas previas del panel
         const vistaNombre = document.getElementById('vista-nombre-marca');
-        if(vistaNombre) vistaNombre.innerText = visuales.nombre_marca || 'Sin nombre';
+        if (vistaNombre) vistaNombre.innerText = visuales.nombre_marca || 'Sin nombre';
         
-        const vistaLogo = document.getElementById('vista-logo-svg');
-        if(vistaLogo) vistaLogo.innerText = visuales.logo_svg || 'Sin logo';
+        const vistaLogos = document.getElementById('vista-logos-archivos');
+        if (vistaLogos) {
+            const h = (visuales.header_logo && !visuales.header_logo.includes('default')) ? 'Imagen subida' : 'SVG por defecto';
+            const f = (visuales.footer_logo && !visuales.footer_logo.includes('default')) ? 'Imagen subida' : 'SVG por defecto';
+            vistaLogos.innerText = `Header: ${h} | Footer: ${f}`;
+        }
 
-        // CORRECCIÓN 2: El mapeo de las páginas
+        // CORRECCIÓN 2: El mapeo de las páginas (Se mantiene intacto)
         const tbody = document.getElementById('tablaPaginasMenu');
         if (tbody) {
             tbody.innerHTML = '';
@@ -1894,15 +1908,11 @@ async function obtenerDatosHeaderAdmin() {
             });
         }
 
-        // CORRECCIÓN 3: Separar la Vista y los Inputs de las Redes Sociales
+        // CORRECCIÓN 3: Separar la Vista y los Inputs de las Redes Sociales (Se mantiene intacto)
         const contenedorVista = document.getElementById('contenedorRedesVista');
-        const contenedorInputs = document.getElementById('contenedorRedesInputs');
-        
         if (contenedorVista) contenedorVista.innerHTML = '';
-        if (contenedorInputs) contenedorInputs.innerHTML = '';
 
         data.redes.forEach(red => {
-            // Ahora inyectamos los INPUTS directamente en la vista principal
             if (contenedorVista) {
                 contenedorVista.innerHTML += `
                     <div class="mb-3">
@@ -1913,7 +1923,6 @@ async function obtenerDatosHeaderAdmin() {
             }
         });
 
-        // Agregamos el botón de guardar directamente al final de los inputs en la vista principal
         if (contenedorVista) {
             contenedorVista.innerHTML += `
                 <div class="mt-4 pt-3 border-t border-slate-100 text-right">
@@ -1929,29 +1938,45 @@ async function obtenerDatosHeaderAdmin() {
     }
 }
 
+
 // 2. Procesar el envío del Formulario de Identidad (Marca y Logo)
 document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) => {
     e.preventDefault();
+    
+    // 1. Extraemos los valores actuales que están visibles en la interfaz
     const nombre_marca = document.getElementById('inputNombreMarca').value;
-    const logo_svg = document.getElementById('inputLogoSvg').value;
+    
+    // Usamos .innerText porque ahora son elementos de texto (spans), no inputs
+    const header_logo  = document.getElementById('span-header-actual').innerText;
+    const footer_logo  = document.getElementById('span-footer-actual').innerText;
 
     try {
+        // 2. Enviamos el payload JSON con las 3 variables que tu backend desestructura
         const res = await fetch('/api/header/config', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nombre_marca, logo_svg })
+            body: JSON.stringify({ 
+                nombre_marca, 
+                header_logo, 
+                footer_logo 
+            })
         });
-        // CORREGIDO: Tu endpoint responde con un OK limpio o un mensaje si todo sale bien
-        if (res.ok) {
-            alert('¡Identidad de marca y logo actualizados!');
-            obtenerDatosHeaderAdmin();
+
+        const data = await res.json();
+
+        // 3. Evaluamos la respuesta según lo que responde tu backend (success: true)
+        if (res.ok && data.success) {
+            alert('¡Configuración general actualizada con éxito!');
+            obtenerDatosHeaderAdmin(); // Refresca la vista del panel
         } else {
-            alert('Error al actualizar los datos en el servidor.');
+            alert(data.error || 'Error al actualizar los datos en el servidor.');
         }
     } catch (err) {
-        alert('Error al guardar la configuración de marca.');
+        alert('Error crítico al conectar con el servidor.');
+        console.error('Error en submit formMarcaLogo:', err);
     }
 });
+
 
 // 3. Función para actualizar una página individual de la tabla
 async function guardarCambiosPagina(id) {
@@ -2061,15 +2086,12 @@ async function cargarFooterAdmin() {
         if (!res.ok) throw new Error("Error al obtener datos del footer");
         const datos = await res.json();
 
-        // 1. Población de campos editables individuales (ACTUALIZADO)
+        // 1. Población de campos editables individuales
         document.getElementById('footer-descripcion').value        = datos.footer_descripcion || '';
-        
-        // Corregido de 'title' a 'titulo' para que coincida con la BD y no queden vacíos
         document.getElementById('footer-titulo-links').value       = datos.footer_titulo_links || '';
         document.getElementById('footer-titulo-contacto').value    = datos.footer_titulo_contacto || '';
         document.getElementById('footer-titulo-redes').value       = datos.footer_titulo_redes || '';
         
-        // Dividido en dos líneas para mapear correctamente las dos filas de la BD
         document.getElementById('footer-direccion-linea1').value  = datos.footer_direccion_linea1 || '';
         document.getElementById('footer-direccion-linea2').value  = datos.footer_direccion_linea2 || '';
         
@@ -2079,12 +2101,14 @@ async function cargarFooterAdmin() {
         document.getElementById('footer-copyright-linea1').value  = datos.footer_copyright_linea1 || '';
         document.getElementById('footer-copyright-linea2').value  = datos.footer_copyright_linea2 || '';
 
-        // 2. Población de datos compartidos (Duplicados del Header para Solo Lectura)
+        // 2. Población de datos compartidos (CORREGIDO: Ahora lee de .config y usa footer_logo)
         const resHeader = await fetch('/api/header-completo'); 
         if (resHeader.ok) {
             const datosHeader = await resHeader.json();
-            document.getElementById('footer-vista-marca').value = datosHeader.nombre_marca || 'No asignada';
-            document.getElementById('footer-vista-logo').value  = datosHeader.logo_svg || 'No asignado';
+            const configHeader = datosHeader.config || {}; // Acceso correcto al objeto de configuración
+            
+            document.getElementById('footer-vista-marca').value = configHeader.nombre_marca || 'No asignada';
+            document.getElementById('footer-vista-logo').value  = configHeader.footer_logo || 'No asignado';
         }
 
     } catch (err) {

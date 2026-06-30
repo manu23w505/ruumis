@@ -971,19 +971,37 @@ app.get('/api/header-completo', (req, res) => {
 });
 
 // Actualizar Configuración General (Nombre de Marca y SVG del Logo)
+// LOGO FOOTER Y HEADER
 app.put('/api/header/config', (req, res) => {
-    const { nombre_marca, logo_svg } = req.body;
+    const { nombre_marca, header_logo, footer_logo } = req.body;
+    const query = "INSERT INTO configuracion_general (clave, valor) VALUES (?, ?) ON DUPLICATE KEY UPDATE valor = ?";
     
-    const queryMarca = "UPDATE configuracion_general SET valor = ? WHERE clave = 'nombre_marca'";
-    const queryLogo = "UPDATE configuracion_general SET valor = ? WHERE clave = 'logo_svg'";
+    const updates = [
+        ['nombre_marca', nombre_marca],
+        ['header_logo', header_logo],
+        ['footer_logo', footer_logo]
+    ];
 
-    db.query(queryMarca, [nombre_marca], (err) => {
-        if (err) return res.status(500).json({ error: 'Error al actualizar el nombre de la marca' });
-        
-        db.query(queryLogo, [logo_svg], (err2) => {
-            if (err2) return res.status(500).json({ error: 'Error al actualizar el SVG del logo' });
-            res.json({ success: true, message: 'Configuración general del header actualizada' });
-        });
+    let completados = 0;
+    let huboError = false;
+
+    updates.forEach(item => {
+        // Solo actualizamos si el frontend nos mandó un valor para esa clave
+        if (item[1] !== undefined) {
+            db.query(query, [item[0], item[1], item[1]], (err) => {
+                if (err) {
+                    console.error(`Error actualizando ${item[0]}:`, err);
+                    huboError = true;
+                }
+                completados++;
+                
+                // Si ya procesamos todos los que no son undefined
+                if (completados === updates.filter(u => u[1] !== undefined).length) {
+                    if (huboError) return res.status(500).json({ error: 'Hubo errores al actualizar la configuración' });
+                    res.json({ success: true, message: 'Configuración general actualizada' });
+                }
+            });
+        }
     });
 });
 
@@ -1146,6 +1164,7 @@ app.delete('/api/delete-image', (req, res) => {
         res.json({ success: true, message: 'El archivo ya no existía en el servidor' });
     }
 });
+
 
 
 cron.schedule('*/5 * * * *', () => {
