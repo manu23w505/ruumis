@@ -1946,15 +1946,15 @@ async function obtenerDatosHeaderAdmin() {
 }
 
 
-// 2. Procesar el envío del Formulario de Identidad (Marca y Logo)
+// 2. Procesar el envío del Formulario de Identidad (Marca y Logos)
 document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const nombre_marca = document.getElementById('inputNombreMarca').value;
     
     // Mantenemos el nombre que ya tienen de fondo por si no suben nada nuevo
-    let header_logo = document.getElementById('span-header-actual').innerText;
-    let footer_logo = document.getElementById('span-footer-actual').innerText;
+    let header_logo = document.getElementById('span-header-actual')?.innerText || '';
+    let footer_logo = document.getElementById('span-footer-actual')?.innerText || '';
 
     const fileHeader = document.getElementById('inputHeaderLogo').files[0];
     const fileFooter = document.getElementById('inputFooterLogo').files[0];
@@ -1963,10 +1963,11 @@ document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) =
         // 1. Subir imagen del Header si fue seleccionada
         if (fileHeader) {
             const formData = new FormData();
-            formData.append('imagen', fileHeader); // Cambia 'imagen' por el campo que requiera tu Multer en server.js
+            formData.append('imagen', fileHeader); // 'imagen' coincide con upload.single('imagen') en server.js
             
-            const uploadRes = await fetch('/api/upload', { method: 'POST', body: formData });
-            if (!uploadRes.ok) throw new Error('Error al subir la imagen del Header.');
+            // CORREGIDO: /api/upload -> /api/subir
+            const uploadRes = await fetch('/api/subir', { method: 'POST', body: formData });
+            if (!uploadRes.ok) throw new Error('Error al subir la imagen del Header al servidor.');
             const uploadData = await uploadRes.json();
             if (uploadData.success) header_logo = uploadData.fileName;
         }
@@ -1974,15 +1975,16 @@ document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) =
         // 2. Subir imagen del Footer si fue seleccionada
         if (fileFooter) {
             const formData = new FormData();
-            formData.append('imagen', fileFooter);
+            formData.append('imagen', fileFooter); // 'imagen' coincide con upload.single('imagen') en server.js
             
-            const uploadRes = await fetch('/api/upload', { method: 'POST', body: formData });
-            if (!uploadRes.ok) throw new Error('Error al subir la imagen del Footer.');
+            // CORREGIDO: /api/upload -> /api/subir
+            const uploadRes = await fetch('/api/subir', { method: 'POST', body: formData });
+            if (!uploadRes.ok) throw new Error('Error al subir la imagen del Footer al servidor.');
             const uploadData = await uploadRes.json();
             if (uploadData.success) footer_logo = uploadData.fileName;
         }
 
-        // 3. Mandar los nombres de los archivos finales a tu endpoint de configuración
+        // 3. Mandar los nombres de los archivos finales y el texto a la configuración
         const res = await fetch('/api/header/config', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -1993,7 +1995,7 @@ document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) =
 
         if (res.ok && data.success) {
             alert('¡Identidad y logotipos actualizados correctamente!');
-            cerrarModalMarca();
+            if (typeof cerrarModalMarca === 'function') cerrarModalMarca();
             obtenerDatosHeaderAdmin(); // Recarga elementos visuales del Admin
             if (typeof cargarFooterAdmin === 'function') cargarFooterAdmin(); // Sincroniza el footer del Admin
         } else {
@@ -2001,7 +2003,7 @@ document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) =
         }
     } catch (err) {
         alert(err.message || 'Error al guardar la configuración.');
-        console.error(err);
+        console.error("Error en la configuración de marca:", err);
     }
 });
 
@@ -2183,6 +2185,5 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 </script>
-<script src="/js/app.js"></script>
 </body>
 </html>
