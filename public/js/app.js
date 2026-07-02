@@ -16,6 +16,15 @@ async function apiCall(endpoint) {
 async function inicializarPagina() {
     console.log("Iniciando carga de componentes...");
     
+    try {
+        const config = await apiCall('/api/configuracion'); // Asegúrate que este endpoint exista
+        if (config && config.favicon) {
+            aplicarFavicon(config.favicon);
+        }
+    } catch (e) {
+        console.warn("No se pudo cargar la configuración para el favicon.");
+    }
+
     // Carga de ubicaciones (Esto ya te funciona correctamente)
     const ubicaciones = await apiCall('/api/ubicaciones');
     const selectCiudad = document.getElementById('filtro-ciudad');
@@ -918,3 +927,16 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     cargarFooterPublico();
 });
+
+//FAVICON
+function aplicarFavicon(nombreArchivo) {
+    if (!nombreArchivo) return; // Si no hay archivo, no hacemos nada
+    
+    let link = document.querySelector("link[rel~='icon']");
+    if (!link) {
+        link = document.createElement('link');
+        link.rel = 'icon';
+        document.head.appendChild(link);
+    }
+    link.href = `/uploads/${nombreArchivo}`;
+}

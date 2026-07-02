@@ -1165,7 +1165,17 @@ app.delete('/api/delete-image', (req, res) => {
     }
 });
 
+//FAVICON
 
+// Endpoint para actualizar el favicon
+app.put('/api/config/favicon', (req, res) => {
+    const { nuevoFavicon } = req.body;
+    const sql = "UPDATE configuracion SET favicon = ? WHERE id = 1"; // Ajusta tu ID
+    db.query(sql, [nuevoFavicon], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ success: true, message: 'Favicon actualizado' });
+    });
+});
 
 cron.schedule('*/5 * * * *', () => {
     sincronizarCalendarios();

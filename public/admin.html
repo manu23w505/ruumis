@@ -816,6 +816,12 @@
                         <input type="email" id="config-email-destino-nuevo" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-cyan-500 transition-colors">
                     </div>
                 </div>
+
+                <div class="mt-4">
+                    <label>Cambiar Favicon (formato .ico o .png)</label>
+                    <input type="file" id="input-favicon" accept="image/*">
+                    <button onclick="subirFavicon()" class="bg-blue-500 text-white p-2 rounded">Guardar Favicon</button>
+                </div>
                 
                 <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
                     <button type="button" onclick="cerrarModalEditarCorreo()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 transition-colors cursor-pointer">Cancelar</button>
@@ -2193,6 +2199,29 @@ document.addEventListener('DOMContentLoaded', () => {
     obtenerDatosHeaderAdmin(); 
     cargarFooterAdmin(); // Carga de forma automática todos tus campos individuales sin clicks previos
 });
+
+//FAVICON
+async function subirFavicon() {
+    const fileInput = document.getElementById('input-favicon');
+    const file = fileInput.files[0];
+    if (!file) return alert("Selecciona una imagen");
+
+    const formData = new FormData();
+    formData.append('image', file); // 'image' debe coincidir con tu multer
+
+    // 1. Subir el archivo al servidor
+    const res = await fetch('/api/upload', { method: 'POST', body: formData });
+    const data = await res.json();
+
+    // 2. Guardar el nombre en la BD
+    await fetch('/api/config/favicon', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nuevoFavicon: data.fileName })
+    });
+    alert("Favicon actualizado. Recarga para ver cambios.");
+}
+
 
 </script>
 </body>
