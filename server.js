@@ -1177,6 +1177,14 @@ app.put('/api/config/favicon', (req, res) => {
     });
 });
 
+app.post('/api/upload', upload.single('image'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: 'No se recibió ningún archivo.' });
+    }
+    // Retornamos el nombre del archivo para que el Frontend lo guarde en la BD
+    res.json({ success: true, fileName: req.file.filename });
+});
+
 cron.schedule('*/5 * * * *', () => {
     sincronizarCalendarios();
 });
