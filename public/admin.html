@@ -1952,7 +1952,7 @@ document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) =
     
     const nombre_marca = document.getElementById('inputNombreMarca').value;
     
-    // Mantenemos el nombre que ya tienen de fondo por si no suben nada nuevo
+    // Recuperamos los nombres actuales por si el usuario no selecciona un archivo nuevo
     let header_logo = document.getElementById('span-header-actual')?.innerText || '';
     let footer_logo = document.getElementById('span-footer-actual')?.innerText || '';
 
@@ -1963,28 +1963,35 @@ document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) =
         // 1. Subir imagen del Header si fue seleccionada
         if (fileHeader) {
             const formData = new FormData();
-            formData.append('imagen', fileHeader); // 'imagen' coincide con upload.single('imagen') en server.js
+            formData.append('imagen', fileHeader); // 'imagen' coincide con upload.single('imagen')
             
-            // CORREGIDO: /api/upload -> /api/subir
-            const uploadRes = await fetch('/api/subir', { method: 'POST', body: formData });
-            if (!uploadRes.ok) throw new Error('Error al subir la imagen del Header al servidor.');
+            // SINCRONIZADO: Cambiado a /api/upload-image
+            const uploadRes = await fetch('/api/upload-image', { method: 'POST', body: formData });
+            if (!uploadRes.ok) throw new Error('Error al cargar la imagen del Header en el servidor.');
+            
             const uploadData = await uploadRes.json();
-            if (uploadData.success) header_logo = uploadData.fileName;
+            if (uploadData.success) {
+                header_logo = uploadData.fileName; // Guardamos el nombre único generado (Timestamp + ext)
+            }
         }
 
         // 2. Subir imagen del Footer si fue seleccionada
         if (fileFooter) {
             const formData = new FormData();
-            formData.append('imagen', fileFooter); // 'imagen' coincide con upload.single('imagen') en server.js
+            formData.append('imagen', fileFooter); // 'imagen' coincide con upload.single('imagen')
             
-            // CORREGIDO: /api/upload -> /api/subir
-            const uploadRes = await fetch('/api/subir', { method: 'POST', body: formData });
-            if (!uploadRes.ok) throw new Error('Error al subir la imagen del Footer al servidor.');
+            // SINCRONIZADO: Cambiado a /api/upload-image
+            const uploadRes = await fetch('/api/upload-image', { method: 'POST', body: formData });
+            if (!uploadRes.ok) throw new Error('Error al cargar la imagen del Footer en el servidor.');
+            
             const uploadData = await uploadRes.json();
-            if (uploadData.success) footer_logo = uploadData.fileName;
+            if (uploadData.success) {
+                footer_logo = uploadData.fileName; // Guardamos el nombre único generado
+            }
         }
 
-        // 3. Mandar los nombres de los archivos finales y el texto a la configuración
+        // 3. Mandar el texto y los archivos finales al endpoint de configuración general
+        // SINCRONIZADO: Apunta a /api/header/config tal como está en tu backend
         const res = await fetch('/api/header/config', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -1994,16 +2001,19 @@ document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) =
         const data = await res.json();
 
         if (res.ok && data.success) {
-            alert('¡Identidad y logotipos actualizados correctamente!');
+            alert('¡Identidad y logotipos actualizados con éxito en la Base de Datos!');
             if (typeof cerrarModalMarca === 'function') cerrarModalMarca();
-            obtenerDatosHeaderAdmin(); // Recarga elementos visuales del Admin
-            if (typeof cargarFooterAdmin === 'function') cargarFooterAdmin(); // Sincroniza el footer del Admin
+            
+            // Recargamos los datos visuales del panel administrador para reflejar los cambios
+            if (typeof obtenerDatosHeaderAdmin === 'function') obtenerDatosHeaderAdmin(); 
+            if (typeof cargarFooterAdmin === 'function') cargarFooterAdmin(); 
         } else {
-            alert(data.error || 'Error al guardar las rutas en la base de datos.');
+            alert(data.error || 'Error al guardar las configuraciones en la BD.');
         }
+
     } catch (err) {
-        alert(err.message || 'Error al guardar la configuración.');
-        console.error("Error en la configuración de marca:", err);
+        alert(err.message || 'Error en el proceso de actualización.');
+        console.error("Error crítico en la configuración de identidad:", err);
     }
 });
 
