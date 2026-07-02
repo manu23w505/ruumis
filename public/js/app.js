@@ -722,7 +722,6 @@ async function cargarPreguntasDinamicas() {
 }
 
 // CARGAR DATOS (HEADER Y FOOTER) 
-// CARGAR DATOS (HEADER Y FOOTER) 
 async function cargarHeaderDinamico() {
     try {
         const response = await fetch('/api/header-completo');
@@ -736,52 +735,52 @@ async function cargarHeaderDinamico() {
         // 1. ACTUALIZAR EL LOGO Y NOMBRE DE LA MARCA EN TODOS LADOS
         // ========================================================
         if (config) {
-            // Definimos el SVG por defecto en una variable limpia de JS
+            // Definimos el SVG por defecto en una variable limpia
             const svgPorDefecto = `
                 <svg width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M7.03198 3.80281V7.07652L3.86083 9.75137L0.689673 12.4263L0.667474 6.56503C0.655304 3.34138 0.663875 0.654206 0.686587 0.593579C0.71907 0.506918 1.4043 0.488223 3.87994 0.506219L7.03198 0.529106V3.80281ZM21.645 4.36419V5.88433L17.0383 9.76316C14.5046 11.8966 11.2263 14.6552 9.75318 15.8934L7.07484 18.145V20.3225V22.5H3.85988H0.64502L0.667303 18.768L0.689673 15.036L2.56785 13.4609C3.60088 12.5946 6.85989 9.85244 9.81009 7.36726L15.1741 2.84867L18.4096 2.8464L21.645 2.84413V4.36419ZM21.645 15.5549V22.5H18.431H15.217V18.2638V14.0274L15.4805 13.7882C15.8061 13.4924 21.5939 8.61606 21.6236 8.61248C21.6353 8.61099 21.645 11.7351 21.645 15.5549Z" fill="currentColor"/>
                 </svg>
             `;
 
-            // 1. Renderizar el nombre dinámico de la marca
-            document.querySelectorAll('.brand_name').forEach(contenedorNombre => {
-                contenedorNombre.textContent = config.nombre_marca || 'Hosteller';
-            });
-            document.querySelectorAll('.nombre-marca-dinamico').forEach(el => {
+            // 1. Renderizar el nombre dinámico de la marca en todos lados
+            document.querySelectorAll('.brand_name, .nombre-marca-dinamico').forEach(el => {
                 el.innerText = config.nombre_marca || 'Hosteller';
             });
 
-            // 2. Control del Logo del Header (.brand_logo.theme-element)
-            const headerLogoContenedor = document.querySelector('.brand_logo.theme-element');
-            if (headerLogoContenedor) {
-                const logHeader = config.header_logo || config.logo_svg; 
-                // Validamos si es una imagen física subida
-                if (logHeader && (logHeader.endsWith('.jpg') || logHeader.endsWith('.jpeg') || logHeader.endsWith('.png') || logHeader.endsWith('.webp'))) {
-                    headerLogoContenedor.innerHTML = `<img src="/uploads/${logHeader}" alt="Logo Header" class="h-6 w-auto object-contain">`;
-                } else if (logHeader && logHeader.includes('<svg')) {
-                    headerLogoContenedor.innerHTML = logHeader;
-                } else {
-                    headerLogoContenedor.innerHTML = svgPorDefecto;
-                }
-            } else {
-                // Fallback por si tienes contenedores .brand_logo genéricos sin la clase .theme-element
-                document.querySelectorAll('.brand_logo').forEach(contenedorLogo => {
-                    contenedorLogo.innerHTML = config.logo_svg || svgPorDefecto;
-                });
-            }
+            // Función auxiliar para reemplazar un logo por su ID exacto, manteniendo el tamaño
+            const inyectarLogo = (idElemento, archivoLogo) => {
+                const elemento = document.getElementById(idElemento);
+                if (!elemento) return;
 
-            // 3. Control del Logo del Footer (.logo-svg-dinamico)
-            const footerLogoContenedor = document.querySelector('.logo-svg-dinamico');
-            if (footerLogoContenedor) {
-                const logFooter = config.footer_logo;
-                if (logFooter && (logFooter.endsWith('.jpg') || logFooter.endsWith('.jpeg') || logFooter.endsWith('.png') || logFooter.endsWith('.webp'))) {
-                    footerLogoContenedor.innerHTML = `<img src="/uploads/${logFooter}" alt="Logo Footer" class="h-6 w-auto object-contain">`;
-                } else {
-                    footerLogoContenedor.innerHTML = svgPorDefecto;
+                // Si hay una imagen real subida (.jpg, .png, etc.)
+                if (archivoLogo && (archivoLogo.endsWith('.jpg') || archivoLogo.endsWith('.jpeg') || archivoLogo.endsWith('.png') || archivoLogo.endsWith('.webp'))) {
+                    // Reemplazamos toda la etiqueta usando outerHTML con el tamaño forzado en CSS
+                    elemento.outerHTML = `
+                        <img 
+                            id="${idElemento}" 
+                            src="/uploads/${archivoLogo}" 
+                            alt="Logotipo" 
+                            style="width: 22px; height: 23px; object-fit: contain; display: inline-block; vertical-align: middle;"
+                        />`;
+                } 
+                // Si es código SVG directo
+                else if (archivoLogo && archivoLogo.includes('<svg')) {
+                    elemento.outerHTML = archivoLogo;
+                } 
+                // Si no hay nada, ponemos el de Hosteller por defecto
+                else {
+                    elemento.outerHTML = svgPorDefecto.replace('<svg ', `<svg id="${idElemento}" `);
                 }
-            }
+            };
+
+            // 2. Inyectar el Logo del Header (Afecta la barra principal y el menú desplegable lateral)
+            inyectarLogo('brandHeader', config.header_logo);
+            inyectarLogo('brandOffset', config.header_logo);
+
+            // 3. Inyectar el Logo del Footer de manera independiente
+            inyectarLogo('brandFooter', config.footer_logo);
             
-            // Asegura que todos los contenedores de marca lleven al inicio
+            // 4. Asegurar que todos los contenedores de marca lleven al inicio
             document.querySelectorAll('.brand').forEach(enlaceMarca => {
                 enlaceMarca.setAttribute('href', '/');
             });
@@ -847,11 +846,6 @@ async function cargarHeaderDinamico() {
     }
 }
 
-// Aseguramos que la función corra automáticamente en cuanto cargue el DOM de cualquier página
-document.addEventListener('DOMContentLoaded', () => {
-    cargarHeaderDinamico();
-});
-
 //footer 
 
 async function cargarFooterPublico() {
@@ -913,6 +907,12 @@ async function cargarFooterPublico() {
         console.error('Error al renderizar los componentes del footer público:', error);
     }
 }
+
+// Aseguramos que la función corra automáticamente en cuanto cargue el DOM de cualquier página
+document.addEventListener('DOMContentLoaded', () => {
+    cargarHeaderDinamico();
+});
+
 
 // Lo ejecutas automáticamente cuando cargue la página web
 document.addEventListener('DOMContentLoaded', () => {
