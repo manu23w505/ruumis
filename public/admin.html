@@ -829,7 +829,7 @@
         <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-lg p-6 shadow-xl">
             <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
                 <h3 class="font-black text-lg text-slate-900">Editar Marca e Identidad</h3>
-                <button onclick="cerrarModalMarca()" class="text-slate-400 hover:text-slate-600 cursor-pointer">
+                <button type="button" onclick="cerrarModalMarca()" class="text-slate-400 hover:text-slate-600 cursor-pointer">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
@@ -839,15 +839,22 @@
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Nombre de la Marca</label>
                         <input type="text" id="inputNombreMarca" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-cyan-500">
                     </div>
+                    
                     <div>
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Logotipo del Header (Opcional)</label>
                         <input type="file" id="inputHeaderLogo" accept="image/jpeg, image/jpg, image/png, image/webp" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-cyan-500">
                         <p class="text-[11px] text-slate-400 mt-1">Actual: <span id="span-header-actual" class="font-mono font-bold text-cyan-600">Por defecto</span></p>
                     </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Logotipo del Footer (Opcional)</label>
+                        <input type="file" id="inputFooterLogo" accept="image/jpeg, image/jpg, image/png, image/webp" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-indigo-500">
+                        <p class="text-[11px] text-slate-400 mt-1">Actual: <span id="span-footer-actual" class="font-mono font-bold text-indigo-600">Por defecto</span></p>
+                    </div>
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
                     <button type="button" onclick="cerrarModalMarca()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100">Cancelar</button>
-                    <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs shadow-sm">Guardar</button>
+                    <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs shadow-sm">Guardar Cambios</button>
                 </div>
             </form>
         </div>
@@ -1943,37 +1950,58 @@ async function obtenerDatosHeaderAdmin() {
 document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    // 1. Extraemos los valores actuales que están visibles en la interfaz
     const nombre_marca = document.getElementById('inputNombreMarca').value;
     
-    // Usamos .innerText porque ahora son elementos de texto (spans), no inputs
-    const header_logo  = document.getElementById('span-header-actual').innerText;
-    const footer_logo  = document.getElementById('span-footer-actual').innerText;
+    // Mantenemos el nombre que ya tienen de fondo por si no suben nada nuevo
+    let header_logo = document.getElementById('span-header-actual').innerText;
+    let footer_logo = document.getElementById('span-footer-actual').innerText;
+
+    const fileHeader = document.getElementById('inputHeaderLogo').files[0];
+    const fileFooter = document.getElementById('inputFooterLogo').files[0];
 
     try {
-        // 2. Enviamos el payload JSON con las 3 variables que tu backend desestructura
+        // 1. Subir imagen del Header si fue seleccionada
+        if (fileHeader) {
+            const formData = new FormData();
+            formData.append('imagen', fileHeader); // Cambia 'imagen' por el campo que requiera tu Multer en server.js
+            
+            const uploadRes = await fetch('/api/upload', { method: 'POST', body: formData });
+            if (!uploadRes.ok) throw new Error('Error al subir la imagen del Header.');
+            const uploadData = await uploadRes.json();
+            if (uploadData.success) header_logo = uploadData.fileName;
+        }
+
+        // 2. Subir imagen del Footer si fue seleccionada
+        if (fileFooter) {
+            const formData = new FormData();
+            formData.append('imagen', fileFooter);
+            
+            const uploadRes = await fetch('/api/upload', { method: 'POST', body: formData });
+            if (!uploadRes.ok) throw new Error('Error al subir la imagen del Footer.');
+            const uploadData = await uploadRes.json();
+            if (uploadData.success) footer_logo = uploadData.fileName;
+        }
+
+        // 3. Mandar los nombres de los archivos finales a tu endpoint de configuración
         const res = await fetch('/api/header/config', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                nombre_marca, 
-                header_logo, 
-                footer_logo 
-            })
+            body: JSON.stringify({ nombre_marca, header_logo, footer_logo })
         });
 
         const data = await res.json();
 
-        // 3. Evaluamos la respuesta según lo que responde tu backend (success: true)
         if (res.ok && data.success) {
-            alert('¡Configuración general actualizada con éxito!');
-            obtenerDatosHeaderAdmin(); // Refresca la vista del panel
+            alert('¡Identidad y logotipos actualizados correctamente!');
+            cerrarModalMarca();
+            obtenerDatosHeaderAdmin(); // Recarga elementos visuales del Admin
+            if (typeof cargarFooterAdmin === 'function') cargarFooterAdmin(); // Sincroniza el footer del Admin
         } else {
-            alert(data.error || 'Error al actualizar los datos en el servidor.');
+            alert(data.error || 'Error al guardar las rutas en la base de datos.');
         }
     } catch (err) {
-        alert('Error crítico al conectar con el servidor.');
-        console.error('Error en submit formMarcaLogo:', err);
+        alert(err.message || 'Error al guardar la configuración.');
+        console.error(err);
     }
 });
 
