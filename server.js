@@ -1167,12 +1167,16 @@ app.delete('/api/delete-image', (req, res) => {
 
 //FAVICON
 
-// Endpoint para actualizar el favicon
 app.put('/api/config/favicon', (req, res) => {
     const { nuevoFavicon } = req.body;
-    const sql = "UPDATE configuracion SET favicon = ? WHERE id = 1"; // Ajusta tu ID
+    console.log("Intentando actualizar favicon con:", nuevoFavicon); // Debug
+    
+    const sql = "UPDATE configuracion SET favicon = ? WHERE id = 1";
     db.query(sql, [nuevoFavicon], (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            console.error("ERROR EN BASE DE DATOS:", err); // <-- ESTO ES CLAVE
+            return res.status(500).json({ error: err.message });
+        }
         res.json({ success: true, message: 'Favicon actualizado' });
     });
 });
