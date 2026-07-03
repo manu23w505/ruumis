@@ -1169,12 +1169,16 @@ app.delete('/api/delete-image', (req, res) => {
 
 app.put('/api/config/favicon', (req, res) => {
     const { nuevoFavicon } = req.body;
-    console.log("Intentando actualizar favicon con:", nuevoFavicon); // Debug
     
-    const sql = "UPDATE configuracion SET favicon = ? WHERE id = 1";
+    // AQUÍ ESTÁ LA CORRECCIÓN:
+    // UPDATE configuracion -> (Nombre de tu tabla)
+    // SET favicon = ? -> (La columna que quieres cambiar)
+    // WHERE clave = 'configuracion_general' -> (Cómo encontrar la fila correcta)
+    const sql = "UPDATE configuracion SET favicon = ? WHERE clave = 'configuracion_general'"; 
+    
     db.query(sql, [nuevoFavicon], (err, result) => {
         if (err) {
-            console.error("ERROR EN BASE DE DATOS:", err); // <-- ESTO ES CLAVE
+            console.error("ERROR EN BASE DE DATOS:", err);
             return res.status(500).json({ error: err.message });
         }
         res.json({ success: true, message: 'Favicon actualizado' });
