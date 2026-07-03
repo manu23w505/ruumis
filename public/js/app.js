@@ -66,36 +66,6 @@ async function inicializarPagina() {
         // Si todo está correcto, mandamos a renderizar de forma segura
         renderizarAnunciosPublicos(todosLosAnuncios);
 
-        async function cargarTitulosDinamicos() {
-            try {
-                // Reutilizamos el endpoint que ya tienes para traer los datos de la BD
-                const datos = await apiCall('/api/configuracion'); 
-                if (!datos) return;
-
-                // 1. Buscamos los elementos en el HTML si es que existen en la página actual
-                const elHome = document.getElementById('public-menu-home');
-                const elAboutMenu = document.getElementById('public-menu-about');
-                const elAboutTitle = document.getElementById('public-title-about');
-
-                // 2. Asignamos los valores dinámicos desde la Base de Datos
-                // (Asegúrate de cambiar 'menu_home' o 'menu_about' por los nombres reales de tus columnas en la BD)
-                if (elHome) {
-                    elHome.innerText = datos.menu_home || 'Home';
-                }
-                
-                if (elAboutMenu) {
-                    elAboutMenu.innerText = datos.menu_about || 'About';
-                }
-                
-                if (elAboutTitle) {
-                    elAboutTitle.innerText = datos.menu_about || 'About'; // Usamos el mismo nombre modificado para el título H1
-                }
-
-            } catch (error) {
-                console.error('Error al cargar los títulos dinámicos del menú:', error);
-            }
-        }
-
         // Ejecutamos la función automáticamente al cargar el DOM
         document.addEventListener('DOMContentLoaded', () => {
             cargarTitulosDinamicos();
@@ -857,6 +827,38 @@ async function cargarHeaderDinamico() {
                             <a class="link underlined underlined--white nav-item" href="${item.url_estetica}">${item.nombre_visible}</a>
                         </li>`;
                 });
+            }
+
+            // ========================================================
+            // NUEVO: ACTUALIZAR MIGAS DE PAN Y TÍTULO DE LA PÁGINA ACTUAL
+            // ========================================================
+            // 1. Buscamos el nombre dinámico asignado a la página de Inicio (Home/Index)
+            const paginaInicio = paginas.find(p => p.url_estetica === '/' || p.url_estetica === '/index.html');
+            const elBreadcrumbHome = document.getElementById('breadcrumb-home');
+            if (elBreadcrumbHome && paginaInicio) {
+                elBreadcrumbHome.innerText = paginaInicio.nombre_visible;
+            }
+
+            // 2. Detectamos en qué ruta limpia estamos actualmente
+            const rutaActual = window.location.pathname;
+
+            // 3. Buscamos si la ruta actual coincide con alguna de las registradas en la Base de Datos
+            const paginaActual = paginas.find(item => 
+                rutaActual === item.url_estetica || 
+                rutaActual.endsWith(item.url_estetica)
+            );
+
+            // 4. Si la encuentra, inyectamos el nombre que editaste desde el panel de administración
+            if (paginaActual) {
+                const elBreadcrumbCurrent = document.getElementById('breadcrumb-current');
+                const elPageTitleCurrent = document.getElementById('page-title-current');
+
+                if (elBreadcrumbCurrent) {
+                    elBreadcrumbCurrent.innerText = paginaActual.nombre_visible;
+                }
+                if (elPageTitleCurrent) {
+                    elPageTitleCurrent.innerText = paginaActual.nombre_visible;
+                }
             }
         }
 
