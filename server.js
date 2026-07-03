@@ -2,7 +2,6 @@ const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
 const path = require('path');
-const multer = require('multer');
 const ical = require('node-ical');
 const cron = require('node-cron');
 const bcrypt = require('bcrypt');
@@ -14,30 +13,26 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, 'public/uploads'));
-    },
-    filename: (req, file, cb) => {
-        const ext = path.extname(file.originalname);
-        cb(null, Date.now() + ext);
-    }
+
+const cloudinary = require('cloudinary').v2;
+cloudinary.config({
+    cloud_name: 'ts3v2nsy', 
+    api_key: '515561375298544',       
+    api_secret: 'gz1WZx3bijvi1xM7qvC6RYVQkj8'  
 });
+
+
+const storage = multer.memoryStorage(); 
 
 const upload = multer({ 
     storage: storage,
-    limits: { 
-        fileSize: 1024 * 1024 * 5 
-    },
+    limits: { fileSize: 1024 * 1024 * 5 }, // 5MB límite
     fileFilter: (req, file, cb) => {
         const filetypes = /jpeg|jpg|png|webp/;
         const mimetype = filetypes.test(file.mimetype);
         const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-
-        if (mimetype && extname) {
-            return cb(null, true);
-        }
-        cb(new Error('Error de Seguridad: ¡Solo se permite subir imágenes reales (jpg, jpeg, png, webp)!'));
+        if (mimetype && extname) return cb(null, true);
+        cb(new Error('¡Solo se permite subir imágenes reales (jpg, jpeg, png, webp)!'));
     }
 });
 
@@ -1186,8 +1181,17 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'No se recibió ningún archivo.' });
     }
-    // Retornamos el nombre del archivo para que el Frontend lo guarde en la BD
-    res.json({ success: true, fileName: req.file.filename });
+
+    // Subimos a Cloudinary
+    cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+        if (error) {
+            console.error("Error al subir a Cloudinary:", error);
+            return res.status(500).json({ error: 'Error al subir a la nube' });
+        }
+        
+        // Retornamos la URL para que el Frontend la guarde
+        res.json({ url: result.secure_url }); 
+    }).end(req.file.buffer);
 });
 
 cron.schedule('*/5 * * * *', () => {

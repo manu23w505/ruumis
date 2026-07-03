@@ -929,16 +929,27 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 //FAVICON
-function aplicarFavicon(nombreArchivo) {
-    if (!nombreArchivo) return;
-    
-    let link = document.querySelector("link[rel~='icon']");
-    if (!link) {
-        link = document.createElement('link');
-        link.rel = 'icon';
-        document.head.appendChild(link);
+async function subirFavicon() {
+    const fileInput = document.getElementById('input-favicon');
+    const file = fileInput.files[0];
+    if (!file) return alert("Selecciona una imagen");
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    // 1. Subir a la nube
+    const res = await fetch('/api/upload', { method: 'POST', body: formData });
+    const data = await res.json(); 
+
+    if (data.url) { // <--- AQUÍ ESTÁ EL CAMBIO: ahora usamos data.url
+        // 2. Guardar la URL completa en la BD
+        await fetch('/api/config/favicon', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nuevoFavicon: data.url }) // Guardamos la URL
+        });
+        alert("Favicon actualizado con éxito");
+    } else {
+        alert("Error al subir la imagen");
     }
-    
-    // AQUÍ AGREGAMOS EL TIMESTAMP AL FINAL
-    link.href = '/uploads/' + nombreArchivo + '?t=' + new Date().getTime();
 }
