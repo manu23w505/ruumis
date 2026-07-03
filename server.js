@@ -1170,11 +1170,8 @@ app.delete('/api/delete-image', (req, res) => {
 app.put('/api/config/favicon', (req, res) => {
     const { nuevoFavicon } = req.body;
     
-    // AQUÍ ESTÁ LA CORRECCIÓN:
-    // UPDATE configuracion -> (Nombre de tu tabla)
-    // SET favicon = ? -> (La columna que quieres cambiar)
-    // WHERE clave = 'configuracion_general' -> (Cómo encontrar la fila correcta)
-    const sql = "UPDATE configuracion SET favicon = ? WHERE clave = 'configuracion_general'"; 
+    // CORRECCIÓN: Usamos 'clave' en lugar de 'id'
+    const sql = "UPDATE configuracion SET favicon = ? WHERE clave = 'correo_destino'";
     
     db.query(sql, [nuevoFavicon], (err, result) => {
         if (err) {
