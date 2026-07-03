@@ -930,7 +930,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 //FAVICON
 function aplicarFavicon(nombreArchivo) {
-    if (!nombreArchivo) return; // Si no hay archivo, no hacemos nada
+    if (!nombreArchivo) return;
     
     let link = document.querySelector("link[rel~='icon']");
     if (!link) {
@@ -938,5 +938,7 @@ function aplicarFavicon(nombreArchivo) {
         link.rel = 'icon';
         document.head.appendChild(link);
     }
-    link.href = `/uploads/${nombreArchivo}`;
+    
+    // AQUÍ AGREGAMOS EL TIMESTAMP AL FINAL
+    link.href = '/uploads/' + nombreArchivo + '?t=' + new Date().getTime();
 }
