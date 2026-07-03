@@ -66,6 +66,41 @@ async function inicializarPagina() {
         // Si todo está correcto, mandamos a renderizar de forma segura
         renderizarAnunciosPublicos(todosLosAnuncios);
 
+        async function cargarTitulosDinamicos() {
+            try {
+                // Reutilizamos el endpoint que ya tienes para traer los datos de la BD
+                const datos = await apiCall('/api/configuracion'); 
+                if (!datos) return;
+
+                // 1. Buscamos los elementos en el HTML si es que existen en la página actual
+                const elHome = document.getElementById('public-menu-home');
+                const elAboutMenu = document.getElementById('public-menu-about');
+                const elAboutTitle = document.getElementById('public-title-about');
+
+                // 2. Asignamos los valores dinámicos desde la Base de Datos
+                // (Asegúrate de cambiar 'menu_home' o 'menu_about' por los nombres reales de tus columnas en la BD)
+                if (elHome) {
+                    elHome.innerText = datos.menu_home || 'Home';
+                }
+                
+                if (elAboutMenu) {
+                    elAboutMenu.innerText = datos.menu_about || 'About';
+                }
+                
+                if (elAboutTitle) {
+                    elAboutTitle.innerText = datos.menu_about || 'About'; // Usamos el mismo nombre modificado para el título H1
+                }
+
+            } catch (error) {
+                console.error('Error al cargar los títulos dinámicos del menú:', error);
+            }
+        }
+
+        // Ejecutamos la función automáticamente al cargar el DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarTitulosDinamicos();
+        });
+
     } catch (err) {
         console.error("Error general al inicializar los anuncios:", err);
         contenedor.innerHTML = '<p class="text-rose-500 col-span-full text-center py-8">⚠️ Ocurrió un error inesperado al procesar las habitaciones.</p>';
