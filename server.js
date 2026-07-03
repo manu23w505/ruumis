@@ -2,6 +2,7 @@ const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
 const path = require('path');
+const multer = require('multer');
 const ical = require('node-ical');
 const cron = require('node-cron');
 const bcrypt = require('bcrypt');
