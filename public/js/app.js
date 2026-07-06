@@ -1061,6 +1061,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 //================================================================
+// ROOMS SECTION HOME
+//================================================================
+
 // Carga dinámica de textos y traducciones para la Sección de Anuncios Corta (Rooms Section)
 async function cargarRoomsSectionHome() {
     try {
@@ -1149,6 +1152,149 @@ async function cargarRoomsSectionHome() {
         console.warn('Advertencia al renderizar dinámicamente Rooms Section:', error);
     }
 }
+
+//================================================================
+// ABOUT SECTION HOME
+//================================================================
+
+// Función auxiliar para extraer el ID de un enlace de YouTube y generar un embed autoejecutable
+function obtenerEmbedYouTube(url) {
+    if (!url) return '';
+    let videoId = '';
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    
+    if (match && match[2].length === 11) {
+        videoId = match[2];
+    } else {
+        return url; // Retorna la original por si ya está en formato embed
+    }
+    // Agregamos autoplay=1, mute=1 (requerido por navegadores modernos para autoplay) y loop=1
+    return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
+}
+
+// Carga inicial de datos en el Panel de Administración
+async function cargarAboutAdmin() {
+    try {
+        const res = await fetch('/api/admin_home_datos'); // Tu endpoint actual que lee admin_home
+        const datos = await res.json();
+        
+        if (datos) {
+            document.getElementById('about-titulo').value = datos.about_titulo || '';
+            document.getElementById('about-video-url').value = datos.about_video_url || '';
+            document.getElementById('about-descripcion').value = datos.about_descripcion || '';
+            document.getElementById('about-item1').value = datos.about_item1_text || '';
+            document.getElementById('about-item2').value = datos.about_item2_text || '';
+            document.getElementById('about-item3').value = datos.about_item3_text || '';
+            document.getElementById('about-item4').value = datos.about_item4_text || '';
+            document.getElementById('about-btn1-text').value = datos.about_btn1_text || '';
+            document.getElementById('about-btn2-text').value = datos.about_btn2_text || '';
+        }
+    } catch (err) {
+        console.error("Error al cargar la configuración de About:", err);
+    }
+}
+
+// Guardado desde el Panel de Administración
+async function guardarAboutSection(event) {
+    event.preventDefault();
+    
+    const payload = {
+        about_titulo: document.getElementById('about-titulo').value,
+        about_video_url: document.getElementById('about-video-url').value,
+        about_descripcion: document.getElementById('about-descripcion').value,
+        about_item1_text: document.getElementById('about-item1').value,
+        about_item2_text: document.getElementById('about-item2').value,
+        about_item3_text: document.getElementById('about-item3').value,
+        about_item4_text: document.getElementById('about-item4').value,
+        about_btn1_text: document.getElementById('about-btn1-text').value,
+        about_btn2_text: document.getElementById('about-btn2-text').value
+    };
+
+    try {
+        const res = await fetch('/api/admin_home', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error("Error en la respuesta del servidor");
+        
+        alert("¡Sección About actualizada con éxito!");
+        if (typeof cargarAboutPublico === "function") cargarAboutPublico(); 
+    } catch (err) {
+        alert("Ocurrió un error al guardar los cambios.");
+        console.error(err);
+    }
+}
+
+// Renderizado dinámico en la página pública (index.html)
+async function cargarAboutPublico() {
+    try {
+        const res = await fetch('/api/admin_home_datos');
+        const datos = await res.json();
+        
+        if (!datos) return;
+
+        // Inyección de textos básicos
+        if (document.getElementById('public-about-titulo')) {
+            document.getElementById('public-about-titulo').innerText = datos.about_titulo;
+        }
+        if (document.getElementById('public-about-descripcion')) {
+            document.getElementById('public-about-descripcion').innerText = datos.about_descripcion;
+        }
+        if (document.getElementById('public-about-item1')) {
+            document.getElementById('public-about-item1').innerText = datos.about_item1_text;
+        }
+        if (document.getElementById('public-about-item2')) {
+            document.getElementById('public-about-item2').innerText = datos.about_item2_text;
+        }
+        if (document.getElementById('public-about-item3')) {
+            document.getElementById('public-about-item3').innerText = datos.about_item3_text;
+        }
+        if (document.getElementById('public-about-item4')) {
+            document.getElementById('public-about-item4').innerText = datos.about_item4_text;
+        }
+        
+        // Inyección de botones
+        if (document.getElementById('public-about-btn1')) {
+            document.getElementById('public-about-btn1').innerText = datos.about_btn1_text;
+        }
+        if (document.getElementById('public-about-btn2')) {
+            document.getElementById('public-about-btn2').innerHTML = `${datos.about_btn2_text} <i class="icon-arrow_right icon"></i>`;
+        }
+
+        // Reemplazo y render dinámico del Reproductor de Video en lugar de la Imagen estática
+        const mediaContainer = document.getElementById('public-about-media');
+        if (mediaContainer && datos.about_video_url) {
+            const embedUrl = obtenerEmbedYouTube(datos.about_video_url);
+            mediaContainer.innerHTML = `
+                <div class="embed-responsive" style="position: relative; width: 100%; padding-top: 56.25%; border-radius: 8px; overflow: hidden; shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <iframe 
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
+                        src="${embedUrl}" 
+                        title="YouTube video player" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            `;
+        }
+    } catch (err) {
+        console.error("Error al renderizar el About público:", err);
+    }
+}
+
+// Escuchas automáticas de carga del DOM
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('form-about-section')) {
+        cargarAboutAdmin();
+    }
+    if (document.getElementById('public-about-titulo')) {
+        cargarAboutPublico();
+    }
+});
 
 // Inicialización automática
 document.addEventListener('DOMContentLoaded', () => {

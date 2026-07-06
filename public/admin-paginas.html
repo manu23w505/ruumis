@@ -169,6 +169,7 @@
                         </div>
                         <!-- HERO SECTION HOME end-->
 
+                        <!-- ROOMS SECTION HOME start-->
                         <div class="bg-white p-6 rounded-lg shadow mb-6">
                             <div class="border-b pb-3 mb-4">
                                 <h3 class="text-xl font-bold text-gray-800">ROOMS SECTION</h3>
@@ -244,6 +245,76 @@
                                 </div>
                             </form>
                         </div>
+                        <!-- ROOMS SECTION HOME end-->
+
+                        <!-- ABOUT SECTION  start-->
+                        <div class="bg-white p-6 rounded-lg shadow-md mb-6 border border-gray-200">
+                            <div class="flex items-center justify-between border-b pb-3 mb-4">
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-800 tracking-wide uppercase">ABOUT SECTION</h3>
+                                    <p class="text-sm text-gray-500">Sección About en el index.html</p>
+                                </div>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">Inicio</span>
+                            </div>
+
+                            <form id="form-about-section" onsubmit="guardarAboutSection(event)" class="space-y-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Título de la Sección (H2)</label>
+                                        <input type="text" id="about-titulo" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Enlace del Video de YouTube</label>
+                                        <input type="url" id="about-video-url" placeholder="https://www.youtube.com/watch?v=..." class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" required>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Descripción de la Sección</label>
+                                    <textarea id="about-descripcion" rows="3" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" required></textarea>
+                                </div>
+
+                                <div class="bg-gray-50 p-4 rounded-md border border-gray-100">
+                                    <h4 class="text-sm font-semibold text-gray-700 mb-3">Textos de los Elementos de Lista (Iconos)</h4>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-600 mb-1">Elemento 1 (WiFi)</label>
+                                            <input type="text" id="about-item1" class="w-full p-2 border rounded text-sm focus:ring-1 focus:ring-blue-500 outline-none" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-600 mb-1">Elemento 2 (Ubicación)</label>
+                                            <input type="text" id="about-item2" class="w-full p-2 border rounded text-sm focus:ring-1 focus:ring-blue-500 outline-none" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-600 mb-1">Elemento 3 (Equipaje)</label>
+                                            <input type="text" id="about-item3" class="w-full p-2 border rounded text-sm focus:ring-1 focus:ring-blue-500 outline-none" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-600 mb-1">Elemento 4 (Estacionamiento)</label>
+                                            <input type="text" id="about-item4" class="w-full p-2 border rounded text-sm focus:ring-1 focus:ring-blue-500 outline-none" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Texto Botón Principal (Book Now)</label>
+                                        <input type="text" id="about-btn1-text" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Texto Enlace Secundario (More About)</label>
+                                        <input type="text" id="about-btn2-text" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" required>
+                                    </div>
+                                </div>
+
+                                <div class="flex justify-end pt-2">
+                                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded shadow transition-colors">
+                                        Guardar About Section
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- ABOUT SECTION  end-->
 
             </div>
 
@@ -265,48 +336,48 @@
             document.getElementById(`btn-page-${idPagina}`).classList.add('active');
         }
 
-        // Al cargar el panel, se consultan los datos actuales de la BD para mostrarlos en la plantilla del admin
-    async function cargarHeroAdmin() {
-        try {
-            const res = await fetch('/api/cms/home');
-            if (!res.ok) throw new Error("No se obtuvieron las configuraciones del Home");
-            const datos = await res.json();
-            
-            if (datos) {
-                document.getElementById('home-hero-titulo').value = datos.hero_titulo || '';
-                document.getElementById('home-hero-descripcion').value = datos.hero_descripcion || '';
-                document.getElementById('preview-hero-imagen').src = datos.hero_imagen || 'img/placeholder.jpg';
-                document.getElementById('home-lbl-checkin').value = datos.lbl_checkin || '';
-                document.getElementById('home-lbl-checkout').value = datos.lbl_checkout || '';
-                document.getElementById('home-lbl-guests').value = datos.lbl_guests || '';
-                document.getElementById('home-lbl-adults').value = datos.lbl_adults || '';
-                document.getElementById('home-lbl-children').value = datos.lbl_children || '';
-                document.getElementById('home-btn-search').value = datos.btn_search || '';
+            // Al cargar el panel, se consultan los datos actuales de la BD para mostrarlos en la plantilla del admin
+        async function cargarHeroAdmin() {
+            try {
+                const res = await fetch('/api/cms/home');
+                if (!res.ok) throw new Error("No se obtuvieron las configuraciones del Home");
+                const datos = await res.json();
+                
+                if (datos) {
+                    document.getElementById('home-hero-titulo').value = datos.hero_titulo || '';
+                    document.getElementById('home-hero-descripcion').value = datos.hero_descripcion || '';
+                    document.getElementById('preview-hero-imagen').src = datos.hero_imagen || 'img/placeholder.jpg';
+                    document.getElementById('home-lbl-checkin').value = datos.lbl_checkin || '';
+                    document.getElementById('home-lbl-checkout').value = datos.lbl_checkout || '';
+                    document.getElementById('home-lbl-guests').value = datos.lbl_guests || '';
+                    document.getElementById('home-lbl-adults').value = datos.lbl_adults || '';
+                    document.getElementById('home-lbl-children').value = datos.lbl_children || '';
+                    document.getElementById('home-btn-search').value = datos.btn_search || '';
+                }
+            } catch (error) {
+                console.error("Error al pintar los datos en el admin:", error);
             }
-        } catch (error) {
-            console.error("Error al pintar los datos en el admin:", error);
         }
-    }
 
-    // Guarda de forma asíncrona e individual el campo editado
-    async function guardarTextoCMS(columnaBD, inputId) {
-        const nuevoValor = document.getElementById(inputId).value;
-        try {
-            const res = await fetch('/api/cms/home/actualizar', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ columna: columnaBD, valor: nuevoValor })
-            });
-            const data = await res.json();
-            if (data.success) {
-                alert("¡Campo actualizado correctamente en la base de datos!");
-            } else {
-                throw new Error(data.error);
+        // Guarda de forma asíncrona e individual el campo editado
+        async function guardarTextoCMS(columnaBD, inputId) {
+            const nuevoValor = document.getElementById(inputId).value;
+            try {
+                const res = await fetch('/api/cms/home/actualizar', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ columna: columnaBD, valor: nuevoValor })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert("¡Campo actualizado correctamente en la base de datos!");
+                } else {
+                    throw new Error(data.error);
+                }
+            } catch (err) {
+                alert("Error al actualizar: " + err.message);
             }
-        } catch (err) {
-            alert("Error al actualizar: " + err.message);
         }
-    }
 
     ///////////////////////////////////////////////////////////////////////////
     //HEADER SECTION HOME start
@@ -356,8 +427,10 @@
     //HEADER SECTION HOME end
     ///////////////////////////////////////////////////////////////////////////
 
+    ///////////////////////////////////////////////////////////////////////////
+    //HEADER ROOMS SECTION start
+    ///////////////////////////////////////////////////////////////////////////
 
-    
     document.addEventListener('DOMContentLoaded', () => {
     consultarRoomsHome();
     });
@@ -420,7 +493,9 @@
         }
     }
         
-
+    ///////////////////////////////////////////////////////////////////////////
+    //HEADER ROOMS SECTION end
+    ///////////////////////////////////////////////////////////////////////////
 
 
     </script>

@@ -1306,6 +1306,57 @@ app.put('/api/home/rooms', (req, res) => {
     });
 });
 
+// ==========================================
+// HOME (ABOUT SECTION)
+// ==========================================
+
+// Endpoint para actualizar los datos de la sección de inicio (admin_home)
+app.put('/api/admin_home', (req, res) => {
+    const {
+        about_titulo,
+        about_descripcion,
+        about_item1_text,
+        about_item2_text,
+        about_item3_text,
+        about_item4_text,
+        about_btn1_text,
+        about_btn2_text,
+        about_video_url
+    } = req.body;
+
+    const sql = `
+        UPDATE admin_home 
+        SET 
+            about_titulo = ?, 
+            about_descripcion = ?, 
+            about_item1_text = ?, 
+            about_item2_text = ?, 
+            about_item3_text = ?, 
+            about_item4_text = ?, 
+            about_btn1_text = ?, 
+            about_btn2_text = ?, 
+            about_video_url = ?
+        WHERE id = 1
+    `;
+
+    db.query(sql, [
+        about_titulo, 
+        about_descripcion, 
+        about_item1_text, 
+        about_item2_text, 
+        about_item3_text, 
+        about_item4_text, 
+        about_btn1_text, 
+        about_btn2_text, 
+        about_video_url
+    ], (err, result) => {
+        if (err) {
+            console.error("Error al actualizar la sección About:", err);
+            return res.status(500).json({ error: 'Error al actualizar la base de datos' });
+        }
+        res.json({ success: true, message: 'Sección About actualizada correctamente' });
+    });
+});
 
 
 cron.schedule('*/5 * * * *', () => {
