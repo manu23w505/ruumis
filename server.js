@@ -1235,6 +1235,78 @@ app.put('/api/cms/home/actualizar', (req, res) => {
 });
 
 
+// ==========================================
+// HOME (ROOMS SECTION)
+// ==========================================
+
+// GET: Obtener la configuración general del Home (Hero + Rooms Section)
+app.get('/api/home', (req, res) => {
+    const sql = "SELECT * FROM admin_home WHERE id = 1";
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error("Error al consultar admin_home:", err);
+            return res.status(500).json({ error: 'Error interno en la base de datos' });
+        }
+        res.json(results[0] || {});
+    });
+});
+
+// PUT: Guardar modificaciones específicas de ROOMS SECTION
+app.put('/api/home/rooms', (req, res) => {
+    const {
+        rooms_titulo,
+        rooms_btn_ver_mas,
+        rooms_lbl_precio_noche,
+        rooms_lbl_sleeps,
+        rooms_lbl_beds,
+        rooms_lbl_disponibilidad,
+        rooms_card_titulo,
+        rooms_card_subtitulo,
+        rooms_card_linea1,
+        rooms_card_linea2,
+        rooms_card_btn
+    } = req.body;
+
+    const sql = `
+        UPDATE admin_home SET 
+            rooms_titulo = ?, 
+            rooms_btn_ver_mas = ?, 
+            rooms_lbl_precio_noche = ?, 
+            rooms_lbl_sleeps = ?, 
+            rooms_lbl_beds = ?, 
+            rooms_lbl_disponibilidad = ?, 
+            rooms_card_titulo = ?, 
+            rooms_card_subtitulo = ?, 
+            rooms_card_linea1 = ?, 
+            rooms_card_linea2 = ?, 
+            rooms_card_btn = ?
+        WHERE id = 1
+    `;
+
+    const values = [
+        rooms_titulo,
+        rooms_btn_ver_mas,
+        rooms_lbl_precio_noche,
+        rooms_lbl_sleeps,
+        rooms_lbl_beds,
+        rooms_lbl_disponibilidad,
+        rooms_card_titulo,
+        rooms_card_subtitulo,
+        rooms_card_linea1,
+        rooms_card_linea2,
+        rooms_card_btn
+    ];
+
+    db.query(sql, values, (err, result) => {
+        if (err) {
+            console.error("Error al actualizar la sección de anuncios de admin_home:", err);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json({ success: true, message: '¡Sección de anuncios (Rooms Section) actualizada correctamente!' });
+    });
+});
+
+
 
 cron.schedule('*/5 * * * *', () => {
     sincronizarCalendarios();

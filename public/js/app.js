@@ -1058,3 +1058,99 @@ async function renderizarHeroPublico() {
 document.addEventListener('DOMContentLoaded', () => {
     renderizarHeroPublico();
 });
+
+
+//================================================================
+// Carga dinámica de textos y traducciones para la Sección de Anuncios Corta (Rooms Section)
+async function cargarRoomsSectionHome() {
+    try {
+        const response = await fetch('/api/home');
+        if (!response.ok) throw new Error("Error al obtener la configuración del Home");
+        const data = await response.json();
+        
+        if (!data) return;
+
+        // 1. Reemplazo del encabezado de la sección y botón global
+        const h2Titulo = document.getElementById('rooms-header-title');
+        if (h2Titulo && data.rooms_titulo) {
+            h2Titulo.textContent = data.rooms_titulo;
+        }
+        const btnVerMas = document.getElementById('rooms-btn-ver-mas');
+        if (btnVerMas && data.rooms_btn_ver_mas) {
+            btnVerMas.textContent = data.rooms_btn_ver_mas;
+        }
+
+        // 2. Traducción cuidadosa de etiquetas fijas en los anuncios dinámicos (Data-Order 1 y 2)
+        const anunciosDinamicos = document.querySelectorAll('.item-home-dinamico');
+        anunciosDinamicos.forEach(item => {
+            
+            // Tratamiento de etiqueta de precio (ej: / 1 night) sin sobreescribir el span del precio numérico
+            const labelPricing = item.querySelector('.media_label--pricing');
+            if (labelPricing && data.rooms_lbl_precio_noche) {
+                const precioSpan = labelPricing.querySelector('.home-room-price');
+                if (precioSpan) {
+                    labelPricing.innerHTML = ''; // Limpiamos texto fijo anterior
+                    labelPricing.appendChild(precioSpan); // Reinsertamos el número intacto
+                    labelPricing.appendChild(document.createTextNode(' ' + data.rooms_lbl_precio_noche)); // Nuevo texto fijo
+                }
+            }
+
+            // Tratamiento de amenidades (Sleeps y Beds) respetando sus íconos correspondientes
+            const itemsAmenidades = item.querySelectorAll('.main_amenities-item');
+            if (itemsAmenidades && itemsAmenidades.length >= 2) {
+                
+                // Amenidad 1: Capacidad (Sleeps)
+                const capSpan = itemsAmenidades[0].querySelector('.home-room-capacity');
+                const iconoUser = itemsAmenidades[0].querySelector('.icon-user');
+                if (capSpan && iconoUser && data.rooms_lbl_sleeps) {
+                    itemsAmenidades[0].innerHTML = '';
+                    itemsAmenidades[0].appendChild(iconoUser);
+                    itemsAmenidades[0].appendChild(capSpan);
+                    itemsAmenidades[0].appendChild(document.createTextNode(' ' + data.rooms_lbl_sleeps));
+                }
+                
+                // Amenidad 2: Camas (Beds)
+                const camasSpan = itemsAmenidades[1].querySelector('.home-room-beds');
+                const iconoCama = itemsAmenidades[1].querySelector('.icon-twin_bed, .icon-bunk_bed, .icon');
+                if (camasSpan && iconoCama && data.rooms_lbl_beds) {
+                    itemsAmenidades[1].innerHTML = '';
+                    itemsAmenidades[1].appendChild(iconoCama);
+                    itemsAmenidades[1].appendChild(camasSpan);
+                    itemsAmenidades[1].appendChild(document.createTextNode(' ' + data.rooms_lbl_beds));
+                }
+            }
+
+            // Tratamiento del enlace de disponibilidad manteniendo su ícono de flecha intacto
+            const enlaceLink = item.querySelector('.home-room-link');
+            if (enlaceLink && data.rooms_lbl_disponibilidad) {
+                const iconoFlecha = enlaceLink.querySelector('.icon-arrow_right');
+                enlaceLink.innerHTML = data.rooms_lbl_disponibilidad + ' ';
+                if (iconoFlecha) enlaceLink.appendChild(iconoFlecha);
+            }
+        });
+
+        // 3. Modificación total de la tarjeta informativa estática (Data-Order 3)
+        const item3Title = document.getElementById('rooms-card-titulo');
+        if (item3Title && data.rooms_card_titulo) item3Title.textContent = data.rooms_card_titulo;
+
+        const item3Sub = document.getElementById('rooms-card-subtitulo');
+        if (item3Sub && data.rooms_card_subtitulo) item3Sub.textContent = data.rooms_card_subtitulo;
+
+        const item3L1 = document.getElementById('rooms-card-linea1');
+        if (item3L1 && data.rooms_card_linea1) item3L1.innerHTML = data.rooms_card_linea1;
+
+        const item3L2 = document.getElementById('rooms-card-linea2');
+        if (item3L2 && data.rooms_card_linea2) item3L2.innerHTML = data.rooms_card_linea2;
+
+        const item3Btn = document.getElementById('rooms-card-btn');
+        if (item3Btn && data.rooms_card_btn) item3Btn.textContent = data.rooms_card_btn;
+
+    } catch (error) {
+        console.warn('Advertencia al renderizar dinámicamente Rooms Section:', error);
+    }
+}
+
+// Inicialización automática
+document.addEventListener('DOMContentLoaded', () => {
+    cargarRoomsSectionHome();
+});

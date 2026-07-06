@@ -169,36 +169,81 @@
                         </div>
                         <!-- HERO SECTION HOME end-->
 
-                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
-                    <div class="border-b border-slate-100 pb-3">
-                        <h3 class="font-bold text-slate-800 text-base">Servicios Destacados (Amenities)</h3>
-                        <p class="text-slate-400 text-xs">Modifica los textos descriptivos de tus ventajas competitivas.</p>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                            <span class="text-xs font-bold text-teal-600 uppercase">Servicio 1 (WiFi)</span>
-                            <div class="flex gap-2">
-                                <input type="text" id="home-service-1" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-teal-500">
-                                <button onclick="guardarTextoCMS('home_service_1', 'home-service-1')" class="bg-teal-600 hover:bg-teal-700 text-white px-3 text-xs rounded-lg font-medium">Actualizar</button>
+                        <div class="bg-white p-6 rounded-lg shadow mb-6">
+                            <div class="border-b pb-3 mb-4">
+                                <h3 class="text-xl font-bold text-gray-800">ROOMS SECTION</h3>
+                                <p class="text-sm text-gray-500">Sección de anuncios corta</p>
                             </div>
-                        </div>
-                        </div>
-                </div>
 
-                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
-                    <div class="border-b border-slate-100 pb-3">
-                        <h3 class="font-bold text-slate-800 text-base"> Bloques de Datos Directos en Home</h3>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Teléfono Informativo</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="home-contacto-telefono" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-teal-500">
-                                <button onclick="guardarTextoCMS('home_contacto_telefono', 'home-contacto-telefono')" class="bg-teal-600 hover:bg-teal-700 text-white text-xs px-4 rounded-xl">Guardar</button>
-                            </div>
+                            <form id="form-home-rooms" onsubmit="guardarRoomsHome(event)" class="space-y-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Título de Sección (H2)</label>
+                                        <input type="text" id="adm-rooms-titulo" class="w-full border p-2 rounded focus:ring focus:ring-blue-200" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Texto Botón "Ver Habitaciones"</label>
+                                        <input type="text" id="adm-rooms-btn-ver-mas" class="w-full border p-2 rounded focus:ring focus:ring-blue-200" required>
+                                    </div>
+                                </div>
+
+                                <div class="border-t pt-3 mt-3">
+                                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Traducción de Etiquetas Fijas (Anuncios 1 y 2)</h4>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Etiqueta Precio (Ej: / 1 night)</label>
+                                            <input type="text" id="adm-rooms-lbl-precio-noche" class="w-full border p-2 text-sm rounded" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Etiqueta Capacidad (Ej: Sleeps)</label>
+                                            <input type="text" id="adm-rooms-lbl-sleeps" class="w-full border p-2 text-sm rounded" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Etiqueta Camas (Ej: beds)</label>
+                                            <input type="text" id="adm-rooms-lbl-beds" class="w-full border p-2 text-sm rounded" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-500 mb-1">Enlace Disponibilidad (Ej: See availability)</label>
+                                            <input type="text" id="adm-rooms-lbl-disponibilidad" class="w-full border p-2 text-sm rounded" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="border-t pt-3 mt-3 bg-gray-50 p-4 rounded-md">
+                                    <h4 class="text-sm font-semibold text-gray-700 mb-2">Tarjeta Informativa Fija (Anuncio Data-Order 3)</h4>
+                                    <div class="space-y-3">
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-xs font-medium text-gray-600 mb-1">Título de la Tarjeta</label>
+                                                <input type="text" id="adm-rooms-card-titulo" class="w-full border p-2 text-sm rounded" required>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-gray-600 mb-1">Botón de la Tarjeta</label>
+                                                <input type="text" id="adm-rooms-card-btn" class="w-full border p-2 text-sm rounded" required>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-600 mb-1">Descripción / Subtítulo Corto</label>
+                                            <input type="text" id="adm-rooms-card-subtitulo" class="w-full border p-2 text-sm rounded" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-600 mb-1">Beneficio Línea 1 (Permite HTML como &lt;b&gt;)</label>
+                                            <textarea id="adm-rooms-card-linea1" rows="2" class="w-full border p-2 text-sm rounded font-mono"></textarea>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-gray-600 mb-1">Beneficio Línea 2 (Permite HTML como &lt;b&gt;)</label>
+                                            <textarea id="adm-rooms-card-linea2" rows="2" class="w-full border p-2 text-sm rounded font-mono"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex justify-end pt-2">
+                                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded shadow transition">
+                                        Guardar Rooms Section
+                                    </button>
+                                </div>
+                            </form>
                         </div>
-                    </div>
-                </div>
 
             </div>
 
@@ -311,8 +356,73 @@
     //HEADER SECTION HOME end
     ///////////////////////////////////////////////////////////////////////////
 
+
     
+    document.addEventListener('DOMContentLoaded', () => {
+    consultarRoomsHome();
+    });
+
+    async function consultarRoomsHome() {
+        try {
+            const res = await fetch('/api/home');
+            if (!res.ok) throw new Error("No se pudo obtener la configuración.");
+            const data = await res.json();
+            
+            if (data) {
+                document.getElementById('adm-rooms-titulo').value = data.rooms_titulo || '';
+                document.getElementById('adm-rooms-btn-ver-mas').value = data.rooms_btn_ver_mas || '';
+                document.getElementById('adm-rooms-lbl-precio-noche').value = data.rooms_lbl_precio_noche || '';
+                document.getElementById('adm-rooms-lbl-sleeps').value = data.rooms_lbl_sleeps || '';
+                document.getElementById('adm-rooms-lbl-beds').value = data.rooms_lbl_beds || '';
+                document.getElementById('adm-rooms-lbl-disponibilidad').value = data.rooms_lbl_disponibilidad || '';
+                document.getElementById('adm-rooms-card-titulo').value = data.rooms_card_titulo || '';
+                document.getElementById('adm-rooms-card-subtitulo').value = data.rooms_card_subtitulo || '';
+                document.getElementById('adm-rooms-card-linea1').value = data.rooms_card_linea1 || '';
+                document.getElementById('adm-rooms-card-linea2').value = data.rooms_card_linea2 || '';
+                document.getElementById('adm-rooms-card-btn').value = data.rooms_card_btn || '';
+            }
+        } catch (err) {
+            console.error("Error al cargar datos en el admin:", err);
+        }
+    }
+
+    async function guardarRoomsHome(e) {
+        e.preventDefault();
         
+        const payload = {
+            rooms_titulo: document.getElementById('adm-rooms-titulo').value,
+            rooms_btn_ver_mas: document.getElementById('adm-rooms-btn-ver-mas').value,
+            rooms_lbl_precio_noche: document.getElementById('adm-rooms-lbl-precio-noche').value,
+            rooms_lbl_sleeps: document.getElementById('adm-rooms-lbl-sleeps').value,
+            rooms_lbl_beds: document.getElementById('adm-rooms-lbl-beds').value,
+            rooms_lbl_disponibilidad: document.getElementById('adm-rooms-lbl-disponibilidad').value,
+            rooms_card_titulo: document.getElementById('adm-rooms-card-titulo').value,
+            rooms_card_subtitulo: document.getElementById('adm-rooms-card-subtitulo').value,
+            rooms_card_linea1: document.getElementById('adm-rooms-card-linea1').value,
+            rooms_card_linea2: document.getElementById('adm-rooms-card-linea2').value,
+            rooms_card_btn: document.getElementById('adm-rooms-card-btn').value
+        };
+
+        try {
+            const res = await fetch('/api/home/rooms', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Error al actualizar.");
+            
+            alert("¡ROOMS SECTION actualizada con éxito!");
+        } catch (err) {
+            alert("Error: " + err.message);
+            console.error(err);
+        }
+    }
+        
+
+
+
     </script>
 </body>
 </html>
