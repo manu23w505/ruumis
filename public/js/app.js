@@ -227,7 +227,6 @@ function renderizarAnunciosPublicos(anuncios) {
             const tarjeta = document.createElement('div');
             tarjeta.className = "bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative";
             
-            // Simplificamos la ubicación ahora que usas `ubicacion_id` y su JOIN (`ubicacion_nombre`)
             const textoUbicacion = anuncio.ubicacion_nombre || 'Ubicación no especificada';
 
             tarjeta.innerHTML = `
@@ -990,3 +989,72 @@ async function subirFavicon() {
         alert("Error al subir la imagen");
     }
 }
+
+// =========================================================================
+// RENDERIZADO DEL HERO EN INDEX.HTML
+// =========================================================================
+async function renderizarHeroPublico() {
+    // Solo actuamos si nos encontramos físicamente en la página de inicio (Home)
+    const tituloHero = document.getElementById('render-hero-titulo');
+    if (!tituloHero) return; 
+
+    try {
+        const response = await fetch('/api/cms/home');
+        if (!response.ok) return;
+        const datos = await response.json();
+
+        if (datos) {
+            // 1. Modificación de Textos Principales
+            tituloHero.innerText = datos.hero_titulo || 'Hosteller';
+            if (document.getElementById('render-hero-descripcion')) {
+                document.getElementById('render-hero-descripcion').innerText = datos.hero_descripcion || '';
+            }
+
+            // 2. Modificación Segura de la Imagen de Fondo (Buscando la etiqueta img de hero_media)
+            const imgHero = document.querySelector('.hero_media img');
+            const sourceHero = document.querySelector('.hero_media source');
+            if (imgHero && datos.hero_imagen) {
+                imgHero.src = datos.hero_imagen;
+                imgHero.setAttribute('data-src', datos.hero_imagen);
+                if (sourceHero) {
+                    sourceHero.srcset = datos.hero_imagen;
+                    sourceHero.setAttribute('data-srcset', datos.hero_imagen);
+                }
+            }
+
+            // 3. Traducción limpia del Filtro conservando los íconos estructurales nativos
+            if (document.getElementById('render-lbl-checkin')) {
+                document.getElementById('render-lbl-checkin').innerHTML = `<i class="icon-calendar icon"></i>${datos.lbl_checkin || 'Check-in'}`;
+            }
+            if (document.getElementById('render-lbl-checkout')) {
+                document.getElementById('render-lbl-checkout').innerHTML = `<i class="icon-calendar icon"></i>${datos.lbl_checkout || 'Check-out'}`;
+            }
+            if (document.getElementById('render-lbl-guests')) {
+                document.getElementById('render-lbl-guests').innerText = datos.lbl_guests || 'Guests';
+            }
+            
+            // Traducción de sub-etiquetas del dropdown flotante (Adultos / Niños)
+            const lblAdults = document.querySelector('label[for="adults"]');
+            if (lblAdults) lblAdults.innerText = datos.lbl_adults || 'Adults';
+            
+            const lblChildren = document.querySelector('label[for="children"]');
+            if (lblChildren) lblChildren.innerText = datos.lbl_children || 'Children';
+
+            // Marcadores de entrada (Placeholders) de los inputs tipo fecha
+            if (document.getElementById('checkIn')) document.getElementById('checkIn').placeholder = datos.lbl_checkin || 'Add date';
+            if (document.getElementById('checkOut')) document.getElementById('checkOut').placeholder = datos.lbl_checkout || 'Add date';
+
+            // Texto interno del botón de envío del formulario
+            if (document.getElementById('render-btn-search')) {
+                document.getElementById('render-btn-search').innerText = datos.btn_search || 'Search';
+            }
+        }
+    } catch (error) {
+        console.error('Error al renderizar los datos del CMS en el Hero Público:', error);
+    }
+}
+
+// Disparador de ejecución automática al cargar la interfaz pública
+document.addEventListener('DOMContentLoaded', () => {
+    renderizarHeroPublico();
+});

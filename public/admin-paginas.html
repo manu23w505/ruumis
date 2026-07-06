@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CMS - Edición de Contenidos Dinámicos</title>
+    <title>Edición de Contenido Para las Páginas</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/icomoon.css" />
     <style>
@@ -13,7 +13,7 @@
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col font-sans">
-
+    <!-- Header  regresar admin-->
     <header class="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shadow-sm">
         <div class="flex items-center gap-3">
             <span class="text-xl font-bold tracking-tight text-teal-700">Ruumis <span class="text-slate-400 font-normal">| Editor CMS</span></span>
@@ -23,7 +23,9 @@
         </a>
     </header>
 
+    <!-- Páginas // Home, About, Rooms, Locations y Contacts -->
     <div class="flex flex-1">
+        <!-- Selección de Página -->
         <aside class="w-64 bg-white border-r border-slate-200 p-4 hidden md:flex flex-col gap-1 justify-between">
             <div class="space-y-1">
                 <span class="px-3 text-xs font-bold text-slate-400 uppercase tracking-wider block mb-3">Selecciona Página</span>
@@ -49,9 +51,11 @@
                 Las ediciones aquí modifican directamente los bloques textuales e imágenes descriptivas.
             </div>
         </aside>
-
+        
+        <!-- Páginas modificadores -->
         <main class="flex-1 p-6 md:p-8 overflow-y-auto max-w-5xl mx-auto w-full custom-scrollbar">
             
+            <!--Editor Home-->
             <div id="tab-page-home" class="page-tab active space-y-8">
                 <div>
                     <h1 class="text-2xl font-bold text-slate-900">Editor de Página: Home</h1>
@@ -63,25 +67,107 @@
                         <h3 class="font-bold text-slate-800 text-base">Sección Hero (Presentación Principal)</h3>
                         <p class="text-slate-400 text-xs">Afecta al título gigante y párrafo introductorio del Home.</p>
                     </div>
-                    
-                    <div class="grid grid-cols-1 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Título de Bienvenida</label>
-                            <div class="flex gap-2">
-                                <textarea id="home-hero-titulo" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-teal-500"></textarea>
-                                <button onclick="guardarTextoCMS('home_hero_titulo', 'home-hero-titulo')" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold text-xs px-4 rounded-xl transition-all self-end h-10">Guardar</button>
+                        <!-- HERO SECTION HOME start-->
+                        <div id="seccion-editor-home" class="space-y-6">
+                            <div>
+                                <h1 class="text-2xl font-bold text-slate-900">HERO SECTION</h1>
+                                <p class="text-slate-500 text-sm">Sección de inicio con filtro. Modifica la imagen, el texto principal y las traducciones del buscador.</p>
+                            </div>
+
+                            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+                                <div class="border-b border-slate-100 pb-3">
+                                    <h3 class="font-bold text-slate-800 text-base">Textos de Presentación e Imagen</h3>
+                                    <p class="text-slate-400 text-xs">Modifica el título de impacto, la descripción principal y el fondo visual del Hero.</p>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Título de Bienvenida</label>
+                                        <div class="flex gap-2">
+                                            <textarea id="home-hero-titulo" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-teal-500"></textarea>
+                                            <button onclick="guardarTextoCMS('hero_titulo', 'home-hero-titulo')" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold text-xs px-4 rounded-xl transition-all self-end h-10">Guardar</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Párrafo Descriptivo</label>
+                                        <div class="flex gap-2">
+                                            <textarea id="home-hero-descripcion" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-teal-500"></textarea>
+                                            <button onclick="guardarTextoCMS('hero_descripcion', 'home-hero-descripcion')" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold text-xs px-4 rounded-xl transition-all self-end h-10">Guardar</button>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Imagen de Fondo de Sección</label>
+                                        <div class="flex items-center gap-4 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                                            <img id="preview-hero-imagen" src="img/placeholder.jpg" class="w-20 h-20 object-cover rounded-lg border border-slate-300" alt="Vista Previa">
+                                            <div class="flex flex-col gap-1.5">
+                                                <input type="file" id="input-hero-imagen" accept="image/*" class="text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100">
+                                                <button onclick="subirImagenHeroCMS()" class="bg-teal-600 hover:bg-teal-700 text-white font-medium text-xs py-1.5 px-3 rounded-lg transition-all w-max">Subir y Actualizar Imagen</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+                                <div class="border-b border-slate-100 pb-3">
+                                    <h3 class="font-bold text-slate-800 text-base">Traducción de Etiquetas del Buscador</h3>
+                                    <p class="text-slate-400 text-xs">Traduce los textos del filtro sin alterar su programación o comportamiento nativo.</p>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+                                        <span class="text-xs font-bold text-teal-600 uppercase">Etiqueta: Check-In</span>
+                                        <div class="flex gap-2">
+                                            <input type="text" id="home-lbl-checkin" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-teal-500">
+                                            <button onclick="guardarTextoCMS('lbl_checkin', 'home-lbl-checkin')" class="bg-teal-600 hover:bg-teal-700 text-white px-3 text-xs rounded-lg font-medium">Actualizar</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+                                        <span class="text-xs font-bold text-teal-600 uppercase">Etiqueta: Check-Out</span>
+                                        <div class="flex gap-2">
+                                            <input type="text" id="home-lbl-checkout" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-teal-500">
+                                            <button onclick="guardarTextoCMS('lbl_checkout', 'home-lbl-checkout')" class="bg-teal-600 hover:bg-teal-700 text-white px-3 text-xs rounded-lg font-medium">Actualizar</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+                                        <span class="text-xs font-bold text-teal-600 uppercase">Etiqueta: Guests (Huéspedes)</span>
+                                        <div class="flex gap-2">
+                                            <input type="text" id="home-lbl-guests" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-teal-500">
+                                            <button onclick="guardarTextoCMS('lbl_guests', 'home-lbl-guests')" class="bg-teal-600 hover:bg-teal-700 text-white px-3 text-xs rounded-lg font-medium">Actualizar</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+                                        <span class="text-xs font-bold text-teal-600 uppercase">Etiqueta: Adults (Adultos)</span>
+                                        <div class="flex gap-2">
+                                            <input type="text" id="home-lbl-adults" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-teal-500">
+                                            <button onclick="guardarTextoCMS('lbl_adults', 'home-lbl-adults')" class="bg-teal-600 hover:bg-teal-700 text-white px-3 text-xs rounded-lg font-medium">Actualizar</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+                                        <span class="text-xs font-bold text-teal-600 uppercase">Etiqueta: Children (Niños)</span>
+                                        <div class="flex gap-2">
+                                            <input type="text" id="home-lbl-children" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-teal-500">
+                                            <button onclick="guardarTextoCMS('lbl_children', 'home-lbl-children')" class="bg-teal-600 hover:bg-teal-700 text-white px-3 text-xs rounded-lg font-medium">Actualizar</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+                                        <span class="text-xs font-bold text-teal-600 uppercase">Texto del Botón: Buscar</span>
+                                        <div class="flex gap-2">
+                                            <input type="text" id="home-btn-search" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-teal-500">
+                                            <button onclick="guardarTextoCMS('btn_search', 'home-btn-search')" class="bg-teal-600 hover:bg-teal-700 text-white px-3 text-xs rounded-lg font-medium">Actualizar</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Párrafo Descriptivo</label>
-                            <div class="flex gap-2">
-                                <textarea id="home-hero-descripcion" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-teal-500"></textarea>
-                                <button onclick="guardarTextoCMS('home_hero_descripcion', 'home-hero-descripcion')" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold text-xs px-4 rounded-xl transition-all self-end h-10">Guardar</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                        <!-- HERO SECTION HOME end-->
 
                 <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
                     <div class="border-b border-slate-100 pb-3">
@@ -116,9 +202,10 @@
 
             </div>
 
+            <!--Editor About-->
             <div id="tab-page-about" class="page-tab space-y-8">
                 <h1 class="text-2xl font-bold text-slate-900">Editor de Página: About</h1>
-                </div>
+            </div>
 
         </main>
     </div>
@@ -132,6 +219,99 @@
             document.getElementById(`tab-page-${idPagina}`).classList.add('active');
             document.getElementById(`btn-page-${idPagina}`).classList.add('active');
         }
+
+        // Al cargar el panel, se consultan los datos actuales de la BD para mostrarlos en la plantilla del admin
+    async function cargarHeroAdmin() {
+        try {
+            const res = await fetch('/api/cms/home');
+            if (!res.ok) throw new Error("No se obtuvieron las configuraciones del Home");
+            const datos = await res.json();
+            
+            if (datos) {
+                document.getElementById('home-hero-titulo').value = datos.hero_titulo || '';
+                document.getElementById('home-hero-descripcion').value = datos.hero_descripcion || '';
+                document.getElementById('preview-hero-imagen').src = datos.hero_imagen || 'img/placeholder.jpg';
+                document.getElementById('home-lbl-checkin').value = datos.lbl_checkin || '';
+                document.getElementById('home-lbl-checkout').value = datos.lbl_checkout || '';
+                document.getElementById('home-lbl-guests').value = datos.lbl_guests || '';
+                document.getElementById('home-lbl-adults').value = datos.lbl_adults || '';
+                document.getElementById('home-lbl-children').value = datos.lbl_children || '';
+                document.getElementById('home-btn-search').value = datos.btn_search || '';
+            }
+        } catch (error) {
+            console.error("Error al pintar los datos en el admin:", error);
+        }
+    }
+
+    // Guarda de forma asíncrona e individual el campo editado
+    async function guardarTextoCMS(columnaBD, inputId) {
+        const nuevoValor = document.getElementById(inputId).value;
+        try {
+            const res = await fetch('/api/cms/home/actualizar', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ columna: columnaBD, valor: nuevoValor })
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert("¡Campo actualizado correctamente en la base de datos!");
+            } else {
+                throw new Error(data.error);
+            }
+        } catch (err) {
+            alert("Error al actualizar: " + err.message);
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    //HEADER SECTION HOME start
+    ///////////////////////////////////////////////////////////////////////////
+
+    // Sube la imagen elegida a Cloudinary a través del endpoint existente y actualiza la ruta
+    async function subirImagenHeroCMS() {
+        const fileInput = document.getElementById('input-hero-imagen');
+        const file = fileInput.files[0];
+        if (!file) return alert("Por favor, selecciona un archivo de imagen primero.");
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            // 1. Subida física a Cloudinary reutilizando tu servicio '/api/upload'
+            const resUpload = await fetch('/api/upload', { method: 'POST', body: formData });
+            const dataUpload = await resUpload.json();
+            
+            if (dataUpload.url) {
+                // 2. Almacenar la URL devuelta en la columna 'hero_imagen' de la BD
+                const resBD = await fetch('/api/cms/home/actualizar', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ columna: 'hero_imagen', valor: dataUpload.url })
+                });
+                const dataBD = await resBD.json();
+                
+                if (dataBD.success) {
+                    document.getElementById('preview-hero-imagen').src = dataUpload.url;
+                    alert("¡Imagen de cabecera subida y guardada con éxito!");
+                }
+            } else {
+                throw new Error("No se recibió una URL válida de la nube.");
+            }
+        } catch (error) {
+            alert("Error al procesar la imagen: " + error.message);
+        }
+    }
+
+    // Inicialización automática cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', () => {
+        cargarHeroAdmin();
+    });
+
+    ///////////////////////////////////////////////////////////////////////////
+    //HEADER SECTION HOME end
+    ///////////////////////////////////////////////////////////////////////////
+
+    
         
     </script>
 </body>

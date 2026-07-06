@@ -14,6 +14,7 @@
         <link rel="stylesheet" href="css/index.min.css" />
     </head>
     <body>
+        <!-- Header Nav-->
         <header class="header d-flex align-items-center" data-page="home">
             <div class="container position-relative d-flex justify-content-between align-items-center">
                 <a class="brand d-flex align-items-center" href="index.html">
@@ -111,90 +112,94 @@
             <section class="hero section">
                 <div class="container container--hero d-lg-flex align-items-center justify-content-between">
                     <div class="hero_main">
-                        <h1 class="hero_main-title" data-aos="fade-up">Hosteller — amazing hostel for the free spirited traveler</h1>
+                        <h1 class="hero_main-title" id="render-hero-titulo" data-aos="fade-up">Hosteller — amazing hostel for the free spirit traveler</h1>
+                        
                         <div class="hero_main-content d-flex">
                             <span class="line" data-aos="fade-up" data-aos-delay="50"></span>
-                            <p class="text" data-aos="fade-up" data-aos-delay="100">
-                                Egestas pretium aenean pharetra magna ac. Et tortor consequat id porta nibh venenatis cras sed. Vel turpis
-                                nunc eget lorem dolor sed
+                            <p class="text" id="render-hero-descripcion" data-aos="fade-up" data-aos-delay="100">
+                                Egestas pretium aenean pharetra magna ac. Et tortor consequat id porta nibh venenatis cras sed. Vel turpis nunc eget lorem dolor sed
                             </p>
                         </div>
-                    <form class="booking" id="form-buscador" action="#" method="post" autocomplete="off" data-type="booking" data-aos="fade-up">
-                        <input type="hidden" id="anuncio_id" name="anuncio_id" value="3">
-                        <div class="item-wrapper d-sm-flex flex-wrap flex-lg-nowrap align-items-lg-center">
-                            <div class="booking_group d-flex flex-column">
-                                <label class="booking_group-label h5" for="checkIn">Check-in</label>
-                                <div class="booking_group-wrapper">
-                                    <i class="icon-calendar icon"></i>
-                                    <input
-                                        class="booking_group-field field required"
-                                        data-type="date"
-                                        data-start="true"
-                                        type="text"
-                                        id="checkIn"
-                                        name="check_in"
-                                        placeholder="Add date"
-                                        readonly
-                                    />
-                                    <i class="icon-chevron_down icon"></i>
+
+                        <form class="booking" id="form-buscador" action="#" method="post" autocomplete="off" data-type="booking" data-aos="fade-up">
+                            <input type="hidden" id="anuncio_id" name="anuncio_id" value="3">
+                            <div class="item-wrapper d-sm-flex flex-wrap flex-lg-nowrap align-items-lg-center">
+                                
+                                <div class="booking_group d-flex flex-column">
+                                    <label class="booking_group-label h5" for="checkIn" id="render-lbl-checkin">Check-in</label>
+                                    <div class="booking_group-wrapper">
+                                        <i class="icon-calendar icon"></i>
+                                        <input
+                                            class="booking_group-field field required"
+                                            data-type="date"
+                                            data-start="true"
+                                            type="text"
+                                            id="checkIn"
+                                            name="check_in"
+                                            placeholder="Add date"
+                                            readonly
+                                        />
+                                        <i class="icon-chevron_down icon"></i>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="booking_group d-flex flex-column">
-                                <label class="booking_group-label h5" for="checkOut">Check-out</label>
-                                <div class="booking_group-wrapper">
-                                    <i class="icon-calendar icon"></i>
-                                    <input
-                                        class="booking_group-field field required"
-                                        data-type="date"
-                                        data-end="true"
-                                        type="text"
-                                        id="checkOut"
-                                        name="check_out"
-                                        placeholder="Add date"
-                                        readonly
-                                    />
-                                    <i class="icon-chevron_down icon"></i>
+                                
+                                <div class="booking_group d-flex flex-column">
+                                    <label class="booking_group-label h5" for="checkOut">Check-out</label>
+                                    <div class="booking_group-wrapper">
+                                        <i class="icon-calendar icon"></i>
+                                        <input
+                                            class="booking_group-field field required"
+                                            data-type="date"
+                                            data-end="true"
+                                            type="text"
+                                            id="checkOut"
+                                            name="check_out"
+                                            placeholder="Add date"
+                                            readonly
+                                        />
+                                        <i class="icon-chevron_down icon"></i>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="booking_group d-flex flex-column">
-                                <span class="booking_group-label h5">Guests</span>
-                                <div class="booking_group-wrapper booking_group-wrapper--guests">
-                                    <i class="icon-user icon"></i>
-                                    <div
-                                        class="booking_group-field dropdown-toggle"
-                                        role="presentation"
-                                        id="guests"
-                                        data-bs-toggle="collapse"
-                                        data-bs-target="#bookingDropdown"
-                                    >1 Guest</div> 
-                                    <div class="booking_group-dropdown collapse" id="bookingDropdown">
-                                        <div class="content">
-                                            <div class="booking_group-dropdown_wrapper d-flex align-items-center justify-content-between">
-                                                <label class="label h5" for="adults">Adults</label>
-                                                <div class="main d-flex align-items-center justify-content-between">
-                                                    <a class="qty_minus qty-changer d-flex align-items-center justify-content-center" href="#" data-disabled="true">-</a>
-                                                    <input class="field required" id="adults" name="adults" type="text" value="1" readonly />
-                                                    <a class="qty_plus qty-changer d-flex align-items-center justify-content-center" href="#">+</a>
+                                
+                                <div class="booking_group d-flex flex-column">
+                                    <span class="booking_group-label h5" id="render-lbl-guests">Guests</span>
+                                    <div class="booking_group-wrapper booking_group-wrapper--guests">
+                                        <i class="icon-user icon"></i>
+                                        <div
+                                            class="booking_group-field dropdown-toggle"
+                                            role="presentation"
+                                            id="guests"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#bookingDropdown"
+                                        >1 Guest</div> 
+                                        <div class="booking_group-dropdown collapse" id="bookingDropdown">
+                                            <div class="content">
+                                                <div class="booking_group-dropdown_wrapper d-flex align-items-center justify-content-between">
+                                                    <label class="label h5" for="adults">Adults</label>
+                                                    <div class="main d-flex align-items-center justify-content-between">
+                                                        <a class="qty_minus qty-changer d-flex align-items-center justify-content-center" href="#" data-disabled="true">-</a>
+                                                        <input class="field required" id="adults" name="adults" type="text" value="1" readonly />
+                                                        <a class="qty_plus qty-changer d-flex align-items-center justify-content-center" href="#">+</a>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="booking_group-dropdown_wrapper d-flex align-items-center justify-content-between">
-                                                <label class="label h5" for="children">Children</label>
-                                                <div class="main d-flex align-items-center justify-content-between">
-                                                    <a class="qty_minus qty-changer d-flex align-items-center justify-content-center" href="#" data-disabled="true">-</a>
-                                                    <input class="field required" id="children" name="children" type="text" value="0" readonly />
-                                                    <a class="qty_plus qty-changer d-flex align-items-center justify-content-center" href="#">+</a>
+                                                <div class="booking_group-dropdown_wrapper d-flex align-items-center justify-content-between">
+                                                    <label class="label h5" for="children">Children</label>
+                                                    <div class="main d-flex align-items-center justify-content-between">
+                                                        <a class="qty_minus qty-changer d-flex align-items-center justify-content-center" href="#" data-disabled="true">-</a>
+                                                        <input class="field required" id="children" name="children" type="text" value="0" readonly />
+                                                        <a class="qty_plus qty-changer d-flex align-items-center justify-content-center" href="#">+</a>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                
+                                <button class="booking_btn btn theme-element theme-element--accent" id="render-btn-search" type="submit">Search</button>
                             </div>
-                            <button class="booking_btn btn theme-element theme-element--accent" type="submit">Search</button>
-                        </div>
-                    </form>
+                        </form>
                     </div>
+                    
                     <div class="hero_media" data-aos="zoom-in">
                         <picture>
                             <source data-srcset="img/placeholder.jpg" srcset="img/placeholder.jpg" />
@@ -986,261 +991,6 @@
                 </div>
             </section>
             <!-- promo section end -->
-            <!-- gallery section start -->
-            <section class="gallery section">
-                <div class="container">
-                    <div class="gallery_header d-sm-flex justify-content-between align-items-center">
-                        <h2 class="gallery_header-title">Photos of our rooms</h2>
-                        <div class="wrapper">
-                            <a class="btn theme-element theme-element--light" href="gallery.html">View all photos</a>
-                        </div>
-                    </div>
-                    <div class="gallery_grid d-grid">
-                        <div class="gallery_grid-item gallery_grid-item--left" data-aos="zoom-in">
-                            <a href="img/placeholder.jpg" data-caption="Image caption" data-role="gallery-link">
-                                <picture>
-                                    <source data-srcset="img/placeholder.jpg" srcset="img/placeholder.jpg" />
-                                    <img
-                                        class="gallery_grid-item_img lazy"
-                                        data-src="img/placeholder.jpg"
-                                        src="img/placeholder.jpg"
-                                        alt="media"
-                                    />
-                                </picture>
-                                <div class="overlay d-flex align-items-center justify-content-center">
-                                    <div class="overlay_focus">
-                                        <svg width="105" height="106" viewBox="0 0 105 106" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M103.514 28.944C102.693 28.944 102.028 28.2795 102.028 27.4598V3.712H78.2507C77.43 3.712 76.7646 3.04749 76.7646 2.22777C76.7646 1.40805 77.43 0.74353 78.2507 0.74353H103.514C104.335 0.74353 105 1.40805 105 2.22777V27.4598C105 28.2795 104.335 28.944 103.514 28.944Z"
-                                                fill="currentColor"
-                                            />
-                                            <path
-                                                d="M26.7492 105.614H1.48607C0.665335 105.614 0 104.95 0 104.13V78.8978C0 78.0781 0.665335 77.4136 1.48607 77.4136C2.3068 77.4136 2.97214 78.0781 2.97214 78.8978V102.646H26.7492C27.57 102.646 28.2353 103.31 28.2353 104.13C28.2353 104.95 27.57 105.614 26.7492 105.614Z"
-                                                fill="currentColor"
-                                            />
-                                            <path
-                                                d="M1.48607 28.944C0.665335 28.944 0 28.2795 0 27.4598V2.22777C0 1.40805 0.665335 0.74353 1.48607 0.74353H26.7492C27.57 0.74353 28.2353 1.40805 28.2353 2.22777C28.2353 3.04749 27.57 3.712 26.7492 3.712H2.97214V27.4598C2.97214 28.2795 2.3068 28.944 1.48607 28.944Z"
-                                                fill="currentColor"
-                                            />
-                                            <path
-                                                d="M103.514 105.614H78.2507C77.43 105.614 76.7646 104.95 76.7646 104.13C76.7646 103.31 77.43 102.646 78.2507 102.646H102.028V78.8978C102.028 78.0781 102.693 77.4136 103.514 77.4136C104.335 77.4136 105 78.0781 105 78.8978V104.13C105 104.95 104.335 105.614 103.514 105.614Z"
-                                                fill="currentColor"
-                                            />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="gallery_grid-item" data-aos="zoom-in">
-                            <a href="img/placeholder.jpg" data-caption="Image caption" data-role="gallery-link">
-                                <picture>
-                                    <source data-srcset="img/placeholder.jpg" srcset="img/placeholder.jpg" />
-                                    <img
-                                        class="gallery_grid-item_img lazy"
-                                        data-src="img/placeholder.jpg"
-                                        src="img/placeholder.jpg"
-                                        alt="media"
-                                    />
-                                </picture>
-                                <div class="overlay d-flex align-items-center justify-content-center">
-                                    <div class="overlay_focus">
-                                        <svg width="105" height="106" viewBox="0 0 105 106" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M103.514 28.944C102.693 28.944 102.028 28.2795 102.028 27.4598V3.712H78.2507C77.43 3.712 76.7646 3.04749 76.7646 2.22777C76.7646 1.40805 77.43 0.74353 78.2507 0.74353H103.514C104.335 0.74353 105 1.40805 105 2.22777V27.4598C105 28.2795 104.335 28.944 103.514 28.944Z"
-                                                fill="currentColor"
-                                            />
-                                            <path
-                                                d="M26.7492 105.614H1.48607C0.665335 105.614 0 104.95 0 104.13V78.8978C0 78.0781 0.665335 77.4136 1.48607 77.4136C2.3068 77.4136 2.97214 78.0781 2.97214 78.8978V102.646H26.7492C27.57 102.646 28.2353 103.31 28.2353 104.13C28.2353 104.95 27.57 105.614 26.7492 105.614Z"
-                                                fill="currentColor"
-                                            />
-                                            <path
-                                                d="M1.48607 28.944C0.665335 28.944 0 28.2795 0 27.4598V2.22777C0 1.40805 0.665335 0.74353 1.48607 0.74353H26.7492C27.57 0.74353 28.2353 1.40805 28.2353 2.22777C28.2353 3.04749 27.57 3.712 26.7492 3.712H2.97214V27.4598C2.97214 28.2795 2.3068 28.944 1.48607 28.944Z"
-                                                fill="currentColor"
-                                            />
-                                            <path
-                                                d="M103.514 105.614H78.2507C77.43 105.614 76.7646 104.95 76.7646 104.13C76.7646 103.31 77.43 102.646 78.2507 102.646H102.028V78.8978C102.028 78.0781 102.693 77.4136 103.514 77.4136C104.335 77.4136 105 78.0781 105 78.8978V104.13C105 104.95 104.335 105.614 103.514 105.614Z"
-                                                fill="currentColor"
-                                            />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="gallery_grid-item gallery_grid-item--right" data-aos="zoom-in">
-                            <a href="img/placeholder.jpg" data-caption="Image caption" data-role="gallery-link">
-                                <picture>
-                                    <source data-srcset="img/placeholder.jpg" srcset="img/placeholder.jpg" />
-                                    <img
-                                        class="gallery_grid-item_img lazy"
-                                        data-src="img/placeholder.jpg"
-                                        src="img/placeholder.jpg"
-                                        alt="media"
-                                    />
-                                </picture>
-                                <div class="overlay d-flex align-items-center justify-content-center">
-                                    <div class="overlay_focus">
-                                        <svg width="105" height="106" viewBox="0 0 105 106" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M103.514 28.944C102.693 28.944 102.028 28.2795 102.028 27.4598V3.712H78.2507C77.43 3.712 76.7646 3.04749 76.7646 2.22777C76.7646 1.40805 77.43 0.74353 78.2507 0.74353H103.514C104.335 0.74353 105 1.40805 105 2.22777V27.4598C105 28.2795 104.335 28.944 103.514 28.944Z"
-                                                fill="currentColor"
-                                            />
-                                            <path
-                                                d="M26.7492 105.614H1.48607C0.665335 105.614 0 104.95 0 104.13V78.8978C0 78.0781 0.665335 77.4136 1.48607 77.4136C2.3068 77.4136 2.97214 78.0781 2.97214 78.8978V102.646H26.7492C27.57 102.646 28.2353 103.31 28.2353 104.13C28.2353 104.95 27.57 105.614 26.7492 105.614Z"
-                                                fill="currentColor"
-                                            />
-                                            <path
-                                                d="M1.48607 28.944C0.665335 28.944 0 28.2795 0 27.4598V2.22777C0 1.40805 0.665335 0.74353 1.48607 0.74353H26.7492C27.57 0.74353 28.2353 1.40805 28.2353 2.22777C28.2353 3.04749 27.57 3.712 26.7492 3.712H2.97214V27.4598C2.97214 28.2795 2.3068 28.944 1.48607 28.944Z"
-                                                fill="currentColor"
-                                            />
-                                            <path
-                                                d="M103.514 105.614H78.2507C77.43 105.614 76.7646 104.95 76.7646 104.13C76.7646 103.31 77.43 102.646 78.2507 102.646H102.028V78.8978C102.028 78.0781 102.693 77.4136 103.514 77.4136C104.335 77.4136 105 78.0781 105 78.8978V104.13C105 104.95 104.335 105.614 103.514 105.614Z"
-                                                fill="currentColor"
-                                            />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="gallery_grid-item" data-aos="zoom-in">
-                            <a href="img/placeholder.jpg" data-caption="Image caption" data-role="gallery-link">
-                                <picture>
-                                    <source data-srcset="img/placeholder.jpg" srcset="img/placeholder.jpg" />
-                                    <img
-                                        class="gallery_grid-item_img lazy"
-                                        data-src="img/placeholder.jpg"
-                                        src="img/placeholder.jpg"
-                                        alt="media"
-                                    />
-                                </picture>
-                                <div class="overlay d-flex align-items-center justify-content-center">
-                                    <div class="overlay_focus">
-                                        <svg width="105" height="106" viewBox="0 0 105 106" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M103.514 28.944C102.693 28.944 102.028 28.2795 102.028 27.4598V3.712H78.2507C77.43 3.712 76.7646 3.04749 76.7646 2.22777C76.7646 1.40805 77.43 0.74353 78.2507 0.74353H103.514C104.335 0.74353 105 1.40805 105 2.22777V27.4598C105 28.2795 104.335 28.944 103.514 28.944Z"
-                                                fill="currentColor"
-                                            />
-                                            <path
-                                                d="M26.7492 105.614H1.48607C0.665335 105.614 0 104.95 0 104.13V78.8978C0 78.0781 0.665335 77.4136 1.48607 77.4136C2.3068 77.4136 2.97214 78.0781 2.97214 78.8978V102.646H26.7492C27.57 102.646 28.2353 103.31 28.2353 104.13C28.2353 104.95 27.57 105.614 26.7492 105.614Z"
-                                                fill="currentColor"
-                                            />
-                                            <path
-                                                d="M1.48607 28.944C0.665335 28.944 0 28.2795 0 27.4598V2.22777C0 1.40805 0.665335 0.74353 1.48607 0.74353H26.7492C27.57 0.74353 28.2353 1.40805 28.2353 2.22777C28.2353 3.04749 27.57 3.712 26.7492 3.712H2.97214V27.4598C2.97214 28.2795 2.3068 28.944 1.48607 28.944Z"
-                                                fill="currentColor"
-                                            />
-                                            <path
-                                                d="M103.514 105.614H78.2507C77.43 105.614 76.7646 104.95 76.7646 104.13C76.7646 103.31 77.43 102.646 78.2507 102.646H102.028V78.8978C102.028 78.0781 102.693 77.4136 103.514 77.4136C104.335 77.4136 105 78.0781 105 78.8978V104.13C105 104.95 104.335 105.614 103.514 105.614Z"
-                                                fill="currentColor"
-                                            />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <!-- gallery section end -->
-            <!-- news section start 
-            <section class="latest section section--blockbg">
-                <div class="block"></div>
-                <div class="container">
-                    <div class="latest_header d-sm-flex justify-content-between align-items-center">
-                        <h2 class="latest_header-title" data-aos="fade-right">Hosteller news</h2>
-                        <div class="wrapper" data-aos="fade-left">
-                            <a class="btn theme-element theme-element--light" href="news.html">View all news</a>
-                        </div>
-                    </div>
-                    <ul class="latest_list d-md-flex flex-wrap">
-                        <li class="latest_list-item col-md-6 col-xl-4" data-order="1" data-aos="fade-up">
-                            <div class="item-wrapper d-md-flex flex-column">
-                                <div class="media">
-                                    <picture>
-                                        <source data-srcset="img/placeholder.jpg" srcset="img/placeholder.jpg" />
-                                        <img class="lazy" data-src="img/placeholder.jpg" src="img/placeholder.jpg" alt="media" />
-                                    </picture>
-                                    <span class="media_label media_label--left"> Travel </span>
-                                </div>
-                                <div class="main d-md-flex flex-column justify-content-between flex-grow-1">
-                                    <a class="main_title h4" href="#" data-shave="true">How to cure wanderlust without leaving your home</a>
-                                    <p class="main_preview">
-                                        Ultrices gravida dictum fusce ut placer orci nulla pellentesque. Senect et netus et malesuada
-                                    </p>
-                                    <div class="main_metadata">
-                                        <span class="main_metadata-item d-inline-flex align-items-center">
-                                            <i class="icon-calendar icon"></i>
-                                            June 16, 2021
-                                        </span>
-                                        <span class="main_metadata-item d-inline-flex align-items-center">
-                                            <i class="icon-eye icon"></i>
-                                            <span class="number">120</span>
-                                            <span class="text">views</span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="latest_list-item col-md-6 col-xl-4" data-order="2" data-aos="fade-up" data-aos-delay="50">
-                            <div class="item-wrapper d-md-flex flex-column">
-                                <div class="media">
-                                    <picture>
-                                        <source data-srcset="img/placeholder.jpg" srcset="img/placeholder.jpg" />
-                                        <img class="lazy" data-src="img/placeholder.jpg" src="img/placeholder.jpg" alt="media" />
-                                    </picture>
-                                    <span class="media_label media_label--left"> Tourist Guide </span>
-                                </div>
-                                <div class="main d-md-flex flex-column justify-content-between flex-grow-1">
-                                    <a class="main_title h4" href="#" data-shave="true"
-                                        >Yoga Hostels to soothe your mind and nomadic soul</a
-                                    >
-                                    <p class="main_preview">
-                                        Ultrices gravida dictum fusce ut placer orci nulla pellentesque. Senect et netus et malesuada
-                                    </p>
-                                    <div class="main_metadata">
-                                        <span class="main_metadata-item d-inline-flex align-items-center">
-                                            <i class="icon-calendar icon"></i>
-                                            June 16, 2021
-                                        </span>
-                                        <span class="main_metadata-item d-inline-flex align-items-center">
-                                            <i class="icon-eye icon"></i>
-                                            <span class="number">120</span>
-                                            <span class="text">views</span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="latest_list-item col-md-6 col-xl-4" data-order="3" data-aos="fade-up" data-aos-delay="100">
-                            <div class="item-wrapper d-md-flex flex-column">
-                                <div class="media">
-                                    <picture>
-                                        <source data-srcset="img/placeholder.jpg" srcset="img/placeholder.jpg" />
-                                        <img class="lazy" data-src="img/placeholder.jpg" src="img/placeholder.jpg" alt="media" />
-                                    </picture>
-                                    <span class="media_label media_label--left"> Communication </span>
-                                </div>
-                                <div class="main d-md-flex flex-column justify-content-between flex-grow-1">
-                                    <a class="main_title h4" href="#" data-shave="true">What happens when you travel with strangers?</a>
-                                    <p class="main_preview">
-                                        Euismod quis viverra nibh cras pulvinar mattis nunc. Leo duis ut diam quam. Sed velit dignissim
-                                    </p>
-                                    <div class="main_metadata">
-                                        <span class="main_metadata-item d-inline-flex align-items-center">
-                                            <i class="icon-calendar icon"></i>
-                                            June 16, 2021
-                                        </span>
-                                        <span class="main_metadata-item d-inline-flex align-items-center">
-                                            <i class="icon-eye icon"></i>
-                                            <span class="number">120</span>
-                                            <span class="text">views</span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </section>
-             news section end -->
             <!-- contacts section start -->
             <section class="contacts section">
                 <div class="container container--contacts d-xl-flex align-items-center">

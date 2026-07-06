@@ -879,7 +879,6 @@ app.post('/api/feedback', (req, res) => {
         return res.status(400).send('<div style="color:red; font-weight:bold; font-family:sans-serif; padding:20px;">Todos los campos son obligatorios.</div>');
     }
 
-    // Creamos un objeto con los datos del mensaje y lo convertimos a texto estructurado
     const datosMensaje = JSON.stringify({
         nombre: feedbackName,
         email: feedbackEmail,
@@ -887,7 +886,6 @@ app.post('/api/feedback', (req, res) => {
         fecha: new Date().toISOString()
     });
 
-    // Usamos una clave única basada en el tiempo para no encimar los mensajes
     const claveUnica = `msg_${Date.now()}`;
 
     const query = "INSERT INTO configuracion (clave, valor) VALUES (?, ?)";
@@ -1194,6 +1192,49 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
         res.json({ url: result.secure_url }); 
     }).end(req.file.buffer);
 });
+
+// ==========================================
+// MÓDULO HERO SECTION (HOME)
+
+// Endpoint para obtener la información actual del Home
+app.get('/api/cms/home', (req, res) => {
+    const sql = "SELECT * FROM admin_home WHERE id = 1";
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error("Error al obtener datos de admin_home:", err);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(result[0]);
+    });
+});
+
+// Endpoint dinámico para actualizar cualquier texto/campo del Home de forma directa
+app.put('/api/cms/home/actualizar', (req, res) => {
+    const { columna, valor } = req.body;
+
+    // Lista blanca de columnas permitidas por seguridad para evitar inyección SQL en identificadores
+    const columnasPermitidas = [
+        'hero_titulo', 'hero_descripcion', 'hero_imagen', 
+        'lbl_checkin', 'lbl_checkout', 'lbl_guests', 
+        'lbl_adults', 'lbl_children', 'btn_search'
+    ];
+
+    if (!columnasPermitidas.includes(columna)) {
+        return res.status(400).json({ error: "Columna no válida o no autorizada." });
+    }
+
+    // Usamos el operador ?? de mysql2 para escapar nombres de columnas de manera segura
+    const sql = "UPDATE admin_home SET ?? = ? WHERE id = 1";
+    db.query(sql, [columna, valor], (err, result) => {
+        if (err) {
+            console.error(`Error al actualizar la columna [${columna}]:`, err);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json({ success: true, message: `Campo ${columna} actualizado con éxito.` });
+    });
+});
+
+
 
 cron.schedule('*/5 * * * *', () => {
     sincronizarCalendarios();
