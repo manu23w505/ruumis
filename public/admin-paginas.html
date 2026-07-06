@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMS - Edición de Contenidos Dinámicos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/icomoon.css" />
+    <style>
+        .page-tab { display: none; }
+        .page-tab.active { display: block; }
+        .sidebar-item.active { background-color: #f0fdfa; color: #0f766e; border-left: 4px solid #0f766e; font-weight: bold; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col font-sans">
+
+    <header class="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shadow-sm">
+        <div class="flex items-center gap-3">
+            <span class="text-xl font-bold tracking-tight text-teal-700">Ruumis <span class="text-slate-400 font-normal">| Editor CMS</span></span>
+        </div>
+        <a href="admin.html" class="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 font-semibold bg-slate-100 hover:bg-slate-200 px-4 py-2 rounded-xl transition-all">
+            ← Volver al Panel Principal
+        </a>
+    </header>
+
+    <div class="flex flex-1">
+        <aside class="w-64 bg-white border-r border-slate-200 p-4 hidden md:flex flex-col gap-1 justify-between">
+            <div class="space-y-1">
+                <span class="px-3 text-xs font-bold text-slate-400 uppercase tracking-wider block mb-3">Selecciona Página</span>
+                
+                <button onclick="cambiarPaginaEditor('home')" id="btn-page-home" class="sidebar-item active w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 rounded-xl hover:bg-slate-50 text-left transition-all">
+                    Home (Inicio)
+                </button>
+                <button onclick="cambiarPaginaEditor('about')" id="btn-page-about" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 rounded-xl hover:bg-slate-50 text-left transition-all">
+                    About (Nosotros)
+                </button>
+                <button onclick="cambiarPaginaEditor('rooms')" id="btn-page-rooms" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 rounded-xl hover:bg-slate-50 text-left transition-all">
+                    Rooms (Habitaciones)
+                </button>
+                <button onclick="cambiarPaginaEditor('locations')" id="btn-page-locations" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 rounded-xl hover:bg-slate-50 text-left transition-all">
+                    Locations (Zonas)
+                </button>
+                <button onclick="cambiarPaginaEditor('contacts')" id="btn-page-contacts" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 rounded-xl hover:bg-slate-50 text-left transition-all">
+                    Contacts (Contacto)
+                </button>
+            </div>
+            
+            <div class="text-xs text-slate-400 p-2 bg-slate-50 rounded-xl border border-slate-100">
+                Las ediciones aquí modifican directamente los bloques textuales e imágenes descriptivas.
+            </div>
+        </aside>
+
+        <main class="flex-1 p-6 md:p-8 overflow-y-auto max-w-5xl mx-auto w-full custom-scrollbar">
+            
+            <div id="tab-page-home" class="page-tab active space-y-8">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-900">Editor de Página: Home</h1>
+                    <p class="text-slate-500 text-sm">Modifica los contenidos de la pantalla principal de tu sitio web.</p>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+                    <div class="border-b border-slate-100 pb-3">
+                        <h3 class="font-bold text-slate-800 text-base">Sección Hero (Presentación Principal)</h3>
+                        <p class="text-slate-400 text-xs">Afecta al título gigante y párrafo introductorio del Home.</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Título de Bienvenida</label>
+                            <div class="flex gap-2">
+                                <textarea id="home-hero-titulo" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-teal-500"></textarea>
+                                <button onclick="guardarTextoCMS('home_hero_titulo', 'home-hero-titulo')" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold text-xs px-4 rounded-xl transition-all self-end h-10">Guardar</button>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Párrafo Descriptivo</label>
+                            <div class="flex gap-2">
+                                <textarea id="home-hero-descripcion" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-teal-500"></textarea>
+                                <button onclick="guardarTextoCMS('home_hero_descripcion', 'home-hero-descripcion')" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold text-xs px-4 rounded-xl transition-all self-end h-10">Guardar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+                    <div class="border-b border-slate-100 pb-3">
+                        <h3 class="font-bold text-slate-800 text-base">Servicios Destacados (Amenities)</h3>
+                        <p class="text-slate-400 text-xs">Modifica los textos descriptivos de tus ventajas competitivas.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                            <span class="text-xs font-bold text-teal-600 uppercase">Servicio 1 (WiFi)</span>
+                            <div class="flex gap-2">
+                                <input type="text" id="home-service-1" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-teal-500">
+                                <button onclick="guardarTextoCMS('home_service_1', 'home-service-1')" class="bg-teal-600 hover:bg-teal-700 text-white px-3 text-xs rounded-lg font-medium">Actualizar</button>
+                            </div>
+                        </div>
+                        </div>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+                    <div class="border-b border-slate-100 pb-3">
+                        <h3 class="font-bold text-slate-800 text-base"> Bloques de Datos Directos en Home</h3>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Teléfono Informativo</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="home-contacto-telefono" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-teal-500">
+                                <button onclick="guardarTextoCMS('home_contacto_telefono', 'home-contacto-telefono')" class="bg-teal-600 hover:bg-teal-700 text-white text-xs px-4 rounded-xl">Guardar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="tab-page-about" class="page-tab space-y-8">
+                <h1 class="text-2xl font-bold text-slate-900">Editor de Página: About</h1>
+                </div>
+
+        </main>
+    </div>
+
+    <script>
+        function cambiarPaginaEditor(idPagina) {
+
+            document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
+
+            document.getElementById(`tab-page-${idPagina}`).classList.add('active');
+            document.getElementById(`btn-page-${idPagina}`).classList.add('active');
+        }
+        
+    </script>
+</body>
+</html>
