@@ -428,7 +428,7 @@
     ///////////////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////////////////////////////
-    //HEADER ROOMS SECTION start
+    //ROOMS SECTION start
     ///////////////////////////////////////////////////////////////////////////
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -494,10 +494,76 @@
     }
         
     ///////////////////////////////////////////////////////////////////////////
-    //HEADER ROOMS SECTION end
+    //ROOMS SECTION end
     ///////////////////////////////////////////////////////////////////////////
 
 
+    ///////////////////////////////////////////////////////////////////////////
+    //ABOUT SECTION start
+    ///////////////////////////////////////////////////////////////////////////
+    document.addEventListener('DOMContentLoaded', () => {
+    consultarRoomsHome();
+    consultarAboutHome(); // 👈 Agregamos la carga del About al iniciar
+    });
+
+    async function consultarAboutHome() {
+        try {
+            // Asumiendo que tu endpoint '/api/home' devuelve todas las configuraciones de la página principal
+            const res = await fetch('/api/home');
+            if (!res.ok) throw new Error("No se pudo obtener la configuración del About.");
+            const data = await res.json();
+            
+            if (data) {
+                // Mapeamos los datos de la BD a los inputs correspondientes de tu formulario HTML
+                document.getElementById('adm-about-titulo').value = data.about_titulo || '';
+                document.getElementById('adm-about-subtitulo').value = data.about_subtitulo || '';
+                document.getElementById('adm-about-descripcion').value = data.about_descripcion || '';
+                document.getElementById('adm-about-btn-texto').value = data.about_btn_texto || '';
+                // Si manejas una imagen secundaria o link de video:
+                document.getElementById('adm-about-video-url').value = data.about_video_url || '';
+            }
+        } catch (err) {
+            console.error("Error al cargar datos del About en el admin:", err);
+        }
+    }
+
+
+    async function guardarAboutHome(e) {
+        e.preventDefault(); // Evita que la página se recargue al enviar el formulario
+        
+        // Construimos el objeto con los datos actuales de los inputs
+        const payload = {
+            about_titulo: document.getElementById('adm-about-titulo').value,
+            about_subtitulo: document.getElementById('adm-about-subtitulo').value,
+            about_descripcion: document.getElementById('adm-about-descripcion').value,
+            about_btn_texto: document.getElementById('adm-about-btn-texto').value,
+            about_video_url: document.getElementById('adm-about-video-url').value
+        };
+
+        try {
+            // Enviamos los datos usando PUT al endpoint correspondiente del About
+            const res = await fetch('/api/home/about', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Error al actualizar la sección About.");
+            
+            alert("¡ABOUT SECTION actualizada con éxito!");
+        } catch (err) {
+            alert("Error: " + err.message);
+            console.error(err);
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    //ABOUT SECTION end
+    ///////////////////////////////////////////////////////////////////////////
+
+
+    
     </script>
 </body>
 </html>
