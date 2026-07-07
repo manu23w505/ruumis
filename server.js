@@ -1122,20 +1122,37 @@ app.put('/api/footer', (req, res) => { // <-- ALINEADO: Se quitó el '/textos' s
     });
 });
 
-//IMAGENES
 
+// ==========================================
+// SECCIÓN: CONTROL DE IMÁGENES (CLOUDINARY)
+// ==========================================
 const fs = require('fs');
 
-// 1. Subir una imagen individual (ej. Logotipo)
+// 1. Subir una imagen individual (ej. Logotipo, logos de marcas, etc.) directamente a Cloudinary
 app.post('/api/upload-image', upload.single('imagen'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'No se recibió ningún archivo válido.' });
     }
-    // Retornamos el nombre del archivo generado para que el Frontend lo guarde en la BD
-    res.json({ success: true, fileName: req.file.filename, url: `/uploads/${req.file.filename}` });
+
+    // Subimos directamente el buffer a Cloudinary usando upload_stream
+    cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+        if (error) {
+            console.error("Error al subir imagen a Cloudinary:", error);
+            return res.status(500).json({ error: 'Error al subir la imagen a la nube' });
+        }
+        
+        // TIP DE COMPATIBILIDAD: Enviamos la URL de Cloudinary tanto en 'url' como en 'fileName'.
+        // De esta manera, si tu frontend antes guardaba "res.fileName" o "res.url", 
+        // guardará la ruta de internet correcta sin romperse.
+        res.json({ 
+            success: true, 
+            fileName: result.secure_url, 
+            url: result.secure_url 
+        }); 
+    }).end(req.file.buffer);
 });
 
-// 2. Eliminar una imagen física de la carpeta uploads
+// 2. Eliminar una imagen (Soporta borrado físico local antiguo y borrado en Cloudinary)
 app.delete('/api/delete-image', (req, res) => {
     const { nombreArchivo } = req.body; 
     
@@ -1143,52 +1160,77 @@ app.delete('/api/delete-image', (req, res) => {
         return res.json({ success: true, message: 'No requiere borrado físico' });
     }
 
-    const rutaArchivo = path.join(__dirname, 'public/uploads', nombreArchivo);
+    // CASO A: La imagen guardada es una URL completa de Cloudinary
+    if (nombreArchivo.includes('cloudinary.com')) {
+        try {
+            // Extraemos el public_id de la URL de Cloudinary (el nombre único sin la extensión)
+            // Ejemplo: .../v1783024268/logo_ejemplo.png -> 'logo_ejemplo'
+            const partesUrl = nombreArchivo.split('/');
+            const archivoConExtension = partesUrl[partesUrl.length - 1];
+            const publicId = archivoConExtension.split('.')[0]; 
 
-    // Verificamos si el archivo existe antes de intentar borrarlo
-    if (fs.existsSync(rutaArchivo)) {
-        fs.unlink(rutaArchivo, (err) => {
-            if (err) {
-                console.error("Error al borrar la imagen física:", err);
-                return res.status(500).json({ error: 'Error al eliminar el archivo del servidor' });
-            }
-            res.json({ success: true, message: 'Archivo eliminado físicamente' });
-        });
-    } else {
-        res.json({ success: true, message: 'El archivo ya no existía en el servidor' });
+            // Ejecutamos la destrucción del recurso en Cloudinary
+            cloudinary.uploader.destroy(publicId, (error, result) => {
+                if (error) {
+                    console.error("Error al eliminar recurso en Cloudinary:", error);
+                    return res.status(500).json({ error: 'Error al eliminar el archivo de Cloudinary' });
+                }
+                return res.json({ success: true, message: 'Imagen eliminada de Cloudinary con éxito', result });
+            });
+        } catch (e) {
+            console.error("Error procesando URL de Cloudinary:", e);
+            return res.status(500).json({ error: 'No se pudo procesar la URL para su borrado' });
+        }
+    } 
+    // CASO B: Es una imagen vieja que se quedó de forma local (ej. "booking-logo.png")
+    else {
+        const rutaArchivo = path.join(__dirname, 'public/uploads', nombreArchivo);
+
+        if (fs.existsSync(rutaArchivo)) {
+            fs.unlink(rutaArchivo, (err) => {
+                if (err) {
+                    console.error("Error al borrar la imagen física local:", err);
+                    return res.status(500).json({ error: 'Error al eliminar el archivo local del servidor' });
+                }
+                res.json({ success: true, message: 'Archivo local eliminado físicamente' });
+            });
+        } else {
+            res.json({ success: true, message: 'El archivo local ya no existía en el servidor' });
+        }
     }
 });
 
-//FAVICON
+// ==========================================
+// SECCIÓN: FAVICON Y CONFIGURACIONES
+// ==========================================
 
 app.put('/api/config/favicon', (req, res) => {
     const { nuevoFavicon } = req.body;
     
-    // CORRECCIÓN: Usamos 'clave' en lugar de 'id'
-    const sql = "UPDATE configuracion SET favicon = ? WHERE clave = 'correo_destino'";
+    // ⚠️ DETALLE DETECTADO: Tenías: WHERE clave = 'correo_destino'. 
+    // Si estás actualizando el favicon, tu condición SQL debe apuntar a la clave del favicon.
+    const sql = "UPDATE configuracion SET favicon = ? WHERE clave = 'favicon'";
     
     db.query(sql, [nuevoFavicon], (err, result) => {
         if (err) {
             console.error("ERROR EN BASE DE DATOS:", err);
             return res.status(500).json({ error: err.message });
         }
-        res.json({ success: true, message: 'Favicon actualizado' });
+        res.json({ success: true, message: 'Favicon actualizado con éxito en la base de datos' });
     });
 });
 
+// Tu endpoint global de subida /api/upload (Se mantiene igual porque ya funciona excelente)
 app.post('/api/upload', upload.single('image'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ error: 'No se recibió ningún archivo.' });
     }
 
-    // Subimos a Cloudinary
     cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
         if (error) {
             console.error("Error al subir a Cloudinary:", error);
             return res.status(500).json({ error: 'Error al subir a la nube' });
         }
-        
-        // Retornamos la URL para que el Frontend la guarde
         res.json({ url: result.secure_url }); 
     }).end(req.file.buffer);
 });
