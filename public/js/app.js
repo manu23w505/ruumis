@@ -1412,13 +1412,46 @@ async function cargarReviewsPublico() {
                 `;
             });
 
+            // Inyectamos el HTML dinámico de la base de datos
             mediaWrapper.innerHTML = htmlMedia;
             contentWrapper.innerHTML = htmlContent;
             
-            // NOTA: Si el Swiper de tu plantilla necesita reinicializarse después de meter los nodos, 
-            // puedes disparar un evento o llamar la actualización aquí si tienes la instancia global:
-            // if (typeof reviewsSliderMedia !== 'undefined') reviewsSliderMedia.update();
-            // if (typeof reviewsSliderMain !== 'undefined') reviewsSliderMain.update();
+            // ========================================================
+            // NUEVO: SOLUCIÓN PARA DESCONGELAR LOS BOTONES DE SWIPER
+            // ========================================================
+            setTimeout(() => {
+                const mediaSliderEl = document.querySelector('.reviews_slider--media');
+                const mainSliderEl = document.querySelector('.reviews_slider--main');
+
+                // Intento 1: Si la plantilla ya creó las instancias, las obligamos a actualizarse
+                if (mediaSliderEl?.swiper && mainSliderEl?.swiper) {
+                    mediaSliderEl.swiper.update();
+                    mainSliderEl.swiper.update();
+                } 
+                // Intento 2: Si Swiper no se había inicializado o se rompió, lo creamos manualmente
+                else if (typeof Swiper !== 'undefined') {
+                    // Inicializamos el slider de imágenes de fondo (izquierdo)
+                    const mediaSwiper = new Swiper('.reviews_slider--media', {
+                        speed: 800,
+                        effect: 'fade',
+                        allowTouchMove: false
+                    });
+
+                    // Inicializamos el slider de textos (derecho) y vinculamos los botones
+                    new Swiper('.reviews_slider--main', {
+                        speed: 800,
+                        loop: true,
+                        navigation: {
+                            nextEl: '.reviews .swiper-button-next',
+                            prevEl: '.reviews .swiper-button-prev',
+                        },
+                        // Vinculamos de forma nativa para que corran sincronizados
+                        controller: {
+                            control: mediaSwiper
+                        }
+                    });
+                }
+            }, 150); // Le damos 150ms al DOM para procesar el HTML antes de activar Swiper
         }
     } catch (error) {
         console.error("Error al renderizar la sección de reseñas públicas:", error);
