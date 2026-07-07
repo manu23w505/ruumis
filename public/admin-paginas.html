@@ -479,6 +479,80 @@
                             </div>
                         </div>
                         <!--REVIEWS SECTION end-->
+
+                        <!--PROMO SECTION start-->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
+                            <div class="border-b border-slate-100 pb-3 mb-5">
+                                <h3 class="text-lg font-bold text-slate-800">PROMO SECTION</h3>
+                                <p class="text-sm text-slate-500">Anuncio de promoción, textos del banner e imagen principal</p>
+                            </div>
+
+                            <form id="form-promo-section" onsubmit="guardarPromoAdmin(event)" class="space-y-5">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Título del Anuncio</label>
+                                        <input type="text" id="adm-promo-titulo" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-teal-600 text-sm" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Imagen de Fondo (Cloudinary)</label>
+                                        <input type="file" id="adm-promo-file" accept="image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100">
+                                        <input type="hidden" id="adm-promo-img-actual">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Descripción del Anuncio</label>
+                                    <textarea id="adm-promo-descripcion" rows="2" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-teal-600 text-sm" required></textarea>
+                                </div>
+
+                                <div class="bg-slate-50 p-4 rounded-xl grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="space-y-3">
+                                        <h4 class="text-xs font-bold text-teal-800 uppercase tracking-wider border-b pb-1">Característica 1</h4>
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-slate-500 uppercase">Título Ítem 1</label>
+                                            <input type="text" id="adm-promo-item1-title" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-teal-600">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-slate-500 uppercase">Texto Ítem 1</label>
+                                            <input type="text" id="adm-promo-item1-text" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-teal-600">
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-3">
+                                        <h4 class="text-xs font-bold text-teal-800 uppercase tracking-wider border-b pb-1">Característica 2</h4>
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-slate-500 uppercase">Título Ítem 2</label>
+                                            <input type="text" id="adm-promo-item2-title" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-teal-600">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-slate-500 uppercase">Texto Ítem 2</label>
+                                            <input type="text" id="adm-promo-item2-text" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-teal-600">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-teal-50/50 p-4 rounded-xl border border-teal-100 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="md:col-span-2">
+                                        <h4 class="text-xs font-bold text-teal-800 uppercase tracking-wider pb-1">Tarjeta Testimonial Superior</h4>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase">Comentario Corto</label>
+                                        <input type="text" id="adm-promo-review-text" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-teal-600">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase">Nombre del Huésped</label>
+                                        <input type="text" id="adm-promo-review-name" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-teal-600">
+                                    </div>
+                                </div>
+
+                                <div class="flex justify-end pt-2">
+                                    <button type="submit" class="bg-teal-700 hover:bg-teal-800 text-white px-5 py-2 rounded-lg text-sm font-medium transition shadow-sm">
+                                        Guardar Promo Section
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <!--PROMO SECTION end-->
             </div>
 
             <!--Editor About-->
@@ -1039,8 +1113,75 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 ///////////////////////////////////////////////////////////////////////////
-// REVIEWS SECTION start
+// REVIEWS SECTION end
 ///////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// PROMO SECTION start
+///////////////////////////////////////////////////////////////////////////
+
+// Cargar datos en el CMS de administración
+async function cargarPromoAdmin() {
+    try {
+        const res = await fetch('/api/home/promo');
+        const data = await res.json();
+
+        document.getElementById('adm-promo-titulo').value = data.promo_titulo || '';
+        document.getElementById('adm-promo-descripcion').value = data.promo_descripcion || '';
+        document.getElementById('adm-promo-item1-title').value = data.promo_item1_title || '';
+        document.getElementById('adm-promo-item1-text').value = data.promo_item1_text || '';
+        document.getElementById('adm-promo-item2-title').value = data.promo_item2_title || '';
+        document.getElementById('adm-promo-item2-text').value = data.promo_item2_text || '';
+        document.getElementById('adm-promo-review-text').value = data.promo_review_text || '';
+        document.getElementById('adm-promo-review-name').value = data.promo_review_name || '';
+        document.getElementById('adm-promo-img-actual').value = data.promo_imagen || '';
+    } catch (err) {
+        console.error("Error al cargar configuración de la sección Promo:", err);
+    }
+}
+
+// Enviar datos modificados (Texto + Archivo binario con FormData)
+async function guardarPromoAdmin(e) {
+    e.preventDefault();
+    const formData = new FormData();
+
+    formData.append('promo_titulo', document.getElementById('adm-promo-titulo').value);
+    formData.append('promo_descripcion', document.getElementById('adm-promo-descripcion').value);
+    formData.append('promo_item1_title', document.getElementById('adm-promo-item1-title').value);
+    formData.append('promo_item1_text', document.getElementById('adm-promo-item1-text').value);
+    formData.append('promo_item2_title', document.getElementById('adm-promo-item2-title').value);
+    formData.append('promo_item2_text', document.getElementById('adm-promo-item2-text').value);
+    formData.append('promo_review_text', document.getElementById('adm-promo-review-text').value);
+    formData.append('promo_review_name', document.getElementById('adm-promo-review-name').value);
+    formData.append('promo_imagen_actual', document.getElementById('adm-promo-img-actual').value);
+
+    const fileInput = document.getElementById('adm-promo-file');
+    if (fileInput.files[0]) {
+        formData.append('promo_imagen', fileInput.files[0]);
+    }
+
+    try {
+        const res = await fetch('/api/home/promo', { method: 'PUT', body: formData });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Error al actualizar.");
+        
+        alert("¡PROMO SECTION guardada con éxito!");
+        cargarPromoAdmin(); // Refresca campos e input oculto
+    } catch (err) {
+        alert("Error: " + err.message);
+        console.error(err);
+    }
+}
+
+// Vinculación automática al iniciar la vista admin
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('form-promo-section')) cargarPromoAdmin();
+});
+
+///////////////////////////////////////////////////////////////////////////
+// PROMO SECTION start
+///////////////////////////////////////////////////////////////////////////
+
 
     </script>
 </body>

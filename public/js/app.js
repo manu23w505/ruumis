@@ -1464,3 +1464,61 @@ document.addEventListener('DOMContentLoaded', () => {
         cargarReviewsPublico();
     }
 });
+
+//================================================================
+// PROMO SECTION HOME
+//================================================================
+
+async function cargarPromoPublico() {
+    try {
+        const response = await fetch('/api/home/promo');
+        if (!response.ok) throw new Error("No se pudo obtener la sección promocional.");
+        const datos = await response.json();
+
+        // Renderizado seguro en el DOM público sin interferir con la tarjeta de ofertas
+        const txtTitulo = document.getElementById('public-promo-titulo');
+        if (txtTitulo) txtTitulo.textContent = datos.promo_titulo;
+
+        const txtDescripcion = document.getElementById('public-promo-descripcion');
+        if (txtDescripcion) txtDescripcion.textContent = datos.promo_descripcion;
+
+        const txtItem1Title = document.getElementById('public-promo-item1-title');
+        if (txtItem1Title) txtItem1Title.textContent = datos.promo_item1_title;
+
+        const txtItem1Text = document.getElementById('public-promo-item1-text');
+        if (txtItem1Text) txtItem1Text.textContent = datos.promo_item1_text;
+
+        const txtItem2Title = document.getElementById('public-promo-item2-title');
+        if (txtItem2Title) txtItem2Title.textContent = datos.promo_item2_title;
+
+        const txtItem2Text = document.getElementById('public-promo-item2-text');
+        if (txtItem2Text) txtItem2Text.textContent = datos.promo_item2_text;
+
+        const txtReviewText = document.getElementById('public-promo-review-text');
+        if (txtReviewText) txtReviewText.textContent = datos.promo_review_text;
+
+        const txtReviewName = document.getElementById('public-promo-review-name');
+        if (txtReviewName) txtReviewName.textContent = datos.promo_review_name;
+
+        // Inyección de la imagen subida a Cloudinary
+        const imgPromo = document.getElementById('public-promo-img');
+        const srcPromo = document.getElementById('public-promo-src-srcset');
+        if (imgPromo && datos.promo_imagen) {
+            imgPromo.src = datos.promo_imagen;
+            imgPromo.setAttribute('data-src', datos.promo_imagen);
+            if(srcPromo) {
+                srcPromo.srcset = datos.promo_imagen;
+                srcPromo.setAttribute('data-srcset', datos.promo_imagen);
+            }
+        }
+    } catch (err) {
+        console.error("Error al renderizar la sección Promo pública:", err);
+    }
+}
+
+// Inicializador automático para el listener DOMContentLoaded existente en tu archivo
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('public-promo-titulo')) {
+        cargarPromoPublico();
+    }
+});

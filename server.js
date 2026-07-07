@@ -1413,7 +1413,7 @@ app.put('/api/home/rating', (req, res) => {
 
 
 // ==========================================
-// ENDPOINTS PARA REVIEWS SECTION
+// REVIEWS SECTION
 // ==========================================
 
 //Obtener el título de la sección y la lista completa de comentarios
@@ -1494,6 +1494,93 @@ app.delete('/api/home/reviews/:id', (req, res) => {
         }
         res.json({ success: true, message: 'Comentario eliminado correctamente.' });
     });
+});
+
+// ========================================================
+// PROMO SECTION 
+// ========================================================
+
+// GET - Obtener datos de la sección Promo
+app.get('/api/home/promo', (req, res) => {
+    const sql = 'SELECT promo_titulo, promo_descripcion, promo_item1_title, promo_item1_text, promo_item2_title, promo_item2_text, promo_imagen, promo_review_text, promo_review_name FROM admin_home WHERE id = 1';
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error("Error al obtener la sección Promo:", err);
+            return res.status(500).json({ error: "Error en el servidor al cargar Promo" });
+        }
+        res.json(result[0] || {});
+    });
+});
+
+// PUT - Actualizar datos de la sección Promo con imagen en Cloudinary
+app.put('/api/home/promo', upload.single('promo_imagen'), async (req, res) => {
+    const {
+        promo_titulo,
+        promo_descripcion,
+        promo_item1_title,
+        promo_item1_text,
+        promo_item2_title,
+        promo_item2_text,
+        promo_review_text,
+        promo_review_name
+    } = req.body;
+
+    // Si no se sube un archivo nuevo, preservamos la URL de la imagen actual
+    let promo_imagen_url = req.body.promo_imagen_actual; 
+
+    try {
+        if (req.file) {
+            // Envío del buffer del archivo directamente a Cloudinary
+            const result = await new Promise((resolve, reject) => {
+                const uploadStream = cloudinary.uploader.upload_stream(
+                    { folder: 'ruumis_promo' },
+                    (error, uploadResult) => {
+                        if (error) return reject(error);
+                        resolve(uploadResult);
+                    }
+                );
+                uploadStream.end(req.file.buffer);
+            });
+            promo_imagen_url = result.secure_url;
+        }
+
+        const sql = `
+            UPDATE admin_home 
+            SET 
+                promo_titulo = ?, 
+                promo_descripcion = ?, 
+                promo_item1_title = ?, 
+                promo_item1_text = ?, 
+                promo_item2_title = ?, 
+                promo_item2_text = ?, 
+                promo_imagen = ?, 
+                promo_review_text = ?, 
+                promo_review_name = ?
+            WHERE id = 1
+        `;
+
+        db.query(sql, [
+            promo_titulo,
+            promo_descripcion,
+            promo_item1_title,
+            promo_item1_text,
+            promo_item2_title,
+            promo_item2_text,
+            promo_imagen_url,
+            promo_review_text,
+            promo_review_name
+        ], (err, result) => {
+            if (err) {
+                console.error("Error al actualizar la tabla admin_home (Promo):", err);
+                return res.status(500).json({ error: "Error al guardar en la base de datos" });
+            }
+            res.json({ message: "¡Sección Promo actualizada con éxito!", promo_imagen: promo_imagen_url });
+        });
+
+    } catch (error) {
+        console.error("Error en la subida a Cloudinary de la sección Promo:", error);
+        res.status(500).json({ error: "Error al procesar la imagen promocional" });
+    }
 });
 
 
