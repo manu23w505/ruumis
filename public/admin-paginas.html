@@ -257,61 +257,57 @@
                                 <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">Inicio</span>
                             </div>
 
-                            <form id="form-about-section" onsubmit="guardarAboutSection(event)" class="space-y-4">
+                            <form onsubmit="guardarAboutHome(event)" class="space-y-4">
+                                <h3 class="text-lg font-bold text-teal-800 border-b pb-2">Editar Sección About</h3>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700">Título de la Sección:</label>
+                                    <input type="text" id="adm-about-titulo" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border">
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700">Descripción:</label>
+                                    <textarea id="adm-about-descripcion" rows="3" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border"></textarea>
+                                </div>
+
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Título de la Sección (H2)</label>
-                                        <input type="text" id="about-titulo" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" required>
+                                        <label class="block text-sm font-medium text-slate-700">Item 1 (WiFi):</label>
+                                        <input type="text" id="adm-about-item1" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border">
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Enlace del Video de YouTube</label>
-                                        <input type="url" id="about-video-url" placeholder="https://www.youtube.com/watch?v=..." class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" required>
+                                        <label class="block text-sm font-medium text-slate-700">Item 2 (Ubicación):</label>
+                                        <input type="text" id="adm-about-item2" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700">Item 3 (Equipaje):</label>
+                                        <input type="text" id="adm-about-item3" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700">Item 4 (Estacionamiento):</label>
+                                        <input type="text" id="adm-about-item4" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border">
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700">Texto Botón 1:</label>
+                                        <input type="text" id="adm-about-btn1" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700">Texto Botón 2:</label>
+                                        <input type="text" id="adm-about-btn2" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border">
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Descripción de la Sección</label>
-                                    <textarea id="about-descripcion" rows="3" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" required></textarea>
+                                    <label class="block text-sm font-medium text-slate-700">Enlace de Video (YouTube):</label>
+                                    <input type="text" id="adm-about-video-url" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border">
                                 </div>
 
-                                <div class="bg-gray-50 p-4 rounded-md border border-gray-100">
-                                    <h4 class="text-sm font-semibold text-gray-700 mb-3">Textos de los Elementos de Lista (Iconos)</h4>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label class="block text-xs font-medium text-gray-600 mb-1">Elemento 1 (WiFi)</label>
-                                            <input type="text" id="about-item1" class="w-full p-2 border rounded text-sm focus:ring-1 focus:ring-blue-500 outline-none" required>
-                                        </div>
-                                        <div>
-                                            <label class="block text-xs font-medium text-gray-600 mb-1">Elemento 2 (Ubicación)</label>
-                                            <input type="text" id="about-item2" class="w-full p-2 border rounded text-sm focus:ring-1 focus:ring-blue-500 outline-none" required>
-                                        </div>
-                                        <div>
-                                            <label class="block text-xs font-medium text-gray-600 mb-1">Elemento 3 (Equipaje)</label>
-                                            <input type="text" id="about-item3" class="w-full p-2 border rounded text-sm focus:ring-1 focus:ring-blue-500 outline-none" required>
-                                        </div>
-                                        <div>
-                                            <label class="block text-xs font-medium text-gray-600 mb-1">Elemento 4 (Estacionamiento)</label>
-                                            <input type="text" id="about-item4" class="w-full p-2 border rounded text-sm focus:ring-1 focus:ring-blue-500 outline-none" required>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Texto Botón Principal (Book Now)</label>
-                                        <input type="text" id="about-btn1-text" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" required>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Texto Enlace Secundario (More About)</label>
-                                        <input type="text" id="about-btn2-text" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 outline-none" required>
-                                    </div>
-                                </div>
-
-                                <div class="flex justify-end pt-2">
-                                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded shadow transition-colors">
-                                        Guardar About Section
-                                    </button>
-                                </div>
+                                <button type="submit" class="bg-teal-600 text-white px-4 py-2 rounded shadow hover:bg-teal-700 transition-colors">
+                                    Guardar Sección About
+                                </button>
                             </form>
                         </div>
                         <!-- ABOUT SECTION  end-->
@@ -498,72 +494,81 @@
     ///////////////////////////////////////////////////////////////////////////
 
 
-    ///////////////////////////////////////////////////////////////////////////
-    //ABOUT SECTION start
-    ///////////////////////////////////////////////////////////////////////////
-    document.addEventListener('DOMContentLoaded', () => {
+///////////////////////////////////////////////////////////////////////////
+// ABOUT SECTION start
+///////////////////////////////////////////////////////////////////////////
+
+document.addEventListener('DOMContentLoaded', () => {
     consultarRoomsHome();
-    consultarAboutHome(); // 👈 Agregamos la carga del About al iniciar
-    });
+    consultarAboutHome(); 
+});
 
-    async function consultarAboutHome() {
-        try {
-            // Asumiendo que tu endpoint '/api/home' devuelve todas las configuraciones de la página principal
-            const res = await fetch('/api/home');
-            if (!res.ok) throw new Error("No se pudo obtener la configuración del About.");
-            const data = await res.json();
-            
-            if (data) {
-                // Mapeamos los datos de la BD a los inputs correspondientes de tu formulario HTML
-                document.getElementById('adm-about-titulo').value = data.about_titulo || '';
-                document.getElementById('adm-about-subtitulo').value = data.about_subtitulo || '';
-                document.getElementById('adm-about-descripcion').value = data.about_descripcion || '';
-                document.getElementById('adm-about-btn-texto').value = data.about_btn_texto || '';
-                // Si manejas una imagen secundaria o link de video:
-                document.getElementById('adm-about-video-url').value = data.about_video_url || '';
-            }
-        } catch (err) {
-            console.error("Error al cargar datos del About en el admin:", err);
-        }
-    }
-
-
-    async function guardarAboutHome(e) {
-        e.preventDefault(); // Evita que la página se recargue al enviar el formulario
+async function consultarAboutHome() {
+    try {
+        const res = await fetch('/api/home');
+        if (!res.ok) throw new Error("No se pudo obtener la configuración del Home.");
+        const data = await res.json();
         
-        // Construimos el objeto con los datos actuales de los inputs
-        const payload = {
-            about_titulo: document.getElementById('adm-about-titulo').value,
-            about_subtitulo: document.getElementById('adm-about-subtitulo').value,
-            about_descripcion: document.getElementById('adm-about-descripcion').value,
-            about_btn_texto: document.getElementById('adm-about-btn-texto').value,
-            about_video_url: document.getElementById('adm-about-video-url').value
-        };
-
-        try {
-            // Enviamos los datos usando PUT al endpoint correspondiente del About
-            const res = await fetch('/api/home/about', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || "Error al actualizar la sección About.");
+        if (data) {
+            // CONCORDANCIA TOTAL CON TU SQL: Mapeamos cada columna de la BD al input HTML correcto
+            document.getElementById('adm-about-titulo').value = data.about_titulo || '';
+            document.getElementById('adm-about-descripcion').value = data.about_descripcion || '';
             
-            alert("¡ABOUT SECTION actualizada con éxito!");
-        } catch (err) {
-            alert("Error: " + err.message);
-            console.error(err);
+            document.getElementById('adm-about-item1').value = data.about_item1_text || '';
+            document.getElementById('adm-about-item2').value = data.about_item2_text || '';
+            document.getElementById('adm-about-item3').value = data.about_item3_text || '';
+            document.getElementById('adm-about-item4').value = data.about_item4_text || '';
+            
+            document.getElementById('adm-about-btn1').value = data.about_btn1_text || '';
+            document.getElementById('adm-about-btn2').value = data.about_btn2_text || '';
+            
+            document.getElementById('adm-about-video-url').value = data.about_video_url || '';
         }
+    } catch (err) {
+        console.error("Error al cargar los datos de la sección About:", err);
     }
+}
 
-    ///////////////////////////////////////////////////////////////////////////
-    //ABOUT SECTION end
-    ///////////////////////////////////////////////////////////////////////////
-
-
+async function guardarAboutHome(e) {
+    e.preventDefault(); // Evita que la página se recargue
     
+    // CONCORDANCIA TOTAL CON TU SQL: Armamos el objeto JSON idéntico a las columnas de la BD
+    const payload = {
+        about_titulo: document.getElementById('adm-about-titulo').value,
+        about_descripcion: document.getElementById('adm-about-descripcion').value,
+        about_item1_text: document.getElementById('adm-about-item1').value,
+        about_item2_text: document.getElementById('adm-about-item2').value,
+        about_item3_text: document.getElementById('adm-about-item3').value,
+        about_item4_text: document.getElementById('adm-about-item4').value,
+        about_btn1_text: document.getElementById('adm-about-btn1').value,
+        about_btn2_text: document.getElementById('adm-about-btn2').value,
+        about_video_url: document.getElementById('adm-about-video-url').value
+    };
+
+    try {
+        const res = await fetch('/api/home/about', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Error al actualizar la sección About.");
+        
+        alert("¡Sección About actualizada con éxito!");
+    } catch (err) {
+        alert("Error: " + err.message);
+        console.error(err);
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////
+// ABOUT SECTION end
+///////////////////////////////////////////////////////////////////////////
+
+
+
+
     </script>
 </body>
 </html>
