@@ -966,37 +966,85 @@ app.get('/api/header-completo', (req, res) => {
 
 // Actualizar Configuración General (Nombre de Marca y SVG del Logo)
 // LOGO FOOTER Y HEADER
-app.put('/api/header/config', (req, res) => {
-    const { nombre_marca, header_logo, footer_logo } = req.body;
-    const query = "INSERT INTO configuracion_general (clave, valor) VALUES (?, ?) ON DUPLICATE KEY UPDATE valor = ?";
+app.put('/api/header/config', upload.fields([
+    { name: 'header_logo', maxCount: 1 },
+    { name: 'footer_logo', maxCount: 1 }
+]), async (req, res) => {
+    const { nombre_marca, header_logo_actual, footer_logo_actual } = req.body;
     
-    const updates = [
-        ['nombre_marca', nombre_marca],
-        ['header_logo', header_logo],
-        ['footer_logo', footer_logo]
-    ];
+    // Si no se suben archivos nuevos, preservamos las URLs actuales de la BD (igual que en Promo)
+    let header_logo_url = header_logo_actual;
+    let footer_logo_url = footer_logo_actual;
 
-    let completados = 0;
-    let huboError = false;
-
-    updates.forEach(item => {
-        // Solo actualizamos si el frontend nos mandó un valor para esa clave
-        if (item[1] !== undefined) {
-            db.query(query, [item[0], item[1], item[1]], (err) => {
-                if (err) {
-                    console.error(`Error actualizando ${item[0]}:`, err);
-                    huboError = true;
-                }
-                completados++;
-                
-                // Si ya procesamos todos los que no son undefined
-                if (completados === updates.filter(u => u[1] !== undefined).length) {
-                    if (huboError) return res.status(500).json({ error: 'Hubo errores al actualizar la configuración' });
-                    res.json({ success: true, message: 'Configuración general actualizada' });
-                }
+    try {
+        // 1. Procesar LOGO DEL HEADER si viene un archivo nuevo
+        if (req.files && req.files['header_logo']) {
+            const resultHeader = await new Promise((resolve, reject) => {
+                const uploadStream = cloudinary.uploader.upload_stream(
+                    { folder: 'ruumis_logos' },
+                    (error, uploadResult) => {
+                        if (error) return reject(error);
+                        resolve(uploadResult);
+                    }
+                );
+                uploadStream.end(req.files['header_logo'][0].buffer);
             });
+            header_logo_url = resultHeader.secure_url;
         }
-    });
+
+        // 2. Procesar LOGO DEL FOOTER si viene un archivo nuevo
+        if (req.files && req.files['footer_logo']) {
+            const resultFooter = await new Promise((resolve, reject) => {
+                const uploadStream = cloudinary.uploader.upload_stream(
+                    { folder: 'ruumis_logos' },
+                    (error, uploadResult) => {
+                        if (error) return reject(error);
+                        resolve(uploadResult);
+                    }
+                );
+                uploadStream.end(req.files['footer_logo'][0].buffer);
+            });
+            footer_logo_url = resultFooter.secure_url;
+        }
+
+        // 3. Guardar o actualizar en la Base de Datos
+        const query = "INSERT INTO configuracion_general (clave, valor) VALUES (?, ?) ON DUPLICATE KEY UPDATE valor = ?";
+        
+        const updates = [
+            ['nombre_marca', nombre_marca],
+            ['header_logo', header_logo_url],
+            ['footer_logo', footer_logo_url]
+        ];
+
+        let completados = 0;
+        let huboError = false;
+
+        updates.forEach(item => {
+            if (item[1] !== undefined) {
+                db.query(query, [item[0], item[1], item[1]], (err) => {
+                    if (err) {
+                        console.error(`Error actualizando ${item[0]}:`, err);
+                        huboError = true;
+                    }
+                    completados++;
+                    
+                    if (completados === updates.filter(u => u[1] !== undefined).length) {
+                        if (huboError) return res.status(500).json({ error: 'Hubo errores al actualizar la configuración' });
+                        res.json({ 
+                            success: true, 
+                            message: 'Configuración y logos actualizados con éxito',
+                            header_logo: header_logo_url,
+                            footer_logo: footer_logo_url
+                        });
+                    }
+                });
+            }
+        });
+
+    } catch (error) {
+        console.error("Error en la subida de logos a Cloudinary:", error);
+        res.status(500).json({ error: "Error al procesar los logos en la nube" });
+    }
 });
 
 // Actualizar una página específica del menú (Nombre visible y su URL estética)

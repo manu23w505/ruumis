@@ -71,6 +71,33 @@ async function inicializarPagina() {
             cargarTitulosDinamicos();
         });
 
+        // Dentro de tu función de carga inicial de configuración (ej. donde obtienes datos generales)
+        async function cargarConfiguracionVisual(datosConfig) {
+            if (!datosConfig) return;
+
+            // 1. Actualizar Nombre de Marca textualmente
+            const txtMarca = document.getElementById('public-nombre-marca');
+            if (txtMarca && datosConfig.nombre_marca) {
+                txtMarca.textContent = datosConfig.nombre_marca;
+            }
+
+            // 2. Renderizar Logo del Header (Soporta URL completa de Cloudinary o SVG antiguo)
+            const headerLogoContainer = document.getElementById('header-logo-container');
+            if (headerLogoContainer && datosConfig.header_logo) {
+                if (datosConfig.header_logo.includes('http')) {
+                    headerLogoContainer.innerHTML = `<img src="${datosConfig.header_logo}" alt="Logo Header" style="max-height: 40px; object-fit: contain;">`;
+                } else {
+                    headerLogoContainer.innerHTML = datosConfig.header_logo; // Mantiene compatibilidad con SVG crudo
+                }
+            }
+
+            // 3. Renderizar Logo del Footer
+            const imgFooterLogo = document.getElementById('public-footer-logo');
+            if (imgFooterLogo && datosConfig.footer_logo) {
+                imgFooterLogo.src = datosConfig.footer_logo;
+            }
+        }
+
     } catch (err) {
         console.error("Error general al inicializar los anuncios:", err);
         contenedor.innerHTML = '<p class="text-rose-500 col-span-full text-center py-8">⚠️ Ocurrió un error inesperado al procesar las habitaciones.</p>';

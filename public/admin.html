@@ -2234,6 +2234,45 @@ async function subirFavicon() {
     alert("Favicon actualizado. Recarga para ver cambios.");
 }
 
+async function guardarConfiguracionHeaderFooter(event) {
+    event.preventDefault();
+    
+    const formData = new FormData();
+    // Campos de texto normales
+    formData.append('nombre_marca', document.getElementById('adm-nombre-marca').value);
+    
+    // Captura de archivos físicos de los inputs type="file"
+    const inputHeader = document.getElementById('input-header-logo');
+    if (inputHeader && inputHeader.files[0]) {
+        formData.append('header_logo', inputHeader.files[0]);
+    }
+    
+    const inputFooter = document.getElementById('input-footer-logo');
+    if (inputFooter && inputFooter.files[0]) {
+        formData.append('footer_logo', inputFooter.files[0]);
+    }
+    
+    // Pasamos los valores actuales de respaldo (igual que "promo_imagen_actual")
+    // Recuerda almacenar las URLs vigentes en inputs ocultos (hidden) al cargar la página
+    formData.append('header_logo_actual', document.getElementById('url-header-logo-actual').value || '');
+    formData.append('footer_logo_actual', document.getElementById('url-footer-logo-actual').value || '');
+
+    try {
+        const res = await fetch('/api/header/config', {
+            method: 'PUT',
+            body: formData // Nota: Al usar FormData NO debes añadir el Header 'Content-Type'
+        });
+        
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "No se pudo actualizar la configuración.");
+        
+        alert("¡Configuración general y logos actualizados en Cloudinary con éxito!");
+        location.reload(); // Recargamos para ver los cambios aplicados
+    } catch (err) {
+        alert("Error: " + err.message);
+        console.error(err);
+    }
+}
 
 </script>
 </body>
