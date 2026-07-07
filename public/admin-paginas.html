@@ -312,6 +312,90 @@
                         </div>
                         <!-- ABOUT SECTION  end-->
 
+                        <!--RAITING SECTION start-->
+                        <div class="bg-white p-6 rounded-lg shadow-md mb-6 border border-gray-200">
+                            <div class="flex items-center justify-between border-b pb-3 mb-4">
+                                <div>
+                                    <h3 class="text-lg font-bold text-gray-800 tracking-wide uppercase">RATING SECTION</h3>
+                                    <p class="text-sm text-gray-500">Sección de marcas con puntuación en el index.html</p>
+                                </div>
+                                <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">Inicio</span>
+                            </div>
+
+                            <form onsubmit="guardarRatingHome(event)" class="space-y-4">
+                                <h3 class="text-lg font-bold text-teal-800 border-b pb-2">Editar Sección Rating</h3>
+
+                                <div class="p-4 bg-slate-50 rounded-md border border-slate-200 space-y-3">
+                                    <h4 class="text-sm font-semibold text-teal-700">Marca 1 (Ej. Booking)</h4>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <label class="block text-xs font-medium text-slate-700">Puntuación / Número:</label>
+                                            <input type="text" id="adm-rating-item1-num" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border text-sm">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-slate-700">Texto Descriptivo:</label>
+                                            <input type="text" id="adm-rating-item1-text" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border text-sm">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-slate-700">Ruta / URL del Logo:</label>
+                                            <input type="text" id="adm-rating-item1-logo" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border text-sm">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-4 bg-slate-50 rounded-md border border-slate-200 space-y-3">
+                                    <h4 class="text-sm font-semibold text-teal-700">Marca 2 (Ej. Hostelworld)</h4>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <label class="block text-xs font-medium text-slate-700">Puntuación / Número:</label>
+                                            <input type="text" id="adm-rating-item2-num" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border text-sm">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-slate-700">Texto Descriptivo:</label>
+                                            <input type="text" id="adm-rating-item2-text" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border text-sm">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-slate-700">Ruta / URL del Logo:</label>
+                                            <input type="text" id="adm-rating-item2-logo" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border text-sm">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-4 bg-slate-50 rounded-md border border-slate-200 space-y-3">
+                                    <h4 class="text-sm font-semibold text-teal-700">Marca 3 (Ej. TripAdvisor)</h4>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <label class="block text-xs font-medium text-slate-700">Puntuación / Número:</label>
+                                            <input type="text" id="adm-rating-item3-num" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border text-sm">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-slate-700">Texto Descriptivo:</label>
+                                            <input type="text" id="adm-rating-item3-text" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border text-sm">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-medium text-slate-700">Ruta / URL del Logo:</label>
+                                            <input type="text" id="adm-rating-item3-logo" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border text-sm">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700">Efecto de Animación CSS (Clase):</label>
+                                    <select id="adm-rating-animacion" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border text-sm">
+                                        <option value="">Sin animación</option>
+                                        <option value="animate-fade-up">Desvanecer hacia arriba (Fade Up)</option>
+                                        <option value="animate-bounce">Efecto Rebote (Bounce)</option>
+                                        <option value="animate-pulse">Efecto Latido (Pulse)</option>
+                                    </select>
+                                </div>
+
+                                <button type="submit" class="bg-teal-600 text-white px-4 py-2 rounded shadow hover:bg-teal-700 transition-colors font-medium">
+                                    Guardar Sección Rating
+                                </button>
+                            </form>
+                        </div>
+                        <!--RAITING SECTION end-->
+
             </div>
 
             <!--Editor About-->
@@ -566,6 +650,82 @@ async function guardarAboutHome(e) {
 // ABOUT SECTION end
 ///////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////
+// RATING SECTION start
+///////////////////////////////////////////////////////////////////////////
+
+document.addEventListener('DOMContentLoaded', () => {
+    consultarRoomsHome();
+    consultarAboutHome();
+    consultarRatingHome(); 
+});
+
+async function consultarRatingHome() {
+    try {
+        const res = await fetch('/api/home');
+        if (!res.ok) throw new Error("No se pudo obtener la configuración del Rating.");
+        const data = await res.json();
+        
+        if (data) {
+            // Rellenamos el formulario dinámicamente con los datos de la BD
+            document.getElementById('adm-rating-item1-num').value = data.rating_item1_num || '';
+            document.getElementById('adm-rating-item1-text').value = data.rating_item1_text || '';
+            document.getElementById('adm-rating-item1-logo').value = data.rating_item1_logo || '';
+            
+            document.getElementById('adm-rating-item2-num').value = data.rating_item2_num || '';
+            document.getElementById('adm-rating-item2-text').value = data.rating_item2_text || '';
+            document.getElementById('adm-rating-item2-logo').value = data.rating_item2_logo || '';
+            
+            document.getElementById('adm-rating-item3-num').value = data.rating_item3_num || '';
+            document.getElementById('adm-rating-item3-text').value = data.rating_item3_text || '';
+            document.getElementById('adm-rating-item3-logo').value = data.rating_item3_logo || '';
+            
+            document.getElementById('adm-rating-animacion').value = data.rating_animacion || '';
+        }
+    } catch (err) {
+        console.error("Error al cargar datos de Ratings en el admin:", err);
+    }
+}
+
+async function guardarRatingHome(e) {
+    e.preventDefault();
+    
+    const payload = {
+        rating_item1_num: document.getElementById('adm-rating-item1-num').value,
+        rating_item1_text: document.getElementById('adm-rating-item1-text').value,
+        rating_item1_logo: document.getElementById('adm-rating-item1-logo').value,
+        
+        rating_item2_num: document.getElementById('adm-rating-item2-num').value,
+        rating_item2_text: document.getElementById('adm-rating-item2-text').value,
+        rating_item2_logo: document.getElementById('adm-rating-item2-logo').value,
+        
+        rating_item3_num: document.getElementById('adm-rating-item3-num').value,
+        rating_item3_text: document.getElementById('adm-rating-item3-text').value,
+        rating_item3_logo: document.getElementById('adm-rating-item3-logo').value,
+        
+        rating_animacion: document.getElementById('adm-rating-animacion').value
+    };
+
+    try {
+        const res = await fetch('/api/home/rating', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Error al actualizar.");
+        
+        alert("¡RATING SECTION (Sección de marcas) actualizada con éxito!");
+    } catch (err) {
+        alert("Error: " + err.message);
+        console.error(err);
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////
+// RATING SECTION end
+///////////////////////////////////////////////////////////////////////////
 
 
 

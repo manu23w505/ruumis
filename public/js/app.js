@@ -1300,3 +1300,48 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     cargarRoomsSectionHome();
 });
+
+//================================================================
+// RAITING SECTION HOME
+//================================================================
+
+// Agrega esta función dentro de tu app.js
+async function cargarRatingPublico() {
+    try {
+        const res = await fetch('/api/home');
+        if (!res.ok) throw new Error("No se pudo obtener la configuración pública del Rating.");
+        const datos = await res.json();
+
+        if (datos) {
+            // 1. Inyectamos los números y los textos de las marcas
+            if(document.getElementById('public-rating-num1')) document.getElementById('public-rating-num1').innerText = datos.rating_item1_num || '';
+            if(document.getElementById('public-rating-text1')) document.getElementById('public-rating-text1').innerText = datos.rating_item1_text || '';
+            if(document.getElementById('public-rating-logo1')) document.getElementById('public-rating-logo1').src = datos.rating_item1_logo || '';
+
+            if(document.getElementById('public-rating-num2')) document.getElementById('public-rating-num2').innerText = datos.rating_item2_num || '';
+            if(document.getElementById('public-rating-text2')) document.getElementById('public-rating-text2').innerText = datos.rating_item2_text || '';
+            if(document.getElementById('public-rating-logo2')) document.getElementById('public-rating-logo2').src = datos.rating_item2_logo || '';
+
+            if(document.getElementById('public-rating-num3')) document.getElementById('public-rating-num3').innerText = datos.rating_item3_num || '';
+            if(document.getElementById('public-rating-text3')) document.getElementById('public-rating-text3').innerText = datos.rating_item3_text || '';
+            if(document.getElementById('public-rating-logo3')) document.getElementById('public-rating-logo3').src = datos.rating_item3_logo || '';
+
+            // 2. Control de Animaciones dinámicas
+            const contenedorRating = document.getElementById('public-rating-section');
+            if (contenedorRating && datos.rating_animacion) {
+                // Removemos animaciones viejas si existieran y añadimos la guardada en la BD
+                contenedorRating.className = "raiting"; // Resetea las clases base del div
+                contenedorRating.classList.add(datos.rating_animacion);
+            }
+        }
+    } catch (err) {
+        console.error("Error al renderizar la sección pública de Ratings:", err);
+    }
+}
+
+// Aseguramos su ejecución automática agregándola al listener ya existente de tu DOM
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('public-rating-section')) {
+        cargarRatingPublico();
+    }
+});

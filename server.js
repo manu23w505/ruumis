@@ -1358,6 +1358,60 @@ app.put('/api/admin_home', (req, res) => {
     });
 });
 
+// ==========================================
+// HOME (RATING SECTION)
+// ==========================================
+app.put('/api/home/rating', (req, res) => {
+    const {
+        rating_item1_num,
+        rating_item1_text,
+        rating_item1_logo,
+        rating_item2_num,
+        rating_item2_text,
+        rating_item2_logo,
+        rating_item3_num,
+        rating_item3_text,
+        rating_item3_logo,
+        rating_animacion
+    } = req.body;
+
+    const sql = `
+        UPDATE admin_home 
+        SET 
+            rating_item1_num = ?, 
+            rating_item1_text = ?, 
+            rating_item1_logo = ?, 
+            rating_item2_num = ?, 
+            rating_item2_text = ?, 
+            rating_item2_logo = ?, 
+            rating_item3_num = ?, 
+            rating_item3_text = ?, 
+            rating_item3_logo = ?, 
+            rating_animacion = ?
+        WHERE id = 1
+    `;
+
+    db.query(sql, [
+        rating_item1_num, 
+        rating_item1_text, 
+        rating_item1_logo, 
+        rating_item2_num, 
+        rating_item2_text, 
+        rating_item2_logo, 
+        rating_item3_num, 
+        rating_item3_text, 
+        rating_item3_logo, 
+        rating_animacion
+    ], (err, result) => {
+        if (err) {
+            console.error("Error al actualizar la sección Rating:", err);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json({ success: true, message: 'Sección Rating actualizada correctamente.' });
+    });
+});
+
+
 
 cron.schedule('*/5 * * * *', () => {
     sincronizarCalendarios();
