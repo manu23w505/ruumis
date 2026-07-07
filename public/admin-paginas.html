@@ -396,6 +396,89 @@
                         </div>
                         <!--RAITING SECTION end-->
 
+                        <!--REVIEWS SECTION start-->
+                        <div id="section-reviews" class="page-tab active bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+                            <div class="border-b border-slate-200 pb-4 mb-6">
+                                <h2 class="text-xl font-bold text-slate-800">REVIEWS SECTION</h2>
+                                <p class="text-sm text-slate-500">Sección de comentarios</p>
+                            </div>
+
+                            <form id="form-reviews-title" class="mb-8 p-4 bg-slate-50 border border-slate-200 rounded-lg" onsubmit="actualizarTituloReviews(event)">
+                                <h3 class="text-sm font-semibold text-slate-700 mb-3 uppercase tracking-wider">Configuración de Título</h3>
+                                <div class="flex flex-col md:flex-row gap-4 items-end">
+                                    <div class="flex-1">
+                                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Título de la Sección (H2)</label>
+                                        <input type="text" id="adm-reviews-titulo-general" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm">
+                                    </div>
+                                    <button type="submit" class="px-5 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition font-medium text-sm">Guardar Título</button>
+                                </div>
+                            </form>
+
+                            <div class="mb-8 p-5 bg-teal-50/50 border border-teal-100 rounded-lg">
+                                <h3 class="text-sm font-semibold text-teal-800 mb-4 uppercase tracking-wider">Añadir Nuevo Comentario</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Nombre del Huésped</label>
+                                        <input type="text" id="new-rev-name" placeholder="Ej. Betty Randal" class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Fecha de Estancia</label>
+                                        <input type="text" id="new-rev-date" placeholder="Ej. July 2021" class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Calificación (Estrellas)</label>
+                                        <select id="new-rev-stars" class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm bg-white">
+                                            <option value="5">5 Estrellas</option>
+                                            <option value="4">4 Estrellas</option>
+                                            <option value="3">3 Estrellas</option>
+                                            <option value="2">2 Estrellas</option>
+                                            <option value="1">1 Estrella</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Título del Comentario</label>
+                                        <input type="text" id="new-rev-title" placeholder="Ej. Very cozy room close to everything" class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Texto del Comentario</label>
+                                        <textarea id="new-rev-text" rows="2" placeholder="Escribe el comentario aquí..." class="w-full px-3 py-1.5 border border-slate-300 rounded-md text-sm"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4 p-3 bg-white border border-slate-200 rounded-md">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Imagen de Fondo (Slide Media)</label>
+                                        <div class="flex items-center gap-3">
+                                            <img id="prev-new-rev-bg" src="img/placeholder.jpg" class="w-12 h-12 object-cover rounded border border-slate-300">
+                                            <input type="hidden" id="url-new-rev-bg" value="img/placeholder.jpg">
+                                            <input type="file" id="file-new-rev-bg" class="text-xs text-slate-500" onchange="subirImagenReview('file-new-rev-bg', 'prev-new-rev-bg', 'url-new-rev-bg')">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 uppercase mb-1">Avatar del Huésped</label>
+                                        <div class="flex items-center gap-3">
+                                            <img id="prev-new-rev-avatar" src="img/placeholder.jpg" class="w-12 h-12 object-cover rounded border border-slate-300">
+                                            <input type="hidden" id="url-new-rev-avatar" value="img/placeholder.jpg">
+                                            <input type="file" id="file-new-rev-avatar" class="text-xs text-slate-500" onchange="subirImagenReview('file-new-rev-avatar', 'prev-new-rev-avatar', 'url-new-rev-avatar')">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="text-right">
+                                    <button type="button" onclick="agregarComentario()" class="px-5 py-2 bg-emerald-600 text-white font-medium rounded-md hover:bg-emerald-700 transition text-sm shadow-sm">Agregar Comentario</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 class="text-sm font-semibold text-slate-700 mb-4 uppercase tracking-wider">Comentarios Registrados</h3>
+                                <div id="contenedor-lista-reviews" class="space-y-4">
+                                    </div>
+                            </div>
+                        </div>
+                        <!--REVIEWS SECTION end-->
             </div>
 
             <!--Editor About-->
@@ -727,7 +810,237 @@ async function guardarRatingHome(e) {
 // RATING SECTION end
 ///////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////
+// REVIEWS SECTION start
+///////////////////////////////////////////////////////////////////////////
 
+async function cargarSeccionReviewsAdmin() {
+    try {
+        const res = await fetch('/api/home/reviews');
+        if (!res.ok) throw new Error("Error al obtener la lista de reviews.");
+        const data = await res.json();
+
+        // Prefilar el campo del título general
+        document.getElementById('adm-reviews-titulo-general').value = data.reviews_titulo;
+
+        // Limpiar y renderizar la lista completa de comentarios
+        const listaContenedor = document.getElementById('contenedor-lista-reviews');
+        listaContenedor.innerHTML = '';
+
+        if (data.comentarios && data.comentarios.length === 0) {
+            listaContenedor.innerHTML = `<p class="text-sm text-slate-400 italic p-4">No hay comentarios registrados.</p>`;
+            return;
+        }
+
+        data.comentarios.forEach(review => {
+            const card = document.createElement('div');
+            card.className = "p-4 bg-white border border-slate-200 rounded-lg shadow-sm grid grid-cols-1 gap-4";
+            card.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase">Nombre</label>
+                        <input type="text" id="edit-name-${review.id}" value="${review.name}" class="w-full px-2 py-1 border border-slate-300 rounded text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase">Fecha de Estancia</label>
+                        <input type="text" id="edit-date-${review.id}" value="${review.date_text}" class="w-full px-2 py-1 border border-slate-300 rounded text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase">Estrellas</label>
+                        <select id="edit-stars-${review.id}" class="w-full px-2 py-1 border border-slate-300 rounded text-sm bg-white">
+                            <option value="5" ${review.stars === 5 ? 'selected' : ''}>5 Estrellas</option>
+                            <option value="4" ${review.stars === 4 ? 'selected' : ''}>4 Estrellas</option>
+                            <option value="3" ${review.stars === 3 ? 'selected' : ''}>3 Estrellas</option>
+                            <option value="2" ${review.stars === 2 ? 'selected' : ''}>2 Estrellas</option>
+                            <option value="1" ${review.stars === 1 ? 'selected' : ''}>1 Estrella</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase">Título del Comentario</label>
+                        <input type="text" id="edit-title-${review.id}" value="${review.title}" class="w-full px-2 py-1 border border-slate-300 rounded text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase">Texto</label>
+                        <textarea id="edit-text-${review.id}" rows="2" class="w-full px-2 py-1 border border-slate-300 rounded text-sm">${review.text}</textarea>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-2 rounded border border-slate-200">
+                    <div class="flex items-center gap-2">
+                        <img id="prev-edit-bg-${review.id}" src="${review.bg_image}" class="w-10 h-10 object-cover rounded border">
+                        <div class="flex-1">
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase">Cambiar Imagen Fondo</label>
+                            <input type="hidden" id="url-edit-bg-${review.id}" value="${review.bg_image}">
+                            <input type="file" class="text-xs text-slate-500 w-full" onchange="subirImagenReview('file-edit-bg-${review.id}', 'prev-edit-bg-${review.id}', 'url-edit-bg-${review.id}')" id="file-edit-bg-${review.id}">
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <img id="prev-edit-avatar-${review.id}" src="${review.avatar}" class="w-10 h-10 object-cover rounded border">
+                        <div class="flex-1">
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase">Cambiar Avatar</label>
+                            <input type="hidden" id="url-edit-avatar-${review.id}" value="${review.avatar}">
+                            <input type="file" class="text-xs text-slate-500 w-full" onchange="subirImagenReview('file-edit-avatar-${review.id}', 'prev-edit-avatar-${review.id}', 'url-edit-avatar-${review.id}')" id="file-edit-avatar-${review.id}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-2 border-t border-slate-100 pt-2">
+                    <button type="button" onclick="guardarEdicionComentario(${review.id})" class="px-3 py-1 bg-teal-600 text-white rounded text-xs font-medium hover:bg-teal-700 transition">Guardar Cambios</button>
+                    <button type="button" onclick="eliminarComentario(${review.id})" class="px-3 py-1 bg-rose-600 text-white rounded text-xs font-medium hover:bg-rose-700 transition">Eliminar</button>
+                </div>
+            `;
+            listaContenedor.appendChild(card);
+        });
+
+    } catch (err) {
+        console.error("Error al cargar la sección de administración:", err);
+    }
+}
+
+//Función global para subir imágenes a Cloudinary usando tu API local
+async function subirImagenReview(inputId, imagePreviewId, hiddenInputId) {
+    const fileInput = document.getElementById(inputId);
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+        const res = await fetch('/api/upload', { method: 'POST', body: formData });
+        const data = await res.json();
+
+        if (data.url) {
+            document.getElementById(imagePreviewId).src = data.url;
+            document.getElementById(hiddenInputId).value = data.url;
+        } else {
+            alert("No se pudo obtener la URL de subida de la imagen.");
+        }
+    } catch (err) {
+        console.error("Error al subir archivo a la nube:", err);
+        alert("Ocurrió un error al subir la imagen.");
+    }
+}
+
+//Guardar el Título General
+async function actualizarTituloReviews(event) {
+    event.preventDefault();
+    const titulo = document.getElementById('adm-reviews-titulo-general').value;
+
+    try {
+        const res = await fetch('/api/home/reviews/title', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reviews_titulo: titulo })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        alert("¡Título general actualizado con éxito!");
+    } catch (err) {
+        alert("Error: " + err.message);
+    }
+}
+
+//Registrar un Comentario Nuevo
+async function agregarComentario() {
+    const payload = {
+        name: document.getElementById('new-rev-name').value,
+        date_text: document.getElementById('new-rev-date').value,
+        stars: parseInt(document.getElementById('new-rev-stars').value),
+        title: document.getElementById('new-rev-title').value,
+        text: document.getElementById('new-rev-text').value,
+        bg_image: document.getElementById('url-new-rev-bg').value,
+        avatar: document.getElementById('url-new-rev-avatar').value
+    };
+
+    if (!payload.name || !payload.title || !payload.text) {
+        return alert("Por favor complete los campos de Nombre, Título y Texto del comentario.");
+    }
+
+    try {
+        const res = await fetch('/api/home/reviews', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        alert("¡Comentario añadido correctamente!");
+        
+        // Limpiar el formulario de ingreso
+        document.getElementById('new-rev-name').value = '';
+        document.getElementById('new-rev-date').value = '';
+        document.getElementById('new-rev-title').value = '';
+        document.getElementById('new-rev-text').value = '';
+        document.getElementById('url-new-rev-bg').value = 'img/placeholder.jpg';
+        document.getElementById('url-new-rev-avatar').value = 'img/placeholder.jpg';
+        document.getElementById('prev-new-rev-bg').src = 'img/placeholder.jpg';
+        document.getElementById('prev-new-rev-avatar').src = 'img/placeholder.jpg';
+
+        // Recargar la lista
+        cargarSeccionReviewsAdmin();
+    } catch (err) {
+        alert("Error al agregar: " + err.message);
+    }
+}
+
+//Guardar Edición de un Comentario Existente
+async function guardarEdicionComentario(id) {
+    const payload = {
+        name: document.getElementById(`edit-name-${id}`).value,
+        date_text: document.getElementById(`edit-date-${id}`).value,
+        stars: parseInt(document.getElementById(`edit-stars-${id}`).value),
+        title: document.getElementById(`edit-title-${id}`).value,
+        text: document.getElementById(`edit-text-${id}`).value,
+        bg_image: document.getElementById(`url-edit-bg-${id}`).value,
+        avatar: document.getElementById(`url-edit-avatar-${id}`).value
+    };
+
+    try {
+        const res = await fetch(`/api/home/reviews/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        alert("¡Comentario actualizado correctamente!");
+        cargarSeccionReviewsAdmin();
+    } catch (err) {
+        alert("Error al actualizar: " + err.message);
+    }
+}
+
+//Eliminar Comentario de la Base de Datos
+async function eliminarComentario(id) {
+    if (!confirm("¿Está seguro de que desea eliminar permanentemente este comentario?")) return;
+
+    try {
+        const res = await fetch(`/api/home/reviews/${id}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        alert("¡Comentario eliminado!");
+        cargarSeccionReviewsAdmin();
+    } catch (err) {
+        alert("Error al eliminar: " + err.message);
+    }
+}
+
+// Inicializar de forma automática al cargar la página del CMS
+document.addEventListener('DOMContentLoaded', () => {
+    cargarSeccionReviewsAdmin();
+});
+
+///////////////////////////////////////////////////////////////////////////
+// REVIEWS SECTION start
+///////////////////////////////////////////////////////////////////////////
 
     </script>
 </body>

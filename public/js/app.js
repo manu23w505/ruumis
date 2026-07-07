@@ -1345,3 +1345,89 @@ document.addEventListener('DOMContentLoaded', () => {
         cargarRatingPublico();
     }
 });
+
+//================================================================
+// REVIEWS SECTION HOME
+//================================================================
+
+async function cargarReviewsPublico() {
+    try {
+        const response = await fetch('/api/home/reviews');
+        if (!response.ok) throw new Error("No se pudieron obtener las reseñas.");
+        const data = await response.json();
+
+        // 1. Renderizar el título general
+        const txtTitulo = document.getElementById('public-reviews-titulo');
+        if (txtTitulo) txtTitulo.textContent = data.reviews_titulo;
+
+        // 2. Obtener los contenedores wrappers de Swiper
+        const mediaWrapper = document.getElementById('public-reviews-media-wrapper');
+        const contentWrapper = document.getElementById('public-reviews-content-wrapper');
+
+        if (mediaWrapper && contentWrapper && data.comentarios) {
+            let htmlMedia = '';
+            let htmlContent = '';
+
+            data.comentarios.forEach(review => {
+                // Generar estrellas dinámicas
+                let estrellasHtml = '';
+                for (let i = 0; i < review.stars; i++) {
+                    estrellasHtml += `<i class="icon-star icon"></i>`;
+                }
+
+                // Armar slider izquierdo (Imágenes de fondo)
+                htmlMedia += `
+                    <div class="swiper-slide">
+                        <picture>
+                            <source data-srcset="${review.bg_image}" srcset="${review.bg_image}" />
+                            <img class="lazy" data-src="${review.bg_image}" src="${review.bg_image}" alt="media" />
+                        </picture>
+                    </div>
+                `;
+
+                // Armar slider derecho (Contenido e información del huésped)
+                htmlContent += `
+                    <div class="reviews_slider-slide d-flex flex-column justify-content-between swiper-slide">
+                        <div class="reviews_slider-slide_stars d-flex align-items-center">
+                            ${estrellasHtml}
+                        </div>
+                        <span class="reviews_slider-slide_date">
+                            <span class="h4">Date of stay:</span>
+                            ${review.date_text}
+                        </span>
+                        <div class="reviews_slider-slide_main">
+                            <h4 class="title">${review.title}</h4>
+                            <p class="text">${review.text}</p>
+                        </div>
+                        <span class="reviews_slider-slide_guest d-flex align-items-center">
+                            <span class="avatar">
+                                <picture>
+                                    <source data-srcset="${review.avatar}" srcset="${review.avatar}" />
+                                    <img class="lazy" data-src="${review.avatar}" src="${review.avatar}" alt="guest avatar" />
+                                </picture>
+                            </span>
+                            <span class="name h6">${review.name}</span>
+                        </span>
+                    </div>
+                `;
+            });
+
+            mediaWrapper.innerHTML = htmlMedia;
+            contentWrapper.innerHTML = htmlContent;
+            
+            // NOTA: Si el Swiper de tu plantilla necesita reinicializarse después de meter los nodos, 
+            // puedes disparar un evento o llamar la actualización aquí si tienes la instancia global:
+            // if (typeof reviewsSliderMedia !== 'undefined') reviewsSliderMedia.update();
+            // if (typeof reviewsSliderMain !== 'undefined') reviewsSliderMain.update();
+        }
+    } catch (error) {
+        console.error("Error al renderizar la sección de reseñas públicas:", error);
+    }
+}
+
+// Asegurar ejecución automática en la carga del DOM
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('public-reviews-titulo')) {
+        cargarReviewsPublico();
+    }
+});

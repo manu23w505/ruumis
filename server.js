@@ -1412,6 +1412,91 @@ app.put('/api/home/rating', (req, res) => {
 });
 
 
+// ==========================================
+// ENDPOINTS PARA REVIEWS SECTION
+// ==========================================
+
+//Obtener el título de la sección y la lista completa de comentarios
+app.get('/api/home/reviews', (req, res) => {
+    //Primero obtenemos el título de la tabla admin_home
+    db.query("SELECT reviews_titulo FROM admin_home WHERE id = 1", (err, titleResult) => {
+        if (err) {
+            console.error("Error al obtener título de reviews:", err);
+            return res.status(500).json({ error: err.message });
+        }
+        
+        //Luego obtenemos todos los comentarios individuales
+        db.query("SELECT * FROM home_reviews ORDER BY id ASC", (err, reviewsResults) => {
+            if (err) {
+                console.error("Error al obtener lista de comentarios:", err);
+                return res.status(500).json({ error: err.message });
+            }
+            
+            res.json({
+                reviews_titulo: titleResult[0] ? titleResult[0].reviews_titulo : 'What our guests say',
+                comentarios: reviewsResults
+            });
+        });
+    });
+});
+
+//Actualizar el título general de la sección
+app.put('/api/home/reviews/title', (req, res) => {
+    const { reviews_titulo } = req.body;
+    db.query("UPDATE admin_home SET reviews_titulo = ? WHERE id = 1", [reviews_titulo], (err, result) => {
+        if (err) {
+            console.error("Error al actualizar título de reviews:", err);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json({ success: true, message: 'Título de la sección actualizado correctamente.' });
+    });
+});
+
+//Agregar un nuevo comentario
+app.post('/api/home/reviews', (req, res) => {
+    const { bg_image, stars, date_text, title, text, avatar, name } = req.body;
+    const sql = `INSERT INTO home_reviews (bg_image, stars, date_text, title, text, avatar, name) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    
+    db.query(sql, [bg_image || 'img/placeholder.jpg', stars || 5, date_text, title, text, avatar || 'img/placeholder.jpg', name], (err, result) => {
+        if (err) {
+            console.error("Error al insertar comentario:", err);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json({ success: true, message: 'Comentario agregado con éxito.', insertId: result.insertId });
+    });
+});
+
+//Editar un comentario existente
+app.put('/api/home/reviews/:id', (req, res) => {
+    const { id } = req.params;
+    const { bg_image, stars, date_text, title, text, avatar, name } = req.body;
+    const sql = `UPDATE home_reviews 
+                 SET bg_image = ?, stars = ?, date_text = ?, title = ?, text = ?, avatar = ?, name = ? 
+                 WHERE id = ?`;
+                 
+    db.query(sql, [bg_image, stars, date_text, title, text, avatar, name, id], (err, result) => {
+        if (err) {
+            console.error("Error al actualizar comentario:", err);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json({ success: true, message: 'Comentario actualizado con éxito.' });
+    });
+});
+
+//Eliminar un comentario
+app.delete('/api/home/reviews/:id', (req, res) => {
+    const { id } = req.params;
+    db.query("DELETE FROM home_reviews WHERE id = ?", [id], (err, result) => {
+        if (err) {
+            console.error("Error al eliminar comentario:", err);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json({ success: true, message: 'Comentario eliminado correctamente.' });
+    });
+});
+
+
 
 cron.schedule('*/5 * * * *', () => {
     sincronizarCalendarios();
