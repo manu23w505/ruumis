@@ -1673,6 +1673,97 @@ app.put('/api/home/promo', upload.single('promo_imagen'), async (req, res) => {
     }
 });
 
+// ==========================================
+// CONTACTS SECTION
+// ==========================================
+app.put('/api/home/contacts', upload.single('contacts_imagen'), async (req, res) => {
+    const {
+        contacts_titulo,
+        contacts_descripcion,
+        contacts_tel_titulo,
+        contacts_tel1,
+        contacts_tel2,
+        contacts_email_titulo,
+        contacts_email1,
+        contacts_email2,
+        contacts_loc_titulo,
+        contacts_loc1,
+        contacts_loc2,
+        contacts_work_titulo,
+        contacts_work1,
+        contacts_work2,
+        contacts_imagen_actual
+    } = req.body;
+
+    // Preservamos la URL actual si el usuario no decide cambiar la imagen
+    let contacts_imagen_url = contacts_imagen_actual;
+
+    try {
+        // Si se seleccionó un archivo nuevo, lo subimos en un flujo a Cloudinary
+        if (req.file) {
+            const result = await new Promise((resolve, reject) => {
+                const uploadStream = cloudinary.uploader.upload_stream(
+                    { folder: 'ruumis_contacts' },
+                    (error, uploadResult) => {
+                        if (error) return reject(error);
+                        resolve(uploadResult);
+                    }
+                );
+                uploadStream.end(req.file.buffer);
+            });
+            contacts_imagen_url = result.secure_url;
+        }
+
+        const sql = `
+            UPDATE admin_home 
+            SET 
+                contacts_titulo = ?, 
+                contacts_descripcion = ?, 
+                contacts_tel_titulo = ?, 
+                contacts_tel1 = ?, 
+                contacts_tel2 = ?, 
+                contacts_email_titulo = ?, 
+                contacts_email1 = ?, 
+                contacts_email2 = ?, 
+                contacts_loc_titulo = ?, 
+                contacts_loc1 = ?, 
+                contacts_loc2 = ?, 
+                contacts_work_titulo = ?, 
+                contacts_work1 = ?, 
+                contacts_work2 = ?, 
+                contacts_imagen = ?
+            WHERE id = 1
+        `;
+
+        db.query(sql, [
+            contacts_titulo,
+            contacts_descripcion,
+            contacts_tel_titulo,
+            contacts_tel1,
+            contacts_tel2,
+            contacts_email_titulo,
+            contacts_email1,
+            contacts_email2,
+            contacts_loc_titulo,
+            contacts_loc1,
+            contacts_loc2,
+            contacts_work_titulo,
+            contacts_work1,
+            contacts_work2,
+            contacts_imagen_url
+        ], (err, result) => {
+            if (err) {
+                console.error("Error al actualizar la tabla admin_home (Contacts):", err);
+                return res.status(500).json({ error: "Error al guardar en la base de datos" });
+            }
+            res.json({ message: "¡Sección CONTACTS actualizada con éxito!", contacts_imagen: contacts_imagen_url });
+        });
+
+    } catch (error) {
+        console.error("Error en la subida a Cloudinary de la sección Contacts:", error);
+        res.status(500).json({ error: "Error al procesar la imagen de contacto" });
+    }
+});
 
 
 cron.schedule('*/5 * * * *', () => {

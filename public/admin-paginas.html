@@ -553,6 +553,72 @@
                             </form>
                         </div>
                         <!--PROMO SECTION end-->
+
+                        <!--CONTACTS SECTION start-->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mt-6">
+                            <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-800">CONTACTS SECTION</h3>
+                                    <p class="text-sm text-slate-500">Sección de contacto home</p>
+                                </div>
+                            </div>
+                            
+                            <form id="form-contacts-section" enctype="multipart/form-data" class="space-y-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Título General</label>
+                                        <input type="text" id="adm-contacts-titulo" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Imagen de Sección (Cloudinary)</label>
+                                        <input type="file" id="input-contacts-imagen" accept="image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100">
+                                        <input type="hidden" id="url-contacts-imagen-actual">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Descripción de Contactos</label>
+                                    <textarea id="adm-contacts-descripcion" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none"></textarea>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-2">
+                                        <label class="block text-xs font-bold text-teal-800 uppercase tracking-wider mb-1">Configuración de Teléfono</label>
+                                        <input type="text" id="adm-contacts-tel-titulo" placeholder="Título Bloque" class="w-full p-2 border border-slate-300 rounded-lg text-xs">
+                                        <input type="text" id="adm-contacts-tel1" placeholder="Teléfono Línea 1" class="w-full p-2 border border-slate-300 rounded-lg text-xs">
+                                        <input type="text" id="adm-contacts-tel2" placeholder="Teléfono Línea 2" class="w-full p-2 border border-slate-300 rounded-lg text-xs">
+                                    </div>
+
+                                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-2">
+                                        <label class="block text-xs font-bold text-teal-800 uppercase tracking-wider mb-1">Configuración de Emails</label>
+                                        <input type="text" id="adm-contacts-email-titulo" placeholder="Título Bloque" class="w-full p-2 border border-slate-300 rounded-lg text-xs">
+                                        <input type="text" id="adm-contacts-email1" placeholder="Email Línea 1" class="w-full p-2 border border-slate-300 rounded-lg text-xs">
+                                        <input type="text" id="adm-contacts-email2" placeholder="Email Línea 2" class="w-full p-2 border border-slate-300 rounded-lg text-xs">
+                                    </div>
+
+                                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-2">
+                                        <label class="block text-xs font-bold text-teal-800 uppercase tracking-wider mb-1">Configuración de Ubicación</label>
+                                        <input type="text" id="adm-contacts-loc-titulo" placeholder="Título Bloque" class="w-full p-2 border border-slate-300 rounded-lg text-xs">
+                                        <input type="text" id="adm-contacts-loc1" placeholder="Dirección Línea 1" class="w-full p-2 border border-slate-300 rounded-lg text-xs">
+                                        <input type="text" id="adm-contacts-loc2" placeholder="Dirección Línea 2" class="w-full p-2 border border-slate-300 rounded-lg text-xs">
+                                    </div>
+
+                                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-2">
+                                        <label class="block text-xs font-bold text-teal-800 uppercase tracking-wider mb-1">Configuración de Horarios</label>
+                                        <input type="text" id="adm-contacts-work-titulo" placeholder="Título Bloque" class="w-full p-2 border border-slate-300 rounded-lg text-xs">
+                                        <input type="text" id="adm-contacts-work1" placeholder="Horario Línea 1" class="w-full p-2 border border-slate-300 rounded-lg text-xs">
+                                        <input type="text" id="adm-contacts-work2" placeholder="Horario Línea 2" class="w-full p-2 border border-slate-300 rounded-lg text-xs">
+                                    </div>
+                                </div>
+
+                                <div class="flex justify-end pt-2">
+                                    <button type="submit" class="bg-teal-700 hover:bg-teal-800 text-white font-semibold text-sm px-5 py-2.5 rounded-lg transition shadow-sm">
+                                        Guardar Sección Contactos
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <!--CONTACTS SECTION end-->
             </div>
 
             <!--Editor About-->
@@ -1179,7 +1245,99 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 ///////////////////////////////////////////////////////////////////////////
-// PROMO SECTION start
+// PROMO SECTION end
+///////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////
+// CONTACTS SECTION start
+///////////////////////////////////////////////////////////////////////////
+
+async function cargarContactsAdmin() {
+    try {
+        const res = await fetch('/api/home/content'); // El mismo endpoint de consulta global de admin_home
+        const datos = await res.json();
+        if (!datos) return;
+
+        document.getElementById('adm-contacts-titulo').value = datos.contacts_titulo || '';
+        document.getElementById('adm-contacts-descripcion').value = datos.contacts_descripcion || '';
+        document.getElementById('url-contacts-imagen-actual').value = datos.contacts_imagen || '';
+
+        document.getElementById('adm-contacts-tel-titulo').value = datos.contacts_tel_titulo || '';
+        document.getElementById('adm-contacts-tel1').value = datos.contacts_tel1 || '';
+        document.getElementById('adm-contacts-tel2').value = datos.contacts_tel2 || '';
+
+        document.getElementById('adm-contacts-email-titulo').value = datos.contacts_email_titulo || '';
+        document.getElementById('adm-contacts-email1').value = datos.contacts_email1 || '';
+        document.getElementById('adm-contacts-email2').value = datos.contacts_email2 || '';
+
+        document.getElementById('adm-contacts-loc-titulo').value = datos.contacts_loc_titulo || '';
+        document.getElementById('adm-contacts-loc1').value = datos.contacts_loc1 || '';
+        document.getElementById('adm-contacts-loc2').value = datos.contacts_loc2 || '';
+
+        document.getElementById('adm-contacts-work-titulo').value = datos.contacts_work_titulo || '';
+        document.getElementById('adm-contacts-work1').value = datos.contacts_work1 || '';
+        document.getElementById('adm-contacts-work2').value = datos.contacts_work2 || '';
+    } catch (err) {
+        console.error("Error al cargar configuración de contactos en el Administrador:", err);
+    }
+}
+
+async function guardarContactsSection(event) {
+    event.preventDefault();
+
+    const formData = new FormData();
+    formData.append('contacts_titulo', document.getElementById('adm-contacts-titulo').value);
+    formData.append('contacts_descripcion', document.getElementById('adm-contacts-descripcion').value);
+    formData.append('contacts_imagen_actual', document.getElementById('url-contacts-imagen-actual').value);
+
+    formData.append('contacts_tel_titulo', document.getElementById('adm-contacts-tel-titulo').value);
+    formData.append('contacts_tel1', document.getElementById('adm-contacts-tel1').value);
+    formData.append('contacts_tel2', document.getElementById('adm-contacts-tel2').value);
+
+    formData.append('contacts_email_titulo', document.getElementById('adm-contacts-email-titulo').value);
+    formData.append('contacts_email1', document.getElementById('adm-contacts-email1').value);
+    formData.append('contacts_email2', document.getElementById('adm-contacts-email2').value);
+
+    formData.append('contacts_loc_titulo', document.getElementById('adm-contacts-loc-titulo').value);
+    formData.append('contacts_loc1', document.getElementById('adm-contacts-loc1').value);
+    formData.append('contacts_loc2', document.getElementById('adm-contacts-loc2').value);
+
+    formData.append('contacts_work_titulo', document.getElementById('adm-contacts-work-titulo').value);
+    formData.append('contacts_work1', document.getElementById('adm-contacts-work1').value);
+    formData.append('contacts_work2', document.getElementById('adm-contacts-work2').value);
+
+    const inputImagen = document.getElementById('input-contacts-imagen');
+    if (inputImagen && inputImagen.files[0]) {
+        formData.append('contacts_imagen', inputImagen.files[0]);
+    }
+
+    try {
+        const res = await fetch('/api/home/contacts', {
+            method: 'PUT',
+            body: formData
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Error al actualizar la sección de contactos.");
+
+        alert("¡CONTACTS SECTION actualizada con éxito!");
+        location.reload();
+    } catch (err) {
+        alert("Error: " + err.message);
+        console.error(err);
+    }
+}
+
+// Inicialización de escuchas automáticas
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('form-contacts-section')) {
+        cargarContactsAdmin();
+        document.getElementById('form-contacts-section').addEventListener('submit', guardarContactsSection);
+    }
+});
+
+///////////////////////////////////////////////////////////////////////////
+// CONTACTS SECTION end
 ///////////////////////////////////////////////////////////////////////////
 
 
