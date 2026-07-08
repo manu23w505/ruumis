@@ -606,8 +606,8 @@ app.delete('/api/anuncios/:id', (req, res) => {
     db.query('SELECT imagen, imagenes_adicionales FROM anuncios WHERE id = ?', [id], (err, results) => {
         if (!err && results.length > 0) {
             const anuncio = results[0];
-            // SE REMOVIÓ 'const fs = require('fs');' por estar duplicado
             
+            // Borrado asíncrono para no congelar el servidor
             if (anuncio.imagen && anuncio.imagen !== 'default.jpg' && anuncio.imagen !== 'placeholder.jpg') {
                 const rutaImg = path.join(__dirname, 'public/uploads', anuncio.imagen);
                 if (fs.existsSync(rutaImg)) {
@@ -632,6 +632,7 @@ app.delete('/api/anuncios/:id', (req, res) => {
             }
         }
 
+        // Eliminar el registro de la BD
         db.query('DELETE FROM anuncios WHERE id = ?', [id], (err, result) => {
             if (err) return res.status(500).json({ error: 'Error al eliminar el registro' });
             res.json({ success: true, message: 'Anuncio e imágenes eliminadas con éxito de forma segura' });
