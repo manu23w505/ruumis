@@ -1167,7 +1167,6 @@ app.put('/api/footer', (req, res) => { // <-- ALINEADO: Se quitó el '/textos' s
 // ==========================================
 // SECCIÓN: CONTROL DE IMÁGENES (CLOUDINARY)
 // ==========================================
-const fs = require('fs');
 
 // 1. Subir una imagen individual (ej. Logotipo, logos de marcas, etc.) directamente a Cloudinary
 app.post('/api/upload-image', upload.single('imagen'), (req, res) => {
