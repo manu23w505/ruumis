@@ -60,7 +60,8 @@ const db = mysql.createPool({
     database: process.env.DB_NAME || 'ruumis',
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    queueLimit: 0,
+    ssl: { rejectUnauthorized: false } 
 });
 
 // Verificar la conexión inicial del Pool
