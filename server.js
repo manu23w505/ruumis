@@ -22,10 +22,6 @@ if (!fs.existsSync(dirUploadsImages)) {
     fs.mkdirSync(dirUploadsImages, { recursive: true });
 }
 
-// Asegúrate de tener fs y path importados arriba del todo una sola vez:
-const fs = require('fs');
-const path = require('path');
-
 // 1. Configurar almacenamiento local en disco
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -56,7 +52,7 @@ const upload = multer({
     }
 });
 
-// Configuración de la Base de Datos (Mantener tus credenciales actuales de desarrollo o producción)
+// Configuración de la Base de Datos
 const db = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
