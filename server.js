@@ -22,29 +22,37 @@ if (!fs.existsSync(dirUploadsImages)) {
     fs.mkdirSync(dirUploadsImages, { recursive: true });
 }
 
-// Configuración de almacenamiento en el disco duro local
-const storageLocal = multer.diskStorage({
-    destination: function (req, file, cb) {
-        // Guardamos directamente en la carpeta estructurada
-        cb(null, 'public/uploads/images/');
+// Asegúrate de tener fs y path importados arriba del todo una sola vez:
+const fs = require('fs');
+const path = require('path');
+
+// 1. Configurar almacenamiento local en disco
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const dir = path.join(__dirname, 'public/uploads');
+        // Salvavidas: Si la carpeta de destino no existe, la crea automáticamente
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+        cb(null, dir);
     },
-    filename: function (req, file, cb) {
-        // Creamos un nombre de archivo único con la marca de tiempo para evitar duplicados
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const ext = path.extname(file.originalname).toLowerCase();
-        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+    filename: (req, file, cb) => {
+        // Creamos un nombre único usando la fecha actual + un número aleatorio
+        const sufijoUnico = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, sufijoUnico + path.extname(file.originalname).toLowerCase());
     }
 });
 
+// 2. Aplicar la configuración al middleware upload
 const upload = multer({ 
-    storage: storageLocal,
-    limits: { fileSize: 1024 * 1024 * 8 }, // Aumentamos límite a 8MB por si suben fotos de celulares modernos
+    storage: storage,
+    limits: { fileSize: 1024 * 1024 * 5 }, // 5MB límite
     fileFilter: (req, file, cb) => {
-        const filetypes = /jpeg|jpg|png|webp|ico/;
+        const filetypes = /jpeg|jpg|png|webp/;
         const mimetype = filetypes.test(file.mimetype);
         const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
         if (mimetype && extname) return cb(null, true);
-        cb(new Error("Error: El archivo debe ser una imagen válida (jpeg, jpg, png, webp, ico)"));
+        cb(new Error('Formato de imagen no permitido. Solo se aceptan png, jpg, jpeg y webp.'));
     }
 });
 
@@ -69,7 +77,7 @@ db.getConnection((err, connection) => {
     }
 });
 
-
+//login
 app.post('/api/login', async (req, res) => {
 const { usuario, contrasena, recaptchaToken } = req.body;
     
@@ -122,6 +130,11 @@ const { usuario, contrasena, recaptchaToken } = req.body;
     });
 });
 
+//====================================
+//  CONFIG GENERAL
+//====================================
+
+//ubicaciones
 app.get('/api/ciudades', (req, res) => {
     db.query('SELECT * FROM ciudades ORDER BY nombre ASC', (err, results) => {
         if (err) return res.status(500).json({ error: 'Error al obtener ciudades' });
@@ -161,45 +174,6 @@ app.get('/api/ubicaciones', (req, res) => {
             return res.status(500).json({ error: 'Error al obtener ubicaciones' });
         }
         res.json(results);
-    });
-});
-
-app.get('/api/tipos-propiedad', (req, res) => {
-    db.query('SELECT * FROM tipos_propiedad ORDER BY nombre ASC', (err, results) => {
-        if (err) return res.status(500).json({ error: 'Error al obtener tipos de propiedad' });
-        res.json(results);
-    });
-});
-
-app.post('/api/tipos-propiedad', (req, res) => {
-    const { nombre } = req.body;
-    if (!nombre) return res.status(400).json({ error: 'El nombre es requerido.' });
-
-    db.query('INSERT INTO tipos_propiedad (nombre) VALUES (?)', [nombre.trim()], (err, result) => {
-        if (err) {
-            console.error("Error al insertar tipo:", err);
-            return res.status(500).json({ error: 'Error al registrar tipo de propiedad' });
-        }
-        res.json({ success: true, id: result.insertId });
-    });
-});
-
-app.put('/api/tipos-propiedad/:id', (req, res) => {
-    const { id } = req.params;
-    const { nombre } = req.body;
-    if (!nombre) return res.status(400).json({ error: 'El nombre es requerido.' });
-
-    db.query('UPDATE tipos_propiedad SET nombre = ? WHERE id = ?', [nombre.trim(), id], (err, result) => {
-        if (err) return res.status(500).json({ error: 'Error al actualizar tipo de propiedad' });
-        res.json({ success: true });
-    });
-});
-
-app.delete('/api/tipos-propiedad/:id', (req, res) => {
-    const { id } = req.params;
-    db.query('DELETE FROM tipos_propiedad WHERE id = ?', [id], (err, result) => {
-        if (err) return res.status(500).json({ error: 'Error al eliminar tipo de propiedad' });
-        res.json({ success: true });
     });
 });
 
@@ -373,9 +347,52 @@ app.delete('/api/ubicaciones/:id', (req, res) => {
     });
 });
 
+//tipo de propiedades
+app.get('/api/tipos-propiedad', (req, res) => {
+    db.query('SELECT * FROM tipos_propiedad ORDER BY nombre ASC', (err, results) => {
+        if (err) return res.status(500).json({ error: 'Error al obtener tipos de propiedad' });
+        res.json(results);
+    });
+});
+
+app.post('/api/tipos-propiedad', (req, res) => {
+    const { nombre } = req.body;
+    if (!nombre) return res.status(400).json({ error: 'El nombre es requerido.' });
+
+    db.query('INSERT INTO tipos_propiedad (nombre) VALUES (?)', [nombre.trim()], (err, result) => {
+        if (err) {
+            console.error("Error al insertar tipo:", err);
+            return res.status(500).json({ error: 'Error al registrar tipo de propiedad' });
+        }
+        res.json({ success: true, id: result.insertId });
+    });
+});
+
+app.put('/api/tipos-propiedad/:id', (req, res) => {
+    const { id } = req.params;
+    const { nombre } = req.body;
+    if (!nombre) return res.status(400).json({ error: 'El nombre es requerido.' });
+
+    db.query('UPDATE tipos_propiedad SET nombre = ? WHERE id = ?', [nombre.trim(), id], (err, result) => {
+        if (err) return res.status(500).json({ error: 'Error al actualizar tipo de propiedad' });
+        res.json({ success: true });
+    });
+});
+
+app.delete('/api/tipos-propiedad/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('DELETE FROM tipos_propiedad WHERE id = ?', [id], (err, result) => {
+        if (err) return res.status(500).json({ error: 'Error al eliminar tipo de propiedad' });
+        res.json({ success: true });
+    });
+});
+
+//anuncios 
+
+// ==========================================
+// GET: OBTENER ANUNCIOS
+// ==========================================
 app.get('/api/anuncios', (req, res) => {
-    // Si la petición viene desde el panel administrativo (?admin=true), 
-    // ordenamos por ID de forma fija. Si no, mantenemos el comportamiento aleatorio público.
     const orden = req.query.admin === 'true' ? 'a.id DESC' : 'RAND()';
 
     const sql = `
@@ -397,8 +414,10 @@ app.get('/api/anuncios', (req, res) => {
     });
 });
 
+// ==========================================
+// POST: CREAR ANUNCIO
+// ==========================================
 app.post('/api/anuncios', (req, res) => {
-    // Cambiamos a upload.array para aceptar hasta 5 imágenes
     upload.array('imagenes', 5)(req, res, (err) => {
         if (err) {
             console.error('Intento de subida bloqueado por seguridad:', err.message);
@@ -410,16 +429,16 @@ app.post('/api/anuncios', (req, res) => {
             ubicacion_id, tipo_propiedad_id, recamaras, camas, banos, capacidad_personas, amenidades, destacado
         } = req.body;
 
-        // Procesamos las imágenes subidas
         let imagenPrincipal = 'default.jpg';
         let imagenesAdicionales = [];
 
+        // Ahora que usamos diskStorage, .filename sí existirá
         if (req.files && req.files.length > 0) {
-            // La primera imagen será la principal (portada)
-            imagenPrincipal = req.files[0].filename;
-            // Las demás van al arreglo de adicionales
+            imagenPrincipal = req.files[0].filename || 'default.jpg';
             for (let i = 1; i < req.files.length; i++) {
-                imagenesAdicionales.push(req.files[i].filename);
+                if(req.files[i].filename) {
+                    imagenesAdicionales.push(req.files[i].filename);
+                }
             }
         }
 
@@ -449,16 +468,21 @@ app.post('/api/anuncios', (req, res) => {
             destacado || 0
         ], (err, result) => {
             if (err) {
-                console.error(err);
+                console.error("====== ERROR AL INSERTAR ANUNCIO ======", err);
                 return res.status(500).json({ error: 'Error al insertar en la base de datos' });
             }
             
             res.json({ success: true, message: 'Anuncio guardado con éxito', id: result.insertId });
-            sincronizarCalendarios(); // Conservamos tu función original
+            if (typeof sincronizarCalendarios === 'function') {
+                sincronizarCalendarios();
+            }
         });
     });
 });
 
+// ==========================================
+// PUT: ACTUALIZAR ANUNCIO
+// ==========================================
 app.put('/api/anuncios/:id', (req, res) => {
     upload.array('imagenes', 5)(req, res, (err) => {
         if (err) {
@@ -481,13 +505,12 @@ app.put('/api/anuncios/:id', (req, res) => {
         const parsedBanos = banos ? parseFloat(banos) : 0.0; 
         const parsedCapacidad = capacidad_personas ? parseInt(capacidad_personas) : 0;
 
-        // Consultamos los valores actuales para saber qué imágenes tiene antes de actualizar
         db.query('SELECT imagen, imagenes_adicionales FROM anuncios WHERE id = ?', [id], (err, currentData) => {
             if (err || currentData.length === 0) {
                 return res.status(500).json({ error: 'Anuncio no encontrado o error de consulta' });
             }
 
-            let imagenPrincipal = currentData[0].imagen;
+            let imagenPrincipal = currentData[0].imagen || 'default.jpg';
             let imagenesAdicionalesArray = [];
 
             try {
@@ -500,11 +523,11 @@ app.put('/api/anuncios/:id', (req, res) => {
                 imagenesAdicionalesArray = [];
             }
 
-            // SI EL USUARIO SUBIÓ NUEVAS IMÁGENES: Procedemos a limpiar los archivos viejos físicos
+            // SI EL USUARIO SUBIÓ NUEVAS IMÁGENES
             if (req.files && req.files.length > 0) {
-                const fs = require('fs');
+                // SE REMOVIÓ 'const fs = require('fs');' por estar duplicado
 
-                // 1. Eliminar la portada anterior (siempre que no sea la default)
+                // 1. Eliminar la portada anterior físico
                 if (imagenPrincipal && imagenPrincipal !== 'default.jpg' && imagenPrincipal !== 'placeholder.jpg') {
                     const rutaViejaPortada = path.join(__dirname, 'public/uploads', imagenPrincipal);
                     if (fs.existsSync(rutaViejaPortada)) {
@@ -512,7 +535,7 @@ app.put('/api/anuncios/:id', (req, res) => {
                     }
                 }
 
-                // 2. Eliminar las imágenes secundarias anteriores de la carpeta uploads
+                // 2. Eliminar las imágenes secundarias anteriores
                 if (Array.isArray(imagenesAdicionalesArray)) {
                     imagenesAdicionalesArray.forEach(img => {
                         if (img && img !== 'default.jpg' && img !== 'placeholder.jpg') {
@@ -524,12 +547,14 @@ app.put('/api/anuncios/:id', (req, res) => {
                     });
                 }
 
-                // 3. Ahora sí, asignamos el nuevo set de imágenes subidas
-                imagenPrincipal = req.files[0].filename; 
+                // 3. Asignar nuevos nombres locales (.filename)
+                imagenPrincipal = req.files[0].filename || 'default.jpg'; 
                 imagenesAdicionalesArray = []; 
                 
                 for (let i = 1; i < req.files.length; i++) {
-                    imagenesAdicionalesArray.push(req.files[i].filename);
+                    if(req.files[i].filename) {
+                        imagenesAdicionalesArray.push(req.files[i].filename);
+                    }
                 }
             }
 
@@ -563,7 +588,7 @@ app.put('/api/anuncios/:id', (req, res) => {
 
             db.query(sql, params, (err, result) => {
                 if (err) {
-                    console.error("====== ERROR CRÍTICO SQL ======");
+                    console.error("====== ERROR CRÍTICO SQL PUT ======");
                     console.error("Mensaje:", err.message);
                     return res.status(500).json({ error: `Error en Base de Datos: ${err.message}` });
                 }
@@ -576,15 +601,17 @@ app.put('/api/anuncios/:id', (req, res) => {
     });
 });
 
+// ==========================================
+// DELETE: ELIMINAR ANUNCIO
+// ==========================================
 app.delete('/api/anuncios/:id', (req, res) => {
     const { id } = req.params;
 
     db.query('SELECT imagen, imagenes_adicionales FROM anuncios WHERE id = ?', [id], (err, results) => {
         if (!err && results.length > 0) {
             const anuncio = results[0];
-            const fs = require('fs');
+            // SE REMOVIÓ 'const fs = require('fs');' por estar duplicado
             
-            // Borrado asíncrono para no congelar el servidor
             if (anuncio.imagen && anuncio.imagen !== 'default.jpg' && anuncio.imagen !== 'placeholder.jpg') {
                 const rutaImg = path.join(__dirname, 'public/uploads', anuncio.imagen);
                 if (fs.existsSync(rutaImg)) {
@@ -609,13 +636,119 @@ app.delete('/api/anuncios/:id', (req, res) => {
             }
         }
 
-        // Eliminar el registro de la BD
         db.query('DELETE FROM anuncios WHERE id = ?', [id], (err, result) => {
             if (err) return res.status(500).json({ error: 'Error al eliminar el registro' });
             res.json({ success: true, message: 'Anuncio e imágenes eliminadas con éxito de forma segura' });
         });
     });
 });
+
+// ==========================================
+// GET: OBTENER TARJETAS (CARDS)
+// ==========================================
+app.get('/api/anuncios-cards', (req, res) => {
+    const sql = 'SELECT id, titulo, descripcion, precio, imagen, camas, capacidad_personas FROM anuncios';
+    
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error('Error al traer los anuncios de la BD:', err);
+            return res.status(500).json({ error: 'Error interno del servidor', detalles: err.message });
+        }
+        res.json(results); 
+    });
+});
+
+//===================================
+// end CONFIG GENERALES
+//===================================
+
+// index search filtro
+app.get('/api/redirect-airbnb/:id', (req, res) => {
+    const anuncioId = req.params.id;
+    // Si no vienen en la query (porque no usó el buscador), les asignamos un valor vacío o por defecto
+    const { 
+        check_in = '', 
+        check_out = '', 
+        guests = '1', 
+        adults = '1', 
+        children = '0' 
+    } = req.query;
+
+    const sql = 'SELECT link_airbnb FROM anuncios WHERE id = ?';
+    
+    db.query(sql, [anuncioId], (err, results) => {
+        if (err) {
+            console.error('Error al buscar el anuncio:', err);
+            return res.status(500).send('Error interno del servidor');
+        }
+        if (results.length === 0 || !results[0].link_airbnb) {
+            return res.status(404).send('Lo sentimos, este anuncio no tiene un enlace de Airbnb configurado.');
+        }
+        
+        let urlBaseReal = results[0].link_airbnb;
+        if (urlBaseReal.includes('?')) {
+            urlBaseReal = urlBaseReal.split('?')[0];
+        }
+        
+        // Construimos la URL final hacia Airbnb incluyendo los filtros si existen
+        let urlFinal = `${urlBaseReal}?adults=${adults}&children=${children}&guests=${guests}`;
+        if (check_in && check_out) {
+            urlFinal += `&check_in=${check_in}&check_out=${check_out}`;
+        }
+        
+        return res.redirect(urlFinal);
+    });
+});
+
+
+// Calendarios iCal
+
+async function sincronizarCalendarios() {
+    console.log('[iCal] Iniciando sincronización automática en el servidor...');
+    
+    // ⬇️ Línea modificada aquí abajo ⬇️
+    db.query('SELECT id, link_calendario FROM anuncios WHERE link_calendario IS NOT NULL AND LENGTH(link_calendario) > 0', async (err, anuncios) => {
+        if (err) return console.error('[iCal] Error de Base de Datos:', err);
+
+        if (anuncios.length === 0) {
+            console.log('[iCal] Ojo: No encontré ningún anuncio con "link_calendario" en la BD.');
+            return;
+        }
+
+        for (const anuncio of anuncios) {
+            try {
+                const webEvents = await ical.fromURL(anuncio.link_calendario.trim(), {
+                    headers: { 
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                        'Accept': 'text/calendar'
+                    }
+                });
+
+                db.query('DELETE FROM fechas_bloqueadas WHERE anuncio_id = ?', [anuncio.id]);
+
+                let insertados = 0;
+                for (const k in webEvents) {
+                    if (webEvents.hasOwnProperty(k)) {
+                        const ev = webEvents[k];
+                        if (ev.type === 'VEVENT' && ev.start && ev.end) {
+                            const fechaInicio = new Date(ev.start).toISOString().split('T')[0];
+                            const fechaFin = new Date(ev.end).toISOString().split('T')[0];
+
+                            db.query('INSERT INTO fechas_bloqueadas (anuncio_id, fecha_inicio, fecha_fin) VALUES (?, ?, ?)', 
+                                [anuncio.id, fechaInicio, fechaFin]
+                            );
+                            insertados++;
+                        }
+                    }
+                }
+                console.log(`[iCal] Sincronización completa para ID ${anuncio.id}. Se guardaron ${insertados} fechas en la BD.`);
+
+            } catch (error) {
+                console.error(`[iCal] Falló la descarga o lectura del link para el ID ${anuncio.id}:`, error.message);
+            }
+        }
+    });
+}
 
 app.get('/api/anuncios/:id/fechas-bloqueadas', (req, res) => {
     const { id } = req.params;
@@ -665,107 +798,6 @@ app.get('/api/anuncios/:id/calendario-capsula', (req, res) => {
     });
 });
 
-
-// index search
-app.get('/api/redirect-airbnb/:id', (req, res) => {
-    const anuncioId = req.params.id;
-    // Si no vienen en la query (porque no usó el buscador), les asignamos un valor vacío o por defecto
-    const { 
-        check_in = '', 
-        check_out = '', 
-        guests = '1', 
-        adults = '1', 
-        children = '0' 
-    } = req.query;
-
-    const sql = 'SELECT link_airbnb FROM anuncios WHERE id = ?';
-    
-    db.query(sql, [anuncioId], (err, results) => {
-        if (err) {
-            console.error('Error al buscar el anuncio:', err);
-            return res.status(500).send('Error interno del servidor');
-        }
-        if (results.length === 0 || !results[0].link_airbnb) {
-            return res.status(404).send('Lo sentimos, este anuncio no tiene un enlace de Airbnb configurado.');
-        }
-        
-        let urlBaseReal = results[0].link_airbnb;
-        if (urlBaseReal.includes('?')) {
-            urlBaseReal = urlBaseReal.split('?')[0];
-        }
-        
-        // Construimos la URL final hacia Airbnb incluyendo los filtros si existen
-        let urlFinal = `${urlBaseReal}?adults=${adults}&children=${children}&guests=${guests}`;
-        if (check_in && check_out) {
-            urlFinal += `&check_in=${check_in}&check_out=${check_out}`;
-        }
-        
-        return res.redirect(urlFinal);
-    });
-});
-
-
-//otros 
-async function sincronizarCalendarios() {
-    console.log('[iCal] Iniciando sincronización automática en el servidor...');
-    
-    // ⬇️ Línea modificada aquí abajo ⬇️
-    db.query('SELECT id, link_calendario FROM anuncios WHERE link_calendario IS NOT NULL AND LENGTH(link_calendario) > 0', async (err, anuncios) => {
-        if (err) return console.error('[iCal] Error de Base de Datos:', err);
-
-        if (anuncios.length === 0) {
-            console.log('[iCal] Ojo: No encontré ningún anuncio con "link_calendario" en la BD.');
-            return;
-        }
-
-        for (const anuncio of anuncios) {
-            try {
-                const webEvents = await ical.fromURL(anuncio.link_calendario.trim(), {
-                    headers: { 
-                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                        'Accept': 'text/calendar'
-                    }
-                });
-
-                db.query('DELETE FROM fechas_bloqueadas WHERE anuncio_id = ?', [anuncio.id]);
-
-                let insertados = 0;
-                for (const k in webEvents) {
-                    if (webEvents.hasOwnProperty(k)) {
-                        const ev = webEvents[k];
-                        if (ev.type === 'VEVENT' && ev.start && ev.end) {
-                            const fechaInicio = new Date(ev.start).toISOString().split('T')[0];
-                            const fechaFin = new Date(ev.end).toISOString().split('T')[0];
-
-                            db.query('INSERT INTO fechas_bloqueadas (anuncio_id, fecha_inicio, fecha_fin) VALUES (?, ?, ?)', 
-                                [anuncio.id, fechaInicio, fechaFin]
-                            );
-                            insertados++;
-                        }
-                    }
-                }
-                console.log(`[iCal] Sincronización completa para ID ${anuncio.id}. Se guardaron ${insertados} fechas en la BD.`);
-
-            } catch (error) {
-                console.error(`[iCal] Falló la descarga o lectura del link para el ID ${anuncio.id}:`, error.message);
-            }
-        }
-    });
-}
-
-app.get('/api/anuncios-cards', (req, res) => {
-    const sql = 'SELECT id, titulo, descripcion, precio, imagen, camas, capacidad_personas FROM anuncios';
-    
-    db.query(sql, (err, results) => {
-        if (err) {
-            console.error('Error al traer los anuncios de la BD:', err);
-            return res.status(500).json({ error: 'Error interno del servidor', detalles: err.message });
-        }
-        res.json(results); 
-    });
-});
-
-
 // PREGUNTAS contacto
 
 app.get('/api/faqs', (req, res) => {
@@ -812,7 +844,8 @@ app.delete('/api/faqs/:id', (req, res) => {
     });
 });
 
-// Ruta dedicada para el formulario de contacto 
+
+// formulario de contacto 
 app.post('/api/contacto', upload.none(), (req, res) => {
     try {
         // Capturamos lo que envía el formulario a través de common.min.js
