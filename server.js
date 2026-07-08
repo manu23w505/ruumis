@@ -1765,6 +1765,19 @@ app.put('/api/home/contacts', upload.single('contacts_imagen'), async (req, res)
     }
 });
 
+// Busca tu ruta GET de contactos en server.js (puede ser /api/home o /api/home/contacts)
+app.get('/api/home/contacts', (req, res) => {
+    const sql = "SELECT * FROM admin_home WHERE id = 1";
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Error en la base de datos" });
+        }
+        // ¡IMPORTANTE! Envía result[0] para que sea un objeto directo, no un array
+        res.json(result[0]); 
+    });
+});
+
 
 cron.schedule('*/5 * * * *', () => {
     sincronizarCalendarios();

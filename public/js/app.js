@@ -1555,38 +1555,38 @@ document.addEventListener('DOMContentLoaded', () => {
 //================================================================
 async function cargarContactsPublico() {
     try {
-        // Usamos el endpoint donde consultas la información global de admin_home (ej: /api/home/content)
-        const res = await fetch('/api/home/content'); 
+        // CORREGIDO: Apuntar al endpoint correcto de contactos definido en server.js
+        const res = await fetch('/api/home/contacts'); 
         const datos = await res.json();
         if (!datos) return;
 
         // Títulos Principales
-        if (document.getElementById('public-contacts-titulo')) document.getElementById('public-contacts-titulo').textContent = datos.contacts_titulo;
-        if (document.getElementById('public-contacts-descripcion')) document.getElementById('public-contacts-descripcion').textContent = datos.contacts_descripcion;
+        if (document.getElementById('public-contacts-titulo')) document.getElementById('public-contacts-titulo').textContent = datos.contacts_titulo || '';
+        if (document.getElementById('public-contacts-descripcion')) document.getElementById('public-contacts-descripcion').textContent = datos.contacts_descripcion || '';
 
         // Teléfonos
-        if (document.getElementById('public-contacts-tel-titulo')) document.getElementById('public-contacts-tel-titulo').textContent = datos.contacts_tel_titulo;
+        if (document.getElementById('public-contacts-tel-titulo')) document.getElementById('public-contacts-tel-titulo').textContent = datos.contacts_tel_titulo || '';
         const tel1 = document.getElementById('public-contacts-tel1');
-        if (tel1) { tel1.textContent = datos.contacts_tel1; tel1.href = `tel:${datos.contacts_tel1}`; }
+        if (tel1 && datos.contacts_tel1) { tel1.textContent = datos.contacts_tel1; tel1.href = `tel:${datos.contacts_tel1}`; }
         const tel2 = document.getElementById('public-contacts-tel2');
-        if (tel2) { tel2.textContent = datos.contacts_tel2; tel2.href = `tel:${datos.contacts_tel2}`; }
+        if (tel2 && datos.contacts_tel2) { tel2.textContent = datos.contacts_tel2; tel2.href = `tel:${datos.contacts_tel2}`; }
 
         // Emails
-        if (document.getElementById('public-contacts-email-titulo')) document.getElementById('public-contacts-email-titulo').textContent = datos.contacts_email_titulo;
+        if (document.getElementById('public-contacts-email-titulo')) document.getElementById('public-contacts-email-titulo').textContent = datos.contacts_email_titulo || '';
         const em1 = document.getElementById('public-contacts-email1');
-        if (em1) { em1.textContent = datos.contacts_email1; em1.href = `mailto:${datos.contacts_email1}`; }
+        if (em1 && datos.contacts_email1) { em1.textContent = datos.contacts_email1; em1.href = `mailto:${datos.contacts_email1}`; }
         const em2 = document.getElementById('public-contacts-email2');
-        if (em2) { em2.textContent = datos.contacts_email2; em2.href = `mailto:${datos.contacts_email2}`; }
+        if (em2 && datos.contacts_email2) { em2.textContent = datos.contacts_email2; em2.href = `mailto:${datos.contacts_email2}`; }
 
         // Ubicaciones
-        if (document.getElementById('public-contacts-loc-titulo')) document.getElementById('public-contacts-loc-titulo').textContent = datos.contacts_loc_titulo;
-        if (document.getElementById('public-contacts-loc1')) document.getElementById('public-contacts-loc1').textContent = datos.contacts_loc1;
-        if (document.getElementById('public-contacts-loc2')) document.getElementById('public-contacts-loc2').textContent = datos.contacts_loc2;
+        if (document.getElementById('public-contacts-loc-titulo')) document.getElementById('public-contacts-loc-titulo').textContent = datos.contacts_loc_titulo || '';
+        if (document.getElementById('public-contacts-loc1')) document.getElementById('public-contacts-loc1').textContent = datos.contacts_loc1 || '';
+        if (document.getElementById('public-contacts-loc2')) document.getElementById('public-contacts-loc2').textContent = datos.contacts_loc2 || '';
 
         // Horarios
-        if (document.getElementById('public-contacts-work-titulo')) document.getElementById('public-contacts-work-titulo').textContent = datos.contacts_work_titulo;
-        if (document.getElementById('public-contacts-work1')) document.getElementById('public-contacts-work1').textContent = datos.contacts_work1;
-        if (document.getElementById('public-contacts-work2')) document.getElementById('public-contacts-work2').textContent = datos.contacts_work2;
+        if (document.getElementById('public-contacts-work-titulo')) document.getElementById('public-contacts-work-titulo').textContent = datos.contacts_work_titulo || '';
+        if (document.getElementById('public-contacts-work1')) document.getElementById('public-contacts-work1').textContent = datos.contacts_work1 || '';
+        if (document.getElementById('public-contacts-work2')) document.getElementById('public-contacts-work2').textContent = datos.contacts_work2 || '';
 
         // Renderizado de Imagen de Cloudinary
         const imgContacts = document.getElementById('public-contacts-img');
@@ -1598,9 +1598,9 @@ async function cargarContactsPublico() {
     }
 }
 
-// Aseguramos su ejecución al cargar el DOM junto a tus funciones existentes
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('public-contacts-titulo')) {
+    // CORREGIDO: Filtro más seguro. Si el contenedor o el título principal de contactos existe, se ejecuta.
+    if (document.getElementById('public-contacts-titulo') || document.getElementById('public-contacts-img')) {
         cargarContactsPublico();
     }
 });

@@ -1254,10 +1254,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function cargarContactsAdmin() {
     try {
-        const res = await fetch('/api/home/content'); // El mismo endpoint de consulta global de admin_home
+        // CORREGIDO: Cambiado de /api/home/content a /api/home/contacts
+        const res = await fetch('/api/home/contacts'); 
         const datos = await res.json();
         if (!datos) return;
 
+        // Se asignan los valores con un fallback de string vacío para evitar valores 'undefined' en los inputs
         document.getElementById('adm-contacts-titulo').value = datos.contacts_titulo || '';
         document.getElementById('adm-contacts-descripcion').value = datos.contacts_descripcion || '';
         document.getElementById('url-contacts-imagen-actual').value = datos.contacts_imagen || '';
