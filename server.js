@@ -7,6 +7,7 @@ const ical = require('node-ical');
 const cron = require('node-cron');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
+const fs = require('fs'); // Importamos fs para asegurarnos de que las carpetas existan
 
 const app = express();
 app.use(cors());
@@ -15,35 +16,44 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-const cloudinary = require('cloudinary').v2;
-cloudinary.config({
-    cloud_name: 'ts3v2nsy', 
-    api_key: '515561375298544',       
-    api_secret: 'gz1WZx3bijvi1xM7qvC6RYVQkj8'  
-});
+// Asegurar que la estructura de carpetas que pidió Pepe exista al arrancar el servidor
+const dirUploadsImages = path.join(__dirname, 'public', 'uploads', 'images');
+if (!fs.existsSync(dirUploadsImages)) {
+    fs.mkdirSync(dirUploadsImages, { recursive: true });
+}
 
-
-const storage = multer.memoryStorage(); 
-
-const upload = multer({ 
-    storage: storage,
-    limits: { fileSize: 1024 * 1024 * 5 }, // 5MB límite
-    fileFilter: (req, file, cb) => {
-        const filetypes = /jpeg|jpg|png|webp/;
-        const mimetype = filetypes.test(file.mimetype);
-        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-        if (mimetype && extname) return cb(null, true);
-        cb(new Error('¡Solo se permite subir imágenes reales (jpg, jpeg, png, webp)!'));
+// Configuración de almacenamiento en el disco duro local
+const storageLocal = multer.diskStorage({
+    destination: function (req, file, cb) {
+        // Guardamos directamente en la carpeta estructurada
+        cb(null, 'public/uploads/images/');
+    },
+    filename: function (req, file, cb) {
+        // Creamos un nombre de archivo único con la marca de tiempo para evitar duplicados
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const ext = path.extname(file.originalname).toLowerCase();
+        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
     }
 });
 
+const upload = multer({ 
+    storage: storageLocal,
+    limits: { fileSize: 1024 * 1024 * 8 }, // Aumentamos límite a 8MB por si suben fotos de celulares modernos
+    fileFilter: (req, file, cb) => {
+        const filetypes = /jpeg|jpg|png|webp|ico/;
+        const mimetype = filetypes.test(file.mimetype);
+        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+        if (mimetype && extname) return cb(null, true);
+        cb(new Error("Error: El archivo debe ser una imagen válida (jpeg, jpg, png, webp, ico)"));
+    }
+});
+
+// Configuración de la Base de Datos (Mantener tus credenciales actuales de desarrollo o producción)
 const db = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER || 'avnadmin',
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME || 'plantilla',
-    port: process.env.DB_PORT || 18515,
-    ssl: { rejectUnauthorized: false },
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'ruumis',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
@@ -964,87 +974,40 @@ app.get('/api/header-completo', (req, res) => {
     });
 });
 
-// Actualizar Configuración General (Nombre de Marca y SVG del Logo)
 // LOGO FOOTER Y HEADER
-app.put('/api/header/config', upload.fields([
+const uploadLogos = upload.fields([
     { name: 'header_logo', maxCount: 1 },
     { name: 'footer_logo', maxCount: 1 }
-]), async (req, res) => {
-    const { nombre_marca, header_logo_actual, footer_logo_actual } = req.body;
-    
-    // Si no se suben archivos nuevos, preservamos las URLs actuales de la BD (igual que en Promo)
+]);
+
+app.put('/api/header/config', uploadLogos, (req, res) => {
+    const { header_logo_actual, footer_logo_actual } = req.body;
+
     let header_logo_url = header_logo_actual;
     let footer_logo_url = footer_logo_actual;
 
-    try {
-        // 1. Procesar LOGO DEL HEADER si viene un archivo nuevo
-        if (req.files && req.files['header_logo']) {
-            const resultHeader = await new Promise((resolve, reject) => {
-                const uploadStream = cloudinary.uploader.upload_stream(
-                    { folder: 'ruumis_logos' },
-                    (error, uploadResult) => {
-                        if (error) return reject(error);
-                        resolve(uploadResult);
-                    }
-                );
-                uploadStream.end(req.files['header_logo'][0].buffer);
-            });
-            header_logo_url = resultHeader.secure_url;
-        }
-
-        // 2. Procesar LOGO DEL FOOTER si viene un archivo nuevo
-        if (req.files && req.files['footer_logo']) {
-            const resultFooter = await new Promise((resolve, reject) => {
-                const uploadStream = cloudinary.uploader.upload_stream(
-                    { folder: 'ruumis_logos' },
-                    (error, uploadResult) => {
-                        if (error) return reject(error);
-                        resolve(uploadResult);
-                    }
-                );
-                uploadStream.end(req.files['footer_logo'][0].buffer);
-            });
-            footer_logo_url = resultFooter.secure_url;
-        }
-
-        // 3. Guardar o actualizar en la Base de Datos
-        const query = "INSERT INTO configuracion_general (clave, valor) VALUES (?, ?) ON DUPLICATE KEY UPDATE valor = ?";
-        
-        const updates = [
-            ['nombre_marca', nombre_marca],
-            ['header_logo', header_logo_url],
-            ['footer_logo', footer_logo_url]
-        ];
-
-        let completados = 0;
-        let huboError = false;
-
-        updates.forEach(item => {
-            if (item[1] !== undefined) {
-                db.query(query, [item[0], item[1], item[1]], (err) => {
-                    if (err) {
-                        console.error(`Error actualizando ${item[0]}:`, err);
-                        huboError = true;
-                    }
-                    completados++;
-                    
-                    if (completados === updates.filter(u => u[1] !== undefined).length) {
-                        if (huboError) return res.status(500).json({ error: 'Hubo errores al actualizar la configuración' });
-                        res.json({ 
-                            success: true, 
-                            message: 'Configuración y logos actualizados con éxito',
-                            header_logo: header_logo_url,
-                            footer_logo: footer_logo_url
-                        });
-                    }
-                });
-            }
-        });
-
-    } catch (error) {
-        console.error("Error en la subida de logos a Cloudinary:", error);
-        res.status(500).json({ error: "Error al procesar los logos en la nube" });
+    // Verificar si se subió nuevo header_logo
+    if (req.files && req.files['header_logo']) {
+        header_logo_url = `/uploads/images/${req.files['header_logo'][0].filename}`;
     }
+
+    // Verificar si se subió nuevo footer_logo
+    if (req.files && req.files['footer_logo']) {
+        footer_logo_url = `/uploads/images/${req.files['footer_logo'][0].filename}`;
+    }
+
+    const sql = `UPDATE admin_configuracion SET header_logo = ?, footer_logo = ? WHERE id = 1`;
+    db.query(sql, [header_logo_url, footer_logo_url], (err, result) => {
+        if (err) {
+            console.error("Error al actualizar logos generales:", err);
+            return res.status(500).json({ error: "Error al guardar los logos en la base de datos" });
+        }
+        res.json({ 
+            message: "¡Logos actualizados localmente con éxito!", 
+            header_logo: header_logo_url, 
+            footer_logo: footer_logo_url 
+        });
+    });
 });
 
 // Actualizar una página específica del menú (Nombre visible y su URL estética)
@@ -1271,16 +1234,30 @@ app.put('/api/config/favicon', (req, res) => {
 // Tu endpoint global de subida /api/upload (Se mantiene igual porque ya funciona excelente)
 app.post('/api/upload', upload.single('image'), (req, res) => {
     if (!req.file) {
-        return res.status(400).json({ error: 'No se recibió ningún archivo.' });
+        return res.status(400).json({ error: "No se subió ningún archivo" });
     }
+    // Devolvemos la ruta local formateada de forma idéntica
+    const fileUrl = `/uploads/images/${req.file.filename}`;
+    res.json({ secure_url: fileUrl });
+});
 
-    cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
-        if (error) {
-            console.error("Error al subir a Cloudinary:", error);
-            return res.status(500).json({ error: 'Error al subir a la nube' });
+app.put('/api/config/favicon', (semibold, res) => {
+    const { favicon } = semibold.body;
+    const sql = "UPDATE admin_configuracion SET favicon = ? WHERE id = 1";
+    db.query(sql, [favicon], (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Error al actualizar el favicon" });
         }
-        res.json({ url: result.secure_url }); 
-    }).end(req.file.buffer);
+        res.json({ message: "Favicon actualizado con éxito" });
+    });
+});
+
+app.get('/api/configuracion', (req, res) => {
+    db.query("SELECT * FROM admin_configuracion WHERE id = 1", (err, result) => {
+        if (err) return res.status(500).json({ error: "Error en base de datos" });
+        res.json(result[0] || {});
+    });
 });
 
 // ==========================================
@@ -1603,169 +1580,90 @@ app.get('/api/home/promo', (req, res) => {
 });
 
 // PUT - Actualizar datos de la sección Promo con imagen en Cloudinary
-app.put('/api/home/promo', upload.single('promo_imagen'), async (req, res) => {
+app.put('/api/home/promo', upload.single('promo_imagen'), (req, res) => {
     const {
-        promo_titulo,
-        promo_descripcion,
-        promo_item1_title,
-        promo_item1_text,
-        promo_item2_title,
-        promo_item2_text,
-        promo_review_text,
-        promo_review_name
+        promo_titulo, promo_descripcion,
+        promo_item1_title, promo_item1_text,
+        promo_item2_title, promo_item2_text,
+        promo_review_text, promo_review_name,
+        promo_imagen_actual
     } = req.body;
 
-    // Si no se sube un archivo nuevo, preservamos la URL de la imagen actual
-    let promo_imagen_url = req.body.promo_imagen_actual; 
-
-    try {
-        if (req.file) {
-            // Envío del buffer del archivo directamente a Cloudinary
-            const result = await new Promise((resolve, reject) => {
-                const uploadStream = cloudinary.uploader.upload_stream(
-                    { folder: 'ruumis_promo' },
-                    (error, uploadResult) => {
-                        if (error) return reject(error);
-                        resolve(uploadResult);
-                    }
-                );
-                uploadStream.end(req.file.buffer);
-            });
-            promo_imagen_url = result.secure_url;
-        }
-
-        const sql = `
-            UPDATE admin_home 
-            SET 
-                promo_titulo = ?, 
-                promo_descripcion = ?, 
-                promo_item1_title = ?, 
-                promo_item1_text = ?, 
-                promo_item2_title = ?, 
-                promo_item2_text = ?, 
-                promo_imagen = ?, 
-                promo_review_text = ?, 
-                promo_review_name = ?
-            WHERE id = 1
-        `;
-
-        db.query(sql, [
-            promo_titulo,
-            promo_descripcion,
-            promo_item1_title,
-            promo_item1_text,
-            promo_item2_title,
-            promo_item2_text,
-            promo_imagen_url,
-            promo_review_text,
-            promo_review_name
-        ], (err, result) => {
-            if (err) {
-                console.error("Error al actualizar la tabla admin_home (Promo):", err);
-                return res.status(500).json({ error: "Error al guardar en la base de datos" });
-            }
-            res.json({ message: "¡Sección Promo actualizada con éxito!", promo_imagen: promo_imagen_url });
-        });
-
-    } catch (error) {
-        console.error("Error en la subida a Cloudinary de la sección Promo:", error);
-        res.status(500).json({ error: "Error al procesar la imagen promocional" });
+    let promo_imagen_url = promo_imagen_actual;
+    if (req.file) {
+        promo_imagen_url = `/uploads/images/${req.file.filename}`;
     }
+
+    const sql = `
+        UPDATE admin_home 
+        SET promo_titulo = ?, promo_descripcion = ?, 
+            promo_item1_title = ?, promo_item1_text = ?, 
+            promo_item2_title = ?, promo_item2_text = ?, 
+            promo_imagen = ?, promo_review_text = ?, promo_review_name = ?
+        WHERE id = 1
+    `;
+
+    db.query(sql, [
+        promo_titulo, promo_descripcion,
+        promo_item1_title, promo_item1_text,
+        promo_item2_title, promo_item2_text,
+        promo_imagen_url, promo_review_text,
+        promo_review_name
+    ], (err, result) => {
+        if (err) {
+            console.error("Error al actualizar la tabla admin_home (Promo):", err);
+            return res.status(500).json({ error: "Error al guardar en la base de datos" });
+        }
+        res.json({ message: "¡Sección Promo actualizada localmente con éxito!", promo_imagen: promo_imagen_url });
+    });
 });
 
 // ==========================================
 // CONTACTS SECTION
 // ==========================================
-app.put('/api/home/contacts', upload.single('contacts_imagen'), async (req, res) => {
+app.put('/api/home/contacts', upload.single('contacts_imagen'), (req, res) => {
     const {
-        contacts_titulo,
-        contacts_descripcion,
-        contacts_tel_titulo,
-        contacts_tel1,
-        contacts_tel2,
-        contacts_email_titulo,
-        contacts_email1,
-        contacts_email2,
-        contacts_loc_titulo,
-        contacts_loc1,
-        contacts_loc2,
-        contacts_work_titulo,
-        contacts_work1,
-        contacts_work2,
-        contacts_imagen_actual
+        contacts_titulo, contacts_descripcion,
+        contacts_tel_titulo, contacts_tel1, contacts_tel2,
+        contacts_email_titulo, contacts_email1, contacts_email2,
+        contacts_loc_titulo, contacts_loc1, contacts_loc2,
+        contacts_work_titulo, contacts_work1, contacts_work2,
+        contacts_imagen_actual // Respaldo enviado desde el frontend si no se sube una nueva
     } = req.body;
 
-    // Preservamos la URL actual si el usuario no decide cambiar la imagen
+    // Si el usuario subió una foto nueva, construimos la ruta local relativa, de lo contrario usamos la actual
     let contacts_imagen_url = contacts_imagen_actual;
-
-    try {
-        // Si se seleccionó un archivo nuevo, lo subimos en un flujo a Cloudinary
-        if (req.file) {
-            const result = await new Promise((resolve, reject) => {
-                const uploadStream = cloudinary.uploader.upload_stream(
-                    { folder: 'ruumis_contacts' },
-                    (error, uploadResult) => {
-                        if (error) return reject(error);
-                        resolve(uploadResult);
-                    }
-                );
-                uploadStream.end(req.file.buffer);
-            });
-            contacts_imagen_url = result.secure_url;
-        }
-
-        const sql = `
-            UPDATE admin_home 
-            SET 
-                contacts_titulo = ?, 
-                contacts_descripcion = ?, 
-                contacts_tel_titulo = ?, 
-                contacts_tel1 = ?, 
-                contacts_tel2 = ?, 
-                contacts_email_titulo = ?, 
-                contacts_email1 = ?, 
-                contacts_email2 = ?, 
-                contacts_loc_titulo = ?, 
-                contacts_loc1 = ?, 
-                contacts_loc2 = ?, 
-                contacts_work_titulo = ?, 
-                contacts_work1 = ?, 
-                contacts_work2 = ?, 
-                contacts_imagen = ?
-            WHERE id = 1
-        `;
-
-        db.query(sql, [
-            contacts_titulo,
-            contacts_descripcion,
-            contacts_tel_titulo,
-            contacts_tel1,
-            contacts_tel2,
-            contacts_email_titulo,
-            contacts_email1,
-            contacts_email2,
-            contacts_loc_titulo,
-            contacts_loc1,
-            contacts_loc2,
-            contacts_work_titulo,
-            contacts_work1,
-            contacts_work2,
-            contacts_imagen_url
-        ], (err, result) => {
-            if (err) {
-                console.error("Error al actualizar la tabla admin_home (Contacts):", err);
-                return res.status(500).json({ error: "Error al guardar en la base de datos" });
-            }
-            res.json({ message: "¡Sección CONTACTS actualizada con éxito!", contacts_imagen: contacts_imagen_url });
-        });
-
-    } catch (error) {
-        console.error("Error en la subida a Cloudinary de la sección Contacts:", error);
-        res.status(500).json({ error: "Error al procesar la imagen de contacto" });
+    if (req.file) {
+        contacts_imagen_url = `/uploads/images/${req.file.filename}`;
     }
+
+    const sql = `
+        UPDATE admin_home 
+        SET contacts_titulo = ?, contacts_descripcion = ?, 
+            contacts_tel_titulo = ?, contacts_tel1 = ?, contacts_tel2 = ?, 
+            contacts_email_titulo = ?, contacts_email1 = ?, contacts_email2 = ?, 
+            contacts_loc_titulo = ?, contacts_loc1 = ?, contacts_loc2 = ?, 
+            contacts_work_titulo = ?, contacts_work1 = ?, contacts_work2 = ?, 
+            contacts_imagen = ?
+        WHERE id = 1
+    `;
+
+    db.query(sql, [
+        contacts_titulo, contacts_descripcion,
+        contacts_tel_titulo, contacts_tel1, contacts_tel2,
+        contacts_email_titulo, contacts_email1, contacts_email2,
+        contacts_loc_titulo, contacts_loc1, contacts_loc2,
+        contacts_work_titulo, contacts_work1, contacts_work2,
+        contacts_imagen_url
+    ], (err, result) => {
+        if (err) {
+            console.error("Error al actualizar la tabla admin_home (Contacts):", err);
+            return res.status(500).json({ error: "Error al guardar en la base de datos" });
+        }
+        res.json({ message: "¡Sección CONTACTS actualizada localmente con éxito!", contacts_imagen: contacts_imagen_url });
+    });
 });
 
-// Busca tu ruta GET de contactos en server.js (puede ser /api/home o /api/home/contacts)
 app.get('/api/home/contacts', (req, res) => {
     const sql = "SELECT * FROM admin_home WHERE id = 1";
     db.query(sql, (err, result) => {
@@ -1773,10 +1671,10 @@ app.get('/api/home/contacts', (req, res) => {
             console.error(err);
             return res.status(500).json({ error: "Error en la base de datos" });
         }
-        // ¡IMPORTANTE! Envía result[0] para que sea un objeto directo, no un array
-        res.json(result[0]); 
+        res.json(result[0] || {});
     });
 });
+
 
 
 cron.schedule('*/5 * * * *', () => {
