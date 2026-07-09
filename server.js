@@ -1012,6 +1012,24 @@ const uploadLogos = upload.fields([
     { name: 'footer_logo', maxCount: 1 }
 ]);
 
+// OBTENER los logotipos e identidad actuales
+app.get('/api/header/config', (req, res) => {
+    // Usamos la misma tabla que modificas en el PUT
+    const sql = "SELECT header_logo, footer_logo, nombre_marca FROM admin_configuracion WHERE id = 1";
+    
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error("Error al obtener la configuración de identidad:", err);
+            return res.status(500).json({ error: "Error en la base de datos al obtener los logos" });
+        }
+        if (result.length === 0) {
+            return res.status(404).json({ error: "No se encontró la configuración con ID 1" });
+        }
+        // Retornamos el objeto limpio con los datos
+        res.json(result[0]);
+    });
+});
+
 app.put('/api/header/config', uploadLogos, (req, res) => {
     // 1. Extraemos todas las posibles variables (soporta tanto JSON como FormData)
     const { 
