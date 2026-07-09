@@ -1170,28 +1170,27 @@ app.put('/api/footer', (req, res) => { // <-- ALINEADO: Se quitó el '/textos' s
 // SECCIÓN: CONTROL DE IMÁGENES (CLOUDINARY)
 // ==========================================
 
-// 1. Subir una imagen individual (ej. Logotipo, logos de marcas, etc.) directamente a Cloudinary
-app.post('/api/upload-image', upload.single('imagen'), (req, res) => {
-    if (!req.file) {
-        return res.status(400).json({ error: 'No se recibió ningún archivo válido.' });
-    }
-
-    // Subimos directamente el buffer a Cloudinary usando upload_stream
-    cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
-        if (error) {
-            console.error("Error al subir imagen a Cloudinary:", error);
-            return res.status(500).json({ error: 'Error al subir la imagen a la nube' });
+// Asegúrate de que apunte a tu configuración de multer local (ej: upload.single('image'))
+app.post('/api/upload-image', upload.single('image'), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, error: "No se seleccionó ningún archivo de imagen." });
         }
-        
-        // TIP DE COMPATIBILIDAD: Enviamos la URL de Cloudinary tanto en 'url' como en 'fileName'.
-        // De esta manera, si tu frontend antes guardaba "res.fileName" o "res.url", 
-        // guardará la ruta de internet correcta sin romperse.
-        res.json({ 
-            success: true, 
-            fileName: result.secure_url, 
-            url: result.secure_url 
-        }); 
-    }).end(req.file.buffer);
+
+        // Generamos la ruta local (ej: /uploads/nombre-de-tu-archivo.png)
+        const urlLocal = `/uploads/${req.file.filename}`;
+
+        // Devolvemos la respuesta exitosa que el JS de tu frontend necesita procesar
+        res.json({
+            success: true,
+            fileName: req.file.filename,
+            url: urlLocal
+        });
+
+    } catch (error) {
+        console.error("Error crítico en el endpoint local /api/upload-image:", error);
+        res.status(500).json({ success: false, error: "Error interno del servidor al guardar la imagen." });
+    }
 });
 
 // 2. Eliminar una imagen (Soporta borrado físico local antiguo y borrado en Cloudinary)

@@ -1969,7 +1969,6 @@ document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) =
     
     const nombre_marca = document.getElementById('inputNombreMarca').value;
     
-    // Recuperamos los nombres o rutas locales actuales de respaldo
     let header_logo = document.getElementById('span-header-actual')?.innerText || '';
     let footer_logo = document.getElementById('span-footer-actual')?.innerText || '';
 
@@ -1977,28 +1976,29 @@ document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) =
     const fileFooter = document.getElementById('inputFooterLogo').files[0];
 
     try {
-        // 1. Subir imagen del Header si fue seleccionada (Local)
+        // 1. Subir imagen del Header (Local)
         if (fileHeader) {
             const formData = new FormData();
-            formData.append('imagen', fileHeader);
+            // CORREGIDO: Cambiado de 'imagen' a 'image' para mantener consistencia con Multer
+            formData.append('image', fileHeader); 
             
             const uploadRes = await fetch('/api/upload-image', { method: 'POST', body: formData });
-            if (!uploadRes.ok) throw new Error('Error al cargar la imagen del Header en el servidor local.');
+            if (!uploadRes.ok) throw new Error('Error al cargar la imagen del Header en el servidor.');
             
             const uploadData = await uploadRes.json();
             if (uploadData.success) {
-                // Guarda la ruta/nombre entregado por tu Multer (ej: /uploads/archivo.png o el fileName)
                 header_logo = uploadData.url || uploadData.fileName; 
             }
         }
 
-        // 2. Subir imagen del Footer si fue seleccionada (Local)
+        // 2. Subir imagen del Footer (Local)
         if (fileFooter) {
             const formData = new FormData();
-            formData.append('imagen', fileFooter);
+            // CORREGIDO: Cambiado de 'imagen' a 'image'
+            formData.append('image', fileFooter); 
             
             const uploadRes = await fetch('/api/upload-image', { method: 'POST', body: formData });
-            if (!uploadRes.ok) throw new Error('Error al cargar la imagen del Footer en el servidor local.');
+            if (!uploadRes.ok) throw new Error('Error al cargar la imagen del Footer en el servidor.');
             
             const uploadData = await uploadRes.json();
             if (uploadData.success) {
@@ -2006,7 +2006,7 @@ document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) =
             }
         }
 
-        // 3. Guardar cambios de texto y referencias finales en la Base de Datos
+        // 3. Mandar el texto y los archivos finales al endpoint de configuración general
         const res = await fetch('/api/header/config', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -2016,10 +2016,8 @@ document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) =
         const data = await res.json();
 
         if (res.ok && data.success) {
-            alert('¡Identidad y logotipos locales actualizados con éxito!');
+            alert('¡Identidad y logotipos actualizados con éxito!');
             if (typeof cerrarModalMarca === 'function') cerrarModalMarca();
-            
-            // Refrescar paneles
             if (typeof obtenerDatosHeaderAdmin === 'function') obtenerDatosHeaderAdmin(); 
             if (typeof cargarFooterAdmin === 'function') cargarFooterAdmin(); 
         } else {
@@ -2027,10 +2025,10 @@ document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) =
         }
 
     } catch (err) {
-        alert(err.message || 'Error en el proceso de actualización local.');
+        alert(err.message || 'Error en el proceso de actualización.');
         console.error("Error crítico en la configuración de identidad:", err);
     }
-})
+});
 
 
 // 3. Función para actualizar una página individual de la tabla
