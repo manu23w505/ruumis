@@ -1886,26 +1886,25 @@ async function obtenerDatosHeaderAdmin() {
         if (!response.ok) return;
         const data = await response.json();
 
-        // CORRECCIÓN 1: El servidor manda 'data.config'
         const visuales = data.config || {};
         
-        // A) Llenar campos de texto y spans de archivos actuales (NUEVA MODIFICACIÓN)
+        // Llenar campos de texto y spans de archivos locales actuales
         document.getElementById('inputNombreMarca').value = visuales.nombre_marca || '';
         document.getElementById('span-header-actual').innerText = visuales.header_logo || 'default-logo-header.png';
         document.getElementById('span-footer-actual').innerText = visuales.footer_logo || 'default-logo-footer.png';
 
-        // B) Llenar vistas previas del panel
+        // Llenar vistas previas del panel
         const vistaNombre = document.getElementById('vista-nombre-marca');
         if (vistaNombre) vistaNombre.innerText = visuales.nombre_marca || 'Sin nombre';
         
         const vistaLogos = document.getElementById('vista-logos-archivos');
         if (vistaLogos) {
-            const h = (visuales.header_logo && !visuales.header_logo.includes('default')) ? 'Imagen subida' : 'SVG por defecto';
-            const f = (visuales.footer_logo && !visuales.footer_logo.includes('default')) ? 'Imagen subida' : 'SVG por defecto';
+            const h = (visuales.header_logo && !visuales.header_logo.includes('default')) ? 'Imagen local' : 'SVG por defecto';
+            const f = (visuales.footer_logo && !visuales.footer_logo.includes('default')) ? 'Imagen local' : 'SVG por defecto';
             vistaLogos.innerText = `Header: ${h} | Footer: ${f}`;
         }
 
-        // CORRECCIÓN 2: El mapeo de las páginas (Se mantiene intacto)
+        // Mapeo dinámico de las páginas del menú
         const tbody = document.getElementById('tablaPaginasMenu');
         if (tbody) {
             tbody.innerHTML = '';
@@ -1933,7 +1932,7 @@ async function obtenerDatosHeaderAdmin() {
             });
         }
 
-        // CORRECCIÓN 3: Separar la Vista y los Inputs de las Redes Sociales (Se mantiene intacto)
+        // Separar la Vista y los Inputs de las Redes Sociales
         const contenedorVista = document.getElementById('contenedorRedesVista');
         if (contenedorVista) contenedorVista.innerHTML = '';
 
@@ -1970,7 +1969,7 @@ document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) =
     
     const nombre_marca = document.getElementById('inputNombreMarca').value;
     
-    // Recuperamos los nombres actuales por si el usuario no selecciona un archivo nuevo
+    // Recuperamos los nombres o rutas locales actuales de respaldo
     let header_logo = document.getElementById('span-header-actual')?.innerText || '';
     let footer_logo = document.getElementById('span-footer-actual')?.innerText || '';
 
@@ -1978,38 +1977,36 @@ document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) =
     const fileFooter = document.getElementById('inputFooterLogo').files[0];
 
     try {
-        // 1. Subir imagen del Header si fue seleccionada
+        // 1. Subir imagen del Header si fue seleccionada (Local)
         if (fileHeader) {
             const formData = new FormData();
-            formData.append('imagen', fileHeader); // 'imagen' coincide con upload.single('imagen')
+            formData.append('imagen', fileHeader);
             
-            // SINCRONIZADO: Cambiado a /api/upload-image
             const uploadRes = await fetch('/api/upload-image', { method: 'POST', body: formData });
-            if (!uploadRes.ok) throw new Error('Error al cargar la imagen del Header en el servidor.');
+            if (!uploadRes.ok) throw new Error('Error al cargar la imagen del Header en el servidor local.');
             
             const uploadData = await uploadRes.json();
             if (uploadData.success) {
-                header_logo = uploadData.fileName; // Guardamos el nombre único generado (Timestamp + ext)
+                // Guarda la ruta/nombre entregado por tu Multer (ej: /uploads/archivo.png o el fileName)
+                header_logo = uploadData.url || uploadData.fileName; 
             }
         }
 
-        // 2. Subir imagen del Footer si fue seleccionada
+        // 2. Subir imagen del Footer si fue seleccionada (Local)
         if (fileFooter) {
             const formData = new FormData();
-            formData.append('imagen', fileFooter); // 'imagen' coincide con upload.single('imagen')
+            formData.append('imagen', fileFooter);
             
-            // SINCRONIZADO: Cambiado a /api/upload-image
             const uploadRes = await fetch('/api/upload-image', { method: 'POST', body: formData });
-            if (!uploadRes.ok) throw new Error('Error al cargar la imagen del Footer en el servidor.');
+            if (!uploadRes.ok) throw new Error('Error al cargar la imagen del Footer en el servidor local.');
             
             const uploadData = await uploadRes.json();
             if (uploadData.success) {
-                footer_logo = uploadData.fileName; // Guardamos el nombre único generado
+                footer_logo = uploadData.url || uploadData.fileName; 
             }
         }
 
-        // 3. Mandar el texto y los archivos finales al endpoint de configuración general
-        // SINCRONIZADO: Apunta a /api/header/config tal como está en tu backend
+        // 3. Guardar cambios de texto y referencias finales en la Base de Datos
         const res = await fetch('/api/header/config', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -2019,10 +2016,10 @@ document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) =
         const data = await res.json();
 
         if (res.ok && data.success) {
-            alert('¡Identidad y logotipos actualizados con éxito en la Base de Datos!');
+            alert('¡Identidad y logotipos locales actualizados con éxito!');
             if (typeof cerrarModalMarca === 'function') cerrarModalMarca();
             
-            // Recargamos los datos visuales del panel administrador para reflejar los cambios
+            // Refrescar paneles
             if (typeof obtenerDatosHeaderAdmin === 'function') obtenerDatosHeaderAdmin(); 
             if (typeof cargarFooterAdmin === 'function') cargarFooterAdmin(); 
         } else {
@@ -2030,10 +2027,10 @@ document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) =
         }
 
     } catch (err) {
-        alert(err.message || 'Error en el proceso de actualización.');
+        alert(err.message || 'Error en el proceso de actualización local.');
         console.error("Error crítico en la configuración de identidad:", err);
     }
-});
+})
 
 
 // 3. Función para actualizar una página individual de la tabla
@@ -2137,14 +2134,13 @@ async function enviarCambiosPagina(e) {
 
 //FOOTER
 
-// 1. Cargar datos del footer en la tabla informativa / inputs
 async function cargarFooterAdmin() {
     try {
         const res = await fetch('/api/footer');
         if (!res.ok) throw new Error("Error al obtener datos del footer");
         const datos = await res.json();
 
-        // 1. Población de campos editables individuales
+        // Población de campos editables individuales
         document.getElementById('footer-descripcion').value        = datos.footer_descripcion || '';
         document.getElementById('footer-titulo-links').value       = datos.footer_titulo_links || '';
         document.getElementById('footer-titulo-contacto').value    = datos.footer_titulo_contacto || '';
@@ -2159,11 +2155,11 @@ async function cargarFooterAdmin() {
         document.getElementById('footer-copyright-linea1').value  = datos.footer_copyright_linea1 || '';
         document.getElementById('footer-copyright-linea2').value  = datos.footer_copyright_linea2 || '';
 
-        // 2. Población de datos compartidos (CORREGIDO: Ahora lee de .config y usa footer_logo)
+        // Sincronización de datos informativos compartidos del Header
         const resHeader = await fetch('/api/header-completo'); 
         if (resHeader.ok) {
             const datosHeader = await resHeader.json();
-            const configHeader = datosHeader.config || {}; // Acceso correcto al objeto de configuración
+            const configHeader = datosHeader.config || {};
             
             document.getElementById('footer-vista-marca').value = configHeader.nombre_marca || 'No asignada';
             document.getElementById('footer-vista-logo').value  = configHeader.footer_logo || 'No asignado';
@@ -2174,14 +2170,11 @@ async function cargarFooterAdmin() {
     }
 }
 
-
 async function guardarDatoIndividual(claveBD, idInputHTML) {
     const inputElement = document.getElementById(idInputHTML);
     if (!inputElement) return;
 
     const valor = inputElement.value;
-
-    // Construimos dinámicamente el payload con una sola clave/valor
     const payload = {};
     payload[claveBD] = valor;
 
@@ -2197,8 +2190,8 @@ async function guardarDatoIndividual(claveBD, idInputHTML) {
             throw new Error(data.error || "No se pudo actualizar el dato.");
         }
 
-        alert("¡Propiedad actualizada correctamente!");
-        cargarFooterAdmin(); // Volver a consultar para asegurar sincronía de datos
+        alert("¡Propiedad actualizada correctamente de forma local!");
+        cargarFooterAdmin(); 
         
     } catch (err) {
         alert(err.message);
@@ -2206,42 +2199,51 @@ async function guardarDatoIndividual(claveBD, idInputHTML) {
     }
 }
 
-// Inicialización del DOM
-document.addEventListener('DOMContentLoaded', () => {
-    obtenerDatosHeaderAdmin(); 
-    cargarFooterAdmin(); // Carga de forma automática todos tus campos individuales sin clicks previos
-});
+// =========================================================================
+// 4. SUBIDA DE FAVICON LOCAL
+// =========================================================================
 
-//FAVICON
 async function subirFavicon() {
     const fileInput = document.getElementById('input-favicon');
     const file = fileInput.files[0];
-    if (!file) return alert("Selecciona una imagen");
+    if (!file) return alert("Por favor, selecciona una imagen para el favicon.");
 
     const formData = new FormData();
-    formData.append('image', file); // 'image' debe coincidir con tu multer
+    formData.append('image', file); // Recuerda que 'image' coincide con el single de Multer
 
-    // 1. Subir el archivo al servidor
-    const res = await fetch('/api/upload', { method: 'POST', body: formData });
-    const data = await res.json();
+    try {
+        // 1. Guardar el archivo físicamente en tu servidor local
+        const res = await fetch('/api/upload', { method: 'POST', body: formData });
+        const data = await res.json();
 
-    // 2. Guardar el nombre en la BD
-    await fetch('/api/config/favicon', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nuevoFavicon: data.fileName })
-    });
-    alert("Favicon actualizado. Recarga para ver cambios.");
+        // Tolerancia: acepta data.url (ruta local completa) o data.fileName
+        const rutaFavicon = data.url || data.fileName;
+
+        if (rutaFavicon) {
+            // 2. Registrar la ruta en la Base de Datos
+            await fetch('/api/config/favicon', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nuevoFavicon: rutaFavicon })
+            });
+            alert("¡Favicon guardado localmente con éxito! Recarga la página para ver los cambios.");
+        } else {
+            alert("El servidor local no devolvió un nombre o ruta de archivo válido.");
+        }
+    } catch (error) {
+        console.error("Error al procesar el favicon localmente:", error);
+        alert("Ocurrió un error al subir el favicon.");
+    }
 }
+
 
 async function guardarConfiguracionHeaderFooter(event) {
     event.preventDefault();
     
     const formData = new FormData();
-    // Campos de texto normales
     formData.append('nombre_marca', document.getElementById('adm-nombre-marca').value);
     
-    // Captura de archivos físicos de los inputs type="file"
+    // Captura de archivos físicos de los inputs
     const inputHeader = document.getElementById('input-header-logo');
     if (inputHeader && inputHeader.files[0]) {
         formData.append('header_logo', inputHeader.files[0]);
@@ -2252,27 +2254,34 @@ async function guardarConfiguracionHeaderFooter(event) {
         formData.append('footer_logo', inputFooter.files[0]);
     }
     
-    // Pasamos los valores actuales de respaldo (igual que "promo_imagen_actual")
-    // Recuerda almacenar las URLs vigentes en inputs ocultos (hidden) al cargar la página
+    // Valores de respaldo si no se eligen archivos nuevos
     formData.append('header_logo_actual', document.getElementById('url-header-logo-actual').value || '');
     formData.append('footer_logo_actual', document.getElementById('url-footer-logo-actual').value || '');
 
     try {
         const res = await fetch('/api/header/config', {
             method: 'PUT',
-            body: formData // Nota: Al usar FormData NO debes añadir el Header 'Content-Type'
+            body: formData // Al mandar FormData, el navegador asigna el Content-Type correcto automáticamente
         });
         
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "No se pudo actualizar la configuración.");
         
-        alert("¡Configuración general y logos actualizados en Cloudinary con éxito!");
-        location.reload(); // Recargamos para ver los cambios aplicados
+        // ¡CORREGIDO AQUÍ! Removida la palabra Cloudinary
+        alert("¡Configuración general y logotipos guardados localmente con éxito!");
+        location.reload(); 
     } catch (err) {
         alert("Error: " + err.message);
         console.error(err);
     }
 }
+
+// Inicialización del DOM al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+    obtenerDatosHeaderAdmin(); 
+    cargarFooterAdmin(); 
+});
+
 
 </script>
 </body>

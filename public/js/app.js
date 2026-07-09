@@ -1,6 +1,19 @@
 let todosLosAnuncios = [];
 let contadorHuespedes = 1;
 
+
+function obtenerRutaImagen(ruta) {
+    if (!ruta) return '/uploads/placeholder.jpg'; // Imagen por defecto si está vacío
+    
+    // Si ya es una URL completa de Cloudinary, la usamos tal cual
+    if (ruta.startsWith('http://') || ruta.startsWith('https://')) {
+        return ruta;
+    }
+    
+    // Si es un nombre de archivo local antiguo, le añade el prefijo /uploads/
+    return `/uploads/${ruta}`;
+}
+
 async function apiCall(endpoint) {
     try {
         const response = await fetch(endpoint);
@@ -11,7 +24,6 @@ async function apiCall(endpoint) {
         return null;
     }
 }
-
 
 async function inicializarPagina() {
     console.log("Iniciando carga de componentes...");
@@ -72,31 +84,32 @@ async function inicializarPagina() {
         });
 
         // Dentro de tu función de carga inicial de configuración (ej. donde obtienes datos generales)
-        async function cargarConfiguracionVisual(datosConfig) {
-            if (!datosConfig) return;
+            async function cargarConfiguracionVisual(datosConfig) {
+                if (!datosConfig) return;
 
-            // 1. Actualizar Nombre de Marca textualmente
-            const txtMarca = document.getElementById('public-nombre-marca');
-            if (txtMarca && datosConfig.nombre_marca) {
-                txtMarca.textContent = datosConfig.nombre_marca;
-            }
+                // 1. Actualizar Nombre de Marca textualmente
+                const txtMarca = document.getElementById('public-nombre-marca');
+                if (txtMarca && datosConfig.nombre_marca) {
+                    txtMarca.textContent = datosConfig.nombre_marca;
+                }
 
-            // 2. Renderizar Logo del Header (Soporta URL completa de Cloudinary o SVG antiguo)
-            const headerLogoContainer = document.getElementById('header-logo-container');
-            if (headerLogoContainer && datosConfig.header_logo) {
-                if (datosConfig.header_logo.includes('http')) {
-                    headerLogoContainer.innerHTML = `<img src="${datosConfig.header_logo}" alt="Logo Header" style="max-height: 40px; object-fit: contain;">`;
-                } else {
-                    headerLogoContainer.innerHTML = datosConfig.header_logo; // Mantiene compatibilidad con SVG crudo
+                // 2. Renderizar Logo del Header (Soporta URL completa de Cloudinary o SVG antiguo)
+                const headerLogoContainer = document.getElementById('header-logo-container');
+                if (headerLogoContainer && datosConfig.header_logo) {
+                    // CORREGIDO: Si es una imagen (Cloudinary o Local), usamos obtenerRutaImagen
+                    if (datosConfig.header_logo.includes('http') || datosConfig.header_logo.endsWith('.jpg') || datosConfig.header_logo.endsWith('.jpeg') || datosConfig.header_logo.endsWith('.png') || datosConfig.header_logo.endsWith('.webp')) {
+                        headerLogoContainer.innerHTML = `<img src="${obtenerRutaImagen(datosConfig.header_logo)}" alt="Logo Header" style="max-height: 40px; object-fit: contain;">`;
+                    } else {
+                        headerLogoContainer.innerHTML = datosConfig.header_logo; // Mantiene compatibilidad con SVG crudo
+                    }
+                }
+
+                // 3. Renderizar Logo del Footer (CORREGIDO con la ruta inteligente)
+                const imgFooterLogo = document.getElementById('public-footer-logo');
+                if (imgFooterLogo && datosConfig.footer_logo) {
+                    imgFooterLogo.src = obtenerRutaImagen(datosConfig.footer_logo);
                 }
             }
-
-            // 3. Renderizar Logo del Footer
-            const imgFooterLogo = document.getElementById('public-footer-logo');
-            if (imgFooterLogo && datosConfig.footer_logo) {
-                imgFooterLogo.src = datosConfig.footer_logo;
-            }
-        }
 
     } catch (err) {
         console.error("Error general al inicializar los anuncios:", err);
@@ -792,13 +805,13 @@ async function cargarHeaderDinamico() {
                 const elemento = document.getElementById(idElemento);
                 if (!elemento) return;
 
-                // Si hay una imagen real subida (.jpg, .png, etc.)
-                if (archivoLogo && (archivoLogo.endsWith('.jpg') || archivoLogo.endsWith('.jpeg') || archivoLogo.endsWith('.png') || archivoLogo.endsWith('.webp'))) {
-                    // Reemplazamos toda la etiqueta usando outerHTML con el tamaño forzado en CSS
+                // CORREGIDO: Soporta tanto enlaces completos de Cloudinary como imágenes locales
+                if (archivoLogo && (archivoLogo.startsWith('http') || archivoLogo.endsWith('.jpg') || archivoLogo.endsWith('.jpeg') || archivoLogo.endsWith('.png') || archivoLogo.endsWith('.webp'))) {
+                    // Reemplazamos toda la etiqueta usando la función inteligente obtenerRutaImagen
                     elemento.outerHTML = `
                         <img 
                             id="${idElemento}" 
-                            src="/uploads/${archivoLogo}" 
+                            src="${obtenerRutaImagen(archivoLogo)}" 
                             alt="Logotipo" 
                             style="width: 120px; height: 40px; object-fit: contain; background: transparent; display: inline-block; vertical-align: middle;"
                         />`;
@@ -1041,11 +1054,14 @@ async function renderizarHeroPublico() {
             const imgHero = document.querySelector('.hero_media img');
             const sourceHero = document.querySelector('.hero_media source');
             if (imgHero && datos.hero_imagen) {
-                imgHero.src = datos.hero_imagen;
-                imgHero.setAttribute('data-src', datos.hero_imagen);
+                // CORREGIDO: Pasamos la imagen por el filtro inteligente
+                const rutaLimpia = obtenerRutaImagen(datos.hero_imagen);
+                
+                imgHero.src = rutaLimpia;
+                imgHero.setAttribute('data-src', rutaLimpia);
                 if (sourceHero) {
-                    sourceHero.srcset = datos.hero_imagen;
-                    sourceHero.setAttribute('data-srcset', datos.hero_imagen);
+                    sourceHero.srcset = rutaLimpia;
+                    sourceHero.setAttribute('data-srcset', rutaLimpia);
                 }
             }
 
@@ -1334,31 +1350,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Agrega esta función dentro de tu app.js
 async function cargarRatingPublico() {
+    // FILTRO DE GUARDA: Si no existe el contenedor de la sección, salimos de inmediato
+    const contenedorRating = document.getElementById('public-rating-section');
+    if (!contenedorRating) return;
+
     try {
         const res = await fetch('/api/home');
         if (!res.ok) throw new Error("No se pudo obtener la configuración pública del Rating.");
         const datos = await res.json();
 
         if (datos) {
-            // 1. Inyectamos los números y los textos de las marcas
+            // 1. Inyectamos los números y los textos de las marcas de manera segura
             if(document.getElementById('public-rating-num1')) document.getElementById('public-rating-num1').innerText = datos.rating_item1_num || '';
             if(document.getElementById('public-rating-text1')) document.getElementById('public-rating-text1').innerText = datos.rating_item1_text || '';
-            if(document.getElementById('public-rating-logo1')) document.getElementById('public-rating-logo1').src = datos.rating_item1_logo || '';
+            if(document.getElementById('public-rating-logo1') && datos.rating_item1_logo) document.getElementById('public-rating-logo1').src = datos.rating_item1_logo;
 
             if(document.getElementById('public-rating-num2')) document.getElementById('public-rating-num2').innerText = datos.rating_item2_num || '';
             if(document.getElementById('public-rating-text2')) document.getElementById('public-rating-text2').innerText = datos.rating_item2_text || '';
-            if(document.getElementById('public-rating-logo2')) document.getElementById('public-rating-logo2').src = datos.rating_item2_logo || '';
+            if(document.getElementById('public-rating-logo2') && datos.rating_item2_logo) document.getElementById('public-rating-logo2').src = datos.rating_item2_logo;
 
             if(document.getElementById('public-rating-num3')) document.getElementById('public-rating-num3').innerText = datos.rating_item3_num || '';
             if(document.getElementById('public-rating-text3')) document.getElementById('public-rating-text3').innerText = datos.rating_item3_text || '';
-            if(document.getElementById('public-rating-logo3')) document.getElementById('public-rating-logo3').src = datos.rating_item3_logo || '';
+            if(document.getElementById('public-rating-logo3') && datos.rating_item3_logo) document.getElementById('public-rating-logo3').src = datos.rating_item3_logo;
 
-            // 2. Control de Animaciones dinámicas
-            const contenedorRating = document.getElementById('public-rating-section');
-            if (contenedorRating && datos.rating_animacion) {
-                // Removemos animaciones viejas si existieran y añadimos la guardada en la BD
-                contenedorRating.className = "raiting"; // Resetea las clases base del div
-                contenedorRating.classList.add(datos.rating_animacion);
+            // 2. Control de Animaciones dinámicas sin destruir clases de diseño previas
+            if (datos.rating_animacion) {
+                // Nota: Ajusta "raiting" si tu clase real se escribe "rating"
+                contenedorRating.className = `raiting ${datos.rating_animacion}`; 
             }
         }
     } catch (err) {
@@ -1378,36 +1396,39 @@ document.addEventListener('DOMContentLoaded', () => {
 //================================================================
 
 async function cargarReviewsPublico() {
+    // FILTRO DE GUARDA: Evita fetch si la página actual no tiene los sliders
+    const mediaWrapper = document.getElementById('public-reviews-media-wrapper');
+    const contentWrapper = document.getElementById('public-reviews-content-wrapper');
+    if (!mediaWrapper || !contentWrapper) return;
+
     try {
         const response = await fetch('/api/home/reviews');
         if (!response.ok) throw new Error("No se pudieron obtener las reseñas.");
         const data = await response.json();
 
-        // 1. Renderizar el título general
+        // 1. Renderizar el título general de forma segura
         const txtTitulo = document.getElementById('public-reviews-titulo');
-        if (txtTitulo) txtTitulo.textContent = data.reviews_titulo;
+        if (txtTitulo) txtTitulo.textContent = data?.reviews_titulo || '';
 
-        // 2. Obtener los contenedores wrappers de Swiper
-        const mediaWrapper = document.getElementById('public-reviews-media-wrapper');
-        const contentWrapper = document.getElementById('public-reviews-content-wrapper');
-
-        if (mediaWrapper && contentWrapper && data.comentarios) {
+        // 2. Procesar comentarios
+        if (data && data.comentarios && Array.isArray(data.comentarios)) {
             let htmlMedia = '';
             let htmlContent = '';
 
             data.comentarios.forEach(review => {
-                // Generar estrellas dinámicas
+                // Generar estrellas dinámicas convirtiendo a Entero seguro
                 let estrellasHtml = '';
-                for (let i = 0; i < review.stars; i++) {
+                const totalStars = parseInt(review.stars) || 0;
+                for (let i = 0; i < totalStars; i++) {
                     estrellasHtml += `<i class="icon-star icon"></i>`;
                 }
 
-                // Armar slider izquierdo (Imágenes de fondo)
+                // Armar slider izquierdo (Imágenes de fondo) con salvavidas de strings vacíos
                 htmlMedia += `
                     <div class="swiper-slide">
                         <picture>
-                            <source data-srcset="${review.bg_image}" srcset="${review.bg_image}" />
-                            <img class="lazy" data-src="${review.bg_image}" src="${review.bg_image}" alt="media" />
+                            <source data-srcset="${review.bg_image || ''}" srcset="${review.bg_image || ''}" />
+                            <img class="lazy" data-src="${review.bg_image || ''}" src="${review.bg_image || ''}" alt="media" />
                         </picture>
                     </div>
                 `;
@@ -1420,51 +1441,47 @@ async function cargarReviewsPublico() {
                         </div>
                         <span class="reviews_slider-slide_date">
                             <span class="h4">Date of stay:</span>
-                            ${review.date_text}
+                            ${review.date_text || ''}
                         </span>
                         <div class="reviews_slider-slide_main">
-                            <h4 class="title">${review.title}</h4>
-                            <p class="text">${review.text}</p>
+                            <h4 class="title">${review.title || ''}</h4>
+                            <p class="text">${review.text || ''}</p>
                         </div>
                         <span class="reviews_slider-slide_guest d-flex align-items-center">
                             <span class="avatar">
                                 <picture>
-                                    <source data-srcset="${review.avatar}" srcset="${review.avatar}" />
-                                    <img class="lazy" data-src="${review.avatar}" src="${review.avatar}" alt="guest avatar" />
+                                    <source data-srcset="${review.avatar || ''}" srcset="${review.avatar || ''}" />
+                                    <img class="lazy" data-src="${review.avatar || ''}" src="${review.avatar || ''}" alt="guest avatar" />
                                 </picture>
                             </span>
-                            <span class="name h6">${review.name}</span>
+                            <span class="name h6">${review.name || ''}</span>
                         </span>
                     </div>
                 `;
             });
 
-            // Inyectamos el HTML dinámico de la base de datos
+            // Inyectamos el HTML dinámico
             mediaWrapper.innerHTML = htmlMedia;
             contentWrapper.innerHTML = htmlContent;
             
-            // ========================================================
-            // NUEVO: SOLUCIÓN PARA DESCONGELAR LOS BOTONES DE SWIPER
-            // ========================================================
+            // Inicialización/Actualización reactiva de Swiper
             setTimeout(() => {
                 const mediaSliderEl = document.querySelector('.reviews_slider--media');
                 const mainSliderEl = document.querySelector('.reviews_slider--main');
 
-                // Intento 1: Si la plantilla ya creó las instancias, las obligamos a actualizarse
+                // Intento 1: Actualizar si ya existen instancias creadas por scripts externos
                 if (mediaSliderEl?.swiper && mainSliderEl?.swiper) {
                     mediaSliderEl.swiper.update();
                     mainSliderEl.swiper.update();
                 } 
-                // Intento 2: Si Swiper no se había inicializado o se rompió, lo creamos manualmente
+                // Intento 2: Si Swiper está listo globalmente, se instancia de cero
                 else if (typeof Swiper !== 'undefined') {
-                    // Inicializamos el slider de imágenes de fondo (izquierdo)
                     const mediaSwiper = new Swiper('.reviews_slider--media', {
                         speed: 800,
                         effect: 'fade',
                         allowTouchMove: false
                     });
 
-                    // Inicializamos el slider de textos (derecho) y vinculamos los botones
                     new Swiper('.reviews_slider--main', {
                         speed: 800,
                         loop: true,
@@ -1472,13 +1489,12 @@ async function cargarReviewsPublico() {
                             nextEl: '.reviews .swiper-button-next',
                             prevEl: '.reviews .swiper-button-prev',
                         },
-                        // Vinculamos de forma nativa para que corran sincronizados
                         controller: {
                             control: mediaSwiper
                         }
                     });
                 }
-            }, 150); // Le damos 150ms al DOM para procesar el HTML antes de activar Swiper
+            }, 150); 
         }
     } catch (error) {
         console.error("Error al renderizar la sección de reseñas públicas:", error);
@@ -1497,45 +1513,50 @@ document.addEventListener('DOMContentLoaded', () => {
 //================================================================
 
 async function cargarPromoPublico() {
+    // FILTRO DE GUARDA: Si no estamos en la página con los contenedores promo, cancelamos fetch
+    if (!document.getElementById('public-promo-titulo') && !document.getElementById('public-promo-img')) return;
+
     try {
         const response = await fetch('/api/home/promo');
         if (!response.ok) throw new Error("No se pudo obtener la sección promocional.");
         const datos = await response.json();
 
-        // Renderizado seguro en el DOM público sin interferir con la tarjeta de ofertas
-        const txtTitulo = document.getElementById('public-promo-titulo');
-        if (txtTitulo) txtTitulo.textContent = datos.promo_titulo;
+        if (datos) {
+            // Renderizado seguro en el DOM público añadiendo fallbacks para evitar "undefined"
+            const txtTitulo = document.getElementById('public-promo-titulo');
+            if (txtTitulo) txtTitulo.textContent = datos.promo_titulo || '';
 
-        const txtDescripcion = document.getElementById('public-promo-descripcion');
-        if (txtDescripcion) txtDescripcion.textContent = datos.promo_descripcion;
+            const txtDescripcion = document.getElementById('public-promo-descripcion');
+            if (txtDescripcion) txtDescripcion.textContent = datos.promo_descripcion || '';
 
-        const txtItem1Title = document.getElementById('public-promo-item1-title');
-        if (txtItem1Title) txtItem1Title.textContent = datos.promo_item1_title;
+            const txtItem1Title = document.getElementById('public-promo-item1-title');
+            if (txtItem1Title) txtItem1Title.textContent = datos.promo_item1_title || '';
 
-        const txtItem1Text = document.getElementById('public-promo-item1-text');
-        if (txtItem1Text) txtItem1Text.textContent = datos.promo_item1_text;
+            const txtItem1Text = document.getElementById('public-promo-item1-text');
+            if (txtItem1Text) txtItem1Text.textContent = datos.promo_item1_text || '';
 
-        const txtItem2Title = document.getElementById('public-promo-item2-title');
-        if (txtItem2Title) txtItem2Title.textContent = datos.promo_item2_title;
+            const txtItem2Title = document.getElementById('public-promo-item2-title');
+            if (txtItem2Title) txtItem2Title.textContent = datos.promo_item2_title || '';
 
-        const txtItem2Text = document.getElementById('public-promo-item2-text');
-        if (txtItem2Text) txtItem2Text.textContent = datos.promo_item2_text;
+            const txtItem2Text = document.getElementById('public-promo-item2-text');
+            if (txtItem2Text) txtItem2Text.textContent = datos.promo_item2_text || '';
 
-        const txtReviewText = document.getElementById('public-promo-review-text');
-        if (txtReviewText) txtReviewText.textContent = datos.promo_review_text;
+            const txtReviewText = document.getElementById('public-promo-review-text');
+            if (txtReviewText) txtReviewText.textContent = datos.promo_review_text || '';
 
-        const txtReviewName = document.getElementById('public-promo-review-name');
-        if (txtReviewName) txtReviewName.textContent = datos.promo_review_name;
+            const txtReviewName = document.getElementById('public-promo-review-name');
+            if (txtReviewName) txtReviewName.textContent = datos.promo_review_name || '';
 
-        // Inyección de la imagen subida a Cloudinary
-        const imgPromo = document.getElementById('public-promo-img');
-        const srcPromo = document.getElementById('public-promo-src-srcset');
-        if (imgPromo && datos.promo_imagen) {
-            imgPromo.src = datos.promo_imagen;
-            imgPromo.setAttribute('data-src', datos.promo_imagen);
-            if(srcPromo) {
-                srcPromo.srcset = datos.promo_imagen;
-                srcPromo.setAttribute('data-srcset', datos.promo_imagen);
+            // Inyección segura de la imagen subida a Cloudinary (sólo si existe la propiedad)
+            const imgPromo = document.getElementById('public-promo-img');
+            const srcPromo = document.getElementById('public-promo-src-srcset');
+            if (imgPromo && datos.promo_imagen) {
+                imgPromo.src = datos.promo_imagen;
+                imgPromo.setAttribute('data-src', datos.promo_imagen);
+                if (srcPromo) {
+                    srcPromo.srcset = datos.promo_imagen;
+                    srcPromo.setAttribute('data-srcset', datos.promo_imagen);
+                }
             }
         }
     } catch (err) {
@@ -1554,9 +1575,13 @@ document.addEventListener('DOMContentLoaded', () => {
 // CONTACTS SECTION HOME
 //================================================================
 async function cargarContactsPublico() {
+    // FILTRO DE GUARDA: Evitar llamados en páginas sin el formulario/bloque de contacto
+    if (!document.getElementById('public-contacts-titulo') && !document.getElementById('public-contacts-img')) return;
+
     try {
-        // CORREGIDO: Apuntar al endpoint correcto de contactos definido en server.js
         const res = await fetch('/api/home/contacts'); 
+        if (!res.ok) throw new Error("No se pudo obtener la sección de contactos de la base de datos.");
+        
         const datos = await res.json();
         if (!datos) return;
 
@@ -1564,14 +1589,14 @@ async function cargarContactsPublico() {
         if (document.getElementById('public-contacts-titulo')) document.getElementById('public-contacts-titulo').textContent = datos.contacts_titulo || '';
         if (document.getElementById('public-contacts-descripcion')) document.getElementById('public-contacts-descripcion').textContent = datos.contacts_descripcion || '';
 
-        // Teléfonos
+        // Teléfonos y atributos href correspondientes
         if (document.getElementById('public-contacts-tel-titulo')) document.getElementById('public-contacts-tel-titulo').textContent = datos.contacts_tel_titulo || '';
         const tel1 = document.getElementById('public-contacts-tel1');
         if (tel1 && datos.contacts_tel1) { tel1.textContent = datos.contacts_tel1; tel1.href = `tel:${datos.contacts_tel1}`; }
         const tel2 = document.getElementById('public-contacts-tel2');
         if (tel2 && datos.contacts_tel2) { tel2.textContent = datos.contacts_tel2; tel2.href = `tel:${datos.contacts_tel2}`; }
 
-        // Emails
+        // Emails y links directos mailto
         if (document.getElementById('public-contacts-email-titulo')) document.getElementById('public-contacts-email-titulo').textContent = datos.contacts_email_titulo || '';
         const em1 = document.getElementById('public-contacts-email1');
         if (em1 && datos.contacts_email1) { em1.textContent = datos.contacts_email1; em1.href = `mailto:${datos.contacts_email1}`; }
@@ -1583,7 +1608,7 @@ async function cargarContactsPublico() {
         if (document.getElementById('public-contacts-loc1')) document.getElementById('public-contacts-loc1').textContent = datos.contacts_loc1 || '';
         if (document.getElementById('public-contacts-loc2')) document.getElementById('public-contacts-loc2').textContent = datos.contacts_loc2 || '';
 
-        // Horarios
+        // Horarios laborales
         if (document.getElementById('public-contacts-work-titulo')) document.getElementById('public-contacts-work-titulo').textContent = datos.contacts_work_titulo || '';
         if (document.getElementById('public-contacts-work1')) document.getElementById('public-contacts-work1').textContent = datos.contacts_work1 || '';
         if (document.getElementById('public-contacts-work2')) document.getElementById('public-contacts-work2').textContent = datos.contacts_work2 || '';
