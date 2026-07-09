@@ -1020,12 +1020,12 @@ app.put('/api/header/config', uploadLogos, (req, res) => {
 
     // Verificar si se subió nuevo header_logo
     if (req.files && req.files['header_logo']) {
-        header_logo_url = `/uploads/images/${req.files['header_logo'][0].filename}`;
+        header_logo_url = `/uploads/img/${req.files['header_logo'][0].filename}`;
     }
 
     // Verificar si se subió nuevo footer_logo
     if (req.files && req.files['footer_logo']) {
-        footer_logo_url = `/uploads/images/${req.files['footer_logo'][0].filename}`;
+        footer_logo_url = `/uploads/img/${req.files['footer_logo'][0].filename}`;
     }
 
     const sql = `UPDATE admin_configuracion SET header_logo = ?, footer_logo = ? WHERE id = 1`;
