@@ -25,95 +25,78 @@ async function apiCall(endpoint) {
     }
 }
 
-async function inicializarPagina() {
+ async function inicializarPagina() {
     console.log("Iniciando carga de componentes...");
     
     try {
-        const config = await apiCall('/api/configuracion'); // Asegúrate que este endpoint exista
+        const configRaw = await apiCall('/api/configuracion'); // Asegúrate que este endpoint exista
+        if (!configRaw) {
+            console.warn("No se pudo obtener la configuración de la API.");
+            return;
+        }
+
+        // SALVAVIDAS: Si la respuesta es un arreglo, tomamos el primer elemento automáticamente
+        const config = Array.isArray(configRaw) ? configRaw[0] : configRaw;
+        console.log("Datos de configuración cargados con éxito:", config);
+
         if (config && config.favicon) {
             aplicarFavicon(config.favicon);
         }
-    } catch (e) {
-        console.warn("No se pudo cargar la configuración para el favicon.");
-    }
 
-    // Carga de ubicaciones (Esto ya te funciona correctamente)
-    const ubicaciones = await apiCall('/api/ubicaciones');
-    const selectCiudad = document.getElementById('filtro-ciudad');
-    
-    if (selectCiudad && ubicaciones && Array.isArray(ubicaciones)) {
-        selectCiudad.innerHTML = '<option value="">Todas las ciudades</option>';
-        const ciudadesUnicas = [...new Set(ubicaciones.map(u => u.ciudad || u.ciudad_nombre))].filter(Boolean);
-        
-        ciudadesUnicas.forEach(ciudadNombre => {
-            selectCiudad.innerHTML += `<option value="${ciudadNombre}">${ciudadNombre}</option>`;
-        });
-    }
-
-    // Ubicamos el contenedor del HTML
-    const contenedor = document.getElementById('contenedor-anuncios');
-    if (!contenedor) {
-        console.error("Error crítico: El contenedor con ID 'contenedor-anuncios' no existe en tu HTML.");
-        return;
-    }
-
-    try {
-        // Consultamos los anuncios
-        todosLosAnuncios = await apiCall('/api/anuncios');
-        console.log("Datos de anuncios recibidos de la API:", todosLosAnuncios);
-
-        // Validación A: Si la API falló por completo o no devolvió nada
-        if (!todosLosAnuncios) {
-            contenedor.innerHTML = '<p class="text-rose-500 col-span-full text-center py-8">⚠️ Error de red o el servidor no respondió.</p>';
-            return;
-        }
-
-        // Validación B: Si la respuesta no es un arreglo (Es decir, vino un objeto de error)
-        if (!Array.isArray(todosLosAnuncios)) {
-            console.error("La API no regresó un arreglo válido. Respuesta recibida:", todosLosAnuncios);
-            contenedor.innerHTML = `<p class="text-amber-500 col-span-full text-center py-8">⚠️ Formato de datos incorrecto recibido de la base de datos.</p>`;
-            return;
-        }
-
-        // Si todo está correcto, mandamos a renderizar de forma segura
-        renderizarAnunciosPublicos(todosLosAnuncios);
-
-        // Ejecutamos la función automáticamente al cargar el DOM
-        document.addEventListener('DOMContentLoaded', () => {
-            cargarTitulosDinamicos();
-        });
-
-        // Dentro de tu función de carga inicial de configuración (ej. donde obtienes datos generales)
-            async function cargarConfiguracionVisual(datosConfig) {
-                if (!datosConfig) return;
-
-                // 1. Actualizar Nombre de Marca textualmente
-                const txtMarca = document.getElementById('public-nombre-marca');
-                if (txtMarca && datosConfig.nombre_marca) {
-                    txtMarca.textContent = datosConfig.nombre_marca;
-                }
-
-                // 2. Renderizar Logo del Header (Soporta URL completa de Cloudinary o SVG antiguo)
-                const headerLogoContainer = document.getElementById('header-logo-container');
-                if (headerLogoContainer && datosConfig.header_logo) {
-                    // CORREGIDO: Si es una imagen (Cloudinary o Local), usamos obtenerRutaImagen
-                    if (datosConfig.header_logo.includes('http') || datosConfig.header_logo.endsWith('.jpg') || datosConfig.header_logo.endsWith('.jpeg') || datosConfig.header_logo.endsWith('.png') || datosConfig.header_logo.endsWith('.webp')) {
-                        headerLogoContainer.innerHTML = `<img src="${obtenerRutaImagen(datosConfig.header_logo)}" alt="Logo Header" style="max-height: 40px; object-fit: contain;">`;
-                    } else {
-                        headerLogoContainer.innerHTML = datosConfig.header_logo; // Mantiene compatibilidad con SVG crudo
-                    }
-                }
-
-                // 3. Renderizar Logo del Footer (CORREGIDO con la ruta inteligente)
-                const imgFooterLogo = document.getElementById('public-footer-logo');
-                if (imgFooterLogo && datosConfig.footer_logo) {
-                    imgFooterLogo.src = obtenerRutaImagen(datosConfig.footer_logo);
-                }
+        // Función auxiliar mejorada para reemplazar un logo por su ID exacto
+        const inyectarLogo = (idElemento, archivoLogo) => {
+            const elemento = document.getElementById(idElemento);
+            if (!elemento) {
+                console.warn(`Elemento #${idElemento} no encontrado en el DOM de esta página.`);
+                return;
             }
 
+            // Expresión regular para detectar formatos de imagen de forma segura (sin importar mayúsculas)
+            const esImagenValida = archivoLogo && (
+                archivoLogo.startsWith('http') || 
+                /\.(jpg|jpeg|png|webp|svg|gif)$/i.test(archivoLogo)
+            );
+
+            if (esImagenValida) {
+                // Validamos si existe obtenerRutaImagen para evitar que la app truene si no está definida
+                const srcFinal = typeof obtenerRutaImagen === 'function' ? obtenerRutaImagen(archivoLogo) : archivoLogo;
+                
+                elemento.outerHTML = `
+                    <img 
+                        id="${idElemento}" 
+                        src="${srcFinal}" 
+                        alt="Logotipo" 
+                        style="width: 120px; height: 40px; object-fit: contain; background: transparent; display: inline-block; vertical-align: middle;"
+                    />`;
+            } 
+            // Si es código SVG directo insertado en la BD
+            else if (archivoLogo && archivoLogo.includes('<svg')) {
+                elemento.outerHTML = archivoLogo;
+            } 
+            // Si no hay logo guardado, aplicamos el de respaldo por defecto
+            else {
+                if (typeof svgPorDefecto !== 'undefined') {
+                    elemento.outerHTML = svgPorDefecto.replace('<svg ', `<svg id="${idElemento}" `);
+                } else {
+                    console.warn(`No hay logo asignado para #${idElemento} y tampoco se encontró 'svgPorDefecto'.`);
+                }
+            }
+        };
+
+        // 2. Inyectar el Logo del Header (Barra principal y menú desplegable lateral)
+        inyectarLogo('brandHeader', config.header_logo);
+        inyectarLogo('brandOffset', config.header_logo);
+
+        // 3. Inyectar el Logo del Footer de manera independiente
+        inyectarLogo('brandFooter', config.footer_logo);
+        
+        // 4. Asegurar que todos los contenedores de marca lleven al inicio
+        document.querySelectorAll('.brand').forEach(enlaceMarca => {
+            enlaceMarca.setAttribute('href', '/');
+        });
+
     } catch (err) {
-        console.error("Error general al inicializar los anuncios:", err);
-        contenedor.innerHTML = '<p class="text-rose-500 col-span-full text-center py-8">⚠️ Ocurrió un error inesperado al procesar las habitaciones.</p>';
+        console.error("Error crítico en inicializarPagina:", err);
     }
 }
 
