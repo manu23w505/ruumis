@@ -1013,31 +1013,50 @@ const uploadLogos = upload.fields([
 ]);
 
 app.put('/api/header/config', uploadLogos, (req, res) => {
-    const { header_logo_actual, footer_logo_actual } = req.body;
+    // 1. Extraemos todas las posibles variables (soporta tanto JSON como FormData)
+    const { 
+        header_logo_actual, 
+        footer_logo_actual, 
+        header_logo, 
+        footer_logo, 
+        nombre_marca 
+    } = req.body;
 
-    let header_logo_url = header_logo_actual;
-    let footer_logo_url = footer_logo_actual;
-
-    // Verificar si se subió nuevo header_logo
+    // 2. Determinamos el logo del Header (Prioridad: Archivo físico > URL/Nombre directo > Respaldo actual)
+    let header_logo_url = header_logo_actual || header_logo;
     if (req.files && req.files['header_logo']) {
         header_logo_url = `/uploads/img/${req.files['header_logo'][0].filename}`;
     }
 
-    // Verificar si se subió nuevo footer_logo
+    // 3. Determinamos el logo del Footer
+    let footer_logo_url = footer_logo_actual || footer_logo;
     if (req.files && req.files['footer_logo']) {
         footer_logo_url = `/uploads/img/${req.files['footer_logo'][0].filename}`;
     }
 
-    const sql = `UPDATE admin_configuracion SET header_logo = ?, footer_logo = ? WHERE id = 1`;
-    db.query(sql, [header_logo_url, footer_logo_url], (err, result) => {
+    // Salvavidas: Evitar que se guarden valores nulos o "undefined" como texto en las columnas
+    if (!header_logo_url || header_logo_url === 'undefined') header_logo_url = 'default-logo-header.png';
+    if (!footer_logo_url || footer_logo_url === 'undefined') footer_logo_url = 'default-logo-footer.png';
+
+    // 4. Consulta SQL Corregida: Ahora sí incluye 'nombre_marca' para guardar el texto del input
+    const sql = `UPDATE admin_configuracion SET header_logo = ?, footer_logo = ?, nombre_marca = ? WHERE id = 1`;
+    
+    db.query(sql, [header_logo_url, footer_logo_url, nombre_marca || ''], (err, result) => {
         if (err) {
-            console.error("Error al actualizar logos generales:", err);
-            return res.status(500).json({ error: "Error al guardar los logos en la base de datos" });
+            console.error("Error crítico al actualizar la configuración general de identidad:", err);
+            return res.status(500).json({ 
+                success: false, 
+                error: "Error al guardar las configuraciones en la base de datos." 
+            });
         }
+        
+        // 5. IMPORTANTE: Devolvemos 'success: true' para que el JS de tu frontend lo valide bien
         res.json({ 
-            message: "¡Logos actualizados localmente con éxito!", 
+            success: true, 
+            message: "¡Configuración de identidad y logotipos actualizada con éxito!", 
             header_logo: header_logo_url, 
-            footer_logo: footer_logo_url 
+            footer_logo: footer_logo_url,
+            nombre_marca: nombre_marca
         });
     });
 });
