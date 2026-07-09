@@ -1012,26 +1012,32 @@ const uploadLogos = upload.fields([
     { name: 'footer_logo', maxCount: 1 }
 ]);
 
-// OBTENER los logotipos e identidad actuales
+// 1. OBTENER los logotipos e identidad actuales desde configuracion_general
 app.get('/api/header/config', (req, res) => {
-    // Usamos la misma tabla que modificas en el PUT
-    const sql = "SELECT header_logo, footer_logo, nombre_marca FROM admin_configuracion WHERE id = 1";
+    // Buscamos las filas específicas por su columna 'clave'
+    const sql = "SELECT clave, valor FROM configuracion_general WHERE clave IN ('header_logo', 'footer_logo', 'nombre_marca')";
     
-    db.query(sql, (err, result) => {
+    db.query(sql, (err, results) => {
         if (err) {
             console.error("Error al obtener la configuración de identidad:", err);
             return res.status(500).json({ error: "Error en la base de datos al obtener los logos" });
         }
-        if (result.length === 0) {
-            return res.status(404).json({ error: "No se encontró la configuración con ID 1" });
+        
+        // Convertimos el array de filas en un objeto plano estructurado para el Front-End
+        const configObj = {};
+        if (results && results.length > 0) {
+            results.forEach(fila => {
+                configObj[fila.clave] = fila.valor;
+            });
         }
-        // Retornamos el objeto limpio con los datos
-        res.json(result[0]);
+        
+        res.json(configObj);
     });
 });
 
+// 2. ACTUALIZAR la identidad y logos dentro de configuracion_general
 app.put('/api/header/config', uploadLogos, (req, res) => {
-    // 1. Extraemos todas las posibles variables (soporta tanto JSON como FormData)
+    // Extraemos las variables (soporta tanto JSON puro como FormData)
     const { 
         header_logo_actual, 
         footer_logo_actual, 
@@ -1040,42 +1046,63 @@ app.put('/api/header/config', uploadLogos, (req, res) => {
         nombre_marca 
     } = req.body;
 
-    // 2. Determinamos el logo del Header (Prioridad: Archivo físico > URL/Nombre directo > Respaldo actual)
-    let header_logo_url = header_logo_actual || header_logo;
+    // Determinamos el string/link final del Header
+    let header_logo_url = header_logo || header_logo_actual;
     if (req.files && req.files['header_logo']) {
         header_logo_url = `/uploads/img/${req.files['header_logo'][0].filename}`;
     }
 
-    // 3. Determinamos el logo del Footer
-    let footer_logo_url = footer_logo_actual || footer_logo;
+    // Determinamos el string/link final del Footer
+    let footer_logo_url = footer_logo || footer_logo_actual;
     if (req.files && req.files['footer_logo']) {
         footer_logo_url = `/uploads/img/${req.files['footer_logo'][0].filename}`;
     }
 
-    // Salvavidas: Evitar que se guarden valores nulos o "undefined" como texto en las columnas
-    if (!header_logo_url || header_logo_url === 'undefined') header_logo_url = 'default-logo-header.png';
-    if (!footer_logo_url || footer_logo_url === 'undefined') footer_logo_url = 'default-logo-footer.png';
+    // Filtro para evitar almacenar valores 'undefined' escritos como texto
+    if (!header_logo_url || header_logo_url === 'undefined') header_logo_url = '';
+    if (!footer_logo_url || footer_logo_url === 'undefined') footer_logo_url = '';
 
-    // 4. Consulta SQL Corregida: Ahora sí incluye 'nombre_marca' para guardar el texto del input
-    const sql = `UPDATE admin_configuracion SET header_logo = ?, footer_logo = ?, nombre_marca = ? WHERE id = 1`;
-    
-    db.query(sql, [header_logo_url, footer_logo_url, nombre_marca || ''], (err, result) => {
-        if (err) {
-            console.error("Error crítico al actualizar la configuración general de identidad:", err);
-            return res.status(500).json({ 
-                success: false, 
-                error: "Error al guardar las configuraciones en la base de datos." 
-            });
-        }
+    // Creamos el diccionario con las claves exactas que corresponden a tu BD
+    const datosIdentidad = {
+        header_logo: header_logo_url,
+        footer_logo: footer_logo_url,
+        nombre_marca: nombre_marca || ''
+    };
+
+    const keys = Object.keys(datosIdentidad);
+    let queriesCompletadas = 0;
+    let huboError = false;
+
+    // Recorremos las claves y ejecutamos un lote seguro usando tu misma lógica del footer
+    keys.forEach(clave => {
+        const valor = datosIdentidad[clave];
         
-        // 5. IMPORTANTE: Devolvemos 'success: true' para que el JS de tu frontend lo valide bien
-        res.json({ 
-            success: true, 
-            message: "¡Configuración de identidad y logotipos actualizada con éxito!", 
-            header_logo: header_logo_url, 
-            footer_logo: footer_logo_url,
-            nombre_marca: nombre_marca
-        });
+        db.query(
+            "INSERT INTO configuracion_general (clave, valor) VALUES (?, ?) ON DUPLICATE KEY UPDATE valor = ?",
+            [clave, valor, valor],
+            (err) => {
+                if (err) {
+                    console.error(`Error al actualizar la clave [${clave}] en configuracion_general:`, err);
+                    if (!huboError) {
+                        huboError = true;
+                        return res.status(500).json({ success: false, error: "Error al actualizar las configuraciones de identidad en lote" });
+                    }
+                    return;
+                }
+                
+                queriesCompletadas++;
+                // Cuando termines de procesar 'header_logo', 'footer_logo' y 'nombre_marca' con éxito:
+                if (queriesCompletadas === keys.length && !huboError) {
+                    return res.json({ 
+                        success: true, 
+                        message: '¡Identidad y logotipos actualizados exitosamente!',
+                        header_logo: header_logo_url,
+                        footer_logo: footer_logo_url,
+                        nombre_marca: nombre_marca
+                    });
+                }
+            }
+        );
     });
 });
 

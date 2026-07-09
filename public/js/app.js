@@ -837,7 +837,7 @@ async function cargarHeaderDinamico() {
             document.querySelectorAll('.brand').forEach(enlaceMarca => {
                 enlaceMarca.setAttribute('href', '/');
             });
-        }
+            }
 
         // ========================================================
         // 2. RENDERIZAR LAS PÁGINAS DEL MENÚ (ARRIBA Y ABAJO)
