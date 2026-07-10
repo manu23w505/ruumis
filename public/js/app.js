@@ -784,39 +784,56 @@ async function cargarHeaderDinamico() {
                 </svg>
             `;
 
-            // 1. Renderizar el nombre dinámico de la marca en todos lados
+            // 1. Renderizar el nombre dinámico (se mantiene como respaldo)
             document.querySelectorAll('.brand_name, .nombre-marca-dinamico').forEach(el => {
                 el.innerText = config.nombre_marca || 'Hosteller';
             });
 
-            // FUNCIÓN AUXILIAR MEJORADA: Cambiamos outerHTML por innerHTML actuando sobre el padre del SVG
-            const inyectarLogo = (idSvg, archivoLogo) => {
+            // FUNCIÓN AUXILIAR MEJORADA: Ahora acepta tamaño personalizado y remueve el texto extra
+            const inyectarLogo = (idSvg, archivoLogo, altoDeseado = '40px') => {
                 const elementoSvg = document.getElementById(idSvg);
                 if (!elementoSvg) return;
 
                 const contenedorPadre = elementoSvg.parentElement; // Captura el <span class="logo-svg-dinamico">
                 if (!contenedorPadre) return;
 
-                // Si hay una imagen válida en la base de datos
+                // Buscamos el texto de la marca (.brand_name) que está justo después en este mismo bloque
+                const contenedorEnlace = contenedorPadre.closest('.brand') || contenedorPadre.parentElement;
+                const textoMarca = contenedorEnlace ? contenedorEnlace.querySelector('.brand_name, .nombre-marca-dinamico') : null;
+
+                // Si hay una imagen guardada en la Base de Datos
                 if (archivoLogo && (archivoLogo.includes('.') || archivoLogo.startsWith('http'))) {
+                    
+                    // SOLUCIÓN: Si hay logo en imagen, ocultamos el texto de después para que no se encimen
+                    if (textoMarca) {
+                        textoMarca.style.display = 'none';
+                    }
+
                     contenedorPadre.innerHTML = `
                         <img 
                             src="${obtenerRutaImagen(archivoLogo)}" 
-                            alt="Logotipo Dinámico" 
-                            style="max-height: 35px; width: auto; object-fit: contain; background: transparent; display: inline-block; vertical-align: middle;"
-                            onerror="this.onerror=null; this.parentElement.innerHTML='${svgPorDefecto.replace(/'/g, "\\'")}';"
+                            alt="Logotipo" 
+                            style="max-height: ${altoDeseado}; width: auto; object-fit: contain; background: transparent; display: inline-block; vertical-align: middle;"
+                            onerror="this.onerror=null; this.src='/uploads/placeholder.jpg';"
                         />`;
                 } else {
-                    // Si no hay imagen, dejamos el SVG original intacto o reinyectamos el por defecto
+                    // Si no hay imagen, dejamos el SVG y volvemos a mostrar el texto original
                     contenedorPadre.innerHTML = svgPorDefecto;
+                    if (textoMarca) {
+                        textoMarca.style.display = 'inline-block';
+                    }
                 }
             };
 
-            // 2. Inyectar logos usando los IDs de tus SVGs del HTML
-            inyectarLogo('brandOffset', config.header_logo); // Logo del Header principal
-            inyectarLogo('brandFooter', config.footer_logo); // Logo del Footer de abajo
+            // ========================================================
+            // 2. AJUSTA LOS TAMAÑOS AQUÍ (Hacerlos más grandes o chicos)
+            // ========================================================
+            // El tercer parámetro controla el alto máximo del logo en píxeles. ¡Cámbialo a tu gusto!
+            inyectarLogo('brandHeader', config.header_logo, '45px'); // Desktop Header
+            inyectarLogo('brandOffset', config.header_logo, '40px'); // Mobile/Sidebar Header
+            inyectarLogo('brandFooter', config.footer_logo, '60px'); // El del Footer (¡Más grande!)
 
-            // 4. Asegurar que todos los contenedores de marca lleven al inicio
+            // 4. Asegurar enlaces al inicio
             document.querySelectorAll('.brand').forEach(enlaceMarca => {
                 enlaceMarca.setAttribute('href', 'index.html');
             });
