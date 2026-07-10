@@ -48,13 +48,17 @@ async function apiCall(endpoint) {
             aplicarFavicon(config.favicon);
         }
 
-        // Función auxiliar mejorada para reemplazar un logo por su ID exacto
+        // Función auxiliar mejorada para manejar logos y nombres de marca de forma condicional
         const inyectarLogo = (idElemento, archivoLogo) => {
             const elemento = document.getElementById(idElemento);
             if (!elemento) {
                 console.warn(`Elemento #${idElemento} no encontrado en el DOM de esta página.`);
                 return;
             }
+
+            // Buscamos el contenedor principal (.brand) y el elemento de texto (.brand_name) antes de alterar el DOM
+            const contenedorBrand = elemento.closest('.brand');
+            const textoMarca = contenedorBrand ? contenedorBrand.querySelector('.brand_name') : null;
 
             // Expresión regular para detectar formatos de imagen de forma segura (sin importar mayúsculas)
             const esImagenValida = archivoLogo && (
@@ -63,8 +67,7 @@ async function apiCall(endpoint) {
             );
 
             if (esImagenValida) {
-
-                // Validamos si existe obtenerRutaImagen para evitar que la app truene si no está definida
+                // Validamos si existe obtenerRutaImagen para evitar errores si no está definida
                 const srcFinal = typeof obtenerRutaImagen === 'function' ? obtenerRutaImagen(archivoLogo) : archivoLogo;
                 
                 elemento.outerHTML = `
@@ -74,18 +77,33 @@ async function apiCall(endpoint) {
                         alt="Logotipo" 
                         style="width: 120px; height: 40px; object-fit: contain; background: transparent; display: inline-block; vertical-align: middle;"
                     />`;
-                } 
 
+                // CONDICIONAL: Al tener un logo en imagen personalizado, ocultamos el texto de la marca
+                if (textoMarca) {
+                    textoMarca.style.display = 'none';
+                }
+            } 
             // Si es código SVG directo insertado en la BD
             else if (archivoLogo && archivoLogo.includes('<svg')) {
                 elemento.outerHTML = archivoLogo;
+
+                // CONDICIONAL: Al tener un logo en SVG personalizado, ocultamos el texto de la marca
+                if (textoMarca) {
+                    textoMarca.style.display = 'none';
+                }
             } 
-            // Si no hay logo guardado, aplicamos el de respaldo por defecto
+            // Si NO se tiene un logo cargado (vacío, nulo o indefinido)
             else {
                 if (typeof svgPorDefecto !== 'undefined') {
                     elemento.outerHTML = svgPorDefecto.replace('<svg ', `<svg id="${idElemento}" `);
                 } else {
                     console.warn(`No hay logo asignado para #${idElemento} y tampoco se encontró 'svgPorDefecto'.`);
+                }
+
+                // CONDICIONAL: Si no hay logo personalizado, mostramos el nombre de marca dinámico desde la BD
+                if (textoMarca) {
+                    textoMarca.style.display = 'inline-block';
+                    textoMarca.textContent = config.nombre_marca || 'Hosteller'; // Fallback por si la BD está vacía
                 }
             }
         };
