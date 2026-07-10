@@ -5,12 +5,17 @@ let contadorHuespedes = 1;
 function obtenerRutaImagen(ruta) {
     if (!ruta) return '/uploads/placeholder.jpg'; // Imagen por defecto si está vacío
     
-    // Si ya es una URL completa de Cloudinary, la usamos tal cual
+    // Si ya es una URL completa (ej. si vuelves a usar Cloudinary o enlaces externos)
     if (ruta.startsWith('http://') || ruta.startsWith('https://')) {
         return ruta;
     }
     
-    // Si es un nombre de archivo local antiguo, le añade el prefijo /uploads/
+    // ¡CANDADO AQUÍ!: Si la cadena ya empieza con /uploads/, la dejamos intacta
+    if (ruta.startsWith('/uploads/')) {
+        return ruta;
+    }
+    
+    // Si solo viene el nombre limpio del archivo suelto, le añade el prefijo
     return `/uploads/${ruta}`;
 }
 
@@ -58,6 +63,7 @@ async function apiCall(endpoint) {
             );
 
             if (esImagenValida) {
+
                 // Validamos si existe obtenerRutaImagen para evitar que la app truene si no está definida
                 const srcFinal = typeof obtenerRutaImagen === 'function' ? obtenerRutaImagen(archivoLogo) : archivoLogo;
                 
@@ -68,7 +74,8 @@ async function apiCall(endpoint) {
                         alt="Logotipo" 
                         style="width: 120px; height: 40px; object-fit: contain; background: transparent; display: inline-block; vertical-align: middle;"
                     />`;
-            } 
+                } 
+
             // Si es código SVG directo insertado en la BD
             else if (archivoLogo && archivoLogo.includes('<svg')) {
                 elemento.outerHTML = archivoLogo;
@@ -771,9 +778,8 @@ async function cargarHeaderDinamico() {
         // 1. ACTUALIZAR EL LOGO Y NOMBRE DE LA MARCA EN TODOS LADOS
         // ========================================================
         if (config) {
-            // Definimos el SVG por defecto en una variable limpia
             const svgPorDefecto = `
-                <svg width="120" height="40" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg" style="background: transparent;">
+                <svg width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M7.03198 3.80281V7.07652L3.86083 9.75137L0.689673 12.4263L0.667474 6.56503C0.655304 3.34138 0.663875 0.654206 0.686587 0.593579C0.71907 0.506918 1.4043 0.488223 3.87994 0.506219L7.03198 0.529106V3.80281ZM21.645 4.36419V5.88433L17.0383 9.76316C14.5046 11.8966 11.2263 14.6552 9.75318 15.8934L7.07484 18.145V20.3225V22.5H3.85988H0.64502L0.667303 18.768L0.689673 15.036L2.56785 13.4609C3.60088 12.5946 6.85989 9.85244 9.81009 7.36726L15.1741 2.84867L18.4096 2.8464L21.645 2.84413V4.36419ZM21.645 15.5549V22.5H18.431H15.217V18.2638V14.0274L15.4805 13.7882C15.8061 13.4924 21.5939 8.61606 21.6236 8.61248C21.6353 8.61099 21.645 11.7351 21.645 15.5549Z" fill="currentColor"/>
                 </svg>
             `;
@@ -783,44 +789,39 @@ async function cargarHeaderDinamico() {
                 el.innerText = config.nombre_marca || 'Hosteller';
             });
 
-            // Función auxiliar para reemplazar un logo por su ID exacto, manteniendo el tamaño
-            const inyectarLogo = (idElemento, archivoLogo) => {
-                const elemento = document.getElementById(idElemento);
-                if (!elemento) return;
+            // FUNCIÓN AUXILIAR MEJORADA: Cambiamos outerHTML por innerHTML actuando sobre el padre del SVG
+            const inyectarLogo = (idSvg, archivoLogo) => {
+                const elementoSvg = document.getElementById(idSvg);
+                if (!elementoSvg) return;
 
-                // CORREGIDO: Soporta tanto enlaces completos de Cloudinary como imágenes locales
-                if (archivoLogo && (archivoLogo.startsWith('http') || archivoLogo.endsWith('.jpg') || archivoLogo.endsWith('.jpeg') || archivoLogo.endsWith('.png') || archivoLogo.endsWith('.webp'))) {
-                    // Reemplazamos toda la etiqueta usando la función inteligente obtenerRutaImagen
-                    elemento.outerHTML = `
+                const contenedorPadre = elementoSvg.parentElement; // Captura el <span class="logo-svg-dinamico">
+                if (!contenedorPadre) return;
+
+                // Si hay una imagen válida en la base de datos
+                if (archivoLogo && (archivoLogo.includes('.') || archivoLogo.startsWith('http'))) {
+                    contenedorPadre.innerHTML = `
                         <img 
-                            id="${idElemento}" 
                             src="${obtenerRutaImagen(archivoLogo)}" 
-                            alt="Logotipo" 
-                            style="width: 120px; height: 40px; object-fit: contain; background: transparent; display: inline-block; vertical-align: middle;"
+                            alt="Logotipo Dinámico" 
+                            style="max-height: 35px; width: auto; object-fit: contain; background: transparent; display: inline-block; vertical-align: middle;"
+                            onerror="this.onerror=null; this.parentElement.innerHTML='${svgPorDefecto.replace(/'/g, "\\'")}';"
                         />`;
-                } 
-                // Si es código SVG directo
-                else if (archivoLogo && archivoLogo.includes('<svg')) {
-                    elemento.outerHTML = archivoLogo;
-                } 
-                // Si no hay nada, ponemos el de Hosteller por defecto
-                else {
-                    elemento.outerHTML = svgPorDefecto.replace('<svg ', `<svg id="${idElemento}" `);
+                } else {
+                    // Si no hay imagen, dejamos el SVG original intacto o reinyectamos el por defecto
+                    contenedorPadre.innerHTML = svgPorDefecto;
                 }
             };
 
-            // 2. Inyectar el Logo del Header (Afecta la barra principal y el menú desplegable lateral)
-            inyectarLogo('brandHeader', config.header_logo);
-            inyectarLogo('brandOffset', config.header_logo);
+            // 2. Inyectar logos usando los IDs de tus SVGs del HTML
+            inyectarLogo('brandOffset', config.header_logo); // Logo del Header principal
+            inyectarLogo('brandFooter', config.footer_logo); // Logo del Footer de abajo
 
-            // 3. Inyectar el Logo del Footer de manera independiente
-            inyectarLogo('brandFooter', config.footer_logo);
-            
             // 4. Asegurar que todos los contenedores de marca lleven al inicio
             document.querySelectorAll('.brand').forEach(enlaceMarca => {
-                enlaceMarca.setAttribute('href', '/');
+                enlaceMarca.setAttribute('href', 'index.html');
             });
-            }
+        }
+
 
         // ========================================================
         // 2. RENDERIZAR LAS PÁGINAS DEL MENÚ (ARRIBA Y ABAJO)
