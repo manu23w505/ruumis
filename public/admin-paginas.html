@@ -641,29 +641,54 @@
 
         // Al cargar el panel, se consultan los datos actuales de la BD para mostrarlos en la plantilla del admin
         async function cargarHeroAdmin() {
-            try {
-                const res = await fetch('/api/cms/home');
-                if (!res.ok) throw new Error("No se pudieron obtener los datos de la base de datos.");
-                const datos = await res.json();
-                
-                if (datos) {
-                    if (document.getElementById('input-hero-titulo')) document.getElementById('input-hero-titulo').value = datos.hero_titulo || '';
-                    if (document.getElementById('input-hero-descripcion')) document.getElementById('input-hero-descripcion').value = datos.hero_descripcion || '';
-                    
-                    // Si la imagen existe, asignarla a la etiqueta de previsualización <img>
-                    const preview = document.getElementById('preview-hero-imagen');
-                    if (preview && datos.hero_imagen) {
-                        // Validación flexible: si ya inicia con "/" o "http" la dejamos tal cual, si no, le concatenamos el prefijo
-                        preview.src = datos.hero_imagen.startsWith('/') || datos.hero_imagen.startsWith('http') 
-                            ? datos.hero_imagen 
-                            : `/uploads/${datos.hero_imagen}`;
-                    }
-                }
-            } catch (err) {
-                console.error("Error al cargar la configuración de la sección Hero:", err);
+    try {
+        // Mantenemos la ruta de tu API actual
+        const res = await fetch('/api/cms/home');
+        if (!res.ok) throw new Error("No se pudieron obtener los datos de la base de datos.");
+        const datos = await res.json();
+        
+        if (datos) {
+            // 1. TEXTOS PRINCIPALES (TITULO Y DESCRIPCIÓN)
+            if (document.getElementById('home-hero-titulo')) {
+                document.getElementById('home-hero-titulo').value = datos.hero_titulo || '';
+            }
+            if (document.getElementById('home-hero-descripcion')) {
+                document.getElementById('home-hero-descripcion').value = datos.hero_descripcion || '';
+            }
+            
+            // 2. TRADUCCIÓN DE ETIQUETAS DEL BUSCADOR
+            if (document.getElementById('home-lbl-checkin')) {
+                document.getElementById('home-lbl-checkin').value = datos.lbl_checkin || '';
+            }
+            if (document.getElementById('home-lbl-checkout')) {
+                document.getElementById('home-lbl-checkout').value = datos.lbl_checkout || '';
+            }
+            if (document.getElementById('home-lbl-guests')) {
+                document.getElementById('home-lbl-guests').value = datos.lbl_guests || '';
+            }
+            if (document.getElementById('home-lbl-adults')) {
+                document.getElementById('home-lbl-adults').value = datos.lbl_adults || '';
+            }
+            if (document.getElementById('home-lbl-children')) {
+                document.getElementById('home-lbl-children').value = datos.lbl_children || '';
+            }
+            if (document.getElementById('home-btn-search')) {
+                document.getElementById('home-btn-search').value = datos.btn_search || '';
+            }
+            
+            // 3. PREVISUALIZACIÓN DE LA IMAGEN DE FONDO
+            const preview = document.getElementById('preview-hero-imagen');
+            if (preview && datos.hero_imagen) {
+                // Validación flexible: si ya inicia con "/" o "http" la dejamos tal cual, si no, le concatenamos el prefijo
+                preview.src = datos.hero_imagen.startsWith('/') || datos.hero_imagen.startsWith('http') 
+                    ? datos.hero_imagen 
+                    : `/uploads/${datos.hero_imagen}`;
             }
         }
-
+    } catch (err) {
+        console.error("Error al cargar la configuración de la sección Hero:", err);
+    }
+}
 
         // Guarda de forma asíncrona e individual el campo editado
         async function guardarTextoCMS(columnaBD, inputId) {
@@ -746,7 +771,6 @@
             }
         }
 
-        
         // Inicialización automática al cargar el DOM de la vista admin
         document.addEventListener('DOMContentLoaded', () => {
             cargarHeroAdmin();
