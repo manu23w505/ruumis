@@ -3,542 +3,591 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruumis - Panel de Administración Seguro</title>
+    <title>Ruumis - Panel de Administración</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     
     <link rel="stylesheet preload" as="style" href="css/preload.min.css" />
     <link rel="stylesheet preload" as="style" href="css/icomoon.css" />
     <link rel="stylesheet preload" as="style" href="css/libs.min.css" />
-
     <link rel="stylesheet" href="css/index.min.css" />
+
     <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        /* Scrollbar sutil y minimalista */
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f8fafc; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         
-        /* Clases para controlar la navegación de secciones */
+        /* Control de pestañas activas */
         .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .sidebar-btn.active { background-color: #ecfeff; color: #0891b2; border-right: 4px solid #0891b2; font-weight: 700; }
+        .tab-content.active { display: block; animation: fadeIn 0.2s ease-in-out; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(2px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* ESTILO MINIMALISTA: Botón de navegación activo (Azul Marino Pastel) */
+        .sidebar-btn.active { 
+            background-color: #f0f4f8; /* Fondo gris/azul pastel muy suave */
+            color: #1e3a8a;            /* Azul marino elegante */
+            border-left: 4px solid #2b6cb0; /* Barra lateral azul marino pastel */
+            font-weight: 600;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Sobreescritura estética global para mantener el estilo minimalista en formularios */
+        input[type="text"], input[type="password"], input[type="email"], input[type="number"], select, textarea {
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 8px !important;
+            background-color: #fff !important;
+            transition: all 0.2s ease !important;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #2b6cb0 !important;
+            box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.1) !important;
+            outline: none !important;
+        }
+
+        /* Botones de acción principales unificados al azul marino suave */
+        .bg-indigo-600, .bg-blue-600, .bg-cyan-600 {
+            background-color: #2b6cb0 !important;
+            border-radius: 8px !important;
+            transition: background 0.2s ease !important;
+        }
+        .hover\:bg-indigo-700:hover, .hover\:bg-blue-700:hover, .hover\:bg-cyan-700:hover {
+            background-color: #1a4971 !important;
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 min-h-screen font-sans">
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans flex flex-col">
 
-    <header class="header d-flex align-items-center" data-page="admin">
-        <div class="container position-relative d-flex justify-content-between align-items-center">
-            <a class="brand d-flex align-items-center" href="index.html">
-                <span class="brand_logo theme-element">
-                    <svg id="brandHeader" width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            fill-rule="evenodd"
-                            clip-rule="evenodd"
-                            d="M7.03198 3.80281V7.07652L3.86083 9.75137L0.689673 12.4263L0.667474 6.56503C0.655304 3.34138 0.663875 0.654206 0.686587 0.593579C0.71907 0.506918 1.4043 0.488223 3.87994 0.506219L7.03198 0.529106V3.80281ZM21.645 4.36419V5.88433L17.0383 9.76316C14.5046 11.8966 11.2263 14.6552 9.75318 15.8934L7.07484 18.145V20.3225V22.5H3.85988H0.64502L0.667303 18.768L0.689673 15.036L2.56785 13.4609C3.60088 12.5946 6.85989 9.85244 9.81009 7.36726L15.1741 2.84867L18.4096 2.8464L21.645 2.84413V4.36419ZM21.645 15.5549V22.5H18.431H15.217V18.2638V14.0274L15.4805 13.7882C15.8061 13.4924 21.5939 8.61606 21.6236 8.61248C21.6353 8.61099 21.645 11.7351 21.645 15.5549Z"
-                            fill="currentColor"
-                        />
-                    </svg>
-                </span>
-                <span class="brand_name">Hosteller</span>
-            </a>
-            <div class="header_offcanvas offcanvas offcanvas-end" id="menuOffcanvas">
-                <div class="header_offcanvas-header d-flex justify-content-between align-content-center">
-                    <a class="brand d-flex align-items-center" href="index.html">
-                        <span class="brand_logo theme-element">
-                            <svg
-                                id="brandOffset"
-                                width="22"
-                                height="23"
-                                viewBox="0 0 22 23"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    fill-rule="evenodd"
-                                    clip-rule="evenodd"
-                                    d="M7.03198 3.80281V7.07652L3.86083 9.75137L0.689673 12.4263L0.667474 6.56503C0.655304 3.34138 0.663875 0.654206 0.686587 0.593579C0.71907 0.506918 1.4043 0.488223 3.87994 0.506219L7.03198 0.529106V3.80281ZM21.645 4.36419V5.88433L17.0383 9.76316C14.5046 11.8966 11.2263 14.6552 9.75318 15.8934L7.07484 18.145V20.3225V22.5H3.85988H0.64502L0.667303 18.768L0.689673 15.036L2.56785 13.4609C3.60088 12.5946 6.85989 9.85244 9.81009 7.36726L15.1741 2.84867L18.4096 2.8464L21.645 2.84413V4.36419ZM21.645 15.5549V22.5H18.431H15.217V18.2638V14.0274L15.4805 13.7882C15.8061 13.4924 21.5939 8.61606 21.6236 8.61248C21.6353 8.61099 21.645 11.7351 21.645 15.5549Z"
-                                    fill="currentColor"
-                                />
-                            </svg>
-                        </span>
-                        <span class="brand_name">Hosteller</span>
-                    </a>
-                    <button class="close" type="button" data-bs-dismiss="offcanvas">
-                        <i class="icon-close--entypo"></i>
-                    </button>
-                </div>
-                <nav class="header_nav">
-                    <ul class="header_nav-list">
-                        <li class="header_nav-list_item">
-                            <a class="nav-item" href="index.html" data-page="home">Home</a>
+    <header class="header d-flex align-items-center bg-white border-b border-slate-200 shadow-sm py-3" data-page="admin" style="border-bottom: 1px solid #e2e8f0;">
+            <div class="container position-relative d-flex justify-content-between align-items-center w-full">
+                <a class="brand d-flex align-items-center gap-2 text-decoration-none transition-opacity hover:opacity-90" href="index.html">
+                    <span class="brand_logo theme-element text-[#4a6984] flex items-center">
+                        <svg id="brandHeader" width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M7.03198 3.80281V7.07652L3.86083 9.75137L0.689673 12.4263L0.667474 6.56503C0.655304 3.34138 0.663875 0.654206 0.686587 0.593579C0.71907 0.506918 1.4043 0.488223 3.87994 0.506219L7.03198 0.529106V3.80281ZM21.645 4.36419V5.88433L17.0383 9.76316C14.5046 11.8966 11.2263 14.6552 9.75318 15.8934L7.07484 18.145V20.3225V22.5H3.85988H0.64502L0.667303 18.768L0.689673 15.036L2.56785 13.4609C3.60088 12.5946 6.85989 9.85244 9.81009 7.36726L15.1741 2.84867L18.4096 2.8464L21.645 2.84413V4.36419ZM21.645 15.5549V22.5H18.431H15.217V18.2638V14.0274L15.4805 13.7882C15.8061 13.4924 21.5939 8.61606 21.6236 8.61248C21.6353 8.61099 21.645 11.7351 21.645 15.5549Z"
+                                fill="currentColor"
+                            />
+                        </svg>
+                    </span>
+                    <span class="brand_name font-semibold text-slate-800 tracking-wide text-lg" style="color: #334155; font-weight: 600;">Hosteller</span>
+                </a>
+                
+                <div class="header_offcanvas offcanvas offcanvas-end bg-white" id="menuOffcanvas">
+                    <div class="header_offcanvas-header d-flex justify-content-between align-content-center px-4 py-3 border-b border-slate-100">
+                        <a class="brand d-flex align-items-center gap-2 text-decoration-none" href="index.html">
+                            <span class="brand_logo theme-element text-[#4a6984] flex items-center">
+                                <svg
+                                    id="brandOffset"
+                                    width="22"
+                                    height="23"
+                                    viewBox="0 0 22 23"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        fill-rule="evenodd"
+                                        clip-rule="evenodd"
+                                        d="M7.03198 3.80281V7.07652L3.86083 9.75137L0.689673 12.4263L0.667474 6.56503C0.655304 3.34138 0.663875 0.654206 0.686587 0.593579C0.71907 0.506918 1.4043 0.488223 3.87994 0.506219L7.03198 0.529106V3.80281ZM21.645 4.36419V5.88433L17.0383 9.76316C14.5046 11.8966 11.2263 14.6552 9.75318 15.8934L7.07484 18.145V20.3225V22.5H3.85988H0.64502L0.667303 18.768L0.689673 15.036L2.56785 13.4609C3.60088 12.5946 6.85989 9.85244 9.81009 7.36726L15.1741 2.84867L18.4096 2.8464L21.645 2.84413V4.36419ZM21.645 15.5549V22.5H18.431H15.217V18.2638V14.0274L15.4805 13.7882C15.8061 13.4924 21.5939 8.61606 21.6236 8.61248C21.6353 8.61099 21.645 11.7351 21.645 15.5549Z"
+                                        fill="currentColor"
+                                    />
+                                </svg>
+                            </span>
+                            <span class="brand_name font-semibold text-slate-800 text-lg">Hosteller</span>
+                        </a>
+                        <button class="close border-0 bg-transparent p-2 text-slate-400 hover:text-slate-600 transition-colors" type="button" data-bs-dismiss="offcanvas">
+                            <i class="icon-close--entypo text-xl"></i>
+                        </button>
+                    </div>
+                    
+                    <nav class="header_nav">
+                        <ul class="header_nav-list list-unstyled d-flex flex-column flex-lg-row gap-2 gap-lg-4 mb-0 px-4 py-3 p-lg-0">
+                            <li class="header_nav-list_item">
+                                <a class="nav-item text-slate-600 hover:text-[#4a6984] font-medium text-sm text-decoration-none transition-colors py-2 block" href="index.html" data-page="home">Home</a>
+                            </li>
+                            <li class="header_nav-list_item">
+                                <a class="nav-item text-slate-600 hover:text-[#4a6984] font-medium text-sm text-decoration-none transition-colors py-2 block" href="about.html" data-page="about">About</a>
+                            </li>
+                            <li class="header_nav-list_item">
+                                <a class="nav-item text-slate-600 hover:text-[#4a6984] font-medium text-sm text-decoration-none transition-colors py-2 block" href="rooms.html" data-page="rooms">Rooms</a>
+                            </li>
+                            <li class="header_nav-list_item">
+                                <a class="nav-item text-slate-600 hover:text-[#4a6984] font-medium text-sm text-decoration-none transition-colors py-2 block" href="locations.html" data-page="locations">Locations</a>
+                            </li>
+                            <li class="header_nav-list_item">
+                                <a class="nav-link text-slate-600 hover:text-[#4a6984] font-medium text-sm text-decoration-none transition-colors py-2 block" href="contacts.html" data-page="contacts">Contacts</a>
+                            </li>
+                            <li class="header_nav-list_item">
+                                <a class="nav-link text-[#4a6984] bg-blue-50/60 px-3 py-1.5 rounded-lg font-semibold text-sm text-decoration-none block" href="admin.html" data-bs-toggle="admin" style="background-color: #f0f4f8; color: #3b597a;">Admin</a>
+                            </li>
+                        </ul>
+                    </nav>
+                    
+                    <ul class="socials d-flex align-items-center list-unstyled gap-3 mb-0 px-4 pb-4 p-lg-0 mt-3 mt-lg-0">
+                        <li class="list-item">
+                            <a class="link text-slate-400 hover:text-[#4a6984] transition-colors" href="">
+                                <i class="icon-facebook text-base"></i>
+                            </a>
                         </li>
-                        <li class="header_nav-list_item">
-                            <a class="nav-item" href="about.html" data-page="about">About</a>
+                        <li class="list-item">
+                            <a class="link text-slate-400 hover:text-[#4a6984] transition-colors" href="">
+                                <i class="icon-instagram text-base"></i>
+                            </a>
                         </li>
-                        <li class="header_nav-list_item">
-                            <a class="nav-item" href="rooms.html" data-page="rooms"> Rooms </a>
+                        <li class="list-item">
+                            <a class="link text-slate-400 hover:text-[#4a6984] transition-colors" href="">
+                                <i class="icon-twitter text-base"></i>
+                            </a>
                         </li>
-                        <li class="header_nav-list_item">
-                            <a class="nav-item" href="locations.html" data-page="locations">Locations </a>
-                        </li>
-                        <li class="header_nav-list_item">
-                            <a class="nav-link" href="contacts.html" data-page="contacts">Contacts</a>
-                        </li>
-                        <li class="header_nav-list_item">
-                            <a class="nav-link" href="admin.html" data-bs-toggle="admin">Admin</a>
+                        <li class="list-item">
+                            <a class="link text-slate-400 hover:text-[#4a6984] transition-colors" href="">
+                                <i class="icon-whatsapp text-base"></i>
+                            </a>
                         </li>
                     </ul>
-                </nav>
-                <ul class="socials d-flex align-items-center">
-                    <li class="list-item">
-                        <a class="link" href="">
-                            <i class="icon-facebook"></i>
-                        </a>
-                    </li>
-                    <li class="list-item">
-                        <a class="link" href="">
-                            <i class="icon-instagram"></i>
-                        </a>
-                    </li>
-                    <li class="list-item">
-                        <a class="link" href="">
-                            <i class="icon-twitter"></i>
-                        </a>
-                    </li>
-                    <li class="list-item">
-                        <a class="link" href="">
-                            <i class="icon-whatsapp"></i>
-                        </a>
-                    </li>
-                </ul>
+                </div>
+                
+                <button class="header_trigger d-lg-none border-0 bg-transparent p-2 text-slate-700" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuOffcanvas">
+                    <i class="icon-stream text-xl"></i>
+                </button>
             </div>
-            <button class="header_trigger d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuOffcanvas">
-                <i class="icon-stream"></i>
-            </button>
-        </div>
     </header>
 
-    <div id="seccion-login" class="flex flex-col items-center justify-center min-h-screen px-4 bg-slate-50">
-        <div id="mensaje-error-login" class="bg-red-50 text-red-600 p-3 rounded-xl text-sm mb-4 w-full max-w-md text-center hidden border border-red-200"></div>
-        <div class="bg-white border border-slate-200 p-8 rounded-2xl shadow-xl w-full max-w-md">
-            <h2 class="text-3xl font-extrabold text-center mb-2 tracking-wider text-cyan-600">RUUMIS</h2>
-            <p class="text-center text-slate-500 text-sm mb-6">Inicia sesión para gestionar las propiedades</p>
+    <div id="seccion-login" class="flex flex-col items-center justify-center min-h-[85vh] px-4 bg-slate-50/50">
+        <div id="mensaje-error-login" class="bg-red-50 text-red-600 p-3.5 rounded-xl text-sm mb-4 w-full max-w-md text-center hidden border border-red-100 font-medium"></div>
+        
+        <div class="bg-white border border-slate-200/80 p-8 rounded-2xl shadow-sm w-full max-w-md transition-all">
+            <h2 class="text-2xl font-bold text-center mb-1 tracking-tight text-slate-800" style="color: #2c3e50; font-weight: 700; tracking-spacing: -0.025em;">RUUMIS</h2>
+            <p class="text-center text-slate-400 text-xs mb-6 font-medium">Inicia sesión en el panel de control seguro</p>
             
             <form id="form-login" class="space-y-4">
                 <div>
-                    <label class="block text-sm text-slate-600 mb-1">Usuario</label>
-                    <input type="text" id="login-usuario" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Usuario</label>
+                    <input type="text" id="login-usuario" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 text-sm focus:outline-none focus:border-[#4a6984] focus:ring-4 focus:ring-blue-50 transition-all placeholder-slate-400">
                 </div>
                 <div>
-                    <label class="block text-sm text-slate-600 mb-1">Contraseña</label>
-                    <input type="password" id="login-pass" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Contraseña</label>
+                    <input type="password" id="login-pass" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 text-sm focus:outline-none focus:border-[#4a6984] focus:ring-4 focus:ring-blue-50 transition-all">
                 </div>
-                <div class="flex justify-center py-2">
+                
+                <div class="flex justify-center py-2 bg-slate-50/50 rounded-xl border border-dashed border-slate-200/60 p-2">
                     <div class="g-recaptcha" data-sitekey="6Le-wzQtAAAAAPwZlobamwq5pc3Vzp3wLz88d_tu"></div> 
                 </div>
+                
                 <div class="grid grid-cols-2 gap-3 pt-2">
-                    <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-3 rounded-xl transition-colors cursor-pointer">Ingresar</button>
-                    <a href="index.html" class="w-full text-center bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 rounded-xl transition-colors">Salir</a>
+                    <button type="submit" class="w-full bg-[#4a6984] hover:bg-[#3d566e] text-white text-sm font-semibold py-3 rounded-xl shadow-sm transition-all cursor-pointer border border-transparent">
+                        Ingresar
+                    </button>
+                    <a href="index.html" class="w-full text-center bg-slate-100 hover:bg-slate-200/80 text-slate-600 text-sm font-semibold py-3 rounded-xl text-decoration-none transition-all flex items-center justify-center">
+                        Salir
+                    </a>
                 </div>
-                <p id="error-login" class="text-red-500 text-center text-sm font-semibold mt-2 hidden">Credenciales incorrectas</p>
+                
+                <p id="error-login" class="text-red-500 text-center text-xs font-semibold mt-3 hidden">
+                    <span class="icon-close--entypo mr-1"></span> Credenciales incorrectas
+                </p>
             </form>
         </div>
     </div>
 
-    <div id="seccion-panel" class="hidden min-h-screen flex flex-col md:flex-row">
-        
-        <aside class="w-full md:w-64 bg-white border-b md:border-b-0 md:border-r border-slate-200 flex flex-col justify-between shrink-0 z-40">
-            <div>
-                <div class="p-6 border-b border-slate-100">
-                    <h1 class="text-xl font-bold text-cyan-600 tracking-wider">RUUMIS</h1>
-                    <p class="text-xs text-slate-400 font-normal">Panel Administrativo</p>
-                </div>
-                
-                <nav class="p-4 space-y-1">
-                    <button onclick="cambiarPestana('tab-habitaciones', this)" class="sidebar-btn active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-all text-left">
-                        Habitaciones
-                    </button>
-                    <button onclick="cambiarPestana('tab-ubicaciones', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-all text-left">
-                        Ubicaciones / Mapas
-                    </button>
-                    <button onclick="cambiarPestana('tab-categorias', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-all text-left">
-                        Tipos de Propiedad
-                    </button>
-
-                    <button onclick="cambiarPestana('tab-preguntas', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-all text-left">
-                        Preguntas Frecuentes
-                    </button>
-                    
-                    <button onclick="cambiarPestana('tab-contacto', this); cargarCorreoDestino();" class="sidebar-btn w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 transition-colors text-slate-600 hover:bg-slate-50 text-sm">
-                        Configurar Contacto
-                    </button>
-
-                    <button onclick="cambiarPestana('tab-header', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-all text-left">
-                        Configurar Header
-                    </button>
-
-                    <button onclick="cambiarPestana('tab-footer', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-all text-left">
-                        Gestión de Footer
-                    </button>
-
-                    <div class="mt-6 pt-4 border-t border-slate-200">
-                        <span class="px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Páginas Web</span>
-                        <a href="admin-paginas.html" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 rounded-xl transition-all">
-                            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                            </svg>
-                            Editar Contenido Páginas Web
-                        </a>
-                    </div>
-
-                    <div class="pt-4 border-t border-slate-100 my-2">
-                        <span class="px-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Próximamente</span>
-                        <button disabled class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-slate-300 text-left cursor-not-allowed">
-                            Ajustes del Sistema
-                        </button>
-                    </div>
-                </nav>
-            </div>
-
-            <div class="p-4 border-t border-slate-100 bg-slate-50/50 flex flex-col gap-2">
-                <a href="index.html" target="_blank" class="text-xs text-center text-slate-500 hover:text-cyan-600 font-medium py-1">Ver Sitio Público →</a>
-                <button onclick="cerrarSesion()" class="w-full text-xs text-center bg-red-50 text-red-600 border border-red-200 py-2 rounded-xl hover:bg-red-600 hover:text-white transition-all cursor-pointer font-bold">
-                    Cerrar Sesión
-                </button>
-            </div>
-        </aside>
-
-        <main class="flex-grow p-6 md:p-10 max-w-6xl mx-auto w-full overflow-x-hidden">
+    <div id="seccion-panel" class="hidden min-h-screen flex flex-col md:flex-row bg-slate-50 text-slate-800">
             
-            <section id="tab-habitaciones" class="tab-content active space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-900">Inventario de Habitaciones</h2>
-                        <p class="text-slate-500 text-sm">Modifica, elimina o agrega nuevas opciones de hospedaje al catálogo público.</p>
+            <aside class="w-full md:w-64 bg-white border-b md:border-b-0 md:border-r border-slate-200 flex flex-col justify-between shrink-0 z-40">
+                <div>
+                    <div class="p-6 border-b border-slate-100">
+                        <h1 class="text-xl font-bold text-slate-800 tracking-wider">RUUMIS</h1>
+                        <p class="text-xs text-slate-400 font-normal">Panel Administrativo</p>
                     </div>
-                    <button onclick="abrirModalCrear()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold px-5 py-2.5 rounded-xl transition-colors shadow-sm cursor-pointer whitespace-nowrap">
-                        + Crear Nuevo Anuncio
-                    </button>
-                </div>
+                    
+                    <nav class="p-4 space-y-1">
+                        <button onclick="cambiarPestana('tab-habitaciones', this)" class="sidebar-btn active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm bg-slate-100 text-slate-900 font-medium transition-all text-left">
+                            Habitaciones
+                        </button>
+                        <button onclick="cambiarPestana('tab-ubicaciones', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all text-left">
+                            Ubicaciones / Mapas
+                        </button>
+                        <button onclick="cambiarPestana('tab-categorias', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all text-left">
+                            Tipos de Propiedad
+                        </button>
+                        <button onclick="cambiarPestana('tab-preguntas', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all text-left">
+                            Preguntas Frecuentes
+                        </button>
+                        <button onclick="cambiarPestana('tab-contacto', this); cargarCorreoDestino();" class="sidebar-btn w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 transition-colors text-slate-500 hover:bg-slate-50 hover:text-slate-900 text-sm">
+                            Configurar Contacto
+                        </button>
+                        <button onclick="cambiarPestana('tab-header', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all text-left">
+                            Configurar Header
+                        </button>
+                        <button onclick="cambiarPestana('tab-footer', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all text-left">
+                            Gestión de Footer
+                        </button>
 
-                <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse whitespace-nowrap">
-                            <thead>
-                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-sm font-semibold">
-                                    <th class="p-4">Propiedad</th>
-                                    <th class="p-4">Ubicación</th>
-                                    <th class="p-4">Precio</th>
-                                    <th class="p-4 text-right">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabla-anuncios-body" class="divide-y divide-slate-100"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <section id="tab-ubicaciones" class="tab-content space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-900">Ubicaciones y Complejos</h2>
-                        <p class="text-slate-500 text-sm">Administra los mapas, zonas y especificaciones de las propiedades.</p>
-                    </div>
-                    <button onclick="abrirModalUbicacion()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold px-5 py-2.5 rounded-xl transition-colors shadow-sm cursor-pointer whitespace-nowrap">
-                        + Nueva Ubicación con Mapa
-                    </button>
-                </div>
-
-                <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm custom-scrollbar">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse text-sm">
-                            <thead>
-                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold sticky top-0 z-10">
-                                    <th class="p-4">Ciudad</th>
-                                    <th class="p-4">Zona / Colonia</th>
-                                    <th class="p-4 text-right">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabla-ubicaciones-body" class="divide-y divide-slate-100"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <section id="tab-categorias" class="tab-content space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-900">Tipos de Propiedades</h2>
-                        <p class="text-slate-500 text-sm">Categorías de clasificación para los listados (ej. Loft, Departamento, Cuarto Privado).</p>
-                    </div>
-                    <button onclick="abrirModalTipoPropiedad()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold px-5 py-2.5 rounded-xl transition-colors shadow-sm cursor-pointer whitespace-nowrap">
-                        + Tipo Propiedad
-                    </button>
-                </div>
-
-                <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm max-w-xl">
-                    <table class="w-full text-left border-collapse text-sm">
-                        <thead>
-                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
-                                <th class="p-4">Nombre del Tipo / Categoría</th>
-                                <th class="p-4 text-right">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-tipos-body" class="divide-y divide-slate-100"></tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section id="tab-preguntas" class="tab-content space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-900">Gestión de Preguntas Frecuentes</h2>
-                        <p class="text-slate-500 text-sm">Administra los textos del acordeón de soporte de la Landing Page. <span class="font-bold text-cyan-600">(Límite: 6 preguntas)</span></p>
-                    </div>
-                    <button onclick="abrirModalPregunta()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold px-5 py-2.5 rounded-xl transition-colors shadow-sm cursor-pointer whitespace-nowrap">
-                        + Nueva Pregunta
-                    </button>
-                </div>
-
-                <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse text-sm">
-                            <thead>
-                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
-                                    <th class="p-4 w-16 text-center">ID</th>
-                                    <th class="p-4">Pregunta</th>
-                                    <th class="p-4">Respuesta de la Plantilla</th>
-                                    <th class="p-4 text-center w-32">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabla-preguntas-body" class="divide-y divide-slate-100">
-                                </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <section id="tab-contacto" class="tab-content space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-900">Configuración de Mensajes de Contacto</h2>
-                        <p class="text-slate-500 text-sm">Define y administra el correo electrónico al cual llegarán las notificaciones del sitio.</p>
-                    </div>
-                </div>
-
-                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm max-w-2xl">
-                    <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-3">Correo configurado actualmente</h3>
-                    <div class="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl p-4">
-                        <div class="flex items-center gap-3">
-                            <span class="text-xl"></span>
-                            <input type="email" id="vista-email-actual" readonly class="bg-transparent border-none text-slate-800 font-semibold text-sm focus:outline-none w-64" value="Cargando...">
+                        <div class="mt-6 pt-4 border-t border-slate-200">
+                            <span class="px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Páginas Web</span>
+                            <a href="admin-paginas.html" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 rounded-xl transition-all">
+                                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                                Editar Contenido Páginas Web
+                            </a>
                         </div>
-                        <button onclick="abrirModalEditarCorreo()" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 text-xs font-bold px-4 py-2 rounded-xl transition-colors shadow-sm cursor-pointer">
-                            Modificar Correo
+
+                        <div class="pt-4 border-t border-slate-100 my-2">
+                            <span class="px-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Próximamente</span>
+                            <button disabled class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-slate-300 text-left cursor-not-allowed">
+                                Ajustes del Sistema
+                            </button>
+                        </div>
+                    </nav>
+                </div>
+
+                <div class="p-4 border-t border-slate-100 bg-slate-50/50 flex flex-col gap-2">
+                    <a href="index.html" target="_blank" class="text-xs text-center text-slate-500 hover:text-slate-800 font-medium py-1 transition-colors">Ver Sitio Público →</a>
+                    <button onclick="cerrarSesion()" class="w-full text-xs text-center bg-rose-50 text-rose-600 border border-rose-100 py-2 rounded-xl hover:bg-rose-600 hover:text-white transition-all cursor-pointer font-bold">
+                        Cerrar Sesión
+                    </button>
+                </div>
+            </aside>
+
+            <!-- CONTENIDO PRINCIPAL -->
+            <main class="flex-grow p-6 md:p-10 max-w-6xl mx-auto w-full overflow-x-hidden">
+                
+                <!-- SECCIÓN HABITACIONES -->
+                <section id="tab-habitaciones" class="tab-content active space-y-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-900">Inventario de Habitaciones</h2>
+                            <p class="text-slate-500 text-sm">Modifica, elimina o agrega nuevas opciones de hospedaje al catálogo público.</p>
+                        </div>
+                        <button onclick="abrirModalCrear()" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-5 py-2.5 rounded-xl transition-colors shadow-sm cursor-pointer whitespace-nowrap text-sm">
+                            + Crear Nuevo Anuncio
                         </button>
                     </div>
-                </div>
 
-                
-                <div class="mt-4">
-                    <label>Cambiar Favicon (formato .ico o .png)</label>
-                    <input type="file" id="input-favicon" accept="image/*">
-                    <button onclick="subirFavicon()" class="bg-blue-500 text-white p-2 rounded">Guardar Favicon</button>
-                </div>
-                
-            </section>
-
-            <section id="tab-header" class="tab-content space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-900">Control de Header y Enrutamiento</h2>
-                        <p class="text-slate-500 text-sm">Administra la identidad de marca, los enlaces del menú y tus enlaces estéticos de navegación.</p>
-                    </div>
-                </div>
-
-                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
-                    <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                        <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Identidad Visual</h3>
-                        <button onclick="abrirModalMarca()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg transition-all">Editar Identidad</button>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <span class="block text-xs font-semibold text-slate-400">Nombre de la Marca:</span>
-                            <p id="vista-nombre-marca" class="font-medium text-slate-800 mt-1">Cargando...</p>
-                        </div>
-                        <div>
-                            <span class="block text-xs font-semibold text-slate-400">Logotipo (SVG):</span>
-                            <p class="font-mono text-xs text-slate-500 mt-1 truncate max-w-xs" id="vista-logo-svg">Cargando...</p>
+                    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse whitespace-nowrap">
+                                <thead>
+                                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-sm font-medium">
+                                        <th class="p-4">Propiedad</th>
+                                        <th class="p-4">Ubicación</th>
+                                        <th class="p-4">Precio</th>
+                                        <th class="p-4 text-right">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-anuncios-body" class="divide-y divide-slate-100"></tbody>
+                            </table>
                         </div>
                     </div>
-                </div>
+                </section>
 
-                <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-                    <div class="p-4 border-b border-slate-100 bg-slate-50/50">
-                        <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Enlaces del Menú y URLs Limpias</h3>
+                <!-- SECCIÓN UBICACIONES -->
+                <section id="tab-ubicaciones" class="tab-content space-y-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-900">Ubicaciones y Complejos</h2>
+                            <p class="text-slate-500 text-sm">Administra los mapas, zonas y especificaciones de las propiedades.</p>
+                        </div>
+                        <button onclick="abrirModalUbicacion()" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-5 py-2.5 rounded-xl transition-colors shadow-sm cursor-pointer whitespace-nowrap text-sm">
+                            + Nueva Ubicación con Mapa
+                        </button>
                     </div>
-                    <div class="overflow-x-auto">
+
+                    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm custom-scrollbar">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-sm">
+                                <thead>
+                                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-medium sticky top-0 z-10">
+                                        <th class="p-4">Ciudad</th>
+                                        <th class="p-4">Zona / Colonia</th>
+                                        <th class="p-4 text-right">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-ubicaciones-body" class="divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECCIÓN CATEGORÍAS -->
+                <section id="tab-categorias" class="tab-content space-y-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-900">Tipos de Propiedades</h2>
+                            <p class="text-slate-500 text-sm">Categorías de clasificación para los listados (ej. Loft, Departamento, Cuarto Privado).</p>
+                        </div>
+                        <button onclick="abrirModalTipoPropiedad()" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-5 py-2.5 rounded-xl transition-colors shadow-sm cursor-pointer whitespace-nowrap text-sm">
+                            + Tipo Propiedad
+                        </button>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm max-w-xl">
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
-                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
-                                    <th class="p-4">Archivo Físico</th>
-                                    <th class="p-4">Nombre en Menú</th>
-                                    <th class="p-4">URL Estética</th>
-                                    <th class="p-4 text-center w-32">Acción</th>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-medium">
+                                    <th class="p-4">Nombre del Tipo / Categoría</th>
+                                    <th class="p-4 text-right">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody id="tablaPaginasMenu" class="divide-y divide-slate-100">
-                                </tbody>
+                            <tbody id="tabla-tipos-body" class="divide-y divide-slate-100"></tbody>
                         </table>
                     </div>
-                </div>
+                </section>
 
-                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                    <div class="flex justify-between items-center border-b border-slate-100 pb-3 mb-4">
-                        <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Redes Sociales</h3>
-                        <button onclick="abrirModalRedes()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg transition-all">Modificar Redes</button>
-                    </div>
-                    <div id="contenedorRedesVista" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600">
+                <!-- SECCIÓN PREGUNTAS -->
+                <section id="tab-preguntas" class="tab-content space-y-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-900">Gestión de Preguntas Frecuentes</h2>
+                            <p class="text-slate-500 text-sm">Administra los textos del acordeón de soporte de la Landing Page. <span class="font-medium text-slate-600">(Límite: 6 preguntas)</span></p>
                         </div>
-                </div>
-            </section>
+                        <button onclick="abrirModalPregunta()" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-5 py-2.5 rounded-xl transition-colors shadow-sm cursor-pointer whitespace-nowrap text-sm">
+                            + Nueva Pregunta
+                        </button>
+                    </div>
 
-            <section id="tab-footer" class="tab-content space-y-6">
-                <div>
-                    <h2 class="text-2xl font-bold text-slate-900">Personalización del Footer</h2>
-                    <p class="text-slate-500 text-sm">Administra y actualiza de forma individual cada sección, textos y títulos que componen el pie de página público.</p>
-                </div>
+                    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-sm">
+                                <thead>
+                                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-medium">
+                                        <th class="p-4 w-16 text-center">ID</th>
+                                        <th class="p-4">Pregunta</th>
+                                        <th class="p-4">Respuesta de la Plantilla</th>
+                                        <th class="p-4 text-center w-32">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-preguntas-body" class="divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
 
-                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                <!-- SECCIÓN CONTACTO -->
+                <section id="tab-contacto" class="tab-content space-y-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-900">Configuración de Mensajes de Contacto</h2>
+                            <p class="text-slate-500 text-sm">Define y administra el correo electrónico al cual llegarán las notificaciones del sitio.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm max-w-2xl">
+                        <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-3">Correo configurado actualmente</h3>
+                        <div class="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl p-4">
+                            <div class="flex items-center gap-3">
+                                <input type="email" id="vista-email-actual" readonly class="bg-transparent border-none text-slate-700 font-medium text-sm focus:outline-none w-64" value="Cargando...">
+                            </div>
+                            <button onclick="abrirModalEditarCorreo()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-medium px-4 py-2 rounded-xl transition-colors shadow-sm cursor-pointer">
+                                Modificar Correo
+                            </button>
+                        </div>
+                    </div>
                     
-                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
-                        <div class="border-b border-slate-100 pb-2">
-                            <h3 class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Identidad Corporativa</h3>
+                    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm max-w-2xl space-y-3">
+                        <label class="block text-sm font-medium text-slate-700">Cambiar Favicon (formato .ico o .png)</label>
+                        <input type="file" id="input-favicon" accept="image/*" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-medium file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200">
+                        <button onclick="subirFavicon()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-medium px-4 py-2 rounded-xl transition-all shadow-sm">Guardar Favicon</button>
+                    </div>
+                </section>
+
+                <!-- SECCIÓN HEADER -->
+                <section id="tab-header" class="tab-content space-y-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-900">Control de Header y Enrutamiento</h2>
+                            <p class="text-slate-500 text-sm">Administra la identidad de marca, los enlaces del menú y tus enlaces estéticos de navegación.</p>
                         </div>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Identidad Visual</h3>
+                            <button onclick="abrirModalMarca()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-1.5 rounded-lg transition-all">Editar Identidad</button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <span class="block text-xs font-semibold text-slate-400">Nombre de la Marca:</span>
+                                <p id="vista-nombre-marca" class="font-medium text-slate-700 mt-1">Cargando...</p>
+                            </div>
+                            <div>
+                                <span class="block text-xs font-semibold text-slate-400">Logotipo (SVG):</span>
+                                <p class="font-mono text-xs text-slate-500 mt-1 truncate max-w-xs" id="vista-logo-svg">Cargando...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                        <div class="p-4 border-b border-slate-100 bg-slate-50/50">
+                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Enlaces del Menú y URLs Limpias</h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-sm">
+                                <thead>
+                                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-medium">
+                                        <th class="p-4">Archivo Físico</th>
+                                        <th class="p-4">Nombre en Menú</th>
+                                        <th class="p-4">URL Estética</th>
+                                        <th class="p-4 text-center w-32">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaPaginasMenu" class="divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-3 mb-4">
+                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Redes Sociales</h3>
+                            <button onclick="abrirModalRedes()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-1.5 rounded-lg transition-all">Modificar Redes</button>
+                        </div>
+                        <div id="contenedorRedesVista" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600"></div>
+                    </div>
+                </section>
+
+                <!-- SECCIÓN FOOTER -->
+                <section id="tab-footer" class="tab-content space-y-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900">Personalización del Footer</h2>
+                        <p class="text-slate-500 text-sm">Administra y actualiza de forma individual cada sección, textos y títulos que componen el pie de página público.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
                         
-                        <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Nombre de la Marca <span class="text-slate-400 font-normal italic">(Se edita en Header)</span></label>
-                            <input type="text" id="footer-vista-marca" readonly class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-500 cursor-not-allowed">
-                        </div>
+                        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+                            <div class="border-b border-slate-100 pb-2">
+                                <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Identidad Corporativa</h3>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Nombre de la Marca <span class="text-slate-400 font-normal italic">(Se edita en Header)</span></label>
+                                <input type="text" id="footer-vista-marca" readonly class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-400 cursor-not-allowed focus:outline-none">
+                            </div>
 
-                        <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Logotipo Corporativo (SVG) <span class="text-slate-400 font-normal italic">(Se edita en Header)</span></label>
-                            <div class="flex gap-2">
-                                <textarea id="footer-vista-logo" readonly rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-mono text-slate-400 cursor-not-allowed resize-none"></textarea>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Logotipo Corporativo (SVG) <span class="text-slate-400 font-normal italic">(Se edita en Header)</span></label>
+                                <div class="flex gap-2">
+                                    <textarea id="footer-vista-logo" readonly rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-mono text-slate-400 cursor-not-allowed resize-none focus:outline-none"></textarea>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Descripción del Footer</label>
+                                <div class="flex gap-2">
+                                    <textarea id="footer-descripcion" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400 resize-none"></textarea>
+                                    <button onclick="guardarDatoIndividual('footer_descripcion', 'footer-descripcion')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all flex items-center justify-center shadow-sm">Actualizar</button>
+                                </div>
                             </div>
                         </div>
 
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Descripción del Footer</label>
-                            <div class="flex gap-2">
-                                <textarea id="footer-descripcion" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500 resize-none"></textarea>
-                                <button onclick="guardarDatoIndividual('footer_descripcion', 'footer-descripcion')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all flex items-center justify-center shadow-sm">Actualizar</button>
+                        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+                            <div class="border-b border-slate-100 pb-2">
+                                <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Encabezados de Columnas</h3>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Columna 1: Enlaces Rápidos</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="footer-titulo-links" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400">
+                                    <button onclick="guardarDatoIndividual('footer_titulo_links', 'footer-titulo-links')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Columna 2: Contacto</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="footer-titulo-contacto" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400">
+                                    <button onclick="guardarDatoIndividual('footer_titulo_contacto', 'footer-titulo-contacto')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Columna 3: Redes Sociales</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="footer-titulo-redes" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400">
+                                    <button onclick="guardarDatoIndividual('footer_titulo_redes', 'footer-titulo-redes')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                </div>
                             </div>
                         </div>
+
+                        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+                            <div class="border-b border-slate-100 pb-2">
+                                <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Información de Contacto y Redes</h3>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Dirección Física - Línea 1</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="footer-direccion-linea1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400">
+                                    <button onclick="guardarDatoIndividual('footer_direccion_linea1', 'footer-direccion-linea1')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Dirección Física - Línea 2</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="footer-direccion-linea2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400">
+                                    <button onclick="guardarDatoIndividual('footer_direccion_linea2', 'footer-direccion-linea2')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Teléfono Principal</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="footer-telefono1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400">
+                                    <button onclick="guardarDatoIndividual('footer_telefono1', 'footer-telefono1')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Teléfono Secundario</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="footer-telefono2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400">
+                                    <button onclick="guardarDatoIndividual('footer_telefono2', 'footer-telefono2')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Subtexto Redes Sociales</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="footer-texto-redes" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400">
+                                    <button onclick="guardarDatoIndividual('footer_texto_redes', 'footer-texto-redes')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+                            <div class="border-b border-slate-100 pb-2">
+                                <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Derechos de Autor</h3>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Línea de Copyright 1 (ej. Merkulove &copy; Hosteller)</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="footer-copyright-linea1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400">
+                                    <button onclick="guardarDatoIndividual('footer_copyright_linea1', 'footer-copyright-linea1')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Línea de Copyright 2 (ej. All rights reserved 2026)</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="footer-copyright-linea2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400">
+                                    <button onclick="guardarDatoIndividual('footer_copyright_linea2', 'footer-copyright-linea2')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
+                </section>
 
-                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
-                        <div class="border-b border-slate-100 pb-2">
-                            <h3 class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Encabezados de Columnas</h3>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Columna 1: Enlaces Rápidos</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="footer-titulo-links" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
-                                <button onclick="guardarDatoIndividual('footer_titulo_links', 'footer-titulo-links')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Columna 2: Contacto</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="footer-titulo-contacto" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
-                                <button onclick="guardarDatoIndividual('footer_titulo_contacto', 'footer-titulo-contacto')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Columna 3: Redes Sociales</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="footer-titulo-redes" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
-                                <button onclick="guardarDatoIndividual('footer_titulo_redes', 'footer-titulo-redes')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
-                        <div class="border-b border-slate-100 pb-2">
-                            <h3 class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Información de Contacto y Redes</h3>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Dirección Física - Línea 1</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="footer-direccion-linea1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
-                                <button onclick="guardarDatoIndividual('footer_direccion_linea1', 'footer-direccion-linea1')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Dirección Física - Línea 2</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="footer-direccion-linea2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
-                                <button onclick="guardarDatoIndividual('footer_direccion_linea2', 'footer-direccion-linea2')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Teléfono Principal</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="footer-telefono1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
-                                <button onclick="guardarDatoIndividual('footer_telefono1', 'footer-telefono1')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Teléfono Secundario</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="footer-telefono2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
-                                <button onclick="guardarDatoIndividual('footer_telefono2', 'footer-telefono2')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Subtexto Redes Sociales</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="footer-texto-redes" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
-                                <button onclick="guardarDatoIndividual('footer_texto_redes', 'footer-texto-redes')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
-                        <div class="border-b border-slate-100 pb-2">
-                            <h3 class="text-xs font-bold text-indigo-600 uppercase tracking-wider">Derechos de Autor</h3>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Línea de Copyright 1 (ej. Merkulove &copy; Hosteller)</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="footer-copyright-linea1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
-                                <button onclick="guardarDatoIndividual('footer_copyright_linea1', 'footer-copyright-linea1')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Línea de Copyright 2 (ej. All rights reserved 2026)</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="footer-copyright-linea2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
-                                <button onclick="guardarDatoIndividual('footer_copyright_linea2', 'footer-copyright-linea2')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </section>
-
-        </main>
+            </main>
     </div>
 
     <div id="modal-formulario" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
