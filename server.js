@@ -1366,14 +1366,14 @@ app.get('/api/configuracion', (req, res) => {
 // ==========================================
 // MÓDULO HERO SECTION (HOME)
 
-app.get('/api/home/hero', (req, res) => {
-    const sql = "SELECT * FROM admin_home WHERE id = 1"; // Ajusta el nombre de tu tabla si es diferente
+app.get('/api/cms/home', (req, res) => {
+    const sql = "SELECT * FROM admin_home WHERE id = 1";
     db.query(sql, (err, result) => {
         if (err) {
-            console.error("Error al obtener los datos de Hero:", err);
-            return res.status(500).json({ error: "Error en la base de datos" });
+            console.error("Error al obtener datos de admin_home:", err);
+            return res.status(500).json({ error: err.message });
         }
-        res.json(result); // Devuelve el arreglo con los datos
+        res.json(result[0]);
     });
 });
 
