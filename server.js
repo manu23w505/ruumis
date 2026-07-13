@@ -15,44 +15,30 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-// Asegurar que la estructura de carpetas que pidió Pepe exista al arrancar el servidor
+// 1. Asegurar que las carpetas existan
 const dirUploadsImages = path.join(__dirname, 'public', 'uploads', 'images');
 if (!fs.existsSync(dirUploadsImages)) {
     fs.mkdirSync(dirUploadsImages, { recursive: true });
 }
 
-// 1. Configurar almacenamiento local en disco
+// 2. CONFIGURACIÓN ÚNICA DE ALMACENAMIENTO (DEJA SOLO ESTA)
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const dir = path.join(__dirname, 'public/uploads');
-        // Salvavidas: Si la carpeta de destino no existe, la crea automáticamente
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true });
         }
         cb(null, dir);
     },
     filename: (req, file, cb) => {
-        // Creamos un nombre único usando la fecha actual + un número aleatorio
-        const sufijoUnico = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, sufijoUnico + path.extname(file.originalname).toLowerCase());
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
     }
 });
 
+// ¡ESTA ES LA QUE SE QUEDA! (Borra cualquier otra línea que diga "const upload = " más abajo)
 const upload = multer({ storage: storage });
 
-// 2. Aplicar la configuración al middleware upload
-const upload = multer({ 
-    storage: storage,
-    limits: { fileSize: 1024 * 1024 * 5 }, // 5MB límite
-    fileFilter: (req, file, cb) => {
-        const filetypes = /jpeg|jpg|png|webp/;
-        const mimetype = filetypes.test(file.mimetype);
-        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-        if (mimetype && extname) return cb(null, true);
-        cb(new Error('Formato de imagen no permitido. Solo se aceptan png, jpg, jpeg y webp.'));
-    }
-});
 
 // Configuración de la Base de Datos
 const db = mysql.createPool({
@@ -1235,6 +1221,19 @@ app.put('/api/footer', (req, res) => { // <-- ALINEADO: Se quitó el '/textos' s
 // ==========================================
 // SECCIÓN: CONTROL DE IMÁGENES (CLOUDINARY)
 // ==========================================
+
+app.post('/api/upload', upload.single('image'), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: "No se recibió ningún archivo o el campo no coincide con 'image'." });
+        }
+        const urlRelativa = `/uploads/${req.file.filename}`;
+        return res.json({ url: urlRelativa });
+    } catch (error) {
+        console.error("Error en /api/upload:", error);
+        return res.status(500).json({ error: "Error interno al procesar el archivo." });
+    }
+});
 
 // Asegúrate de que apunte a tu configuración de multer local (ej: upload.single('image'))
 app.post('/api/upload-image', upload.single('image'), (req, res) => {
