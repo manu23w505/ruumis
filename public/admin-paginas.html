@@ -744,17 +744,17 @@
         }
 
 
+        // Inicialización automática al cargar el DOM de la vista admin
         document.addEventListener('DOMContentLoaded', () => {
-            if (document.getElementById('form-contacts-section')) {
-                cargarContactsAdmin();
-                document.getElementById('form-contacts-section').addEventListener('submit', guardarContactsSection);
-            }
+            cargarHeroAdmin();
             
-            if (document.getElementById('form-hero-section')) {
-                cargarHeroAdmin();
-                document.getElementById('form-hero-section').addEventListener('submit', guardarHeroSection);
+            // Si tienes un botón específico para subir la imagen, puedes enlazar el evento aquí
+            const btnSubirImagen = document.getElementById('btn-subir-hero-img');
+            if (btnSubirImagen) {
+                btnSubirImagen.addEventListener('click', subirImagenHeroCMS);
             }
         });
+
 
     ///////////////////////////////////////////////////////////////////////////
     //HEADER SECTION HOME end
