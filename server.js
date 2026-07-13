@@ -1366,15 +1366,15 @@ app.get('/api/configuracion', (req, res) => {
 // ==========================================
 // MÓDULO HERO SECTION (HOME)
 
-app.get('/api/cms/home', (req, res) => {
+app.get('/api/home/hero', (req, res) => {
     const sql = "SELECT * FROM admin_home WHERE id = 1"; // Ajusta el nombre de tu tabla si es diferente
-        db.query(sql, (err, result) => {
-            if (err) {
-                console.error("Error al obtener los datos de Hero:", err);
-                return res.status(500).json({ error: "Error en la base de datos" });
-            }
-            res.json(result); // Devuelve el arreglo con los datos
-        });
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error("Error al obtener los datos de Hero:", err);
+            return res.status(500).json({ error: "Error en la base de datos" });
+        }
+        res.json(result); // Devuelve el arreglo con los datos
+    });
 });
 
 // Endpoint dinámico para actualizar textos/imágenes del Home (Ya lo tienes bien)
