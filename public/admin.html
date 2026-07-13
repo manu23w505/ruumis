@@ -163,7 +163,7 @@
         <div id="mensaje-error-login" class="bg-red-50 text-red-600 p-3.5 rounded-xl text-sm mb-4 w-full max-w-md text-center hidden border border-red-100 font-medium"></div>
         
         <div class="bg-white border border-slate-200/80 p-8 rounded-2xl shadow-sm w-full max-w-md transition-all">
-            <h2 class="text-2xl font-bold text-center mb-1 tracking-tight text-slate-800" style="color: #2c3e50; font-weight: 700; tracking-spacing: -0.025em;">RUUMIS</h2>
+            <h2 class="text-2xl font-bold text-center mb-1 tracking-tight text-slate-800" style="color: #2c3e50; font-weight: 700;">ADMIN PANEL</h2>
             <p class="text-center text-slate-400 text-xs mb-6 font-medium">Inicia sesión en el panel de control seguro</p>
             
             <form id="form-login" class="space-y-4">
@@ -201,7 +201,7 @@
             <aside class="w-full md:w-64 bg-white border-b md:border-b-0 md:border-r border-slate-200 flex flex-col justify-between shrink-0 z-40">
                 <div>
                     <div class="p-6 border-b border-slate-100">
-                        <h1 class="text-xl font-bold text-slate-800 tracking-wider">RUUMIS</h1>
+                        <h1 class="text-xl font-bold text-slate-800 tracking-wider">ADMIN PANEL</h1>
                         <p class="text-xs text-slate-400 font-normal">Panel Administrativo</p>
                     </div>
                     
@@ -226,6 +226,13 @@
                         </button>
                         <button onclick="cambiarPestana('tab-footer', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all text-left">
                             Gestión de Footer
+                        </button>
+
+                        <button onclick="cambiarPestana('tab-paginas-cms', this)" class="sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 rounded-xl hover:bg-slate-50 text-left transition-all">
+                            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                            <span>Editar Web (CMS)</span>
                         </button>
 
                         <div class="mt-6 pt-4 border-t border-slate-200">
@@ -313,7 +320,7 @@
                             </table>
                         </div>
                     </div>
-                </section>
+            </section>
 
                 <!-- SECCIÓN CATEGORÍAS -->
                 <section id="tab-categorias" class="tab-content space-y-6">
@@ -584,6 +591,17 @@
                             </div>
                         </div>
 
+                    </div>
+                </section>
+
+                <section id="tab-paginas-cms" class="tab-content space-y-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800" style="color: #2c3e50;">Administrador de Contenido</h2>
+                        <p class="text-slate-400 text-xs">Modifica las secciones, textos e imágenes de la plantilla principal.</p>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm w-full h-[calc(100vh-160px)]">
+                        <iframe src="admin-paginas.html" class="w-full h-full border-0 m-0 p-0 custom-scrollbar"></iframe>
                     </div>
                 </section>
 

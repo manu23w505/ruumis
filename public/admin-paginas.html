@@ -1348,6 +1348,17 @@ document.addEventListener('DOMContentLoaded', () => {
 // CONTACTS SECTION end
 ///////////////////////////////////////////////////////////////////////////
 
+// Validar si la página se está cargando dentro de un iframe
+if (window.self !== window.top) {
+    // Buscar el header de navegación de admin-paginas y ocultarlo
+    const headerRedundante = document.querySelector('header');
+    if (headerRedundante) {
+        headerRedundante.style.display = 'none';
+    }
+    
+    // Opcional: Si deseas remover márgenes externos del contenedor principal al estar embebido
+    document.body.classList.add('p-0', 'bg-white');
+}
 
     </script>
 </body>
