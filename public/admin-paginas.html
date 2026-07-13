@@ -642,25 +642,28 @@
         // Al cargar el panel, se consultan los datos actuales de la BD para mostrarlos en la plantilla del admin
         async function cargarHeroAdmin() {
             try {
-                const res = await fetch('/api/home/hero'); // O el endpoint exacto que uses para el Hero
-                const data = await res.json();
+                const res = await fetch('/api/cms/home');
+                if (!res.ok) throw new Error("No se pudieron obtener los datos de la base de datos.");
+                const datos = await res.json();
                 
-                // ¡CANDADO / SALVAVIDAS AQUÍ!
-                // Si la respuesta es un arreglo, tomamos automáticamente el primer elemento
-                const datos = Array.isArray(data) ? data[0] : data;
-                
-                // Rellenar los campos usando la variable 'datos'
-                if (document.getElementById('adm-hero-titulo')) {
-                    document.getElementById('adm-hero-titulo').value = datos.hero_titulo || '';
+                if (datos) {
+                    if (document.getElementById('input-hero-titulo')) document.getElementById('input-hero-titulo').value = datos.hero_titulo || '';
+                    if (document.getElementById('input-hero-descripcion')) document.getElementById('input-hero-descripcion').value = datos.hero_descripcion || '';
+                    
+                    // Si la imagen existe, asignarla a la etiqueta de previsualización <img>
+                    const preview = document.getElementById('preview-hero-imagen');
+                    if (preview && datos.hero_imagen) {
+                        // Validación flexible: si ya inicia con "/" o "http" la dejamos tal cual, si no, le concatenamos el prefijo
+                        preview.src = datos.hero_imagen.startsWith('/') || datos.hero_imagen.startsWith('http') 
+                            ? datos.hero_imagen 
+                            : `/uploads/${datos.hero_imagen}`;
+                    }
                 }
-                if (document.getElementById('adm-hero-descripcion')) {
-                    document.getElementById('adm-hero-descripcion').value = datos.hero_descripcion || '';
-                }
-                // Agrega aquí los demás campos que correspondan al Hero (imágenes, subtítulos, etc.)
             } catch (err) {
-                console.error("Error al cargar la sección Hero en el admin:", err);
+                console.error("Error al cargar la configuración de la sección Hero:", err);
             }
         }
+
 
         // Guarda de forma asíncrona e individual el campo editado
         async function guardarTextoCMS(columnaBD, inputId) {
@@ -743,7 +746,7 @@
             }
         }
 
-
+        
         // Inicialización automática al cargar el DOM de la vista admin
         document.addEventListener('DOMContentLoaded', () => {
             cargarHeroAdmin();
