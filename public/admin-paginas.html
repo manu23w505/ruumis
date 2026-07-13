@@ -639,46 +639,28 @@
             document.getElementById(`btn-page-${idPagina}`).classList.add('active');
         }
 
-        // Carga los textos y la imagen actual de la Hero Section en el panel administrativo
+        // Al cargar el panel, se consultan los datos actuales de la BD para mostrarlos en la plantilla del admin
         async function cargarHeroAdmin() {
             try {
-                // Hacemos la petición al endpoint que expone la configuración del Home
-                const res = await fetch('/api/configuracion'); 
-                if (!res.ok) throw new Error("No se pudieron obtener los datos de la cabecera.");
+                const res = await fetch('/api/cms/home');
+                if (!res.ok) throw new Error("No se pudieron obtener los datos de la base de datos.");
+                const datos = await res.json();
                 
-                const configRaw = await res.json();
-                // Si la respuesta es un arreglo, tomamos el primer registro como salvavidas
-                const datos = Array.isArray(configRaw) ? configRaw[0] : configRaw;
-
                 if (datos) {
-                    // Cargar textos principales
-                    if (document.getElementById('home-hero-titulo')) 
-                        document.getElementById('home-hero-titulo').value = datos.hero_titulo || '';
-                    if (document.getElementById('home-hero-descripcion')) 
-                        document.getElementById('home-hero-descripcion').value = datos.hero_descripcion || '';
+                    if (document.getElementById('input-hero-titulo')) document.getElementById('input-hero-titulo').value = datos.hero_titulo || '';
+                    if (document.getElementById('input-hero-descripcion')) document.getElementById('input-hero-descripcion').value = datos.hero_descripcion || '';
                     
-                    // Cargar traducción de etiquetas del buscador
-                    if (document.getElementById('home-lbl-checkin')) 
-                        document.getElementById('home-lbl-checkin').value = datos.lbl_checkin || '';
-                    if (document.getElementById('home-lbl-checkout')) 
-                        document.getElementById('home-lbl-checkout').value = datos.lbl_checkout || '';
-                    if (document.getElementById('home-lbl-guests')) 
-                        document.getElementById('home-lbl-guests').value = datos.lbl_guests || '';
-                    if (document.getElementById('home-lbl-adults')) 
-                        document.getElementById('home-lbl-adults').value = datos.lbl_adults || '';
-                    if (document.getElementById('home-lbl-children')) 
-                        document.getElementById('home-lbl-children').value = datos.lbl_children || '';
-                    if (document.getElementById('home-btn-search')) 
-                        document.getElementById('home-btn-search').value = datos.btn_search || '';
-                    
-                    // Renderizado seguro de la imagen de fondo local
-                    const imgPreview = document.getElementById('preview-hero-imagen');
-                    if (imgPreview) {
-                        imgPreview.src = obtenerRutaImagenLocal(datos.hero_imagen);
+                    // Si la imagen existe, asignarla a la etiqueta de previsualización <img>
+                    const preview = document.getElementById('preview-hero-imagen');
+                    if (preview && datos.hero_imagen) {
+                        // Validación flexible: si ya inicia con "/" o "http" la dejamos tal cual, si no, le concatenamos el prefijo
+                        preview.src = datos.hero_imagen.startsWith('/') || datos.hero_imagen.startsWith('http') 
+                            ? datos.hero_imagen 
+                            : `/uploads/${datos.hero_imagen}`;
                     }
                 }
-            } catch (error) {
-                console.error("Error al renderizar la sección Hero en el panel:", error);
+            } catch (err) {
+                console.error("Error al cargar la configuración de la sección Hero:", err);
             }
         }
 
@@ -703,75 +685,79 @@
             }
         }
 
-
-        // Asistente local para asegurar que la ruta de la imagen siempre sea válida y tenga el prefijo correcto
-        function obtenerRutaImagenLocal(ruta) {
-                if (!ruta) return '/uploads/placeholder.jpg'; // Imagen por defecto si está vacío
-                
-                // Si quedó alguna URL antigua completa de Cloudinary o externa, la dejamos pasar
-                if (ruta.startsWith('http://') || ruta.startsWith('https://')) {
-                    return ruta;
-                }
-                
-                // Si ya tiene el prefijo correcto de la carpeta local, la dejamos intacta
-                if (ruta.startsWith('/uploads/')) {
-                    return ruta;
-                }
-                
-                // Si viene solo el nombre del archivo suelto, le añadimos el prefijo local
-                return `/uploads/${ruta}`;
-            }
-
-            
     ///////////////////////////////////////////////////////////////////////////
     //HEADER SECTION HOME start
     ///////////////////////////////////////////////////////////////////////////
 
-    // Sube la imagen elegida al servidor local y actualiza la ruta en la base de datos
-    async function subirImagenHeroCMS() {
-        const fileInput = document.getElementById('input-hero-imagen');
-        const file = fileInput.files[0];
-        if (!file) return alert("Por favor, selecciona un archivo de imagen primero.");
-
-        const formData = new FormData();
-        formData.append('image', file);
-
-        try {
-            // 1. Subida física al servidor local reutilizando el servicio '/api/upload'
-            const resUpload = await fetch('/api/upload', { method: 'POST', body: formData });
-            const dataUpload = await resUpload.json();
-            
-            // El servidor local retorna la ruta o nombre en dataUpload.url
-            if (dataUpload.url) {
-                // 2. Almacenar la ruta local devuelta en la columna 'hero_imagen' de la BD
-                const resBD = await fetch('/api/cms/home/actualizar', {
+        async function actualizarTextoHero(columna, inputId) {
+            const valor = document.getElementById(inputId).value;
+            try {
+                const res = await fetch('/api/cms/home/actualizar', {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ columna: 'hero_imagen', valor: dataUpload.url })
+                    body: JSON.stringify({ columna: columna, valor: valor })
                 });
-                const dataBD = await resBD.json();
-                
-                if (dataBD.success || resBD.ok) {
-                    // Forzamos a la vista previa a usar el formateador local para evitar rupturas de ruta
-                    document.getElementById('preview-hero-imagen').src = obtenerRutaImagenLocal(dataUpload.url);
-                    alert("¡Imagen de cabecera subida localmente y guardada con éxito!");
+                const data = await res.json();
+                if (data.success || res.ok) {
+                    alert(`¡Campo ${columna} guardado localmente con éxito!`);
+                } else {
+                    throw new Error(data.error || "Error al actualizar texto.");
                 }
-            } else {
-                throw new Error("No se recibió una ruta de archivo local válida desde el servidor.");
+            } catch (err) {
+                alert("Error: " + err.message);
             }
-        } catch (error) {
-            alert("Error al procesar la imagen de forma local: " + error.message);
         }
-    }
 
 
-    // Inicialización automática cuando el DOM esté listo
-    document.addEventListener('DOMContentLoaded', () => {
-        // Si estamos en la pestaña o vista que contiene el formulario del Hero, inicializamos
-        if (document.getElementById('home-hero-titulo') || document.getElementById('preview-hero-imagen')) {
+        async function subirImagenHeroCMS() {
+            const fileInput = document.getElementById('input-hero-imagen');
+            const file = fileInput.files[0];
+            if (!file) return alert("Por favor, selecciona un archivo de imagen primero.");
+
+            const formData = new FormData();
+            formData.append('image', file); // El backend lo recibirá como upload.single('image')
+
+            try {
+                // Step 1: Subida física local del archivo
+                const resUpload = await fetch('/api/upload', { method: 'POST', body: formData });
+                const dataUpload = await resUpload.json();
+                
+                if (dataUpload.url) {
+                    // Step 2: Almacenar la ruta local limpia en la columna 'hero_imagen' de la BD
+                    const resBD = await fetch('/api/cms/home/actualizar', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ columna: 'hero_imagen', valor: dataUpload.url })
+                    });
+                    const dataBD = await resBD.json();
+                    
+                    if (dataBD.success || resBD.ok) {
+                        document.getElementById('preview-hero-imagen').src = dataUpload.url;
+                        alert("¡Imagen de cabecera subida localmente y guardada con éxito!");
+                    } else {
+                        throw new Error(dataBD.error || "No se pudo actualizar la ruta en la base de datos.");
+                    }
+                } else {
+                    throw new Error(dataUpload.error || "No se recibió una ruta de archivo local válida desde el servidor.");
+                }
+            } catch (error) {
+                alert("Error al procesar la imagen de forma local: " + error.message);
+                console.error(error);
+            }
+        }
+
+        
+        // Inicialización automática al cargar el DOM de la vista admin
+        document.addEventListener('DOMContentLoaded', () => {
             cargarHeroAdmin();
-        }
-    });
+            
+            // Si tienes un botón específico para subir la imagen, puedes enlazar el evento aquí
+            const btnSubirImagen = document.getElementById('btn-subir-hero-img');
+            if (btnSubirImagen) {
+                btnSubirImagen.addEventListener('click', subirImagenHeroCMS);
+            }
+        });
+
 
     ///////////////////////////////////////////////////////////////////////////
     //HEADER SECTION HOME end
@@ -1404,7 +1390,6 @@ if (window.self !== window.top) {
     // Opcional: Si deseas remover márgenes externos del contenedor principal al estar embebido
     document.body.classList.add('p-0', 'bg-white');
 }
-
     </script>
 </body>
 </html>

@@ -1052,6 +1052,14 @@ async function subirFavicon() {
 // =========================================================================
 // RENDERIZADO DEL HERO EN INDEX.HTML
 // =========================================================================
+
+function obtenerRutaImagen(ruta) {
+    if (!ruta) return '';
+    if (ruta.startsWith('/') || ruta.startsWith('http')) return ruta;
+    return `/uploads/${ruta}`;
+}
+
+// Renderizado dinámico y traducción del Hero en el Home Público
 async function renderizarHeroPublico() {
     // Solo actuamos si nos encontramos físicamente en la página de inicio (Home)
     const tituloHero = document.getElementById('render-hero-titulo');
@@ -1069,11 +1077,10 @@ async function renderizarHeroPublico() {
                 document.getElementById('render-hero-descripcion').innerText = datos.hero_descripcion || '';
             }
 
-            // 2. Modificación Segura de la Imagen de Fondo (Buscando la etiqueta img de hero_media)
+            // 2. Modificación Segura de la Imagen de Fondo (Buscando las etiquetas nativas de la plantilla)
             const imgHero = document.querySelector('.hero_media img');
             const sourceHero = document.querySelector('.hero_media source');
             if (imgHero && datos.hero_imagen) {
-                // CORREGIDO: Pasamos la imagen por el filtro inteligente
                 const rutaLimpia = obtenerRutaImagen(datos.hero_imagen);
                 
                 imgHero.src = rutaLimpia;
@@ -1084,7 +1091,7 @@ async function renderizarHeroPublico() {
                 }
             }
 
-            // 3. Traducción limpia del Filtro conservando los íconos estructurales nativos
+            // 3. Traducción limpia del Filtro de reservas conservando los íconos nativos
             if (document.getElementById('render-lbl-checkin')) {
                 document.getElementById('render-lbl-checkin').innerHTML = `<i class="icon-calendar icon"></i>${datos.lbl_checkin || 'Check-in'}`;
             }

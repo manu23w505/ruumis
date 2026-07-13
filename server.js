@@ -39,6 +39,8 @@ const storage = multer.diskStorage({
     }
 });
 
+const upload = multer({ storage: storage });
+
 // 2. Aplicar la configuración al middleware upload
 const upload = multer({ 
     storage: storage,
@@ -1325,18 +1327,26 @@ app.put('/api/config/favicon', (req, res) => {
     });
 });
 
-// Tu endpoint global de subida /api/upload (Se mantiene igual porque ya funciona excelente)
 app.post('/api/upload', upload.single('image'), (req, res) => {
-    if (!req.file) {
-        return res.status(400).json({ error: "No se subió ningún archivo" });
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: "No se recibió ningún archivo o el campo no coincide con 'image'." });
+        }
+
+        // Como tu servidor sirve los archivos estáticos desde la carpeta 'public',
+        // el navegador web accederá directamente mediante '/uploads/nombre_del_archivo'
+        const urlRelativa = `/uploads/${req.file.filename}`;
+
+        // Retornamos el objeto con la propiedad 'url' exacta que tu frontend espera recibir
+        return res.json({ url: urlRelativa });
+    } catch (error) {
+        console.error("Error en el endpoint /api/upload:", error);
+        return res.status(500).json({ error: "Error interno al procesar la subida del archivo." });
     }
-    // Devolvemos la ruta local formateada de forma idéntica
-    const fileUrl = `/uploads/images/${req.file.filename}`;
-    res.json({ secure_url: fileUrl });
 });
 
-app.put('/api/config/favicon', (semibold, res) => {
-    const { favicon } = semibold.body;
+app.put('/api/config/favicon', (req, res) => {
+    const { favicon } = req.body;
     const sql = "UPDATE admin_configuracion SET favicon = ? WHERE id = 1";
     db.query(sql, [favicon], (err, result) => {
         if (err) {
@@ -1357,7 +1367,6 @@ app.get('/api/configuracion', (req, res) => {
 // ==========================================
 // MÓDULO HERO SECTION (HOME)
 
-// Endpoint para obtener la información actual del Home
 app.get('/api/cms/home', (req, res) => {
     const sql = "SELECT * FROM admin_home WHERE id = 1";
     db.query(sql, (err, result) => {
@@ -1369,11 +1378,10 @@ app.get('/api/cms/home', (req, res) => {
     });
 });
 
-// Endpoint dinámico para actualizar cualquier texto/campo del Home de forma directa
+// Endpoint dinámico para actualizar textos/imágenes del Home (Ya lo tienes bien)
 app.put('/api/cms/home/actualizar', (req, res) => {
     const { columna, valor } = req.body;
 
-    // Lista blanca de columnas permitidas por seguridad para evitar inyección SQL en identificadores
     const columnasPermitidas = [
         'hero_titulo', 'hero_descripcion', 'hero_imagen', 
         'lbl_checkin', 'lbl_checkout', 'lbl_guests', 
@@ -1384,7 +1392,6 @@ app.put('/api/cms/home/actualizar', (req, res) => {
         return res.status(400).json({ error: "Columna no válida o no autorizada." });
     }
 
-    // Usamos el operador ?? de mysql2 para escapar nombres de columnas de manera segura
     const sql = "UPDATE admin_home SET ?? = ? WHERE id = 1";
     db.query(sql, [columna, valor], (err, result) => {
         if (err) {
