@@ -958,7 +958,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // RATING SECTION start
 ///////////////////////////////////////////////////////////////////////////
 
-
 async function cargarRatingAdmin() {
     console.log("=== 🔴 1. cargarRatingAdmin() se está ejecutando ===");
     try {
@@ -966,9 +965,17 @@ async function cargarRatingAdmin() {
         console.log("Respuesta del servidor (Status):", res.status);
         
         if (!res.ok) throw new Error("No se pudo obtener los datos de la sección Rating.");
-        const datos = await res.json();
+        const datosRecibidos = await res.json();
         
-        console.log("Datos exactos recibidos de la Base de Datos:", datos);
+        console.log("Datos exactos recibidos de la Base de Datos:", datosRecibidos);
+
+
+        const datos = Array.isArray(datosRecibidos) ? datosRecibidos[0] : datosRecibidos;
+
+        if (!datos) {
+            console.warn("⚠️ No se encontró ningún registro válido en la respuesta del servidor.");
+            return;
+        }
 
 
         const camposTexto = {
@@ -981,17 +988,16 @@ async function cargarRatingAdmin() {
             'adm-rating-animacion': datos.rating_animacion
         };
 
-
         for (const [idInput, valorDB] of Object.entries(camposTexto)) {
             const elemento = document.getElementById(idInput);
             if (elemento) {
                 elemento.value = valorDB || '';
             } else {
-                console.warn(`⚠️ Alerta: El input con ID "${idInput}" NO existe en tu HTML. Revisa cómo lo escribiste.`);
+                console.warn(`⚠️ Alerta: El input con ID "${idInput}" NO existe en tu HTML.`);
             }
         }
 
- 
+
         const camposOcultos = {
             'url-rating-item1-logo-actual': datos.rating_item1_logo,
             'url-rating-item2-logo-actual': datos.rating_item2_logo,
@@ -1004,14 +1010,20 @@ async function cargarRatingAdmin() {
         }
 
 
-        if (datos.rating_item1_logo && document.getElementById('prev-rating-item1-logo')) {
-            document.getElementById('prev-rating-item1-logo').src = `/uploads/${datos.rating_item1_logo}`;
-        }
-        if (datos.rating_item2_logo && document.getElementById('prev-rating-item2-logo')) {
-            document.getElementById('prev-rating-item2-logo').src = `/uploads/${datos.rating_item2_logo}`;
-        }
-        if (datos.rating_item3_logo && document.getElementById('prev-rating-item3-logo')) {
-            document.getElementById('prev-rating-item3-logo').src = `/uploads/${datos.rating_item3_logo}`;
+        for (let i = 1; i <= 3; i++) {
+            const nombreImagen = datos[`rating_item${i}_logo`];
+            const elImg = document.getElementById(`prev-rating-item${i}-logo`);
+            
+            if (elImg) {
+                if (nombreImagen) {
+
+                    elImg.src = (nombreImagen.startsWith('http') || nombreImagen.startsWith('/uploads/')) 
+                        ? nombreImagen 
+                        : `/uploads/${nombreImagen}`;
+                } else {
+                    elImg.src = ''; 
+                }
+            }
         }
 
     } catch (err) {
@@ -1019,46 +1031,39 @@ async function cargarRatingAdmin() {
     }
 }
 
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("=== 🔴 DOM Completamente Cargado en Admin Paginas ===");
-    const formulario = document.getElementById('form-rating-section');
-    
-    console.log("¿Existe el formulario 'form-rating-section' en el HTML?:", formulario ? "SÍ ✅" : "NO ❌");
-
-    if (formulario) {
-        cargarRatingAdmin();
-        formulario.addEventListener('submit', guardarRatingSection);
-    }
-});
-
 async function guardarRatingSection(e) {
     e.preventDefault();
+    console.log("=== 💾 Guardando Sección Rating ===");
 
     const formData = new FormData();
-    formData.append('rating_item1_num', document.getElementById('adm-rating-item1-num').value);
-    formData.append('rating_item1_text', document.getElementById('adm-rating-item1-text').value);
-    formData.append('rating_item2_num', document.getElementById('adm-rating-item2-num').value);
-    formData.append('rating_item2_text', document.getElementById('adm-rating-item2-text').value);
-    formData.append('rating_item3_num', document.getElementById('adm-rating-item3-num').value);
-    formData.append('rating_item3_text', document.getElementById('adm-rating-item3-text').value);
-    formData.append('rating_animacion', document.getElementById('adm-rating-animacion').value);
+    
+
+    const camposMapeados = [
+        { id: 'adm-rating-item1-num', key: 'rating_item1_num' },
+        { id: 'adm-rating-item1-text', key: 'rating_item1_text' },
+        { id: 'adm-rating-item2-num', key: 'rating_item2_num' },
+        { id: 'adm-rating-item2-text', key: 'rating_item2_text' },
+        { id: 'adm-rating-item3-num', key: 'rating_item3_num' },
+        { id: 'adm-rating-item3-text', key: 'rating_item3_text' },
+        { id: 'adm-rating-animacion', key: 'rating_animacion' },
+        { id: 'url-rating-item1-logo-actual', key: 'rating_item1_logo_actual' },
+        { id: 'url-rating-item2-logo-actual', key: 'rating_item2_logo_actual' },
+        { id: 'url-rating-item3-logo-actual', key: 'rating_item3_logo_actual' }
+    ];
 
 
-    formData.append('rating_item1_logo_actual', document.getElementById('url-rating-item1-logo-actual').value || '');
-    formData.append('rating_item2_logo_actual', document.getElementById('url-rating-item2-logo-actual').value || '');
-    formData.append('rating_item3_logo_actual', document.getElementById('url-rating-item3-logo-actual').value || '');
+    camposMapeados.forEach(campo => {
+        const elemento = document.getElementById(campo.id);
+        formData.append(campo.key, elemento ? elemento.value : '');
+    });
 
 
-    const inputFile1 = document.getElementById('input-rating-item1-logo');
-    if (inputFile1 && inputFile1.files[0]) formData.append('rating_item1_logo', inputFile1.files[0]);
-
-    const inputFile2 = document.getElementById('input-rating-item2-logo');
-    if (inputFile2 && inputFile2.files[0]) formData.append('rating_item2_logo', inputFile2.files[0]);
-
-    const inputFile3 = document.getElementById('input-rating-item3-logo');
-    if (inputFile3 && inputFile3.files[0]) formData.append('rating_item3_logo', inputFile3.files[0]);
+    for (let i = 1; i <= 3; i++) {
+        const inputFile = document.getElementById(`input-rating-item${i}-logo`);
+        if (inputFile && inputFile.files[0]) {
+            formData.append(`rating_item${i}_logo`, inputFile.files[0]);
+        }
+    }
 
     try {
         const res = await fetch('/api/home/rating', {
@@ -1079,13 +1084,15 @@ async function guardarRatingSection(e) {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('form-rating-section')) {
+    console.log("=== 🔴 DOM Completamente Cargado en Admin Paginas ===");
+    
+    const inputTestigo = document.getElementById('adm-rating-item1-num');
+    console.log("¿Se encuentra la Sección de Rating en esta página?:", inputTestigo ? "SÍ ✅" : "NO ❌");
+
+    if (inputTestigo) {
         cargarRatingAdmin();
-        document.getElementById('form-rating-section').addEventListener('submit', guardarRatingSection);
     }
 });
-
-
 
 ///////////////////////////////////////////////////////////////////////////
 // REVIEWS SECTION start
