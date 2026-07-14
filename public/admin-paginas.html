@@ -869,12 +869,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function consultarAboutHome() {
     try {
-        const res = await fetch('/api/home');
-        if (!res.ok) throw new Error("No se pudo obtener la configuración del Home.");
+        // CORREGIDO: Cambiado de '/api/home' a '/api/home/about' para que coincida con el backend
+        const res = await fetch('/api/home/about'); 
+        if (!res.ok) throw new Error("No se pudo obtener la configuración del About.");
         const data = await res.json();
         
         if (data) {
-            // CONCORDANCIA TOTAL CON TU SQL: Mapeamos cada columna de la BD al input HTML correcto
             document.getElementById('adm-about-titulo').value = data.about_titulo || '';
             document.getElementById('adm-about-descripcion').value = data.about_descripcion || '';
             
