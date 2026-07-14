@@ -1297,63 +1297,36 @@ async function guardarAboutSection(event) {
     }
 }
 
-// Renderizado dinámico en la página pública (index.html)
 async function cargarAboutPublico() {
     try {
-        const res = await fetch('/api/admin_home_datos');
-        const datos = await res.json();
-        
+        // Usamos la función apiCall de tu proyecto apuntando a la nueva ruta GET
+        const datos = await apiCall('/api/home/about');
         if (!datos) return;
 
-        // Inyección de textos básicos
-        if (document.getElementById('public-about-titulo')) {
-            document.getElementById('public-about-titulo').innerText = datos.about_titulo;
-        }
-        if (document.getElementById('public-about-descripcion')) {
-            document.getElementById('public-about-descripcion').innerText = datos.about_descripcion;
-        }
-        if (document.getElementById('public-about-item1')) {
-            document.getElementById('public-about-item1').innerText = datos.about_item1_text;
-        }
-        if (document.getElementById('public-about-item2')) {
-            document.getElementById('public-about-item2').innerText = datos.about_item2_text;
-        }
-        if (document.getElementById('public-about-item3')) {
-            document.getElementById('public-about-item3').innerText = datos.about_item3_text;
-        }
-        if (document.getElementById('public-about-item4')) {
-            document.getElementById('public-about-item4').innerText = datos.about_item4_text;
-        }
+        // Inyectamos los textos de forma segura en los contenedores correspondientes del HTML público
+        if (document.getElementById('public-about-titulo')) document.getElementById('public-about-titulo').textContent = datos.about_titulo || '';
+        if (document.getElementById('public-about-descripcion')) document.getElementById('public-about-descripcion').textContent = datos.about_descripcion || '';
         
-        // Inyección de botones
-        if (document.getElementById('public-about-btn1')) {
-            document.getElementById('public-about-btn1').innerText = datos.about_btn1_text;
-        }
-        if (document.getElementById('public-about-btn2')) {
-            document.getElementById('public-about-btn2').innerHTML = `${datos.about_btn2_text} <i class="icon-arrow_right icon"></i>`;
-        }
+        // Items o viñetas de características
+        if (document.getElementById('public-about-item1')) document.getElementById('public-about-item1').textContent = datos.about_item1_text || '';
+        if (document.getElementById('public-about-item2')) document.getElementById('public-about-item2').textContent = datos.about_item2_text || '';
+        if (document.getElementById('public-about-item3')) document.getElementById('public-about-item3').textContent = datos.about_item3_text || '';
+        if (document.getElementById('public-about-item4')) document.getElementById('public-about-item4').textContent = datos.about_item4_text || '';
 
-        // Reemplazo y render dinámico del Reproductor de Video en lugar de la Imagen estática
-        const mediaContainer = document.getElementById('public-about-media');
-        if (mediaContainer && datos.about_video_url) {
-            const embedUrl = obtenerEmbedYouTube(datos.about_video_url);
-            mediaContainer.innerHTML = `
-                <div class="embed-responsive" style="position: relative; width: 100%; padding-top: 56.25%; border-radius: 8px; overflow: hidden; shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <iframe 
-                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
-                        src="${embedUrl}" 
-                        title="YouTube video player" 
-                        frameborder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                        allowfullscreen>
-                    </iframe>
-                </div>
-            `;
+        // Botones de acción
+        if (document.getElementById('public-about-btn1')) document.getElementById('public-about-btn1').textContent = datos.about_btn1_text || '';
+        if (document.getElementById('public-about-btn2')) document.getElementById('public-about-btn2').textContent = datos.about_btn2_text || '';
+
+        // Enlace del video de presentación (por ejemplo, si es un botón de reproducción o una ventana modal)
+        const videoLink = document.getElementById('public-about-video');
+        if (videoLink && datos.about_video_url) {
+            videoLink.href = datos.about_video_url;
         }
     } catch (err) {
-        console.error("Error al renderizar el About público:", err);
+        console.error("Error al renderizar la sección About pública:", err);
     }
 }
+
 
 // Escuchas automáticas de carga del DOM
 document.addEventListener('DOMContentLoaded', () => {

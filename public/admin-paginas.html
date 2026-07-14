@@ -862,41 +862,35 @@
 // ABOUT SECTION start
 ///////////////////////////////////////////////////////////////////////////
 
-document.addEventListener('DOMContentLoaded', () => {
-    consultarRoomsHome();
-    consultarAboutHome(); 
-});
 
-async function consultarAboutHome() {
+async function cargarAboutAdmin() {
     try {
-        // CORREGIDO: Cambiado de '/api/home' a '/api/home/about' para que coincida con el backend
-        const res = await fetch('/api/home/about'); 
-        if (!res.ok) throw new Error("No se pudo obtener la configuración del About.");
-        const data = await res.json();
+        const res = await fetch('/api/home/about');
+        if (!res.ok) throw new Error("No se pudo obtener la configuración de la sección About.");
         
-        if (data) {
-            document.getElementById('adm-about-titulo').value = data.about_titulo || '';
-            document.getElementById('adm-about-descripcion').value = data.about_descripcion || '';
-            
-            document.getElementById('adm-about-item1').value = data.about_item1_text || '';
-            document.getElementById('adm-about-item2').value = data.about_item2_text || '';
-            document.getElementById('adm-about-item3').value = data.about_item3_text || '';
-            document.getElementById('adm-about-item4').value = data.about_item4_text || '';
-            
-            document.getElementById('adm-about-btn1').value = data.about_btn1_text || '';
-            document.getElementById('adm-about-btn2').value = data.about_btn2_text || '';
-            
-            document.getElementById('adm-about-video-url').value = data.about_video_url || '';
-        }
+        const datos = await res.json();
+
+        // Mapeamos los datos regresados por la base de datos a los inputs correspondientes
+        if (document.getElementById('adm-about-titulo')) document.getElementById('adm-about-titulo').value = datos.about_titulo || '';
+        if (document.getElementById('adm-about-descripcion')) document.getElementById('adm-about-descripcion').value = datos.about_descripcion || '';
+        if (document.getElementById('adm-about-item1')) document.getElementById('adm-about-item1').value = datos.about_item1_text || '';
+        if (document.getElementById('adm-about-item2')) document.getElementById('adm-about-item2').value = datos.about_item2_text || '';
+        if (document.getElementById('adm-about-item3')) document.getElementById('adm-about-item3').value = datos.about_item3_text || '';
+        if (document.getElementById('adm-about-item4')) document.getElementById('adm-about-item4').value = datos.about_item4_text || '';
+        if (document.getElementById('adm-about-btn1')) document.getElementById('adm-about-btn1').value = datos.about_btn1_text || '';
+        if (document.getElementById('adm-about-btn2')) document.getElementById('adm-about-btn2').value = datos.about_btn2_text || '';
+        if (document.getElementById('adm-about-video')) document.getElementById('adm-about-video').value = datos.about_video_url || '';
+        
     } catch (err) {
-        console.error("Error al cargar los datos de la sección About:", err);
+        console.error("Error al cargar la sección About en el panel:", err);
     }
 }
 
-async function guardarAboutHome(e) {
-    e.preventDefault(); // Evita que la página se recargue
+
+async function guardarAboutSection(e) {
+    e.preventDefault();
     
-    // CONCORDANCIA TOTAL CON TU SQL: Armamos el objeto JSON idéntico a las columnas de la BD
+    // Construimos el objeto JSON exacto con los nombres que espera tu backend
     const payload = {
         about_titulo: document.getElementById('adm-about-titulo').value,
         about_descripcion: document.getElementById('adm-about-descripcion').value,
@@ -906,25 +900,38 @@ async function guardarAboutHome(e) {
         about_item4_text: document.getElementById('adm-about-item4').value,
         about_btn1_text: document.getElementById('adm-about-btn1').value,
         about_btn2_text: document.getElementById('adm-about-btn2').value,
-        about_video_url: document.getElementById('adm-about-video-url').value
+        about_video_url: document.getElementById('adm-about-video').value
     };
 
     try {
         const res = await fetch('/api/home/about', {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify(payload)
         });
 
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Error al actualizar la sección About.");
-        
-        alert("¡Sección About actualizada con éxito!");
+
+        alert("¡SECCIÓN ABOUT actualizada con éxito!");
+        location.reload();
     } catch (err) {
         alert("Error: " + err.message);
         console.error(err);
     }
 }
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Cambia 'form-about-section' por el ID real de tu etiqueta <form> de la sección About
+    if (document.getElementById('form-about-section')) {
+        cargarAboutAdmin();
+        document.getElementById('form-about-section').addEventListener('submit', guardarAboutSection);
+    }
+});
+
 
 ///////////////////////////////////////////////////////////////////////////
 // ABOUT SECTION end
