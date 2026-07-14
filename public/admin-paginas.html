@@ -925,10 +925,14 @@ async function guardarAboutSection(e) {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Cambia 'form-about-section' por el ID real de tu etiqueta <form> de la sección About
-    if (document.getElementById('form-about-section')) {
-        cargarAboutAdmin();
-        document.getElementById('form-about-section').addEventListener('submit', guardarAboutSection);
+    cargarAboutAdmin();
+
+    const formularioAbout = document.getElementById('form-about-section');
+    
+    if (formularioAbout) {
+        formularioAbout.addEventListener('submit', guardarAboutSection);
+    } else {
+        console.warn("Advertencia: No se encontró el elemento 'form-about-section' para asignar el evento submit.");
     }
 });
 
