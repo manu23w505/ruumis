@@ -1479,14 +1479,13 @@ app.put('/api/home/rooms', (req, res) => {
 // ==========================================
 
 app.get('/api/home/about', (req, res) => {
-    const sql = "SELECT * FROM admin_home WHERE id = 1";
+    const sql = "SELECT * FROM admin_home WHERE id = 1"; // O la consulta equivalente que uses
     db.query(sql, (err, result) => {
         if (err) {
-            console.error("Error al consultar la tabla admin_home (About):", err);
+            console.error(err);
             return res.status(500).json({ error: "Error en la base de datos" });
         }
-        // Retornamos la primera fila mapeada como JSON
-        res.json(result[0] || {});
+        res.json(result[0]); 
     });
 });
 

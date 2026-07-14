@@ -1299,34 +1299,81 @@ async function guardarAboutSection(event) {
 
 async function cargarAboutPublico() {
     try {
-        // Usamos la función apiCall de tu proyecto apuntando a la nueva ruta GET
-        const datos = await apiCall('/api/home/about');
-        if (!datos) return;
+        const respuesta = await fetch('/api/home/about'); // Ajusta este endpoint según tu backend
+        const datos = await respuesta.json();
 
-        // Inyectamos los textos de forma segura en los contenedores correspondientes del HTML público
-        if (document.getElementById('public-about-titulo')) document.getElementById('public-about-titulo').textContent = datos.about_titulo || '';
-        if (document.getElementById('public-about-descripcion')) document.getElementById('public-about-descripcion').textContent = datos.about_descripcion || '';
-        
-        // Items o viñetas de características
-        if (document.getElementById('public-about-item1')) document.getElementById('public-about-item1').textContent = datos.about_item1_text || '';
-        if (document.getElementById('public-about-item2')) document.getElementById('public-about-item2').textContent = datos.about_item2_text || '';
-        if (document.getElementById('public-about-item3')) document.getElementById('public-about-item3').textContent = datos.about_item3_text || '';
-        if (document.getElementById('public-about-item4')) document.getElementById('public-about-item4').textContent = datos.about_item4_text || '';
+        if (!respuesta.ok) throw new Error("No se pudo obtener la sección About");
 
-        // Botones de acción
-        if (document.getElementById('public-about-btn1')) document.getElementById('public-about-btn1').textContent = datos.about_btn1_text || '';
-        if (document.getElementById('public-about-btn2')) document.getElementById('public-about-btn2').textContent = datos.about_btn2_text || '';
-
-        // Enlace del video de presentación (por ejemplo, si es un botón de reproducción o una ventana modal)
-        const videoLink = document.getElementById('public-about-video');
-        if (videoLink && datos.about_video_url) {
-            videoLink.href = datos.about_video_url;
+        // Renderizar textos básicos
+        if (document.getElementById('public-about-titulo')) {
+            document.getElementById('public-about-titulo').textContent = datos.about_titulo || 'We have everything you need';
         }
+        if (document.getElementById('public-about-descripcion')) {
+            document.getElementById('public-about-descripcion').textContent = datos.about_descripcion || '';
+        }
+
+        // ==========================================
+        // ¡CÓDIGO DE REPARACIÓN PARA EL VIDEO AQUÍ!
+        // ==========================================
+        const mediaContainer = document.getElementById('public-about-media');
+        if (mediaContainer) {
+            if (datos.about_video) {
+                // Convertimos el link de la BD a formato seguro embed
+                const urlSegura = obtenerEmbedYouTube(datos.about_video);
+                
+                if (urlSegura) {
+                    // Inyectamos el iframe responsivo con las clases necesarias
+                    mediaContainer.innerHTML = `
+                        <iframe 
+                            width="100%" 
+                            height="350" 
+                            src="${urlSegura}" 
+                            title="YouTube video player" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                            allowfullscreen
+                            style="border-radius: 8px; shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
+                        </iframe>`;
+                } else {
+                    mediaContainer.innerHTML = `<p class="text-danger">Formato de enlace de video no válido.</p>`;
+                }
+            } else {
+                // Si no hay video en la base de datos, puedes poner una imagen de respaldo o dejarlo vacío
+                mediaContainer.innerHTML = `<p class="text-muted text-center">No hay video configurado.</p>`;
+            }
+        }
+
     } catch (err) {
-        console.error("Error al renderizar la sección About pública:", err);
+        console.error("Error al renderizar la sección About:", err);
     }
 }
 
+
+
+function obtenerEmbedYouTube(url) {
+    if (!url) return '';
+    
+    // Si ya es un ID directo de 11 caracteres
+    if (url.length === 11) {
+        return `https://www.youtube.com/embed/${url}`;
+    }
+    
+    // Expresión regular para capturar el ID desde varios formatos de URL comunes
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    
+    if (match && match[2].length === 11) {
+        const videoId = match[2];
+        return `https://www.youtube.com/embed/${videoId}`;
+    }
+    
+    // Si ya venía formateado como embed, lo dejamos igual
+    if (url.includes('youtube.com/embed/')) {
+        return url;
+    }
+    
+    return '';
+}
 
 // Escuchas automáticas de carga del DOM
 document.addEventListener('DOMContentLoaded', () => {
@@ -1341,6 +1388,13 @@ document.addEventListener('DOMContentLoaded', () => {
 // Inicialización automática
 document.addEventListener('DOMContentLoaded', () => {
     cargarRoomsSectionHome();
+});
+
+// Asegurar su ejecución al cargar el DOM
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('public-about-titulo') || document.getElementById('public-about-media')) {
+        cargarAboutPublico();
+    }
 });
 
 //================================================================
