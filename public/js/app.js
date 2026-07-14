@@ -1348,8 +1348,6 @@ async function cargarAboutPublico() {
     }
 }
 
-
-
 function obtenerEmbedYouTube(url) {
     if (!url) return '';
     
@@ -1401,7 +1399,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // RAITING SECTION HOME
 //================================================================
 
-// Agrega esta función dentro de tu app.js
+
 async function cargarRatingPublico() {
     // FILTRO DE GUARDA: Si no existe el contenedor de la sección, salimos de inmediato
     const contenedorRating = document.getElementById('public-rating-section');
@@ -1416,19 +1414,30 @@ async function cargarRatingPublico() {
             // 1. Inyectamos los números y los textos de las marcas de manera segura
             if(document.getElementById('public-rating-num1')) document.getElementById('public-rating-num1').innerText = datos.rating_item1_num || '';
             if(document.getElementById('public-rating-text1')) document.getElementById('public-rating-text1').innerText = datos.rating_item1_text || '';
-            if(document.getElementById('public-rating-logo1') && datos.rating_item1_logo) document.getElementById('public-rating-logo1').src = datos.rating_item1_logo;
+            
+            // CORRECCIÓN AQUÍ: Pasamos el logo por obtenerRutaImagen para que busque en /uploads/
+            if(document.getElementById('public-rating-logo1') && datos.rating_item1_logo) {
+                document.getElementById('public-rating-logo1').src = obtenerRutaImagen(datos.rating_item1_logo);
+            }
 
             if(document.getElementById('public-rating-num2')) document.getElementById('public-rating-num2').innerText = datos.rating_item2_num || '';
             if(document.getElementById('public-rating-text2')) document.getElementById('public-rating-text2').innerText = datos.rating_item2_text || '';
-            if(document.getElementById('public-rating-logo2') && datos.rating_item2_logo) document.getElementById('public-rating-logo2').src = datos.rating_item2_logo;
+            
+            // CORRECCIÓN AQUÍ: Pasamos el logo por obtenerRutaImagen para que busque en /uploads/
+            if(document.getElementById('public-rating-logo2') && datos.rating_item2_logo) {
+                document.getElementById('public-rating-logo2').src = obtenerRutaImagen(datos.rating_item2_logo);
+            }
 
             if(document.getElementById('public-rating-num3')) document.getElementById('public-rating-num3').innerText = datos.rating_item3_num || '';
             if(document.getElementById('public-rating-text3')) document.getElementById('public-rating-text3').innerText = datos.rating_item3_text || '';
-            if(document.getElementById('public-rating-logo3') && datos.rating_item3_logo) document.getElementById('public-rating-logo3').src = datos.rating_item3_logo;
+            
+            // CORRECCIÓN AQUÍ: Pasamos el logo por obtenerRutaImagen para que busque en /uploads/
+            if(document.getElementById('public-rating-logo3') && datos.rating_item3_logo) {
+                document.getElementById('public-rating-logo3').src = obtenerRutaImagen(datos.rating_item3_logo);
+            }
 
             // 2. Control de Animaciones dinámicas sin destruir clases de diseño previas
             if (datos.rating_animacion) {
-                // Nota: Ajusta "raiting" si tu clase real se escribe "rating"
                 contenedorRating.className = `raiting ${datos.rating_animacion}`; 
             }
         }

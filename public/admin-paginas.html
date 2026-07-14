@@ -325,57 +325,69 @@
                             <form onsubmit="guardarRatingHome(event)" class="space-y-4">
                                 <h3 class="text-lg font-bold text-teal-800 border-b pb-2">Editar Sección Rating</h3>
 
-                                <div class="p-4 bg-slate-50 rounded-md border border-slate-200 space-y-3">
-                                    <h4 class="text-sm font-semibold text-teal-700">Marca 1 (Ej. Booking)</h4>
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="p-4 border border-slate-200 rounded-lg bg-white shadow-sm mb-4">
+                                    <h4 class="font-bold text-teal-700 mb-2">Elemento 1</h4>
+                                    
+                                    <div class="grid grid-cols-2 gap-4 mb-3">
                                         <div>
-                                            <label class="block text-xs font-medium text-slate-700">Puntuación / Número:</label>
-                                            <input type="text" id="adm-rating-item1-num" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border text-sm">
+                                            <label class="block text-xs font-semibold text-slate-600">Número / Porcentaje</label>
+                                            <input type="text" id="adm-rating-item1-num" class="w-full border border-slate-300 rounded px-3 py-2 text-sm">
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-medium text-slate-700">Texto Descriptivo:</label>
-                                            <input type="text" id="adm-rating-item1-text" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border text-sm">
+                                            <label class="block text-xs font-semibold text-slate-600">Texto descriptivo</label>
+                                            <input type="text" id="adm-rating-item1-text" class="w-full border border-slate-300 rounded px-3 py-2 text-sm">
                                         </div>
-                                        <div>
-                                            <label class="block text-xs font-medium text-slate-700">Ruta / URL del Logo:</label>
-                                            <input type="text" id="adm-rating-item1-logo" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border text-sm">
-                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-600 mb-1">Logo / Icono</label>
+                                        <img id="prev-rating-item1-logo" src="" alt="Vista previa" class="h-12 w-auto mb-2 object-contain bg-slate-100 rounded border p-1">
+                                        <input type="hidden" id="url-rating-item1-logo-actual">
+                                        <input type="file" id="input-rating-item1-logo" accept="image/*" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100">
                                     </div>
                                 </div>
 
-                                <div class="p-4 bg-slate-50 rounded-md border border-slate-200 space-y-3">
-                                    <h4 class="text-sm font-semibold text-teal-700">Marca 2 (Ej. Hostelworld)</h4>
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="p-4 border border-slate-200 rounded-lg bg-white shadow-sm mb-4">
+                                    <h4 class="font-bold text-teal-700 mb-2">Elemento 2</h4>
+                                    
+                                    <div class="grid grid-cols-2 gap-4 mb-3">
                                         <div>
-                                            <label class="block text-xs font-medium text-slate-700">Puntuación / Número:</label>
-                                            <input type="text" id="adm-rating-item2-num" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border text-sm">
+                                            <label class="block text-xs font-semibold text-slate-600">Número / Porcentaje</label>
+                                            <input type="text" id="adm-rating-item2-num" class="w-full border border-slate-300 rounded px-3 py-2 text-sm">
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-medium text-slate-700">Texto Descriptivo:</label>
-                                            <input type="text" id="adm-rating-item2-text" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border text-sm">
+                                            <label class="block text-xs font-semibold text-slate-600">Texto descriptivo</label>
+                                            <input type="text" id="adm-rating-item2-text" class="w-full border border-slate-300 rounded px-3 py-2 text-sm">
                                         </div>
-                                        <div>
-                                            <label class="block text-xs font-medium text-slate-700">Ruta / URL del Logo:</label>
-                                            <input type="text" id="adm-rating-item2-logo" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border text-sm">
-                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-600 mb-1">Logo / Icono</label>
+                                        <img id="prev-rating-item2-logo" src="" alt="Vista previa" class="h-12 w-auto mb-2 object-contain bg-slate-100 rounded border p-1">
+                                        <input type="hidden" id="url-rating-item2-logo-actual">
+                                        <input type="file" id="input-rating-item2-logo" accept="image/*" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100">
                                     </div>
                                 </div>
 
-                                <div class="p-4 bg-slate-50 rounded-md border border-slate-200 space-y-3">
-                                    <h4 class="text-sm font-semibold text-teal-700">Marca 3 (Ej. TripAdvisor)</h4>
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="p-4 border border-slate-200 rounded-lg bg-white shadow-sm mb-4">
+                                    <h4 class="font-bold text-teal-700 mb-2">Elemento 3</h4>
+                                    
+                                    <div class="grid grid-cols-2 gap-4 mb-3">
                                         <div>
-                                            <label class="block text-xs font-medium text-slate-700">Puntuación / Número:</label>
-                                            <input type="text" id="adm-rating-item3-num" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border text-sm">
+                                            <label class="block text-xs font-semibold text-slate-600">Número / Porcentaje</label>
+                                            <input type="text" id="adm-rating-item3-num" class="w-full border border-slate-300 rounded px-3 py-2 text-sm">
                                         </div>
                                         <div>
-                                            <label class="block text-xs font-medium text-slate-700">Texto Descriptivo:</label>
-                                            <input type="text" id="adm-rating-item3-text" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border text-sm">
+                                            <label class="block text-xs font-semibold text-slate-600">Texto descriptivo</label>
+                                            <input type="text" id="adm-rating-item3-text" class="w-full border border-slate-300 rounded px-3 py-2 text-sm">
                                         </div>
-                                        <div>
-                                            <label class="block text-xs font-medium text-slate-700">Ruta / URL del Logo:</label>
-                                            <input type="text" id="adm-rating-item3-logo" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm p-2 border text-sm">
-                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-600 mb-1">Logo / Icono</label>
+                                        <img id="prev-rating-item3-logo" src="" alt="Vista previa" class="h-12 w-auto mb-2 object-contain bg-slate-100 rounded border p-1">
+                                        <input type="hidden" id="url-rating-item3-logo-actual">
+                                        <input type="file" id="input-rating-item3-logo" accept="image/*" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100">
                                     </div>
                                 </div>
 
@@ -948,71 +960,85 @@ document.addEventListener('DOMContentLoaded', () => {
 // RATING SECTION start
 ///////////////////////////////////////////////////////////////////////////
 
-document.addEventListener('DOMContentLoaded', () => {
-    consultarRoomsHome();
-    consultarAboutHome();
-    consultarRatingHome(); 
-});
 
-
-async function consultarRatingHome() {
+async function cargarRatingAdmin() {
     try {
-        const res = await fetch('/api/home');
-        if (!res.ok) throw new Error("No se pudo obtener la configuración del Rating.");
-        const data = await res.json();
+        const res = await fetch('/api/home/rating');
+        if (!res.ok) throw new Error("No se pudo obtener los datos de la sección Rating.");
+        const datos = await res.json();
+
+        // Llenar campos de Texto y Números
+        if (document.getElementById('adm-rating-item1-num')) document.getElementById('adm-rating-item1-num').value = datos.rating_item1_num || '';
+        if (document.getElementById('adm-rating-item1-text')) document.getElementById('adm-rating-item1-text').value = datos.rating_item1_text || '';
         
-        if (data) {
-            // Rellenamos el formulario dinámicamente con los datos de la BD
-            document.getElementById('adm-rating-item1-num').value = data.rating_item1_num || '';
-            document.getElementById('adm-rating-item1-text').value = data.rating_item1_text || '';
-            document.getElementById('adm-rating-item1-logo').value = data.rating_item1_logo || '';
-            
-            document.getElementById('adm-rating-item2-num').value = data.rating_item2_num || '';
-            document.getElementById('adm-rating-item2-text').value = data.rating_item2_text || '';
-            document.getElementById('adm-rating-item2-logo').value = data.rating_item2_logo || '';
-            
-            document.getElementById('adm-rating-item3-num').value = data.rating_item3_num || '';
-            document.getElementById('adm-rating-item3-text').value = data.rating_item3_text || '';
-            document.getElementById('adm-rating-item3-logo').value = data.rating_item3_logo || '';
-            
-            document.getElementById('adm-rating-animacion').value = data.rating_animacion || '';
+        if (document.getElementById('adm-rating-item2-num')) document.getElementById('adm-rating-item2-num').value = datos.rating_item2_num || '';
+        if (document.getElementById('adm-rating-item2-text')) document.getElementById('adm-rating-item2-text').value = datos.rating_item2_text || '';
+        
+        if (document.getElementById('adm-rating-item3-num')) document.getElementById('adm-rating-item3-num').value = datos.rating_item3_num || '';
+        if (document.getElementById('adm-rating-item3-text')) document.getElementById('adm-rating-item3-text').value = datos.rating_item3_text || '';
+        
+        if (document.getElementById('adm-rating-animacion')) document.getElementById('adm-rating-animacion').value = datos.rating_animacion || '';
+
+        // Guardar nombres de archivos actuales en los campos de respaldo ocultos
+        if (document.getElementById('url-rating-item1-logo-actual')) document.getElementById('url-rating-item1-logo-actual').value = datos.rating_item1_logo || '';
+        if (document.getElementById('url-rating-item2-logo-actual')) document.getElementById('url-rating-item2-logo-actual').value = datos.rating_item2_logo || '';
+        if (document.getElementById('url-rating-item3-logo-actual')) document.getElementById('url-rating-item3-logo-actual').value = datos.rating_item3_logo || '';
+
+        // Renderizar vistas previas si el archivo existe
+        if (datos.rating_item1_logo && document.getElementById('prev-rating-item1-logo')) {
+            document.getElementById('prev-rating-item1-logo').src = `/uploads/${datos.rating_item1_logo}`;
         }
+        if (datos.rating_item2_logo && document.getElementById('prev-rating-item2-logo')) {
+            document.getElementById('prev-rating-item2-logo').src = `/uploads/${datos.rating_item2_logo}`;
+        }
+        if (datos.rating_item3_logo && document.getElementById('prev-rating-item3-logo')) {
+            document.getElementById('prev-rating-item3-logo').src = `/uploads/${datos.rating_item3_logo}`;
+        }
+
     } catch (err) {
-        console.error("Error al cargar datos de Ratings en el admin:", err);
+        console.error("Error al poblar los recuadros de la sección Rating:", err);
     }
 }
 
 
-async function guardarRatingHome(e) {
+async function guardarRatingSection(e) {
     e.preventDefault();
-    
-    const payload = {
-        rating_item1_num: document.getElementById('adm-rating-item1-num').value,
-        rating_item1_text: document.getElementById('adm-rating-item1-text').value,
-        rating_item1_logo: document.getElementById('adm-rating-item1-logo').value,
-        
-        rating_item2_num: document.getElementById('adm-rating-item2-num').value,
-        rating_item2_text: document.getElementById('adm-rating-item2-text').value,
-        rating_item2_logo: document.getElementById('adm-rating-item2-logo').value,
-        
-        rating_item3_num: document.getElementById('adm-rating-item3-num').value,
-        rating_item3_text: document.getElementById('adm-rating-item3-text').value,
-        rating_item3_logo: document.getElementById('adm-rating-item3-logo').value,
-        
-        rating_animacion: document.getElementById('adm-rating-animacion').value
-    };
+
+    const formData = new FormData();
+    formData.append('rating_item1_num', document.getElementById('adm-rating-item1-num').value);
+    formData.append('rating_item1_text', document.getElementById('adm-rating-item1-text').value);
+    formData.append('rating_item2_num', document.getElementById('adm-rating-item2-num').value);
+    formData.append('rating_item2_text', document.getElementById('adm-rating-item2-text').value);
+    formData.append('rating_item3_num', document.getElementById('adm-rating-item3-num').value);
+    formData.append('rating_item3_text', document.getElementById('adm-rating-item3-text').value);
+    formData.append('rating_animacion', document.getElementById('adm-rating-animacion').value);
+
+    // Adjuntar valores de respaldo string
+    formData.append('rating_item1_logo_actual', document.getElementById('url-rating-item1-logo-actual').value || '');
+    formData.append('rating_item2_logo_actual', document.getElementById('url-rating-item2-logo-actual').value || '');
+    formData.append('rating_item3_logo_actual', document.getElementById('url-rating-item3-logo-actual').value || '');
+
+    // Adjuntar archivos binarios si el usuario seleccionó uno nuevo
+    const inputFile1 = document.getElementById('input-rating-item1-logo');
+    if (inputFile1 && inputFile1.files[0]) formData.append('rating_item1_logo', inputFile1.files[0]);
+
+    const inputFile2 = document.getElementById('input-rating-item2-logo');
+    if (inputFile2 && inputFile2.files[0]) formData.append('rating_item2_logo', inputFile2.files[0]);
+
+    const inputFile3 = document.getElementById('input-rating-item3-logo');
+    if (inputFile3 && inputFile3.files[0]) formData.append('rating_item3_logo', inputFile3.files[0]);
 
     try {
         const res = await fetch('/api/home/rating', {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: formData // Multipart/form-data automático
         });
 
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Error al actualizar.");
-        
-        alert("¡RATING SECTION (Sección de marcas) actualizada con éxito!");
+        if (!res.ok) throw new Error(data.error || "No se pudo actualizar el Rating.");
+
+        alert("¡Sección RATING actualizada localmente con éxito!");
+        location.reload();
     } catch (err) {
         alert("Error: " + err.message);
         console.error(err);
@@ -1020,9 +1046,17 @@ async function guardarRatingHome(e) {
 }
 
 
-///////////////////////////////////////////////////////////////////////////
-// RATING SECTION end
-///////////////////////////////////////////////////////////////////////////
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Reemplaza 'form-rating-section' por el ID real que tenga el formulario de tu sección rating
+    if (document.getElementById('form-rating-section')) {
+        cargarRatingAdmin();
+        document.getElementById('form-rating-section').addEventListener('submit', guardarRatingSection);
+    }
+});
+
+
+
 
 ///////////////////////////////////////////////////////////////////////////
 // REVIEWS SECTION start

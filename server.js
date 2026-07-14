@@ -1536,22 +1536,49 @@ app.put('/api/home/about', (req, res) => {
     });
 });
 
-// ==========================================
-// HOME (RATING SECTION)
-// ==========================================
-app.put('/api/home/rating', (req, res) => {
+
+// =========================================================================
+// RATING
+// =========================================================================
+
+
+app.get('/api/home/rating', (req, res) => {
+    const sql = "SELECT * FROM admin_home WHERE id = 1";
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error("Error al obtener la sección Rating:", err);
+            return res.status(500).json({ error: "Error en la base de datos" });
+        }
+        if (result.length === 0) {
+            return res.status(404).json({ error: "No se encontraron registros de Rating." });
+        }
+        res.json(result[0]);
+    });
+});
+
+
+app.put('/api/home/rating', upload.fields([
+    { name: 'rating_item1_logo', maxCount: 1 },
+    { name: 'rating_item2_logo', maxCount: 1 },
+    { name: 'rating_item3_logo', maxCount: 1 }
+]), (req, res) => {
     const {
         rating_item1_num,
         rating_item1_text,
-        rating_item1_logo,
         rating_item2_num,
         rating_item2_text,
-        rating_item2_logo,
         rating_item3_num,
         rating_item3_text,
-        rating_item3_logo,
-        rating_animacion
+        rating_animacion,
+        rating_item1_logo_actual,
+        rating_item2_logo_actual,
+        rating_item3_logo_actual
     } = req.body;
+
+
+    const logo1 = req.files && req.files['rating_item1_logo'] ? req.files['rating_item1_logo'][0].filename : (rating_item1_logo_actual || '');
+    const logo2 = req.files && req.files['rating_item2_logo'] ? req.files['rating_item2_logo'][0].filename : (rating_item2_logo_actual || '');
+    const logo3 = req.files && req.files['rating_item3_logo'] ? req.files['rating_item3_logo'][0].filename : (rating_item3_logo_actual || '');
 
     const sql = `
         UPDATE admin_home 
@@ -1572,22 +1599,23 @@ app.put('/api/home/rating', (req, res) => {
     db.query(sql, [
         rating_item1_num, 
         rating_item1_text, 
-        rating_item1_logo, 
+        logo1, 
         rating_item2_num, 
         rating_item2_text, 
-        rating_item2_logo, 
+        logo2, 
         rating_item3_num, 
         rating_item3_text, 
-        rating_item3_logo, 
+        logo3, 
         rating_animacion
     ], (err, result) => {
         if (err) {
             console.error("Error al actualizar la sección Rating:", err);
             return res.status(500).json({ error: err.message });
         }
-        res.json({ success: true, message: 'Sección Rating actualizada correctamente.' });
+        res.json({ success: true, message: '¡Sección Rating actualizada localmente con éxito!' });
     });
 });
+
 
 
 // ==========================================
