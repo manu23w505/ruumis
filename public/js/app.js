@@ -1059,9 +1059,9 @@ function obtenerRutaImagen(ruta) {
     return `/uploads/${ruta}`;
 }
 
-// Renderizado dinámico y traducción del Hero en el Home Público
+
 async function renderizarHeroPublico() {
-    // Solo actuamos si nos encontramos físicamente en la página de inicio (Home)
+
     const tituloHero = document.getElementById('render-hero-titulo');
     if (!tituloHero) return; 
 
@@ -1071,13 +1071,13 @@ async function renderizarHeroPublico() {
         const datos = await response.json();
 
         if (datos) {
-            // 1. Modificación de Textos Principales
+
             tituloHero.innerText = datos.hero_titulo || 'Hosteller';
             if (document.getElementById('render-hero-descripcion')) {
                 document.getElementById('render-hero-descripcion').innerText = datos.hero_descripcion || '';
             }
 
-            // 2. Modificación Segura de la Imagen de Fondo (Buscando las etiquetas nativas de la plantilla)
+
             const imgHero = document.querySelector('.hero_media img');
             const sourceHero = document.querySelector('.hero_media source');
             if (imgHero && datos.hero_imagen) {
@@ -1091,7 +1091,7 @@ async function renderizarHeroPublico() {
                 }
             }
 
-            // 3. Traducción limpia del Filtro de reservas conservando los íconos nativos
+
             if (document.getElementById('render-lbl-checkin')) {
                 document.getElementById('render-lbl-checkin').innerHTML = `<i class="icon-calendar icon"></i>${datos.lbl_checkin || 'Check-in'}`;
             }
@@ -1102,18 +1102,18 @@ async function renderizarHeroPublico() {
                 document.getElementById('render-lbl-guests').innerText = datos.lbl_guests || 'Guests';
             }
             
-            // Traducción de sub-etiquetas del dropdown flotante (Adultos / Niños)
+
             const lblAdults = document.querySelector('label[for="adults"]');
             if (lblAdults) lblAdults.innerText = datos.lbl_adults || 'Adults';
             
             const lblChildren = document.querySelector('label[for="children"]');
             if (lblChildren) lblChildren.innerText = datos.lbl_children || 'Children';
 
-            // Marcadores de entrada (Placeholders) de los inputs tipo fecha
+
             if (document.getElementById('checkIn')) document.getElementById('checkIn').placeholder = datos.lbl_checkin || 'Add date';
             if (document.getElementById('checkOut')) document.getElementById('checkOut').placeholder = datos.lbl_checkout || 'Add date';
 
-            // Texto interno del botón de envío del formulario
+
             if (document.getElementById('render-btn-search')) {
                 document.getElementById('render-btn-search').innerText = datos.btn_search || 'Search';
             }
@@ -1123,7 +1123,7 @@ async function renderizarHeroPublico() {
     }
 }
 
-// Disparador de ejecución automática al cargar la interfaz pública
+
 document.addEventListener('DOMContentLoaded', () => {
     renderizarHeroPublico();
 });
@@ -1133,7 +1133,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ROOMS SECTION HOME
 //================================================================
 
-// Carga dinámica de textos y traducciones para la Sección de Anuncios Corta (Rooms Section)
+
 async function cargarRoomsSectionHome() {
     try {
         const response = await fetch('/api/home');
@@ -1142,7 +1142,7 @@ async function cargarRoomsSectionHome() {
         
         if (!data) return;
 
-        // 1. Reemplazo del encabezado de la sección y botón global
+
         const h2Titulo = document.getElementById('rooms-header-title');
         if (h2Titulo && data.rooms_titulo) {
             h2Titulo.textContent = data.rooms_titulo;
@@ -1152,26 +1152,26 @@ async function cargarRoomsSectionHome() {
             btnVerMas.textContent = data.rooms_btn_ver_mas;
         }
 
-        // 2. Traducción cuidadosa de etiquetas fijas en los anuncios dinámicos (Data-Order 1 y 2)
+
         const anunciosDinamicos = document.querySelectorAll('.item-home-dinamico');
         anunciosDinamicos.forEach(item => {
             
-            // Tratamiento de etiqueta de precio (ej: / 1 night) sin sobreescribir el span del precio numérico
+
             const labelPricing = item.querySelector('.media_label--pricing');
             if (labelPricing && data.rooms_lbl_precio_noche) {
                 const precioSpan = labelPricing.querySelector('.home-room-price');
                 if (precioSpan) {
-                    labelPricing.innerHTML = ''; // Limpiamos texto fijo anterior
-                    labelPricing.appendChild(precioSpan); // Reinsertamos el número intacto
-                    labelPricing.appendChild(document.createTextNode(' ' + data.rooms_lbl_precio_noche)); // Nuevo texto fijo
+                    labelPricing.innerHTML = ''; 
+                    labelPricing.appendChild(precioSpan); 
+                    labelPricing.appendChild(document.createTextNode(' ' + data.rooms_lbl_precio_noche)); 
                 }
             }
 
-            // Tratamiento de amenidades (Sleeps y Beds) respetando sus íconos correspondientes
+
             const itemsAmenidades = item.querySelectorAll('.main_amenities-item');
             if (itemsAmenidades && itemsAmenidades.length >= 2) {
                 
-                // Amenidad 1: Capacidad (Sleeps)
+
                 const capSpan = itemsAmenidades[0].querySelector('.home-room-capacity');
                 const iconoUser = itemsAmenidades[0].querySelector('.icon-user');
                 if (capSpan && iconoUser && data.rooms_lbl_sleeps) {
@@ -1181,7 +1181,7 @@ async function cargarRoomsSectionHome() {
                     itemsAmenidades[0].appendChild(document.createTextNode(' ' + data.rooms_lbl_sleeps));
                 }
                 
-                // Amenidad 2: Camas (Beds)
+
                 const camasSpan = itemsAmenidades[1].querySelector('.home-room-beds');
                 const iconoCama = itemsAmenidades[1].querySelector('.icon-twin_bed, .icon-bunk_bed, .icon');
                 if (camasSpan && iconoCama && data.rooms_lbl_beds) {
@@ -1192,7 +1192,7 @@ async function cargarRoomsSectionHome() {
                 }
             }
 
-            // Tratamiento del enlace de disponibilidad manteniendo su ícono de flecha intacto
+
             const enlaceLink = item.querySelector('.home-room-link');
             if (enlaceLink && data.rooms_lbl_disponibilidad) {
                 const iconoFlecha = enlaceLink.querySelector('.icon-arrow_right');
@@ -1201,7 +1201,6 @@ async function cargarRoomsSectionHome() {
             }
         });
 
-        // 3. Modificación total de la tarjeta informativa estática (Data-Order 3)
         const item3Title = document.getElementById('rooms-card-titulo');
         if (item3Title && data.rooms_card_titulo) item3Title.textContent = data.rooms_card_titulo;
 
@@ -1401,7 +1400,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 async function cargarRatingPublico() {
-    // FILTRO DE GUARDA: Si no existe el contenedor de la sección, salimos de inmediato
+
     const contenedorRating = document.getElementById('public-rating-section');
     if (!contenedorRating) return;
 
@@ -1411,11 +1410,11 @@ async function cargarRatingPublico() {
         const datos = await res.json();
 
         if (datos) {
-            // 1. Inyectamos los números y los textos de las marcas de manera segura
+
             if(document.getElementById('public-rating-num1')) document.getElementById('public-rating-num1').innerText = datos.rating_item1_num || '';
             if(document.getElementById('public-rating-text1')) document.getElementById('public-rating-text1').innerText = datos.rating_item1_text || '';
             
-            // CORRECCIÓN AQUÍ: Pasamos el logo por obtenerRutaImagen para que busque en /uploads/
+
             if(document.getElementById('public-rating-logo1') && datos.rating_item1_logo) {
                 document.getElementById('public-rating-logo1').src = obtenerRutaImagen(datos.rating_item1_logo);
             }
@@ -1423,7 +1422,7 @@ async function cargarRatingPublico() {
             if(document.getElementById('public-rating-num2')) document.getElementById('public-rating-num2').innerText = datos.rating_item2_num || '';
             if(document.getElementById('public-rating-text2')) document.getElementById('public-rating-text2').innerText = datos.rating_item2_text || '';
             
-            // CORRECCIÓN AQUÍ: Pasamos el logo por obtenerRutaImagen para que busque en /uploads/
+
             if(document.getElementById('public-rating-logo2') && datos.rating_item2_logo) {
                 document.getElementById('public-rating-logo2').src = obtenerRutaImagen(datos.rating_item2_logo);
             }
@@ -1431,12 +1430,12 @@ async function cargarRatingPublico() {
             if(document.getElementById('public-rating-num3')) document.getElementById('public-rating-num3').innerText = datos.rating_item3_num || '';
             if(document.getElementById('public-rating-text3')) document.getElementById('public-rating-text3').innerText = datos.rating_item3_text || '';
             
-            // CORRECCIÓN AQUÍ: Pasamos el logo por obtenerRutaImagen para que busque en /uploads/
+
             if(document.getElementById('public-rating-logo3') && datos.rating_item3_logo) {
                 document.getElementById('public-rating-logo3').src = obtenerRutaImagen(datos.rating_item3_logo);
             }
 
-            // 2. Control de Animaciones dinámicas sin destruir clases de diseño previas
+
             if (datos.rating_animacion) {
                 contenedorRating.className = `raiting ${datos.rating_animacion}`; 
             }
@@ -1446,7 +1445,7 @@ async function cargarRatingPublico() {
     }
 }
 
-// Aseguramos su ejecución automática agregándola al listener ya existente de tu DOM
+
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('public-rating-section')) {
         cargarRatingPublico();

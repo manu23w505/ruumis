@@ -651,16 +651,16 @@
             document.getElementById(`btn-page-${idPagina}`).classList.add('active');
         }
 
-        // Al cargar el panel, se consultan los datos actuales de la BD para mostrarlos en la plantilla del admin
+
         async function cargarHeroAdmin() {
     try {
-        // Mantenemos la ruta de tu API actual
+
         const res = await fetch('/api/cms/home');
         if (!res.ok) throw new Error("No se pudieron obtener los datos de la base de datos.");
         const datos = await res.json();
         
         if (datos) {
-            // 1. TEXTOS PRINCIPALES (TITULO Y DESCRIPCIÓN)
+
             if (document.getElementById('home-hero-titulo')) {
                 document.getElementById('home-hero-titulo').value = datos.hero_titulo || '';
             }
@@ -668,7 +668,7 @@
                 document.getElementById('home-hero-descripcion').value = datos.hero_descripcion || '';
             }
             
-            // 2. TRADUCCIÓN DE ETIQUETAS DEL BUSCADOR
+
             if (document.getElementById('home-lbl-checkin')) {
                 document.getElementById('home-lbl-checkin').value = datos.lbl_checkin || '';
             }
@@ -688,10 +688,9 @@
                 document.getElementById('home-btn-search').value = datos.btn_search || '';
             }
             
-            // 3. PREVISUALIZACIÓN DE LA IMAGEN DE FONDO
+
             const preview = document.getElementById('preview-hero-imagen');
             if (preview && datos.hero_imagen) {
-                // Validación flexible: si ya inicia con "/" o "http" la dejamos tal cual, si no, le concatenamos el prefijo
                 preview.src = datos.hero_imagen.startsWith('/') || datos.hero_imagen.startsWith('http') 
                     ? datos.hero_imagen 
                     : `/uploads/${datos.hero_imagen}`;
@@ -702,7 +701,7 @@
     }
 }
 
-        // Guarda de forma asíncrona e individual el campo editado
+
         async function guardarTextoCMS(columnaBD, inputId) {
             const nuevoValor = document.getElementById(inputId).value;
             try {
@@ -752,15 +751,15 @@
             if (!file) return alert("Por favor, selecciona un archivo de imagen primero.");
 
             const formData = new FormData();
-            formData.append('image', file); // El backend lo recibirá como upload.single('image')
+            formData.append('image', file); 
 
             try {
-                // Step 1: Subida física local del archivo
+
                 const resUpload = await fetch('/api/upload', { method: 'POST', body: formData });
                 const dataUpload = await resUpload.json();
                 
                 if (dataUpload.url) {
-                    // Step 2: Almacenar la ruta local limpia en la columna 'hero_imagen' de la BD
+
                     const resBD = await fetch('/api/cms/home/actualizar', {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
@@ -783,11 +782,10 @@
             }
         }
 
-        // Inicialización automática al cargar el DOM de la vista admin
+
         document.addEventListener('DOMContentLoaded', () => {
             cargarHeroAdmin();
             
-            // Si tienes un botón específico para subir la imagen, puedes enlazar el evento aquí
             const btnSubirImagen = document.getElementById('btn-subir-hero-img');
             if (btnSubirImagen) {
                 btnSubirImagen.addEventListener('click', subirImagenHeroCMS);
@@ -881,7 +879,7 @@ async function cargarAboutAdmin() {
         
         const datos = await res.json();
 
-        // Mapeamos los datos de forma segura
+
         if (document.getElementById('adm-about-titulo')) document.getElementById('adm-about-titulo').value = datos.about_titulo || '';
         if (document.getElementById('adm-about-descripcion')) document.getElementById('adm-about-descripcion').value = datos.about_descripcion || '';
         if (document.getElementById('adm-about-item1')) document.getElementById('adm-about-item1').value = datos.about_item1_text || '';
@@ -962,29 +960,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 async function cargarRatingAdmin() {
+    console.log("=== 🔴 1. cargarRatingAdmin() se está ejecutando ===");
     try {
         const res = await fetch('/api/home/rating');
+        console.log("Respuesta del servidor (Status):", res.status);
+        
         if (!res.ok) throw new Error("No se pudo obtener los datos de la sección Rating.");
         const datos = await res.json();
-
-        // Llenar campos de Texto y Números
-        if (document.getElementById('adm-rating-item1-num')) document.getElementById('adm-rating-item1-num').value = datos.rating_item1_num || '';
-        if (document.getElementById('adm-rating-item1-text')) document.getElementById('adm-rating-item1-text').value = datos.rating_item1_text || '';
         
-        if (document.getElementById('adm-rating-item2-num')) document.getElementById('adm-rating-item2-num').value = datos.rating_item2_num || '';
-        if (document.getElementById('adm-rating-item2-text')) document.getElementById('adm-rating-item2-text').value = datos.rating_item2_text || '';
-        
-        if (document.getElementById('adm-rating-item3-num')) document.getElementById('adm-rating-item3-num').value = datos.rating_item3_num || '';
-        if (document.getElementById('adm-rating-item3-text')) document.getElementById('adm-rating-item3-text').value = datos.rating_item3_text || '';
-        
-        if (document.getElementById('adm-rating-animacion')) document.getElementById('adm-rating-animacion').value = datos.rating_animacion || '';
+        console.log("Datos exactos recibidos de la Base de Datos:", datos);
 
-        // Guardar nombres de archivos actuales en los campos de respaldo ocultos
-        if (document.getElementById('url-rating-item1-logo-actual')) document.getElementById('url-rating-item1-logo-actual').value = datos.rating_item1_logo || '';
-        if (document.getElementById('url-rating-item2-logo-actual')) document.getElementById('url-rating-item2-logo-actual').value = datos.rating_item2_logo || '';
-        if (document.getElementById('url-rating-item3-logo-actual')) document.getElementById('url-rating-item3-logo-actual').value = datos.rating_item3_logo || '';
 
-        // Renderizar vistas previas si el archivo existe
+        const camposTexto = {
+            'adm-rating-item1-num': datos.rating_item1_num,
+            'adm-rating-item1-text': datos.rating_item1_text,
+            'adm-rating-item2-num': datos.rating_item2_num,
+            'adm-rating-item2-text': datos.rating_item2_text,
+            'adm-rating-item3-num': datos.rating_item3_num,
+            'adm-rating-item3-text': datos.rating_item3_text,
+            'adm-rating-animacion': datos.rating_animacion
+        };
+
+
+        for (const [idInput, valorDB] of Object.entries(camposTexto)) {
+            const elemento = document.getElementById(idInput);
+            if (elemento) {
+                elemento.value = valorDB || '';
+            } else {
+                console.warn(`⚠️ Alerta: El input con ID "${idInput}" NO existe en tu HTML. Revisa cómo lo escribiste.`);
+            }
+        }
+
+ 
+        const camposOcultos = {
+            'url-rating-item1-logo-actual': datos.rating_item1_logo,
+            'url-rating-item2-logo-actual': datos.rating_item2_logo,
+            'url-rating-item3-logo-actual': datos.rating_item3_logo
+        };
+
+        for (const [idOculto, valorLogo] of Object.entries(camposOcultos)) {
+            const elOculto = document.getElementById(idOculto);
+            if (elOculto) elOculto.value = valorLogo || '';
+        }
+
+
         if (datos.rating_item1_logo && document.getElementById('prev-rating-item1-logo')) {
             document.getElementById('prev-rating-item1-logo').src = `/uploads/${datos.rating_item1_logo}`;
         }
@@ -996,10 +1015,23 @@ async function cargarRatingAdmin() {
         }
 
     } catch (err) {
-        console.error("Error al poblar los recuadros de la sección Rating:", err);
+        console.error("❌ Error al poblar los recuadros de la sección Rating:", err);
     }
 }
 
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("=== 🔴 DOM Completamente Cargado en Admin Paginas ===");
+    const formulario = document.getElementById('form-rating-section');
+    
+    console.log("¿Existe el formulario 'form-rating-section' en el HTML?:", formulario ? "SÍ ✅" : "NO ❌");
+
+    if (formulario) {
+        cargarRatingAdmin();
+        formulario.addEventListener('submit', guardarRatingSection);
+    }
+});
 
 async function guardarRatingSection(e) {
     e.preventDefault();
@@ -1013,12 +1045,12 @@ async function guardarRatingSection(e) {
     formData.append('rating_item3_text', document.getElementById('adm-rating-item3-text').value);
     formData.append('rating_animacion', document.getElementById('adm-rating-animacion').value);
 
-    // Adjuntar valores de respaldo string
+
     formData.append('rating_item1_logo_actual', document.getElementById('url-rating-item1-logo-actual').value || '');
     formData.append('rating_item2_logo_actual', document.getElementById('url-rating-item2-logo-actual').value || '');
     formData.append('rating_item3_logo_actual', document.getElementById('url-rating-item3-logo-actual').value || '');
 
-    // Adjuntar archivos binarios si el usuario seleccionó uno nuevo
+
     const inputFile1 = document.getElementById('input-rating-item1-logo');
     if (inputFile1 && inputFile1.files[0]) formData.append('rating_item1_logo', inputFile1.files[0]);
 
@@ -1031,7 +1063,7 @@ async function guardarRatingSection(e) {
     try {
         const res = await fetch('/api/home/rating', {
             method: 'PUT',
-            body: formData // Multipart/form-data automático
+            body: formData 
         });
 
         const data = await res.json();
@@ -1046,15 +1078,12 @@ async function guardarRatingSection(e) {
 }
 
 
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Reemplaza 'form-rating-section' por el ID real que tenga el formulario de tu sección rating
     if (document.getElementById('form-rating-section')) {
         cargarRatingAdmin();
         document.getElementById('form-rating-section').addEventListener('submit', guardarRatingSection);
     }
 });
-
 
 
 
