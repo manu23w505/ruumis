@@ -886,20 +886,17 @@ async function cargarAboutAdmin() {
 }
 
 
-async function guardarAboutSection(e) {
-    // Salvavidas por si la función es llamada desde el HTML sin pasar el evento
+async function guardarAboutHome(e) {
     if (e && typeof e.preventDefault === 'function') {
         e.preventDefault();
     }
     
     try {
-        // Función interna para obtener valores de forma segura sin romper el código si el ID no existe
         const obtenerValorSeguro = (id) => {
             const elemento = document.getElementById(id);
             return elemento ? elemento.value : '';
         };
 
-        // Construimos el objeto JSON DENTRO del try-catch
         const payload = {
             about_titulo: obtenerValorSeguro('adm-about-titulo'),
             about_descripcion: obtenerValorSeguro('adm-about-descripcion'),
@@ -937,7 +934,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const formularioAbout = document.getElementById('form-about-section');
     if (formularioAbout) {
-        formularioAbout.addEventListener('submit', guardarAboutSection);
+        formularioAbout.addEventListener('submit', guardarAboutHome);
     } else {
         console.warn("Advertencia: No se encontró el elemento '<form id=\"form-about-section\">' en el HTML.");
     }
