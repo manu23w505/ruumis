@@ -1479,17 +1479,48 @@ app.put('/api/home/rooms', (req, res) => {
 // ==========================================
 
 app.put('/api/home/about', (req, res) => {
-    const { about_titulo, about_descripcion, about_video_url } = req.body;
+    // Desestructurar las propiedades con los nombres exactos que envía el frontend
+    const { 
+        about_titulo, 
+        about_descripcion, 
+        about_item1_text, 
+        about_item2_text, 
+        about_item3_text, 
+        about_item4_text, 
+        about_btn1_text, 
+        about_btn2_text, 
+        about_video_url 
+    } = req.body;
 
+    // Asegúrate de que los nombres de las columnas correspondan a tu base de datos
     const sql = `
         UPDATE admin_home 
-        SET about_titulo = ?, about_descripcion = ?, about_video = ? 
+        SET about_titulo = ?, 
+            about_descripcion = ?, 
+            about_item1_text = ?, 
+            about_item2_text = ?, 
+            about_item3_text = ?, 
+            about_item4_text = ?, 
+            about_btn1_text = ?, 
+            about_btn2_text = ?, 
+            about_video_url = ? 
         WHERE id = 1
     `;
 
-    db.query(sql, [about_titulo, about_descripcion, about_video_url], (err, result) => {
+    // Pasar las variables en el mismo orden exacto que los signos '?'
+    db.query(sql, [
+        about_titulo, 
+        about_descripcion, 
+        about_item1_text, 
+        about_item2_text, 
+        about_item3_text, 
+        about_item4_text, 
+        about_btn1_text, 
+        about_btn2_text, 
+        about_video_url
+    ], (err, result) => {
         if (err) {
-            console.error("Error al actualizar la sección About:", err);
+            console.error("Error al actualizar la tabla admin_home (About):", err);
             return res.status(500).json({ error: "Error al guardar en la base de datos" });
         }
         res.json({ message: "¡Sección ABOUT actualizada con éxito!" });

@@ -1247,12 +1247,19 @@ async function cargarAboutAdmin() {
         const datos = await res.json();
         
         if (datos) {
-            document.getElementById('about-titulo').value = datos.about_titulo || '';
-            document.getElementById('about-descripcion').value = datos.about_descripcion || '';
+            document.getElementById('adm-about-titulo').value = datos.about_titulo || '';
+            document.getElementById('adm-about-descripcion').value = datos.about_descripcion || '';
+            document.getElementById('adm-about-item1').value = datos.about_item1_text || '';
+            document.getElementById('adm-about-item2').value = datos.about_item2_text || '';
+            document.getElementById('adm-about-item3').value = datos.about_item3_text || '';
+            document.getElementById('adm-about-item4').value = datos.about_item4_text || '';
+            document.getElementById('adm-about-btn1').value = datos.about_btn1_text || '';
+            document.getElementById('adm-about-btn2').value = datos.about_btn2_text || '';
             
-            // CORRECCIÓN FRONTAL: Carga el link actual en el input para que no se mande vacío al guardar
-            if (document.getElementById('about-video')) {
-                document.getElementById('about-video').value = datos.about_video_url || '';
+            // Carga el enlace del video actual de la base de datos al input
+            const inputVideo = document.getElementById('adm-about-video');
+            if (inputVideo) {
+                inputVideo.value = datos.about_video_url || '';
             }
         }
     } catch (err) {
