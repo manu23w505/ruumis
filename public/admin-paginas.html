@@ -1010,7 +1010,7 @@ async function cargarRatingAdmin() {
         if (document.getElementById('adm-rating-item3-num')) document.getElementById('adm-rating-item3-num').value = datos.rating_item3_num || '';
         if (document.getElementById('adm-rating-item3-text')) document.getElementById('adm-rating-item3-text').value = datos.rating_item3_text || '';
         if (document.getElementById('url-rating-item3-logo-actual')) document.getElementById('url-rating-item3-logo-actual').value = datos.rating_item3_logo || '';
-        if (datos.rating_logo3) { // Nota: aquí tenías datos.rating_logo3, corregido a rating_item3_logo
+        if (datos.rating_item3_logo) {
             const rutaLogo3 = datos.rating_item3_logo.startsWith('/uploads/') ? datos.rating_item3_logo : `/uploads/${datos.rating_item3_logo}`;
             document.getElementById('prev-rating-item3-logo').src = rutaLogo3;
         }
