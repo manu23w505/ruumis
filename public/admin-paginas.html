@@ -979,34 +979,43 @@ document.addEventListener('DOMContentLoaded', () => {
 async function cargarRatingAdmin() {
     try {
         const res = await fetch('/api/home/rating');
-        const datos = await res.json();
+        const datosRaw = await res.json();
+        
+        console.log("Datos recibidos de /api/home/rating:", datosRaw);
+        
+        if (!datosRaw) return;
+
+        const datos = Array.isArray(datosRaw) ? datosRaw[0] : datosRaw;
         if (!datos) return;
 
-        // Elemento 1
+
         if (document.getElementById('adm-rating-item1-num')) document.getElementById('adm-rating-item1-num').value = datos.rating_num1 || '';
         if (document.getElementById('adm-rating-item1-text')) document.getElementById('adm-rating-item1-text').value = datos.rating_text1 || '';
         if (document.getElementById('url-rating-item1-logo-actual')) document.getElementById('url-rating-item1-logo-actual').value = datos.rating_logo1 || '';
         if (datos.rating_logo1) {
-            document.getElementById('prev-rating-item1-logo').src = `/uploads/${datos.rating_logo1}`;
+            const rutaLogo1 = datos.rating_logo1.startsWith('/uploads/') ? datos.rating_logo1 : `/uploads/${datos.rating_logo1}`;
+            document.getElementById('prev-rating-item1-logo').src = rutaLogo1;
         }
 
-        // Elemento 2
+
         if (document.getElementById('adm-rating-item2-num')) document.getElementById('adm-rating-item2-num').value = datos.rating_num2 || '';
         if (document.getElementById('adm-rating-item2-text')) document.getElementById('adm-rating-item2-text').value = datos.rating_text2 || '';
         if (document.getElementById('url-rating-item2-logo-actual')) document.getElementById('url-rating-item2-logo-actual').value = datos.rating_logo2 || '';
         if (datos.rating_logo2) {
-            document.getElementById('prev-rating-item2-logo').src = `/uploads/${datos.rating_logo2}`;
+            const rutaLogo2 = datos.rating_logo2.startsWith('/uploads/') ? datos.rating_logo2 : `/uploads/${datos.rating_logo2}`;
+            document.getElementById('prev-rating-item2-logo').src = rutaLogo2;
         }
 
-        // Elemento 3
+
         if (document.getElementById('adm-rating-item3-num')) document.getElementById('adm-rating-item3-num').value = datos.rating_num3 || '';
         if (document.getElementById('adm-rating-item3-text')) document.getElementById('adm-rating-item3-text').value = datos.rating_text3 || '';
         if (document.getElementById('url-rating-item3-logo-actual')) document.getElementById('url-rating-item3-logo-actual').value = datos.rating_logo3 || '';
         if (datos.rating_logo3) {
-            document.getElementById('prev-rating-item3-logo').src = `/uploads/${datos.rating_logo3}`;
+            const rutaLogo3 = datos.rating_logo3.startsWith('/uploads/') ? datos.rating_logo3 : `/uploads/${datos.rating_logo3}`;
+            document.getElementById('prev-rating-item3-logo').src = rutaLogo3;
         }
 
-        // Animación CSS
+
         if (document.getElementById('adm-rating-animacion')) document.getElementById('adm-rating-animacion').value = datos.rating_animacion || '';
 
     } catch (err) {
