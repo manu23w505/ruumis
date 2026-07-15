@@ -1491,7 +1491,7 @@ document.addEventListener('DOMContentLoaded', () => {
 //================================================================
 
 async function cargarPromoPublico() {
-    // FILTRO DE GUARDA: Si no estamos en la página con los contenedores promo, cancelamos fetch
+    
     if (!document.getElementById('public-promo-titulo') && !document.getElementById('public-promo-img')) return;
 
     try {
@@ -1525,15 +1525,18 @@ async function cargarPromoPublico() {
             const txtReviewName = document.getElementById('public-promo-review-name');
             if (txtReviewName) txtReviewName.textContent = datos.promo_review_name || '';
 
-            // Inyección segura de la imagen subida a Cloudinary (sólo si existe la propiedad)
             const imgPromo = document.getElementById('public-promo-img');
             const srcPromo = document.getElementById('public-promo-src-srcset');
+            
             if (imgPromo && datos.promo_imagen) {
-                imgPromo.src = datos.promo_imagen;
-                imgPromo.setAttribute('data-src', datos.promo_imagen);
+                const rutaLimpia = obtenerRutaImagen(datos.promo_imagen);
+                
+                imgPromo.src = rutaLimpia;
+                imgPromo.setAttribute('data-src', rutaLimpia);
+                
                 if (srcPromo) {
-                    srcPromo.srcset = datos.promo_imagen;
-                    srcPromo.setAttribute('data-srcset', datos.promo_imagen);
+                    srcPromo.srcset = rutaLimpia;
+                    srcPromo.setAttribute('data-srcset', rutaLimpia);
                 }
             }
         }
@@ -1542,7 +1545,7 @@ async function cargarPromoPublico() {
     }
 }
 
-// Inicializador automático para el listener DOMContentLoaded existente en tu archivo
+
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('public-promo-titulo')) {
         cargarPromoPublico();

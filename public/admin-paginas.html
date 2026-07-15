@@ -1366,10 +1366,15 @@ async function guardarPromoAdmin(e) {
 }
 
 
-// Vinculación automática al iniciar la vista admin
+
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('form-promo-section')) cargarPromoAdmin();
+    const formPromo = document.getElementById('form-promo-section');
+    if (formPromo) {
+        cargarPromoAdmin();
+        formPromo.addEventListener('submit', guardarPromoAdmin); 
+    }
 });
+
 
 ///////////////////////////////////////////////////////////////////////////
 // PROMO SECTION end
