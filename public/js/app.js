@@ -1240,7 +1240,6 @@ function obtenerEmbedYouTube(url) {
     return '';
 }
 
-
 async function cargarAboutPublico() {
     try {
         const res = await fetch('/api/home/about');
@@ -1258,9 +1257,12 @@ async function cargarAboutPublico() {
             'public-about-btn2': datos.about_btn2_text
         };
 
+
         for (const [id, valor] of Object.entries(mapeoTextos)) {
             const elemento = document.getElementById(id);
-            if (element) element.textContent = valor || '';
+            if (elemento) {
+                elemento.textContent = valor || '';
+            }
         }
 
         const iframeVideo = document.getElementById('public-about-video');
@@ -1281,7 +1283,6 @@ async function cargarAboutPublico() {
         console.error("Error al renderizar la sección About público:", err);
     }
 }
-
 
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('public-about-video') || document.getElementById('public-about-titulo')) {
