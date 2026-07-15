@@ -1448,12 +1448,6 @@ async function cargarReviewsPublico() {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-
-    if (document.getElementById('public-rating-section')) {
-        cargarRatingPublico();
-    }
-    
-
     if (document.getElementById('public-reviews-titulo')) {
         cargarReviewsPublico();
     }
