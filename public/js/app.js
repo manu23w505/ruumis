@@ -1248,7 +1248,7 @@ async function cargarAboutPublico() {
         const datos = await res.json();
         if (!datos) return;
 
-        // 1. Renderizar Textos de la sección
+
         const mapeoTextos = {
             'public-about-titulo': datos.about_titulo,
             'public-about-descripcion': datos.about_descripcion,
@@ -1265,7 +1265,7 @@ async function cargarAboutPublico() {
             if (elemento) elemento.textContent = valor || '';
         }
 
-        // 2. Renderizar el Video de YouTube
+
         const iframeVideo = document.getElementById('public-about-video');
         const contenedorMensaje = document.getElementById('no-video-message');
 
@@ -1282,66 +1282,6 @@ async function cargarAboutPublico() {
         }
     } catch (err) {
         console.error("Error al renderizar la sección About público:", err);
-    }
-}
-
-
-async function cargarAboutAdmin() {
-    try {
-        const res = await fetch('/api/home/about');
-        const datos = await res.json();
-        if (!datos) return;
-
-        // Rellenamos los inputs principales (Usando la Opción A: 'about-video-url')
-        if (document.getElementById('about-titulo')) document.getElementById('about-titulo').value = datos.about_titulo || '';
-        if (document.getElementById('about-descripcion')) document.getElementById('about-descripcion').value = datos.about_descripcion || '';
-        if (document.getElementById('about-video-url')) document.getElementById('about-video-url').value = datos.about_video_url || '';
-
-        // Rellenamos los ítems y botones secundarios si existen en tu HTML del admin
-        if (document.getElementById('about-item1')) document.getElementById('about-item1').value = datos.about_item1_text || '';
-        if (document.getElementById('about-item2')) document.getElementById('about-item2').value = datos.about_item2_text || '';
-        if (document.getElementById('about-item3')) document.getElementById('about-item3').value = datos.about_item3_text || '';
-        if (document.getElementById('about-item4')) document.getElementById('about-item4').value = datos.about_item4_text || '';
-        if (document.getElementById('about-btn1')) document.getElementById('about-btn1').value = datos.about_btn1_text || '';
-        if (document.getElementById('about-btn2')) document.getElementById('about-btn2').value = datos.about_btn2_text || '';
-        
-    } catch (err) {
-        console.error("Error al cargar datos del About en el administrador:", err);
-    }
-}
-
-
-async function guardarAboutSection(e) {
-    e.preventDefault();
-    
-    const datos = {
-        about_titulo: document.getElementById('about-titulo').value,
-        about_descripcion: document.getElementById('about-descripcion').value,
-        about_video_url: document.getElementById('about-video-url').value, // Opción A confirmada
-        
-        // Capturamos el resto de elementos (añadiendo validación por si acaso no existen en el HTML)
-        about_item1_text: document.getElementById('about-item1') ? document.getElementById('about-item1').value : '',
-        about_item2_text: document.getElementById('about-item2') ? document.getElementById('about-item2').value : '',
-        about_item3_text: document.getElementById('about-item3') ? document.getElementById('about-item3').value : '',
-        about_item4_text: document.getElementById('about-item4') ? document.getElementById('about-item4').value : '',
-        about_btn1_text: document.getElementById('about-btn1') ? document.getElementById('about-btn1').value : '',
-        about_btn2_text: document.getElementById('about-btn2') ? document.getElementById('about-btn2').value : ''
-    };
-
-    try {
-        const res = await fetch('/api/home/about', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(datos)
-        });
-
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Error al actualizar.");
-
-        alert("¡Sección ABOUT actualizada con éxito!");
-        location.reload();
-    } catch (err) {
-        alert("Error: " + err.message);
     }
 }
 
