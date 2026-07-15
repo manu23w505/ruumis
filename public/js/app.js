@@ -1428,7 +1428,7 @@ async function cargarReviewsPublico() {
         if (typeof Swiper !== 'undefined') {
             const activarLoop = data.comentarios.length > 1;
 
-            // 1. Inicializar el slider seguidor (Imágenes de fondo)
+            // 1. Inicializar slider de imágenes de fondo
             const mediaSwiper = new Swiper('.reviews_slider--media', {
                 speed: 600,
                 effect: 'fade',
@@ -1436,25 +1436,42 @@ async function cargarReviewsPublico() {
                 loop: activarLoop
             });
 
-            // 2. Inicializar el slider líder (Textos y Control de Flechas)
+            // 2. Inicializar slider de contenido
             const mainSwiper = new Swiper('.reviews_slider--main', {
                 speed: 600,
                 loop: activarLoop,
                 autoplay: {
                     delay: 5000,
                     disableOnInteraction: false,
-                },
-                // Dejamos que Swiper administre las flechas de forma nativa y segura
-                navigation: {
-                    nextEl: '.reviews .swiper-button-next',
-                    prevEl: '.reviews .swiper-button-prev',
                 }
             });
 
-            // 3. ¡CORRECCIÓN CLAVE!: Sincronización Unidireccional
-            // Solo el slider principal arrastra al slider de medios. 
-            // Eliminamos la línea inversa para romper el ciclo infinito.
-            mainSwiper.controller.control = mediaSwiper;
+            // 3. ESTRATEGIA DE SINCRONIZACIÓN MÁS SEGURA:
+            // Escuchamos el cambio de diapositiva y forzamos al de atrás a ir al índice real exacto.
+            // Esto elimina fallos con el "loop: true".
+            mainSwiper.on('slideChange', () => {
+                if (!mediaSwiper.destroyed) {
+                    mediaSwiper.slideToLoop(mainSwiper.realIndex);
+                }
+            });
+
+            // 4. CONTROL MANUAL DE TUS NUEVOS BOTONES PERSONALIZADOS
+            const btnPrev = document.querySelector('.review-btn-prev');
+            const btnNext = document.querySelector('.review-btn-next');
+
+            if (btnPrev && btnNext) {
+                btnPrev.onclick = function () {
+                    if (mainSwiper && !mainSwiper.destroyed) {
+                        mainSwiper.slidePrev();
+                    }
+                };
+
+                btnNext.onclick = function () {
+                    if (mainSwiper && !mainSwiper.destroyed) {
+                        mainSwiper.slideNext();
+                    }
+                };
+            }
         }
 
     } catch (error) {
