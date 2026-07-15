@@ -1545,16 +1545,10 @@ app.get('/api/home/about', (req, res) => {
 
 
 app.get('/api/home/rating', (req, res) => {
-    const sql = "SELECT * FROM admin_home WHERE id = 1";
+    const sql = "SELECT * FROM admin_home WHERE id = 1"; 
     db.query(sql, (err, result) => {
-        if (err) {
-            console.error("Error al obtener la sección Rating:", err);
-            return res.status(500).json({ error: "Error en la base de datos" });
-        }
-        if (result.length === 0) {
-            return res.status(404).json({ error: "No se encontraron registros de Rating." });
-        }
-        res.json(result[0]);
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(result[0]); 
     });
 });
 
