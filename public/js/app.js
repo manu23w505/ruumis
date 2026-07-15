@@ -1428,6 +1428,7 @@ async function cargarReviewsPublico() {
         if (typeof Swiper !== 'undefined') {
             const activarLoop = data.comentarios.length > 1;
 
+            // 1. Inicializar el slider seguidor (Imágenes de fondo)
             const mediaSwiper = new Swiper('.reviews_slider--media', {
                 speed: 600,
                 effect: 'fade',
@@ -1435,36 +1436,25 @@ async function cargarReviewsPublico() {
                 loop: activarLoop
             });
 
+            // 2. Inicializar el slider líder (Textos y Control de Flechas)
             const mainSwiper = new Swiper('.reviews_slider--main', {
                 speed: 600,
                 loop: activarLoop,
                 autoplay: {
                     delay: 5000,
                     disableOnInteraction: false,
+                },
+                // Dejamos que Swiper administre las flechas de forma nativa y segura
+                navigation: {
+                    nextEl: '.reviews .swiper-button-next',
+                    prevEl: '.reviews .swiper-button-prev',
                 }
             });
 
+            // 3. ¡CORRECCIÓN CLAVE!: Sincronización Unidireccional
+            // Solo el slider principal arrastra al slider de medios. 
+            // Eliminamos la línea inversa para romper el ciclo infinito.
             mainSwiper.controller.control = mediaSwiper;
-            mediaSwiper.controller.control = mainSwiper;
-
-            const btnPrev = document.querySelector('.reviews .swiper-button-prev');
-            const btnNext = document.querySelector('.reviews .swiper-button-next');
-
-            if (btnPrev && btnNext) {
-                btnPrev.onclick = function (e) {
-                    e.preventDefault(); 
-                    if (mainSwiper && !mainSwiper.destroyed) {
-                        mainSwiper.slidePrev();
-                    }
-                };
-
-                btnNext.onclick = function (e) {
-                    e.preventDefault(); 
-                    if (mainSwiper && !mainSwiper.destroyed) {
-                        mainSwiper.slideNext();
-                    }
-                };
-            }
         }
 
     } catch (error) {
