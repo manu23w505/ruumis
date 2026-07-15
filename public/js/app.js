@@ -1241,111 +1241,91 @@ function obtenerEmbedYouTube(url) {
     return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
 }
 
-// Carga inicial de datos en el Panel de Administración
 async function cargarAboutAdmin() {
     try {
-        const res = await fetch('/api/admin_home_datos'); // Tu endpoint actual que lee admin_home
+        const res = await fetch('/api/home/about');
         const datos = await res.json();
         
         if (datos) {
             document.getElementById('about-titulo').value = datos.about_titulo || '';
-            document.getElementById('about-video-url').value = datos.about_video_url || '';
             document.getElementById('about-descripcion').value = datos.about_descripcion || '';
-            document.getElementById('about-item1').value = datos.about_item1_text || '';
-            document.getElementById('about-item2').value = datos.about_item2_text || '';
-            document.getElementById('about-item3').value = datos.about_item3_text || '';
-            document.getElementById('about-item4').value = datos.about_item4_text || '';
-            document.getElementById('about-btn1-text').value = datos.about_btn1_text || '';
-            document.getElementById('about-btn2-text').value = datos.about_btn2_text || '';
+            
+            // CORRECCIÓN FRONTAL: Carga el link actual en el input para que no se mande vacío al guardar
+            if (document.getElementById('about-video')) {
+                document.getElementById('about-video').value = datos.about_video_url || '';
+            }
         }
     } catch (err) {
-        console.error("Error al cargar la configuración de About:", err);
+        console.error("Error al cargar About en admin:", err);
     }
 }
 
-// Guardado desde el Panel de Administración
-async function guardarAboutSection(event) {
-    event.preventDefault();
+async function guardarAboutSection(e) {
+    e.preventDefault();
     
-    const payload = {
+    // Si usas JSON estructurado para el envío:
+    const datos = {
         about_titulo: document.getElementById('about-titulo').value,
-        about_video_url: document.getElementById('about-video-url').value,
         about_descripcion: document.getElementById('about-descripcion').value,
-        about_item1_text: document.getElementById('about-item1').value,
-        about_item2_text: document.getElementById('about-item2').value,
-        about_item3_text: document.getElementById('about-item3').value,
-        about_item4_text: document.getElementById('about-item4').value,
-        about_btn1_text: document.getElementById('about-btn1-text').value,
-        about_btn2_text: document.getElementById('about-btn2-text').value
+        about_video_url: document.getElementById('about-video-url').value
     };
 
     try {
-        const res = await fetch('/api/admin_home', {
+        const res = await fetch('/api/home/about', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(datos)
         });
 
-        if (!res.ok) throw new Error("Error en la respuesta del servidor");
-        
-        alert("¡Sección About actualizada con éxito!");
-        if (typeof cargarAboutPublico === "function") cargarAboutPublico(); 
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Error al actualizar.");
+
+        alert("¡Sección ABOUT actualizada con éxito!");
+        location.reload();
     } catch (err) {
-        alert("Ocurrió un error al guardar los cambios.");
-        console.error(err);
+        alert("Error: " + err.message);
     }
 }
 
 async function cargarAboutPublico() {
     try {
-        const respuesta = await fetch('/api/home/about'); // Ajusta este endpoint según tu backend
-        const datos = await respuesta.json();
+        const res = await fetch('/api/home/about');
+        const datos = await res.json();
 
-        if (!respuesta.ok) throw new Error("No se pudo obtener la sección About");
+        const iframeVideo = document.getElementById('public-about-video');
+        const contenedorMensaje = document.getElementById('no-video-message');
 
-        // Renderizar textos básicos
-        if (document.getElementById('public-about-titulo')) {
-            document.getElementById('public-about-titulo').textContent = datos.about_titulo || 'We have everything you need';
-        }
-        if (document.getElementById('public-about-descripcion')) {
-            document.getElementById('public-about-descripcion').textContent = datos.about_descripcion || '';
-        }
+        if (datos && datos.about_video) {
+            let urlFormateada = datos.about_video_url;
 
-        // ==========================================
-        // ¡CÓDIGO DE REPARACIÓN PARA EL VIDEO AQUÍ!
-        // ==========================================
-        const mediaContainer = document.getElementById('public-about-media');
-        if (mediaContainer) {
-            if (datos.about_video) {
-                // Convertimos el link de la BD a formato seguro embed
-                const urlSegura = obtenerEmbedYouTube(datos.about_video);
-                
-                if (urlSegura) {
-                    // Inyectamos el iframe responsivo con las clases necesarias
-                    mediaContainer.innerHTML = `
-                        <iframe 
-                            width="100%" 
-                            height="350" 
-                            src="${urlSegura}" 
-                            title="YouTube video player" 
-                            frameborder="0" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                            allowfullscreen
-                            style="border-radius: 8px; shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
-                        </iframe>`;
-                } else {
-                    mediaContainer.innerHTML = `<p class="text-danger">Formato de enlace de video no válido.</p>`;
-                }
-            } else {
-                // Si no hay video en la base de datos, puedes poner una imagen de respaldo o dejarlo vacío
-                mediaContainer.innerHTML = `<p class="text-muted text-center">No hay video configurado.</p>`;
+            // Transforma links estándar de YouTube a formato embed interactivo
+            if (urlFormateada.includes("watch?v=")) {
+                urlFormateada = urlFormateada.replace("watch?v=", "embed/");
+            } else if (urlFormateada.includes("youtu.be/")) {
+                urlFormateada = urlFormateada.replace("youtu.be/", "youtube.com/embed/");
             }
-        }
 
+            if (iframeVideo) {
+                iframeVideo.src = urlFormateada;
+                iframeVideo.style.display = 'block';
+            }
+            if (contenedorMensaje) {
+                contenedorMensaje.style.display = 'none';
+            }
+        } else {
+            if (iframeVideo) iframeVideo.style.display = 'none';
+            if (contenedorMensaje) contenedorMensaje.style.display = 'block';
+        }
     } catch (err) {
-        console.error("Error al renderizar la sección About:", err);
+        console.error("Error al renderizar el video de About:", err);
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('public-about-video') || document.getElementById('no-video-message')) {
+        cargarAboutPublico();
+    }
+});
 
 function obtenerEmbedYouTube(url) {
     if (!url) return '';
