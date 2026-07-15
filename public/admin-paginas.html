@@ -1167,7 +1167,6 @@ async function cargarSeccionReviewsAdmin() {
     }
 }
 
-//Función global para subir imágenes a Cloudinary usando tu API local
 async function subirImagenReview(inputId, imagePreviewId, hiddenInputId) {
     const fileInput = document.getElementById(inputId);
     const file = fileInput.files[0];
@@ -1193,7 +1192,7 @@ async function subirImagenReview(inputId, imagePreviewId, hiddenInputId) {
     }
 }
 
-//Guardar el Título General
+
 async function actualizarTituloReviews(event) {
     event.preventDefault();
     const titulo = document.getElementById('adm-reviews-titulo-general').value;
@@ -1213,7 +1212,7 @@ async function actualizarTituloReviews(event) {
     }
 }
 
-//Registrar un Comentario Nuevo
+
 async function agregarComentario() {
     const payload = {
         name: document.getElementById('new-rev-name').value,
@@ -1257,7 +1256,7 @@ async function agregarComentario() {
     }
 }
 
-//Guardar Edición de un Comentario Existente
+
 async function guardarEdicionComentario(id) {
     const payload = {
         name: document.getElementById(`edit-name-${id}`).value,
@@ -1285,7 +1284,7 @@ async function guardarEdicionComentario(id) {
     }
 }
 
-//Eliminar Comentario de la Base de Datos
+
 async function eliminarComentario(id) {
     if (!confirm("¿Está seguro de que desea eliminar permanentemente este comentario?")) return;
 
@@ -1301,7 +1300,7 @@ async function eliminarComentario(id) {
     }
 }
 
-// Inicializar de forma automática al cargar la página del CMS
+
 document.addEventListener('DOMContentLoaded', () => {
     cargarSeccionReviewsAdmin();
 });

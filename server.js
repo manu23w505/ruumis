@@ -1332,11 +1332,8 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
             return res.status(400).json({ error: "No se recibió ningún archivo o el campo no coincide con 'image'." });
         }
 
-        // Como tu servidor sirve los archivos estáticos desde la carpeta 'public',
-        // el navegador web accederá directamente mediante '/uploads/nombre_del_archivo'
         const urlRelativa = `/uploads/${req.file.filename}`;
 
-        // Retornamos el objeto con la propiedad 'url' exacta que tu frontend espera recibir
         return res.json({ url: urlRelativa });
     } catch (error) {
         console.error("Error en el endpoint /api/upload:", error);

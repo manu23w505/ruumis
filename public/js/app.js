@@ -1353,113 +1353,107 @@ document.addEventListener('DOMContentLoaded', () => {
 //================================================================
 
 async function cargarReviewsPublico() {
-    // FILTRO DE GUARDA: Evita fetch si la página actual no tiene los sliders
+
     const mediaWrapper = document.getElementById('public-reviews-media-wrapper');
     const contentWrapper = document.getElementById('public-reviews-content-wrapper');
+    
     if (!mediaWrapper || !contentWrapper) return;
 
     try {
-        const response = await fetch('/api/home/reviews');
-        if (!response.ok) throw new Error("No se pudieron obtener las reseñas.");
-        const data = await response.json();
 
-        // 1. Renderizar el título general de forma segura
-        const txtTitulo = document.getElementById('public-reviews-titulo');
-        if (txtTitulo) txtTitulo.textContent = data?.reviews_titulo || '';
+        const res = await fetch('/api/home/reviews'); 
+        if (!res.ok) throw new Error("No se pudieron obtener las reseñas.");
+        
+        const lasReviews = await res.json(); 
 
-        // 2. Procesar comentarios
-        if (data && data.comentarios && Array.isArray(data.comentarios)) {
-            let htmlMedia = '';
-            let htmlContent = '';
 
-            data.comentarios.forEach(review => {
-                // Generar estrellas dinámicas convirtiendo a Entero seguro
-                let estrellasHtml = '';
-                const totalStars = parseInt(review.stars) || 0;
-                for (let i = 0; i < totalStars; i++) {
-                    estrellasHtml += `<i class="icon-star icon"></i>`;
-                }
+        mediaWrapper.innerHTML = '';
+        contentWrapper.innerHTML = '';
 
-                // Armar slider izquierdo (Imágenes de fondo) con salvavidas de strings vacíos
-                htmlMedia += `
-                    <div class="swiper-slide">
-                        <picture>
-                            <source data-srcset="${review.bg_image || ''}" srcset="${review.bg_image || ''}" />
-                            <img class="lazy" data-src="${review.bg_image || ''}" src="${review.bg_image || ''}" alt="media" />
-                        </picture>
-                    </div>
-                `;
-
-                // Armar slider derecho (Contenido e información del huésped)
-                htmlContent += `
-                    <div class="reviews_slider-slide d-flex flex-column justify-content-between swiper-slide">
-                        <div class="reviews_slider-slide_stars d-flex align-items-center">
-                            ${estrellasHtml}
-                        </div>
-                        <span class="reviews_slider-slide_date">
-                            <span class="h4">Date of stay:</span>
-                            ${review.date_text || ''}
-                        </span>
-                        <div class="reviews_slider-slide_main">
-                            <h4 class="title">${review.title || ''}</h4>
-                            <p class="text">${review.text || ''}</p>
-                        </div>
-                        <span class="reviews_slider-slide_guest d-flex align-items-center">
-                            <span class="avatar">
-                                <picture>
-                                    <source data-srcset="${review.avatar || ''}" srcset="${review.avatar || ''}" />
-                                    <img class="lazy" data-src="${review.avatar || ''}" src="${review.avatar || ''}" alt="guest avatar" />
-                                </picture>
-                            </span>
-                            <span class="name h6">${review.name || ''}</span>
-                        </span>
-                    </div>
-                `;
-            });
-
-            // Inyectamos el HTML dinámico
-            mediaWrapper.innerHTML = htmlMedia;
-            contentWrapper.innerHTML = htmlContent;
-            
-            // Inicialización/Actualización reactiva de Swiper
-            setTimeout(() => {
-                const mediaSliderEl = document.querySelector('.reviews_slider--media');
-                const mainSliderEl = document.querySelector('.reviews_slider--main');
-
-                // Intento 1: Actualizar si ya existen instancias creadas por scripts externos
-                if (mediaSliderEl?.swiper && mainSliderEl?.swiper) {
-                    mediaSliderEl.swiper.update();
-                    mainSliderEl.swiper.update();
-                } 
-                // Intento 2: Si Swiper está listo globalmente, se instancia de cero
-                else if (typeof Swiper !== 'undefined') {
-                    const mediaSwiper = new Swiper('.reviews_slider--media', {
-                        speed: 800,
-                        effect: 'fade',
-                        allowTouchMove: false
-                    });
-
-                    new Swiper('.reviews_slider--main', {
-                        speed: 800,
-                        loop: true,
-                        navigation: {
-                            nextEl: '.reviews .swiper-button-next',
-                            prevEl: '.reviews .swiper-button-prev',
-                        },
-                        controller: {
-                            control: mediaSwiper
-                        }
-                    });
-                }
-            }, 150); 
+        if (!lasReviews || lasReviews.length === 0) {
+            console.warn("No hay reseñas configuradas.");
+            return;
         }
-    } catch (error) {
-        console.error("Error al renderizar la sección de reseñas públicas:", error);
+
+
+        lasReviews.forEach(review => {
+
+            const mediaSlide = document.createElement('div');
+            mediaSlide.className = 'swiper-slide';
+            mediaSlide.innerHTML = `
+                <div class="media_avatar">
+                    <img src="${obtenerRutaImagen(review.imagen)}" alt="${review.nombre || 'Huésped'}" />
+                </div>
+            `;
+            mediaWrapper.appendChild(mediaSlide);
+
+
+            const contentSlide = document.createElement('div');
+            contentSlide.className = 'swiper-slide';
+            
+
+            let estrellasHTML = '';
+            const estrellas = review.puntuacion || 5;
+            for (let i = 0; i < estrellas; i++) {
+                estrellasHTML += '<i class="icon-star icon"></i>'; 
+            }
+
+            contentSlide.innerHTML = `
+                <div class="feedback">
+                    <div class="feedback_stars mb-3 text-warning">
+                        ${estrellasHTML}
+                    </div>
+                    <q class="feedback_text">${review.comentario || ''}</q>
+                    <div class="feedback_author mt-3">
+                        <span class="name d-block font-weight-bold">${review.nombre || ''}</span>
+                        <span class="role text-muted text-sm">${review.rol || 'Huésped'}</span>
+                    </div>
+                </div>
+            `;
+            contentWrapper.appendChild(contentSlide);
+        });
+
+        
+        const reviewsSliderMedia = new Swiper('.reviews_slider--media', {
+            effect: 'fade',
+            allowTouchMove: false,
+            speed: 600,
+            observer: true,         
+            observeParents: true    
+        });
+
+        const reviewsSliderMain = new Swiper('.reviews_slider--main', {
+            loop: true,
+            speed: 600,
+            observer: true,
+            observeParents: true,
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false,
+            }
+        });
+
+
+        reviewsSliderMain.controller.control = reviewsSliderMedia;
+        reviewsSliderMedia.controller.control = reviewsSliderMain;
+
+    } catch (err) {
+        console.error("Error al renderizar las Reviews:", err);
     }
 }
 
-// Asegurar ejecución automática en la carga del DOM
+
 document.addEventListener('DOMContentLoaded', () => {
+
+    if (document.getElementById('public-rating-section')) {
+        cargarRatingPublico();
+    }
+    
+
     if (document.getElementById('public-reviews-titulo')) {
         cargarReviewsPublico();
     }
