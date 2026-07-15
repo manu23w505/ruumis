@@ -1560,61 +1560,42 @@ app.get('/api/home/rating', (req, res) => {
 
 
 app.put('/api/home/rating', upload.fields([
-    { name: 'rating_item1_logo', maxCount: 1 },
-    { name: 'rating_item2_logo', maxCount: 1 },
-    { name: 'rating_item3_logo', maxCount: 1 }
+    { name: 'rating_logo1', maxCount: 1 },
+    { name: 'rating_logo2', maxCount: 1 },
+    { name: 'rating_logo3', maxCount: 1 }
 ]), (req, res) => {
     const {
-        rating_item1_num,
-        rating_item1_text,
-        rating_item2_num,
-        rating_item2_text,
-        rating_item3_num,
-        rating_item3_text,
-        rating_animacion,
-        rating_item1_logo_actual,
-        rating_item2_logo_actual,
-        rating_item3_logo_actual
+        rating_num1, rating_text1, rating_logo1_actual,
+        rating_num2, rating_text2, rating_logo2_actual,
+        rating_num3, rating_text3, rating_logo3_actual,
+        rating_animacion
     } = req.body;
 
-
-    const logo1 = req.files && req.files['rating_item1_logo'] ? req.files['rating_item1_logo'][0].filename : (rating_item1_logo_actual || '');
-    const logo2 = req.files && req.files['rating_item2_logo'] ? req.files['rating_item2_logo'][0].filename : (rating_item2_logo_actual || '');
-    const logo3 = req.files && req.files['rating_item3_logo'] ? req.files['rating_item3_logo'][0].filename : (rating_item3_logo_actual || '');
+    // Si hay un archivo nuevo usa ese name, si no, mantén el valor del input hidden actual
+    const rating_logo1_url = (req.files && req.files['rating_logo1']) ? req.files['rating_logo1'][0].filename : rating_logo1_actual;
+    const rating_logo2_url = (req.files && req.files['rating_logo2']) ? req.files['rating_logo2'][0].filename : rating_logo2_actual;
+    const rating_logo3_url = (req.files && req.files['rating_logo3']) ? req.files['rating_logo3'][0].filename : rating_logo3_actual;
 
     const sql = `
         UPDATE admin_home 
-        SET 
-            rating_item1_num = ?, 
-            rating_item1_text = ?, 
-            rating_item1_logo = ?, 
-            rating_item2_num = ?, 
-            rating_item2_text = ?, 
-            rating_item2_logo = ?, 
-            rating_item3_num = ?, 
-            rating_item3_text = ?, 
-            rating_item3_logo = ?, 
+        SET rating_num1 = ?, rating_text1 = ?, rating_logo1 = ?,
+            rating_num2 = ?, rating_text2 = ?, rating_logo2 = ?,
+            rating_num3 = ?, rating_text3 = ?, rating_logo3 = ?,
             rating_animacion = ?
         WHERE id = 1
     `;
 
     db.query(sql, [
-        rating_item1_num, 
-        rating_item1_text, 
-        logo1, 
-        rating_item2_num, 
-        rating_item2_text, 
-        logo2, 
-        rating_item3_num, 
-        rating_item3_text, 
-        logo3, 
+        rating_num1, rating_text1, rating_logo1_url,
+        rating_num2, rating_text2, rating_logo2_url,
+        rating_num3, rating_text3, rating_logo3_url,
         rating_animacion
     ], (err, result) => {
         if (err) {
-            console.error("Error al actualizar la sección Rating:", err);
-            return res.status(500).json({ error: err.message });
+            console.error("Error al actualizar la tabla admin_home en Rating:", err);
+            return res.status(500).json({ error: "Error en la consulta base de datos." });
         }
-        res.json({ success: true, message: '¡Sección Rating actualizada localmente con éxito!' });
+        res.json({ message: "¡Sección de Ratings actualizada correctamente!" });
     });
 });
 

@@ -975,139 +975,98 @@ document.addEventListener('DOMContentLoaded', () => {
 // RATING SECTION start
 ///////////////////////////////////////////////////////////////////////////
 
-async function cargarRatingAdmin() {
 
+async function cargarRatingAdmin() {
     try {
         const res = await fetch('/api/home/rating');
-        console.log("Respuesta del servidor (Status):", res.status);
-        
-        if (!res.ok) throw new Error("No se pudo obtener los datos de la sección Rating.");
-        const datosRecibidos = await res.json();
-        
-        console.log("Datos exactos recibidos de la Base de Datos:", datosRecibidos);
+        const datos = await res.json();
+        if (!datos) return;
 
-
-        const datos = Array.isArray(datosRecibidos) ? datosRecibidos[0] : datosRecibidos;
-
-        if (!datos) {
-            console.warn("⚠️ No se encontró ningún registro válido en la respuesta del servidor.");
-            return;
+        // Elemento 1
+        if (document.getElementById('adm-rating-item1-num')) document.getElementById('adm-rating-item1-num').value = datos.rating_num1 || '';
+        if (document.getElementById('adm-rating-item1-text')) document.getElementById('adm-rating-item1-text').value = datos.rating_text1 || '';
+        if (document.getElementById('url-rating-item1-logo-actual')) document.getElementById('url-rating-item1-logo-actual').value = datos.rating_logo1 || '';
+        if (datos.rating_logo1) {
+            document.getElementById('prev-rating-item1-logo').src = `/uploads/${datos.rating_logo1}`;
         }
 
-
-        const camposTexto = {
-            'adm-rating-item1-num': datos.rating_item1_num,
-            'adm-rating-item1-text': datos.rating_item1_text,
-            'adm-rating-item2-num': datos.rating_item2_num,
-            'adm-rating-item2-text': datos.rating_item2_text,
-            'adm-rating-item3-num': datos.rating_item3_num,
-            'adm-rating-item3-text': datos.rating_item3_text,
-            'adm-rating-animacion': datos.rating_animacion
-        };
-
-        for (const [idInput, valorDB] of Object.entries(camposTexto)) {
-            const elemento = document.getElementById(idInput);
-            if (elemento) {
-                elemento.value = valorDB || '';
-            } else {
-                console.warn(`⚠️ Alerta: El input con ID "${idInput}" NO existe en tu HTML.`);
-            }
+        // Elemento 2
+        if (document.getElementById('adm-rating-item2-num')) document.getElementById('adm-rating-item2-num').value = datos.rating_num2 || '';
+        if (document.getElementById('adm-rating-item2-text')) document.getElementById('adm-rating-item2-text').value = datos.rating_text2 || '';
+        if (document.getElementById('url-rating-item2-logo-actual')) document.getElementById('url-rating-item2-logo-actual').value = datos.rating_logo2 || '';
+        if (datos.rating_logo2) {
+            document.getElementById('prev-rating-item2-logo').src = `/uploads/${datos.rating_logo2}`;
         }
 
-
-        const camposOcultos = {
-            'url-rating-item1-logo-actual': datos.rating_item1_logo,
-            'url-rating-item2-logo-actual': datos.rating_item2_logo,
-            'url-rating-item3-logo-actual': datos.rating_item3_logo
-        };
-
-        for (const [idOculto, valorLogo] of Object.entries(camposOcultos)) {
-            const elOculto = document.getElementById(idOculto);
-            if (elOculto) elOculto.value = valorLogo || '';
+        // Elemento 3
+        if (document.getElementById('adm-rating-item3-num')) document.getElementById('adm-rating-item3-num').value = datos.rating_num3 || '';
+        if (document.getElementById('adm-rating-item3-text')) document.getElementById('adm-rating-item3-text').value = datos.rating_text3 || '';
+        if (document.getElementById('url-rating-item3-logo-actual')) document.getElementById('url-rating-item3-logo-actual').value = datos.rating_logo3 || '';
+        if (datos.rating_logo3) {
+            document.getElementById('prev-rating-item3-logo').src = `/uploads/${datos.rating_logo3}`;
         }
 
-
-        for (let i = 1; i <= 3; i++) {
-            const nombreImagen = datos[`rating_item${i}_logo`];
-            const elImg = document.getElementById(`prev-rating-item${i}-logo`);
-            
-            if (elImg) {
-                if (nombreImagen) {
-
-                    elImg.src = (nombreImagen.startsWith('http') || nombreImagen.startsWith('/uploads/')) 
-                        ? nombreImagen 
-                        : `/uploads/${nombreImagen}`;
-                } else {
-                    elImg.src = ''; 
-                }
-            }
-        }
+        // Animación CSS
+        if (document.getElementById('adm-rating-animacion')) document.getElementById('adm-rating-animacion').value = datos.rating_animacion || '';
 
     } catch (err) {
-        console.error("❌ Error al poblar los recuadros de la sección Rating:", err);
+        console.error("Error al cargar la sección Rating en el Admin:", err);
     }
 }
 
-async function guardarRatingSection(e) {
+
+async function guardarRatingHome(e) {
     e.preventDefault();
-
-
     const formData = new FormData();
+
+    // Mapeamos tus IDs a las variables del FormData
+    formData.append('rating_num1', document.getElementById('adm-rating-item1-num').value);
+    formData.append('rating_text1', document.getElementById('adm-rating-item1-text').value);
+    formData.append('rating_logo1_actual', document.getElementById('url-rating-item1-logo-actual').value);
+
+    formData.append('rating_num2', document.getElementById('adm-rating-item2-num').value);
+    formData.append('rating_text2', document.getElementById('adm-rating-item2-text').value);
+    formData.append('rating_logo2_actual', document.getElementById('url-rating-item2-logo-actual').value);
+
+    formData.append('rating_num3', document.getElementById('adm-rating-item3-num').value);
+    formData.append('rating_text3', document.getElementById('adm-rating-item3-text').value);
+    formData.append('rating_logo3_actual', document.getElementById('url-rating-item3-logo-actual').value);
     
+    // Agregamos la animación si la guardas en base de datos
+    formData.append('rating_animacion', document.getElementById('adm-rating-animacion').value);
 
-    const camposMapeados = [
-        { id: 'adm-rating-item1-num', key: 'rating_item1_num' },
-        { id: 'adm-rating-item1-text', key: 'rating_item1_text' },
-        { id: 'adm-rating-item2-num', key: 'rating_item2_num' },
-        { id: 'adm-rating-item2-text', key: 'rating_item2_text' },
-        { id: 'adm-rating-item3-num', key: 'rating_item3_num' },
-        { id: 'adm-rating-item3-text', key: 'rating_item3_text' },
-        { id: 'adm-rating-animacion', key: 'rating_animacion' },
-        { id: 'url-rating-item1-logo-actual', key: 'rating_item1_logo_actual' },
-        { id: 'url-rating-item2-logo-actual', key: 'rating_item2_logo_actual' },
-        { id: 'url-rating-item3-logo-actual', key: 'rating_item3_logo_actual' }
-    ];
+    // Leer archivos desde tus IDs de inputs tipo file
+    const logo1 = document.getElementById('input-rating-item1-logo').files[0];
+    if (logo1) formData.append('rating_logo1', logo1);
 
+    const logo2 = document.getElementById('input-rating-item2-logo').files[0];
+    if (logo2) formData.append('rating_logo2', logo2);
 
-    camposMapeados.forEach(campo => {
-        const elemento = document.getElementById(campo.id);
-        formData.append(campo.key, elemento ? elemento.value : '');
-    });
-
-
-    for (let i = 1; i <= 3; i++) {
-        const inputFile = document.getElementById(`input-rating-item${i}-logo`);
-        if (inputFile && inputFile.files[0]) {
-            formData.append(`rating_item${i}_logo`, inputFile.files[0]);
-        }
-    }
+    const logo3 = document.getElementById('input-rating-item3-logo').files[0];
+    if (logo3) formData.append('rating_logo3', logo3);
 
     try {
         const res = await fetch('/api/home/rating', {
             method: 'PUT',
-            body: formData 
+            body: formData
         });
 
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "No se pudo actualizar el Rating.");
+        if (!res.ok) throw new Error(data.error || "Error al actualizar la sección de Rating.");
 
-        alert("¡Sección RATING actualizada localmente con éxito!");
+        alert("¡RATING SECTION actualizada con éxito!");
         location.reload();
     } catch (err) {
-        alert("Error: " + err.message);
+        alert("Error al guardar: " + err.message);
         console.error(err);
     }
 }
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    
-    const inputTestigo = document.getElementById('adm-rating-item1-num');
-
-    if (inputTestigo) {
-        cargarRatingAdmin();
-    }
+    cargarRatingAdmin();
 });
+
 
 ///////////////////////////////////////////////////////////////////////////
 // REVIEWS SECTION start
