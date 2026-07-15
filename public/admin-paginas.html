@@ -988,34 +988,34 @@ async function cargarRatingAdmin() {
         const datos = Array.isArray(datosRaw) ? datosRaw[0] : datosRaw;
         if (!datos) return;
 
-
-        if (document.getElementById('adm-rating-item1-num')) document.getElementById('adm-rating-item1-num').value = datos.rating_num1 || '';
-        if (document.getElementById('adm-rating-item1-text')) document.getElementById('adm-rating-item1-text').value = datos.rating_text1 || '';
-        if (document.getElementById('url-rating-item1-logo-actual')) document.getElementById('url-rating-item1-logo-actual').value = datos.rating_logo1 || '';
-        if (datos.rating_logo1) {
-            const rutaLogo1 = datos.rating_logo1.startsWith('/uploads/') ? datos.rating_logo1 : `/uploads/${datos.rating_logo1}`;
+        // Elemento 1 (Corregido a rating_item1_...)
+        if (document.getElementById('adm-rating-item1-num')) document.getElementById('adm-rating-item1-num').value = datos.rating_item1_num || '';
+        if (document.getElementById('adm-rating-item1-text')) document.getElementById('adm-rating-item1-text').value = datos.rating_item1_text || '';
+        if (document.getElementById('url-rating-item1-logo-actual')) document.getElementById('url-rating-item1-logo-actual').value = datos.rating_item1_logo || '';
+        if (datos.rating_item1_logo) {
+            const rutaLogo1 = datos.rating_item1_logo.startsWith('/uploads/') ? datos.rating_item1_logo : `/uploads/${datos.rating_item1_logo}`;
             document.getElementById('prev-rating-item1-logo').src = rutaLogo1;
         }
 
-
-        if (document.getElementById('adm-rating-item2-num')) document.getElementById('adm-rating-item2-num').value = datos.rating_num2 || '';
-        if (document.getElementById('adm-rating-item2-text')) document.getElementById('adm-rating-item2-text').value = datos.rating_text2 || '';
-        if (document.getElementById('url-rating-item2-logo-actual')) document.getElementById('url-rating-item2-logo-actual').value = datos.rating_logo2 || '';
-        if (datos.rating_logo2) {
-            const rutaLogo2 = datos.rating_logo2.startsWith('/uploads/') ? datos.rating_logo2 : `/uploads/${datos.rating_logo2}`;
+        // Elemento 2 (Corregido a rating_item2_...)
+        if (document.getElementById('adm-rating-item2-num')) document.getElementById('adm-rating-item2-num').value = datos.rating_item2_num || '';
+        if (document.getElementById('adm-rating-item2-text')) document.getElementById('adm-rating-item2-text').value = datos.rating_item2_text || '';
+        if (document.getElementById('url-rating-item2-logo-actual')) document.getElementById('url-rating-item2-logo-actual').value = datos.rating_item2_logo || '';
+        if (datos.rating_item2_logo) {
+            const rutaLogo2 = datos.rating_item2_logo.startsWith('/uploads/') ? datos.rating_item2_logo : `/uploads/${datos.rating_item2_logo}`;
             document.getElementById('prev-rating-item2-logo').src = rutaLogo2;
         }
 
-
-        if (document.getElementById('adm-rating-item3-num')) document.getElementById('adm-rating-item3-num').value = datos.rating_num3 || '';
-        if (document.getElementById('adm-rating-item3-text')) document.getElementById('adm-rating-item3-text').value = datos.rating_text3 || '';
-        if (document.getElementById('url-rating-item3-logo-actual')) document.getElementById('url-rating-item3-logo-actual').value = datos.rating_logo3 || '';
-        if (datos.rating_logo3) {
-            const rutaLogo3 = datos.rating_logo3.startsWith('/uploads/') ? datos.rating_logo3 : `/uploads/${datos.rating_logo3}`;
+        // Elemento 3 (Corregido a rating_item3_...)
+        if (document.getElementById('adm-rating-item3-num')) document.getElementById('adm-rating-item3-num').value = datos.rating_item3_num || '';
+        if (document.getElementById('adm-rating-item3-text')) document.getElementById('adm-rating-item3-text').value = datos.rating_item3_text || '';
+        if (document.getElementById('url-rating-item3-logo-actual')) document.getElementById('url-rating-item3-logo-actual').value = datos.rating_item3_logo || '';
+        if (datos.rating_logo3) { // Nota: aquí tenías datos.rating_logo3, corregido a rating_item3_logo
+            const rutaLogo3 = datos.rating_item3_logo.startsWith('/uploads/') ? datos.rating_item3_logo : `/uploads/${datos.rating_item3_logo}`;
             document.getElementById('prev-rating-item3-logo').src = rutaLogo3;
         }
 
-
+        // Animación CSS
         if (document.getElementById('adm-rating-animacion')) document.getElementById('adm-rating-animacion').value = datos.rating_animacion || '';
 
     } catch (err) {

@@ -1570,11 +1570,12 @@ app.put('/api/home/rating', upload.fields([
     const rating_logo2_url = (req.files && req.files['rating_logo2']) ? req.files['rating_logo2'][0].filename : rating_logo2_actual;
     const rating_logo3_url = (req.files && req.files['rating_logo3']) ? req.files['rating_logo3'][0].filename : rating_logo3_actual;
 
+    // CORREGIDO: Nombres de columnas reales de tu BD (rating_itemX_...)
     const sql = `
         UPDATE admin_home 
-        SET rating_num1 = ?, rating_text1 = ?, rating_logo1 = ?,
-            rating_num2 = ?, rating_text2 = ?, rating_logo2 = ?,
-            rating_num3 = ?, rating_text3 = ?, rating_logo3 = ?,
+        SET rating_item1_num = ?, rating_item1_text = ?, rating_item1_logo = ?,
+            rating_item2_num = ?, rating_item2_text = ?, rating_item2_logo = ?,
+            rating_item3_num = ?, rating_item3_text = ?, rating_item3_logo = ?,
             rating_animacion = ?
         WHERE id = 1
     `;
