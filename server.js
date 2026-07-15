@@ -1681,7 +1681,7 @@ app.delete('/api/home/reviews/:id', (req, res) => {
 // PROMO SECTION 
 // ========================================================
 
-// GET - Obtener datos de la sección Promo
+
 app.get('/api/home/promo', (req, res) => {
     const sql = 'SELECT promo_titulo, promo_descripcion, promo_item1_title, promo_item1_text, promo_item2_title, promo_item2_text, promo_imagen, promo_review_text, promo_review_name FROM admin_home WHERE id = 1';
     db.query(sql, (err, result) => {
@@ -1693,11 +1693,11 @@ app.get('/api/home/promo', (req, res) => {
     });
 });
 
-// PUT - Actualizar datos de la sección Promo con imagen en Cloudinary
+
 app.put('/api/home/promo', upload.single('promo_imagen'), (req, res) => {
     const {
-        promo_titulo, promo_descripcion,
-        promo_item1_title, promo_item1_text,
+        promo_titulo, promo_descripcion, 
+        promo_item1_title, promo_item1_text, 
         promo_item2_title, promo_item2_text,
         promo_review_text, promo_review_name,
         promo_imagen_actual
@@ -1705,7 +1705,7 @@ app.put('/api/home/promo', upload.single('promo_imagen'), (req, res) => {
 
     let promo_imagen_url = promo_imagen_actual;
     if (req.file) {
-        promo_imagen_url = `/uploads/images/${req.file.filename}`;
+        promo_imagen_url = req.file.filename; 
     }
 
     const sql = `
@@ -1713,24 +1713,26 @@ app.put('/api/home/promo', upload.single('promo_imagen'), (req, res) => {
         SET promo_titulo = ?, promo_descripcion = ?, 
             promo_item1_title = ?, promo_item1_text = ?, 
             promo_item2_title = ?, promo_item2_text = ?, 
-            promo_imagen = ?, promo_review_text = ?, promo_review_name = ?
+            promo_review_text = ?, promo_review_name = ?, 
+            promo_imagen = ?
         WHERE id = 1
     `;
 
     db.query(sql, [
-        promo_titulo, promo_descripcion,
-        promo_item1_title, promo_item1_text,
-        promo_item2_title, promo_item2_text,
-        promo_imagen_url, promo_review_text,
-        promo_review_name
+        promo_titulo, promo_descripcion, 
+        promo_item1_title, promo_item1_text, 
+        promo_item2_title, promo_item2_text, 
+        promo_review_text, promo_review_name,
+        promo_imagen_url 
     ], (err, result) => {
         if (err) {
             console.error("Error al actualizar la tabla admin_home (Promo):", err);
             return res.status(500).json({ error: "Error al guardar en la base de datos" });
         }
-        res.json({ message: "¡Sección Promo actualizada localmente con éxito!", promo_imagen: promo_imagen_url });
+        res.json({ message: "¡Sección PROMO actualizada con éxito!", promo_imagen: promo_imagen_url });
     });
 });
+
 
 // ==========================================
 // CONTACTS SECTION
