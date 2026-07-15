@@ -878,17 +878,28 @@ async function cargarAboutAdmin() {
         if (!res.ok) throw new Error("No se pudo obtener la configuración de la sección About.");
         
         const datos = await res.json();
+        if (!datos) return;
 
+        // Mapeo seguro de campos con prefijo 'adm-' para evitar colisiones
+        const campos = {
+            'adm-about-titulo': datos.about_titulo,
+            'adm-about-descripcion': datos.about_descripcion,
+            'adm-about-item1': datos.about_item1_text,
+            'adm-about-item2': datos.about_item2_text,
+            'adm-about-item3': datos.about_item3_text,
+            'adm-about-item4': datos.about_item4_text,
+            'adm-about-btn1': datos.about_btn1_text,
+            'adm-about-btn2': datos.about_btn2_text,
+            'adm-about-video': datos.about_video_url
+        };
 
-        if (document.getElementById('adm-about-titulo')) document.getElementById('adm-about-titulo').value = datos.about_titulo || '';
-        if (document.getElementById('adm-about-descripcion')) document.getElementById('adm-about-descripcion').value = datos.about_descripcion || '';
-        if (document.getElementById('adm-about-item1')) document.getElementById('adm-about-item1').value = datos.about_item1_text || '';
-        if (document.getElementById('adm-about-item2')) document.getElementById('adm-about-item2').value = datos.about_item2_text || '';
-        if (document.getElementById('adm-about-item3')) document.getElementById('adm-about-item3').value = datos.about_item3_text || '';
-        if (document.getElementById('adm-about-item4')) document.getElementById('adm-about-item4').value = datos.about_item4_text || '';
-        if (document.getElementById('adm-about-btn1')) document.getElementById('adm-about-btn1').value = datos.about_btn1_text || '';
-        if (document.getElementById('adm-about-btn2')) document.getElementById('adm-about-btn2').value = datos.about_btn2_text || '';
-        if (document.getElementById('adm-about-video')) document.getElementById('adm-about-video').value = datos.about_video_url || '';
+        // Asignación automática y segura de valores
+        for (const [id, valor] of Object.entries(campos)) {
+            const elemento = document.getElementById(id);
+            if (elemento) {
+                elemento.value = valor || '';
+            }
+        }
         
     } catch (err) {
         console.error("Error al cargar la sección About en el panel:", err);
@@ -907,6 +918,7 @@ async function guardarAboutHome(e) {
             return elemento ? elemento.value : '';
         };
 
+        // Payload completo con los 9 campos necesarios
         const payload = {
             about_titulo: obtenerValorSeguro('adm-about-titulo'),
             about_descripcion: obtenerValorSeguro('adm-about-descripcion'),
@@ -940,13 +952,10 @@ async function guardarAboutHome(e) {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    cargarAboutAdmin();
-    
     const formularioAbout = document.getElementById('form-about-section');
     if (formularioAbout) {
+        cargarAboutAdmin();
         formularioAbout.addEventListener('submit', guardarAboutHome);
-    } else {
-        console.warn("Advertencia: No se encontró el elemento '<form id=\"form-about-section\">' en el HTML.");
     }
 });
 

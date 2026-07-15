@@ -1225,56 +1225,107 @@ async function cargarRoomsSectionHome() {
 // ABOUT SECTION HOME
 //================================================================
 
-// Función auxiliar para extraer el ID de un enlace de YouTube y generar un embed autoejecutable
+
 function obtenerEmbedYouTube(url) {
     if (!url) return '';
-    let videoId = '';
+    if (url.length === 11) {
+        return `https://www.youtube.com/embed/${url}?autoplay=1&mute=1&loop=1&playlist=${url}`;
+    }
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
-    
     if (match && match[2].length === 11) {
-        videoId = match[2];
-    } else {
-        return url; // Retorna la original por si ya está en formato embed
+        const videoId = match[2];
+        return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
     }
-    // Agregamos autoplay=1, mute=1 (requerido por navegadores modernos para autoplay) y loop=1
-    return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}`;
+    if (url.includes('youtube.com/embed/')) return url;
+    return '';
 }
+
+
+async function cargarAboutPublico() {
+    try {
+        const res = await fetch('/api/home/about');
+        const datos = await res.json();
+        if (!datos) return;
+
+        // 1. Renderizar Textos de la sección
+        const mapeoTextos = {
+            'public-about-titulo': datos.about_titulo,
+            'public-about-descripcion': datos.about_descripcion,
+            'public-about-item1': datos.about_item1_text,
+            'public-about-item2': datos.about_item2_text,
+            'public-about-item3': datos.about_item3_text,
+            'public-about-item4': datos.about_item4_text,
+            'public-about-btn1': datos.about_btn1_text,
+            'public-about-btn2': datos.about_btn2_text
+        };
+
+        for (const [id, valor] of Object.entries(mapeoTextos)) {
+            const elemento = document.getElementById(id);
+            if (elemento) elemento.textContent = valor || '';
+        }
+
+        // 2. Renderizar el Video de YouTube
+        const iframeVideo = document.getElementById('public-about-video');
+        const contenedorMensaje = document.getElementById('no-video-message');
+
+        if (datos.about_video_url) {
+            const urlFormateada = obtenerEmbedYouTube(datos.about_video_url);
+            if (iframeVideo) {
+                iframeVideo.src = urlFormateada;
+                iframeVideo.style.display = 'block';
+            }
+            if (contenedorMensaje) contenedorMensaje.style.display = 'none';
+        } else {
+            if (iframeVideo) iframeVideo.style.display = 'none';
+            if (contenedorMensaje) contenedorMensaje.style.display = 'block';
+        }
+    } catch (err) {
+        console.error("Error al renderizar la sección About público:", err);
+    }
+}
+
 
 async function cargarAboutAdmin() {
     try {
         const res = await fetch('/api/home/about');
         const datos = await res.json();
+        if (!datos) return;
+
+        // Rellenamos los inputs principales (Usando la Opción A: 'about-video-url')
+        if (document.getElementById('about-titulo')) document.getElementById('about-titulo').value = datos.about_titulo || '';
+        if (document.getElementById('about-descripcion')) document.getElementById('about-descripcion').value = datos.about_descripcion || '';
+        if (document.getElementById('about-video-url')) document.getElementById('about-video-url').value = datos.about_video_url || '';
+
+        // Rellenamos los ítems y botones secundarios si existen en tu HTML del admin
+        if (document.getElementById('about-item1')) document.getElementById('about-item1').value = datos.about_item1_text || '';
+        if (document.getElementById('about-item2')) document.getElementById('about-item2').value = datos.about_item2_text || '';
+        if (document.getElementById('about-item3')) document.getElementById('about-item3').value = datos.about_item3_text || '';
+        if (document.getElementById('about-item4')) document.getElementById('about-item4').value = datos.about_item4_text || '';
+        if (document.getElementById('about-btn1')) document.getElementById('about-btn1').value = datos.about_btn1_text || '';
+        if (document.getElementById('about-btn2')) document.getElementById('about-btn2').value = datos.about_btn2_text || '';
         
-        if (datos) {
-            document.getElementById('adm-about-titulo').value = datos.about_titulo || '';
-            document.getElementById('adm-about-descripcion').value = datos.about_descripcion || '';
-            document.getElementById('adm-about-item1').value = datos.about_item1_text || '';
-            document.getElementById('adm-about-item2').value = datos.about_item2_text || '';
-            document.getElementById('adm-about-item3').value = datos.about_item3_text || '';
-            document.getElementById('adm-about-item4').value = datos.about_item4_text || '';
-            document.getElementById('adm-about-btn1').value = datos.about_btn1_text || '';
-            document.getElementById('adm-about-btn2').value = datos.about_btn2_text || '';
-            
-            // Carga el enlace del video actual de la base de datos al input
-            const inputVideo = document.getElementById('adm-about-video');
-            if (inputVideo) {
-                inputVideo.value = datos.about_video_url || '';
-            }
-        }
     } catch (err) {
-        console.error("Error al cargar About en admin:", err);
+        console.error("Error al cargar datos del About en el administrador:", err);
     }
 }
+
 
 async function guardarAboutSection(e) {
     e.preventDefault();
     
-    // Si usas JSON estructurado para el envío:
     const datos = {
         about_titulo: document.getElementById('about-titulo').value,
         about_descripcion: document.getElementById('about-descripcion').value,
-        about_video_url: document.getElementById('about-video-url').value
+        about_video_url: document.getElementById('about-video-url').value, // Opción A confirmada
+        
+        // Capturamos el resto de elementos (añadiendo validación por si acaso no existen en el HTML)
+        about_item1_text: document.getElementById('about-item1') ? document.getElementById('about-item1').value : '',
+        about_item2_text: document.getElementById('about-item2') ? document.getElementById('about-item2').value : '',
+        about_item3_text: document.getElementById('about-item3') ? document.getElementById('about-item3').value : '',
+        about_item4_text: document.getElementById('about-item4') ? document.getElementById('about-item4').value : '',
+        about_btn1_text: document.getElementById('about-btn1') ? document.getElementById('about-btn1').value : '',
+        about_btn2_text: document.getElementById('about-btn2') ? document.getElementById('about-btn2').value : ''
     };
 
     try {
@@ -1294,90 +1345,29 @@ async function guardarAboutSection(e) {
     }
 }
 
-async function cargarAboutPublico() {
-    try {
-        const res = await fetch('/api/home/about');
-        const datos = await res.json();
-
-        const iframeVideo = document.getElementById('public-about-video');
-        const contenedorMensaje = document.getElementById('no-video-message');
-
-        if (datos && datos.about_video) {
-            let urlFormateada = datos.about_video_url;
-
-            // Transforma links estándar de YouTube a formato embed interactivo
-            if (urlFormateada.includes("watch?v=")) {
-                urlFormateada = urlFormateada.replace("watch?v=", "embed/");
-            } else if (urlFormateada.includes("youtu.be/")) {
-                urlFormateada = urlFormateada.replace("youtu.be/", "youtube.com/embed/");
-            }
-
-            if (iframeVideo) {
-                iframeVideo.src = urlFormateada;
-                iframeVideo.style.display = 'block';
-            }
-            if (contenedorMensaje) {
-                contenedorMensaje.style.display = 'none';
-            }
-        } else {
-            if (iframeVideo) iframeVideo.style.display = 'none';
-            if (contenedorMensaje) contenedorMensaje.style.display = 'block';
-        }
-    } catch (err) {
-        console.error("Error al renderizar el video de About:", err);
-    }
-}
 
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('public-about-video') || document.getElementById('no-video-message')) {
+    
+    // ---- ZONA PÚBLICA ----
+    if (document.getElementById('public-about-video') || 
+        document.getElementById('public-about-titulo') || 
+        document.getElementById('no-video-message')) {
         cargarAboutPublico();
     }
-});
 
-function obtenerEmbedYouTube(url) {
-    if (!url) return '';
-    
-    // Si ya es un ID directo de 11 caracteres
-    if (url.length === 11) {
-        return `https://www.youtube.com/embed/${url}`;
+    if (document.getElementById('public-contacts-titulo') || document.getElementById('public-contacts-img')) {
+        if (typeof cargarContactsPublico === 'function') cargarContactsPublico();
     }
-    
-    // Expresión regular para capturar el ID desde varios formatos de URL comunes
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = url.match(regExp);
-    
-    if (match && match[2].length === 11) {
-        const videoId = match[2];
-        return `https://www.youtube.com/embed/${videoId}`;
-    }
-    
-    // Si ya venía formateado como embed, lo dejamos igual
-    if (url.includes('youtube.com/embed/')) {
-        return url;
-    }
-    
-    return '';
-}
 
-// Escuchas automáticas de carga del DOM
-document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('form-about-section')) {
-        cargarAboutAdmin();
-    }
-    if (document.getElementById('public-about-titulo')) {
-        cargarAboutPublico();
-    }
-});
+    if (typeof cargarRoomsSectionHome === 'function') cargarRoomsSectionHome();
 
-// Inicialización automática
-document.addEventListener('DOMContentLoaded', () => {
-    cargarRoomsSectionHome();
-});
 
-// Asegurar su ejecución al cargar el DOM
-document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('public-about-titulo') || document.getElementById('public-about-media')) {
-        cargarAboutPublico();
+    // ---- ZONA ADMINISTRADOR ----
+    // Asumiendo que tu <form> en admin-paginas.html tiene id="form-about-section"
+    const formularioAboutAdmin = document.getElementById('form-about-section');
+    if (formularioAboutAdmin) {
+        cargarAboutAdmin(); // Carga los textos actuales en los inputs para poder editarlos
+        formularioAboutAdmin.addEventListener('submit', guardarAboutSection); // Asigna el botón de guardar
     }
 });
 
