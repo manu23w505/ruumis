@@ -1353,6 +1353,7 @@ document.addEventListener('DOMContentLoaded', () => {
 //================================================================
 
 async function cargarReviewsPublico() {
+
     const mediaWrapper = document.getElementById('public-reviews-media-wrapper');
     const contentWrapper = document.getElementById('public-reviews-content-wrapper');
     if (!mediaWrapper || !contentWrapper) return;
@@ -1425,20 +1426,18 @@ async function cargarReviewsPublico() {
         if (mainSliderEl?.swiper) mainSliderEl.swiper.destroy(true, true);
 
         if (typeof Swiper !== 'undefined') {
+            const activarLoop = data.comentarios.length > 1;
+
             const mediaSwiper = new Swiper('.reviews_slider--media', {
                 speed: 600,
                 effect: 'fade',
                 allowTouchMove: false,
-                loop: true
+                loop: activarLoop
             });
 
             const mainSwiper = new Swiper('.reviews_slider--main', {
                 speed: 600,
-                loop: true,
-                navigation: {
-                    nextEl: '.reviews .swiper-button-next',
-                    prevEl: '.reviews .swiper-button-prev',
-                },
+                loop: activarLoop,
                 autoplay: {
                     delay: 5000,
                     disableOnInteraction: false,
@@ -1447,6 +1446,25 @@ async function cargarReviewsPublico() {
 
             mainSwiper.controller.control = mediaSwiper;
             mediaSwiper.controller.control = mainSwiper;
+
+            const btnPrev = document.querySelector('.reviews .swiper-button-prev');
+            const btnNext = document.querySelector('.reviews .swiper-button-next');
+
+            if (btnPrev && btnNext) {
+                btnPrev.onclick = function (e) {
+                    e.preventDefault(); 
+                    if (mainSwiper && !mainSwiper.destroyed) {
+                        mainSwiper.slidePrev();
+                    }
+                };
+
+                btnNext.onclick = function (e) {
+                    e.preventDefault(); 
+                    if (mainSwiper && !mainSwiper.destroyed) {
+                        mainSwiper.slideNext();
+                    }
+                };
+            }
         }
 
     } catch (error) {
