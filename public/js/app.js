@@ -1225,7 +1225,6 @@ async function cargarRoomsSectionHome() {
 // ABOUT SECTION HOME
 //================================================================
 
-
 function obtenerEmbedYouTube(url) {
     if (!url) return '';
     if (url.length === 11) {
@@ -1248,7 +1247,6 @@ async function cargarAboutPublico() {
         const datos = await res.json();
         if (!datos) return;
 
-
         const mapeoTextos = {
             'public-about-titulo': datos.about_titulo,
             'public-about-descripcion': datos.about_descripcion,
@@ -1262,9 +1260,8 @@ async function cargarAboutPublico() {
 
         for (const [id, valor] of Object.entries(mapeoTextos)) {
             const elemento = document.getElementById(id);
-            if (elemento) elemento.textContent = valor || '';
+            if (element) element.textContent = valor || '';
         }
-
 
         const iframeVideo = document.getElementById('public-about-video');
         const contenedorMensaje = document.getElementById('no-video-message');
@@ -1287,27 +1284,8 @@ async function cargarAboutPublico() {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    
-    // ---- ZONA PÚBLICA ----
-    if (document.getElementById('public-about-video') || 
-        document.getElementById('public-about-titulo') || 
-        document.getElementById('no-video-message')) {
+    if (document.getElementById('public-about-video') || document.getElementById('public-about-titulo')) {
         cargarAboutPublico();
-    }
-
-    if (document.getElementById('public-contacts-titulo') || document.getElementById('public-contacts-img')) {
-        if (typeof cargarContactsPublico === 'function') cargarContactsPublico();
-    }
-
-    if (typeof cargarRoomsSectionHome === 'function') cargarRoomsSectionHome();
-
-
-    // ---- ZONA ADMINISTRADOR ----
-    // Asumiendo que tu <form> en admin-paginas.html tiene id="form-about-section"
-    const formularioAboutAdmin = document.getElementById('form-about-section');
-    if (formularioAboutAdmin) {
-        cargarAboutAdmin(); // Carga los textos actuales en los inputs para poder editarlos
-        formularioAboutAdmin.addEventListener('submit', guardarAboutSection); // Asigna el botón de guardar
     }
 });
 

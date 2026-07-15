@@ -872,6 +872,7 @@
 // ABOUT SECTION start
 ///////////////////////////////////////////////////////////////////////////
 
+
 async function cargarAboutAdmin() {
     try {
         const res = await fetch('/api/home/about');
@@ -879,39 +880,60 @@ async function cargarAboutAdmin() {
         if (!datos) return;
 
 
-        if (document.getElementById('about-titulo')) document.getElementById('about-titulo').value = datos.about_titulo || '';
-        if (document.getElementById('about-descripcion')) document.getElementById('about-descripcion').value = datos.about_descripcion || '';
-        if (document.getElementById('about-video-url')) document.getElementById('about-video-url').value = datos.about_video_url || '';
-
-
-        if (document.getElementById('about-item1')) document.getElementById('about-item1').value = datos.about_item1_text || '';
-        if (document.getElementById('about-item2')) document.getElementById('about-item2').value = datos.about_item2_text || '';
-        if (document.getElementById('about-item3')) document.getElementById('about-item3').value = datos.about_item3_text || '';
-        if (document.getElementById('about-item4')) document.getElementById('about-item4').value = datos.about_item4_text || '';
-        if (document.getElementById('about-btn1')) document.getElementById('about-btn1').value = datos.about_btn1_text || '';
-        if (document.getElementById('about-btn2')) document.getElementById('about-btn2').value = datos.about_btn2_text || '';
+        if (document.getElementById('adm-about-titulo')) {
+            document.getElementById('adm-about-titulo').value = datos.about_titulo || '';
+        }
+        if (document.getElementById('adm-about-descripcion')) {
+            document.getElementById('adm-about-descripcion').value = datos.about_descripcion || '';
+        }
         
+
+        if (document.getElementById('adm-about-item1')) {
+            document.getElementById('adm-about-item1').value = datos.about_item1_text || '';
+        }
+        if (document.getElementById('adm-about-item2')) {
+            document.getElementById('adm-about-item2').value = datos.about_item2_text || '';
+        }
+        if (document.getElementById('adm-about-item3')) {
+            document.getElementById('adm-about-item3').value = datos.about_item3_text || '';
+        }
+        if (document.getElementById('adm-about-item4')) {
+            document.getElementById('adm-about-item4').value = datos.about_item4_text || '';
+        }
+        
+
+        if (document.getElementById('adm-about-btn1')) {
+            document.getElementById('adm-about-btn1').value = datos.about_btn1_text || '';
+        }
+        if (document.getElementById('adm-about-btn2')) {
+            document.getElementById('adm-about-btn2').value = datos.about_btn2_text || '';
+        }
+
+
+        if (document.getElementById('about-video-url')) {
+            document.getElementById('about-video-url').value = datos.about_video_url || '';
+        }
     } catch (err) {
         console.error("Error al cargar datos del About en el administrador:", err);
     }
 }
 
 
-async function guardarAboutSection(e) {
+async function guardarAboutHome(e) {
     e.preventDefault();
     
+
     const datos = {
-        about_titulo: document.getElementById('about-titulo').value,
-        about_descripcion: document.getElementById('about-descripcion').value,
+        about_titulo: document.getElementById('adm-about-titulo').value,
+        about_descripcion: document.getElementById('adm-about-descripcion').value,
         about_video_url: document.getElementById('about-video-url').value, 
         
-
-        about_item1_text: document.getElementById('about-item1') ? document.getElementById('about-item1').value : '',
-        about_item2_text: document.getElementById('about-item2') ? document.getElementById('about-item2').value : '',
-        about_item3_text: document.getElementById('about-item3') ? document.getElementById('about-item3').value : '',
-        about_item4_text: document.getElementById('about-item4') ? document.getElementById('about-item4').value : '',
-        about_btn1_text: document.getElementById('about-btn1') ? document.getElementById('about-btn1').value : '',
-        about_btn2_text: document.getElementById('about-btn2') ? document.getElementById('about-btn2').value : ''
+        about_item1_text: document.getElementById('adm-about-item1') ? document.getElementById('adm-about-item1').value : '',
+        about_item2_text: document.getElementById('adm-about-item2') ? document.getElementById('adm-about-item2').value : '',
+        about_item3_text: document.getElementById('adm-about-item3') ? document.getElementById('adm-about-item3').value : '',
+        about_item4_text: document.getElementById('adm-about-item4') ? document.getElementById('adm-about-item4').value : '',
+        about_btn1_text: document.getElementById('adm-about-btn1') ? document.getElementById('adm-about-btn1').value : '',
+        about_btn2_text: document.getElementById('adm-about-btn2') ? document.getElementById('adm-about-btn2').value : ''
     };
 
     try {
@@ -922,7 +944,7 @@ async function guardarAboutSection(e) {
         });
 
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Error al actualizar.");
+        if (!res.ok) throw new Error(data.error || "Error al actualizar la sección About.");
 
         alert("¡Sección ABOUT actualizada con éxito!");
         location.reload();
@@ -933,12 +955,17 @@ async function guardarAboutSection(e) {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    const formularioAbout = document.getElementById('form-about-section');
-    if (formularioAbout) {
+
+    if (document.getElementById('form-contacts-section')) {
+        cargarContactsAdmin();
+        document.getElementById('form-contacts-section').addEventListener('submit', guardarContactsSection);
+    }
+
+    if (document.getElementById('adm-about-titulo')) {
         cargarAboutAdmin();
-        formularioAbout.addEventListener('submit', guardarAboutHome);
     }
 });
+
 
 ///////////////////////////////////////////////////////////////////////////
 // ABOUT SECTION end
@@ -949,7 +976,7 @@ document.addEventListener('DOMContentLoaded', () => {
 ///////////////////////////////////////////////////////////////////////////
 
 async function cargarRatingAdmin() {
-    console.log("=== 🔴 1. cargarRatingAdmin() se está ejecutando ===");
+
     try {
         const res = await fetch('/api/home/rating');
         console.log("Respuesta del servidor (Status):", res.status);
@@ -1023,7 +1050,7 @@ async function cargarRatingAdmin() {
 
 async function guardarRatingSection(e) {
     e.preventDefault();
-    console.log("=== 💾 Guardando Sección Rating ===");
+
 
     const formData = new FormData();
     
@@ -1074,10 +1101,8 @@ async function guardarRatingSection(e) {
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("=== 🔴 DOM Completamente Cargado en Admin Paginas ===");
     
     const inputTestigo = document.getElementById('adm-rating-item1-num');
-    console.log("¿Se encuentra la Sección de Rating en esta página?:", inputTestigo ? "SÍ ✅" : "NO ❌");
 
     if (inputTestigo) {
         cargarRatingAdmin();
