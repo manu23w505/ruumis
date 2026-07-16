@@ -1892,6 +1892,84 @@ app.put('/api/about/benefits', upload.single('benefits_imagen'), (req, res) => {
     });
 });
 
+//===========================================
+// About (STAGES SECTION)   
+//===========================================
+
+app.get('/api/about/stages', (req, res) => {
+    const sql = `
+        SELECT 
+            stages_titulo, 
+            stages_step1_titulo, stages_step1_descripcion,
+            stages_step2_titulo, stages_step2_descripcion,
+            stages_step3_titulo, stages_step3_descripcion,
+            stages_boton_texto, stages_imagen 
+        FROM admin_about 
+        WHERE id = 1
+    `;
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error("Error al obtener la sección stages:", err);
+            return res.status(500).json({ error: "Error en la base de datos" });
+        }
+        res.json(result[0] || {});
+    });
+});
+
+
+app.put('/api/about/stages', upload.single('stages_imagen'), (req, res) => {
+    const {
+        stages_titulo,
+        stages_step1_titulo,
+        stages_step1_descripcion,
+        stages_step2_titulo,
+        stages_step2_descripcion,
+        stages_step3_titulo,
+        stages_step3_descripcion,
+        stages_boton_texto,
+        stages_imagen_actual
+    } = req.body;
+
+    let stages_imagen_url = stages_imagen_actual;
+    if (req.file) {
+        stages_imagen_url = req.file.filename; 
+    }
+
+    const sql = `
+        UPDATE admin_about SET 
+            stages_titulo = ?, 
+            stages_step1_titulo = ?, 
+            stages_step1_descripcion = ?, 
+            stages_step2_titulo = ?, 
+            stages_step2_descripcion = ?, 
+            stages_step3_titulo = ?, 
+            stages_step3_descripcion = ?, 
+            stages_boton_texto = ?, 
+            stages_imagen = ? 
+        WHERE id = 1
+    `;
+
+    db.query(sql, [
+        stages_titulo,
+        stages_step1_titulo,
+        stages_step1_descripcion,
+        stages_step2_titulo,
+        stages_step2_descripcion,
+        stages_step3_titulo,
+        stages_step3_descripcion,
+        stages_boton_texto,
+        stages_imagen_url
+    ], (err, result) => {
+        if (err) {
+            console.error("Error al actualizar la tabla admin_about (Stages):", err);
+            return res.status(500).json({ error: "Error al guardar en la base de datos" });
+        }
+        res.json({ 
+            message: "¡Sección STAGES actualizada con éxito!", 
+            stages_imagen: stages_imagen_url 
+        });
+    });
+});
 
 
 

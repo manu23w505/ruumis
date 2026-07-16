@@ -735,42 +735,9 @@
                                         </div>
                                     </div>
 
-                                    <!-- ROOMS SECTION ABOUT start-->
-                                    <div class="mt-8 pt-6 border-t border-slate-200">
-                                        <h3 class="text-lg font-semibold text-slate-800 mb-4">ROOMS SECTION</h3>
-                                        
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div>
-                                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Título de la Sección</label>
-                                                <input type="text" id="input-rooms-titulo" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-teal-500 text-sm">
-                                            </div>
-                                            
-                                            <div>
-                                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Texto del Botón (Ver Habitaciones)</label>
-                                                <input type="text" id="input-rooms-boton-texto" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-teal-500 text-sm">
-                                            </div>
-
-                                            <div>
-                                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Etiqueta Capacidad (Ej: "Sleeps" o "Personas")</label>
-                                                <input type="text" id="input-rooms-label-sleeps" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-teal-500 text-sm">
-                                            </div>
-
-                                            <div>
-                                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Etiqueta Camas (Ej: "beds" o "Camas")</label>
-                                                <input type="text" id="input-rooms-label-beds" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-teal-500 text-sm">
-                                            </div>
-
-                                            <div class="md:col-span-2">
-                                                <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Etiqueta Enlace (Ej: "See availability" o "Ver disponibilidad")</label>
-                                                <input type="text" id="input-rooms-label-ver" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-teal-500 text-sm">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- ROOMSA SECTION ABOUT end-->
-
                                     <div class="flex justify-end pt-2">
                                         <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold text-sm px-6 py-2.5 rounded-xl transition-all shadow-sm">
-                                            Guardar Cambios de About Page
+                                            Guardar Cambios de Beneficios
                                         </button>
                                     </div>
                                 </form>
@@ -808,7 +775,85 @@
                                     </div>
                                 </div>
                             </div>
-                            <!-- ROOMSA SECTION ABOUT end-->
+                            <!-- ROOMS SECTION ABOUT end-->
+
+                            <!-- STAGES SECTION ABOUT  start-->
+                            <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6 mb-8">
+                                <div class="border-b border-slate-100 pb-4 mb-6">
+                                    <h3 class="text-lg font-semibold text-slate-800">STAGES SECTION</h3>
+                                    <p class="text-sm text-slate-500">Administra los textos de las etapas de reserva, el botón principal y la imagen lateral en la sección de Nosotros.</p>
+                                </div>
+
+                                <form id="form-stages-admin" class="space-y-6" onsubmit="guardarStagesAdmin(event)">
+                                    <div>
+                                        <label class="block text-sm font-medium text-slate-700 mb-1">Título General de la Sección</label>
+                                        <input type="text" id="input-stages-titulo" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 text-sm" required>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                                            <span class="text-xs font-bold uppercase tracking-wider text-teal-600">Paso 1</span>
+                                            <div>
+                                                <label class="block text-xs font-medium text-slate-600 mb-1">Título Paso 1</label>
+                                                <input type="text" id="input-stages-step1-titulo" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 text-xs" required>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-slate-600 mb-1">Descripción Paso 1</label>
+                                                <textarea id="textarea-stages-step1-descripcion" rows="3" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 text-xs" required></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                                            <span class="text-xs font-bold uppercase tracking-wider text-teal-600">Paso 2</span>
+                                            <div>
+                                                <label class="block text-xs font-medium text-slate-600 mb-1">Título Paso 2</label>
+                                                <input type="text" id="input-stages-step2-titulo" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 text-xs" required>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-slate-600 mb-1">Descripción Paso 2</label>
+                                                <textarea id="textarea-stages-step2-descripcion" rows="3" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 text-xs" required></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                                            <span class="text-xs font-bold uppercase tracking-wider text-teal-600">Paso 3</span>
+                                            <div>
+                                                <label class="block text-xs font-medium text-slate-600 mb-1">Título Paso 3</label>
+                                                <input type="text" id="input-stages-step3-titulo" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 text-xs" required>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-medium text-slate-600 mb-1">Descripción Paso 3</label>
+                                                <textarea id="textarea-stages-step3-descripcion" rows="3" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 text-xs" required></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-700 mb-1">Texto del Botón (Enlace a habitaciones)</label>
+                                            <input type="text" id="input-stages-boton" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-teal-500 focus:border-teal-500 text-sm" required>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium text-slate-700 mb-1">Imagen Lateral Ilustrativa</label>
+                                            <div class="flex items-center gap-4">
+                                                <img id="img-stages-preview" src="img/placeholder.jpg" class="w-20 h-20 object-cover rounded-lg border border-slate-200" alt="Vista Previa">
+                                                <div class="flex-1">
+                                                    <input type="file" id="input-stages-imagen" accept="image/*" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100">
+                                                    <input type="hidden" id="url-stages-imagen-actual">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex justify-end pt-4 border-t border-slate-100">
+                                        <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white font-medium px-5 py-2.5 rounded-lg text-sm transition shadow-sm">
+                                            Guardar Sección Stages
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- STAGES SECTION ABOUT end -->
 
 
                         </div>
@@ -816,7 +861,7 @@
             </div>
 
             <!--Editor About-->
-            <div id="tab-page-about" class="page-tab space-y-8">
+            <!--<div id="tab-page-about" class="page-tab space-y-8">
                 <div>
                     <h1 class="text-2xl font-bold text-slate-900">Editor de Página: About</h1>
                     <p class="text-slate-500 text-sm">Modifica la página About.</p>
@@ -828,7 +873,7 @@
                         <p class="text-slate-400 text-xs">Contadores informativos de la página de nosotros.</p>
                     </div>
 
-                    <!-- BENEFITS SECTION ABOUT start -->
+                    BENEFITS SECTION ABOUT start
                     <div class="bg-white p-6 rounded-lg shadow mb-6">
                         <form id="form-admin-benefits" enctype="multipart/form-data" class="space-y-6">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -849,7 +894,6 @@
                             <hr class="border-slate-100">
 
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <!-- Beneficio 1 -->
                                 <div class="p-4 border border-slate-200 rounded-xl bg-white shadow-sm space-y-3">
                                     <h6 class="text-sm font-bold text-teal-600 uppercase">Beneficio 1</h6>
                                     <div class="grid grid-cols-2 gap-2">
@@ -868,7 +912,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Beneficio 2 -->
+
                                 <div class="p-4 border border-slate-200 rounded-xl bg-white shadow-sm space-y-3">
                                     <h6 class="text-sm font-bold text-teal-600 uppercase">Beneficio 2</h6>
                                     <div class="grid grid-cols-2 gap-2">
@@ -887,7 +931,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Beneficio 3 -->
+
                                 <div class="p-4 border border-slate-200 rounded-xl bg-white shadow-sm space-y-3">
                                     <h6 class="text-sm font-bold text-teal-600 uppercase">Beneficio 3</h6>
                                     <div class="grid grid-cols-2 gap-2">
@@ -929,10 +973,10 @@
                             </div>
                         </form>
                     </div>
-                    <!-- BENEFITS SECTION ABOUT end -->
+                     BENEFITS SECTION ABOUT end
 
                 </div>
-            </div>
+            </div> -->
 
 
             <div id="tab-page-rooms" class="page-tab space-y-8">
@@ -1802,6 +1846,84 @@
         }
 
 
+        //===========================================
+        // STAGES SECTION ABOUT
+        //===========================================
+        async function cargarStagesAdmin() {
+            try {
+                const response = await fetch('/api/about/stages');
+                if (!response.ok) throw new Error("Error al obtener los datos de la sección Stages.");
+                const datos = await response.json();
+
+                document.getElementById('input-stages-titulo').value = datos.stages_titulo || '';
+                document.getElementById('input-stages-step1-titulo').value = datos.stages_step1_titulo || '';
+                document.getElementById('textarea-stages-step1-descripcion').value = datos.stages_step1_descripcion || '';
+                document.getElementById('input-stages-step2-titulo').value = datos.stages_step2_titulo || '';
+                document.getElementById('textarea-stages-step2-descripcion').value = datos.stages_step2_descripcion || '';
+                document.getElementById('input-stages-step3-titulo').value = datos.stages_step3_titulo || '';
+                document.getElementById('textarea-stages-step3-descripcion').value = datos.stages_step3_descripcion || '';
+                document.getElementById('input-stages-boton').value = datos.stages_boton_texto || '';
+                document.getElementById('url-stages-imagen-actual').value = datos.stages_imagen || '';
+
+                // Actualizar vista previa de la imagen
+                const previewImg = document.getElementById('img-stages-preview');
+                if (previewImg) {
+                    const rutaImg = datos.stages_imagen || 'img/placeholder.jpg';
+                    // Validar si es URL completa (Cloudinary / enlaces) o un archivo local
+                    previewImg.src = (rutaImg.startsWith('http') || rutaImg.startsWith('/')) ? rutaImg : `/uploads/${rutaImg}`;
+                }
+            } catch (err) {
+                console.error("Error al cargar la sección Stages en administración:", err);
+            }
+        }
+
+
+        async function guardarStagesAdmin(e) {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('stages_titulo', document.getElementById('input-stages-titulo').value);
+            formData.append('stages_step1_titulo', document.getElementById('input-stages-step1-titulo').value);
+            formData.append('stages_step1_descripcion', document.getElementById('textarea-stages-step1-descripcion').value);
+            formData.append('stages_step2_titulo', document.getElementById('input-stages-step2-titulo').value);
+            formData.append('stages_step2_descripcion', document.getElementById('textarea-stages-step2-descripcion').value);
+            formData.append('stages_step3_titulo', document.getElementById('input-stages-step3-titulo').value);
+            formData.append('stages_step3_descripcion', document.getElementById('textarea-stages-step3-descripcion').value);
+            formData.append('stages_boton_texto', document.getElementById('input-stages-boton').value);
+            formData.append('stages_imagen_actual', document.getElementById('url-stages-imagen-actual').value);
+
+            const fileInput = document.getElementById('input-stages-imagen');
+            if (fileInput && fileInput.files[0]) {
+                formData.append('stages_imagen', fileInput.files[0]);
+            }
+
+            try {
+                const response = await fetch('/api/about/stages', {
+                    method: 'PUT',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error("Error al intentar guardar los cambios de Stages.");
+                const result = await response.json();
+
+                alert("¡Sección Stages modificada con éxito!");
+                if (fileInput) fileInput.value = ''; // Reseteamos el selector de archivo
+                await cargarStagesAdmin(); // Recargar datos limpios
+            } catch (err) {
+                console.error("Error al guardar cambios de la sección Stages:", err);
+                alert("Ocurrió un error al intentar guardar los datos.");
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (document.getElementById('form-stages-admin')) {
+                cargarStagesAdmin();
+            }
+        });
+
+
+        
 
         if (window.self !== window.top) {
             const headerRedundante = document.querySelector('header');

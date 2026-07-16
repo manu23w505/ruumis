@@ -1741,3 +1741,58 @@ async function cargarBenefitsPublico() {
     }
 }
 
+//================================================================
+// STAGES SECTION ABOUT
+//================================================================
+
+async function cargarStagesPublico() {
+    try {
+        const response = await fetch('/api/about/stages');
+        if (!response.ok) throw new Error("No se pudo obtener la información de las Etapas");
+        const datos = await response.json();
+
+        const tituloSec = document.getElementById('public-stages-titulo');
+        if (tituloSec) tituloSec.textContent = datos.stages_titulo || '';
+
+        const s1Titulo = document.getElementById('public-stages-step1-titulo');
+        const s1Desc = document.getElementById('public-stages-step1-desc');
+        if (s1Titulo) s1Titulo.textContent = datos.stages_step1_titulo || '';
+        if (s1Desc) s1Desc.textContent = datos.stages_step1_descripcion || '';
+
+        const s2Titulo = document.getElementById('public-stages-step2-titulo');
+        const s2Desc = document.getElementById('public-stages-step2-desc');
+        if (s2Titulo) s2Titulo.textContent = datos.stages_step2_titulo || '';
+        if (s2Desc) s2Desc.textContent = datos.stages_step2_descripcion || '';
+
+        const s3Titulo = document.getElementById('public-stages-step3-titulo');
+        const s3Desc = document.getElementById('public-stages-step3-desc');
+        if (s3Titulo) s3Titulo.textContent = datos.stages_step3_titulo || '';
+        if (s3Desc) s3Desc.textContent = datos.stages_step3_descripcion || '';
+
+        const btnStages = document.getElementById('public-stages-btn');
+        if (btnStages) btnStages.textContent = datos.stages_boton_texto || '';
+
+        const imgStages = document.getElementById('public-stages-img');
+        const sourceStages = document.getElementById('public-stages-source');
+        if (imgStages && datos.stages_imagen) {
+            const rutaFinal = obtenerRutaImagen(datos.stages_imagen);
+            
+            imgStages.src = rutaFinal;
+            imgStages.setAttribute('data-src', rutaFinal);
+            
+            if (sourceStages) {
+                sourceStages.srcset = rutaFinal;
+                sourceStages.setAttribute('data-srcset', rutaFinal);
+            }
+        }
+    } catch (err) {
+        console.error("Error al cargar renderizado público de Stages:", err);
+    }
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('public-stages-titulo')) {
+        cargarStagesPublico();
+    }
+});
