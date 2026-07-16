@@ -2143,33 +2143,54 @@ app.get('/api/about/footer', (req, res) => {
 });
 
 
-app.put('/api/about/footer', (req, res) => {
+app.put('/api/about/footer', upload.single('footer_quote_img'), (req, res) => {
     const {
-        footer_quote_img, footer_quote_texto, footer_quote_autor, footer_quote_profesion,
-        footer_booking_titulo, footer_booking_descripcion, footer_booking_btn_texto, footer_booking_btn_enlace,
-        footer_sub_titulo, footer_sub_descripcion
+        footer_quote_autor,
+        footer_quote_texto,
+        footer_quote_profesion,
+        footer_booking_titulo,
+        footer_booking_descripcion,
+        footer_booking_btn_texto,
+        footer_booking_btn_enlace,
+        footer_sub_titulo,
+        footer_sub_descripcion,
+        footer_quote_img_actual
     } = req.body;
 
+    const rutaImagenFinal = req.file ? `/uploads/${req.file.filename}` : footer_quote_img_actual;
+
     const sql = `
-        UPDATE admin_about SET 
-            footer_quote_img = ?, footer_quote_texto = ?, footer_quote_autor = ?, footer_quote_profesion = ?,
-            footer_booking_titulo = ?, footer_booking_descripcion = ?, footer_booking_btn_texto = ?, footer_booking_btn_enlace = ?,
-            footer_sub_titulo = ?, footer_sub_descripcion = ?
+        UPDATE about_footer 
+        SET footer_quote_img = ?, 
+            footer_quote_autor = ?, 
+            footer_quote_texto = ?, 
+            footer_quote_profesion = ?, 
+            footer_booking_titulo = ?, 
+            footer_booking_descripcion = ?, 
+            footer_booking_btn_texto = ?, 
+            footer_booking_btn_enlace = ?, 
+            footer_sub_titulo = ?, 
+            footer_sub_descripcion = ?
         WHERE id = 1
     `;
 
-    const params = [
-        footer_quote_img, footer_quote_texto, footer_quote_autor, footer_quote_profesion,
-        footer_booking_titulo, footer_booking_descripcion, footer_booking_btn_texto, footer_booking_btn_enlace,
-        footer_sub_titulo, footer_sub_descripcion
-    ];
-
-    db.query(sql, params, (err, result) => {
+    db.query(sql, [
+        rutaImagenFinal,
+        footer_quote_autor,
+        footer_quote_texto,
+        footer_quote_profesion,
+        footer_booking_titulo,
+        footer_booking_descripcion,
+        footer_booking_btn_texto,
+        footer_booking_btn_enlace,
+        footer_sub_titulo,
+        footer_sub_descripcion
+    ], (err, result) => {
         if (err) {
-            console.error("Error al actualizar about_footer en la base de datos:", err);
-            return res.status(500).json({ error: "No se pudieron almacenar los cambios" });
+            console.error("Error al actualizar la tabla about_footer:", err);
+            return res.status(500).json({ error: "Error interno al guardar en la base de datos" });
         }
-        res.json({ message: "¡La sección final de la página About se ha actualizado correctamente!" });
+        res.json({ message: "¡Sección de Pie de Página actualizada con éxito!", footer_quote_img: rutaImagenFinal });
     });
 });
 
