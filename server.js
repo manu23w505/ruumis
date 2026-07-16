@@ -2117,6 +2117,63 @@ app.put('/api/about/faq', (req, res) => {
     });
 });
 
+// ==========================================
+// RUTA: SECCIÓN FOOTER INTERNO (ABOUT PAGE)
+// ==========================================
+
+app.get('/api/about/footer', (req, res) => {
+    const sql = `
+        SELECT 
+            footer_quote_img, footer_quote_texto, footer_quote_autor, footer_quote_profesion,
+            footer_booking_titulo, footer_booking_descripcion, footer_booking_btn_texto, footer_booking_btn_enlace,
+            footer_sub_titulo, footer_sub_descripcion
+        FROM admin_about 
+        WHERE id = 1
+    `;
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error("Error al obtener about_footer de la base de datos:", err);
+            return res.status(500).json({ error: "Error interno en el servidor" });
+        }
+        if (result.length === 0) {
+            return res.status(404).json({ error: "Configuración del pie de página no encontrada" });
+        }
+        res.json(result[0]);
+    });
+});
+
+
+app.put('/api/about/footer', (req, res) => {
+    const {
+        footer_quote_img, footer_quote_texto, footer_quote_autor, footer_quote_profesion,
+        footer_booking_titulo, footer_booking_descripcion, footer_booking_btn_texto, footer_booking_btn_enlace,
+        footer_sub_titulo, footer_sub_descripcion
+    } = req.body;
+
+    const sql = `
+        UPDATE admin_about SET 
+            footer_quote_img = ?, footer_quote_texto = ?, footer_quote_autor = ?, footer_quote_profesion = ?,
+            footer_booking_titulo = ?, footer_booking_descripcion = ?, footer_booking_btn_texto = ?, footer_booking_btn_enlace = ?,
+            footer_sub_titulo = ?, footer_sub_descripcion = ?
+        WHERE id = 1
+    `;
+
+    const params = [
+        footer_quote_img, footer_quote_texto, footer_quote_autor, footer_quote_profesion,
+        footer_booking_titulo, footer_booking_descripcion, footer_booking_btn_texto, footer_booking_btn_enlace,
+        footer_sub_titulo, footer_sub_descripcion
+    ];
+
+    db.query(sql, params, (err, result) => {
+        if (err) {
+            console.error("Error al actualizar about_footer en la base de datos:", err);
+            return res.status(500).json({ error: "No se pudieron almacenar los cambios" });
+        }
+        res.json({ message: "¡La sección final de la página About se ha actualizado correctamente!" });
+    });
+});
+
+
 
 
 cron.schedule('*/5 * * * *', () => {

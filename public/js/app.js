@@ -1893,3 +1893,76 @@ document.addEventListener('DOMContentLoaded', () => {
         cargarFaqPublico();
     }
 });
+
+//================================================================
+// SECTION FOOTER ABOUT
+//================================================================
+
+async function cargarAboutFooterPublico() {
+    try {
+        const response = await fetch('/api/about/footer');
+        if (!response.ok) throw new Error("No se pudo conectar a la API del footer.");
+        const datos = await response.json();
+
+        const imgContenedor = document.getElementById('public-footer-quote-img-container');
+        if (imgContenedor) {
+            const rutaImagen = datos.footer_quote_img || 'img/placeholder.jpg';
+            imgContenedor.innerHTML = `
+                <picture>
+                    <source data-srcset="${rutaImagen}" srcset="${rutaImagen}" />
+                    <img class="lazy" data-src="${rutaImagen}" src="${rutaImagen}" alt="media" />
+                </picture>
+            `;
+        }
+
+        const quoteTexto = document.getElementById('public-footer-quote-texto');
+        if (quoteTexto) {
+            quoteTexto.textContent = datos.footer_quote_texto || '';
+        }
+
+        const quoteAutor = document.getElementById('public-footer-quote-autor');
+        if (quoteAutor) {
+            quoteAutor.textContent = datos.footer_quote_autor || '';
+        }
+
+        const quoteProfesion = document.getElementById('public-footer-quote-profesion');
+        if (quoteProfesion) {
+            quoteProfesion.textContent = datos.footer_quote_profesion || '';
+        }
+
+        const bookingTitulo = document.getElementById('public-footer-booking-titulo');
+        if (bookingTitulo) {
+            bookingTitulo.textContent = datos.footer_booking_titulo || '';
+        }
+
+        const bookingDescripcion = document.getElementById('public-footer-booking-descripcion');
+        if (bookingDescripcion) {
+            bookingDescripcion.textContent = datos.footer_booking_descripcion || '';
+        }
+
+        const bookingBtn = document.getElementById('public-footer-booking-btn');
+        if (bookingBtn) {
+            bookingBtn.textContent = datos.footer_booking_btn_texto || '';
+            bookingBtn.setAttribute('href', datos.footer_booking_btn_enlace || 'rooms.html');
+        }
+
+        const subTitulo = document.getElementById('public-footer-sub-titulo');
+        if (subTitulo) {
+            subTitulo.textContent = datos.footer_sub_titulo || '';
+        }
+
+        const subDescripcion = document.getElementById('public-footer-sub-descripcion');
+        if (subDescripcion) {
+            subDescripcion.textContent = datos.footer_sub_descripcion || '';
+        }
+
+    } catch (err) {
+        console.error("Error al inyectar datos del about_footer público:", err);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('public-footer-booking-titulo')) {
+        cargarAboutFooterPublico();
+    }
+});

@@ -907,7 +907,7 @@
                             </div>
                             <!-- RULES SECTION ABOUT end -->
 
-                            <!-- SECCTION FAQ start-->
+                            <!-- SECTION FAQ start-->
                             <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 mt-6">
                                 <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
                                     <span class="icon-question text-teal-600"></span> Edición de Preguntas Frecuentes (FAQ Section)
@@ -985,7 +985,85 @@
                                     </div>
                                 </form>
                             </div>
-                            <!-- SECCTION FAQ end-->
+                            <!-- SECTION FAQ end-->
+
+                            <!-- SECTION FOOTER ABOUT start -->
+                            <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 mt-6">
+                                <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                    <span class="icon-layout text-teal-600"></span> Edición de Pie de Página (Footer Section - About)
+                                </h3>
+                                <form id="form-about-footer" class="space-y-6">
+                                    
+                                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-4">
+                                        <span class="text-xs font-bold text-teal-700 tracking-wider uppercase block">Bloque 1: Testimonio / Frase destacada</span>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Ruta de la Imagen</label>
+                                                <input type="text" id="input-footer-quote-img" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-teal-500 bg-white" required>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Autor de la Cita</label>
+                                                <input type="text" id="input-footer-quote-autor" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-teal-500 bg-white" required>
+                                            </div>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Texto de la Cita</label>
+                                                <textarea id="textarea-footer-quote-texto" rows="3" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-teal-500 bg-white" required></textarea>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Puesto o Profesión del Autor</label>
+                                                <input type="text" id="input-footer-quote-profesion" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-teal-500 bg-white" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-4">
+                                        <span class="text-xs font-bold text-teal-700 tracking-wider uppercase block">Bloque 2: Llamada a la Acción (Reservaciones)</span>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Título Booking</label>
+                                                <input type="text" id="input-footer-booking-titulo" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-teal-500 bg-white" required>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Descripción Corta</label>
+                                                <textarea id="textarea-footer-booking-descripcion" rows="1" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-teal-500 bg-white" required></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Texto del Botón</label>
+                                                <input type="text" id="input-footer-booking-btn-texto" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-teal-500 bg-white" required>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Enlace del Botón (Página de Redirección)</label>
+                                                <input type="text" id="input-footer-booking-btn-enlace" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-teal-500 bg-white" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 space-y-4">
+                                        <span class="text-xs font-bold text-teal-700 tracking-wider uppercase block">Bloque 3: Boletín Informativo (Newsletter)</span>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Título Newsletter</label>
+                                                <input type="text" id="input-footer-sub-titulo" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-teal-500 bg-white" required>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Descripción Corta</label>
+                                                <textarea id="textarea-footer-sub-descripcion" rows="1" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-teal-500 bg-white" required></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex justify-end pt-2">
+                                        <button type="submit" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg shadow-sm transition-colors flex items-center gap-2">
+                                            <span class="icon-floppy-disk"></span> Guardar Pie de Página
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- SECTION FOOTER ABOUT end-->
 
                         </div>
 
@@ -2189,6 +2267,81 @@
             }
             cargarFaqAdmin();
         });
+
+        //=========================================
+        // SECTION FOOTER ABOUT
+        //=========================================
+
+        async function cargarAboutFooterAdmin() {
+            try {
+                const response = await fetch('/api/about/footer');
+                if (!response.ok) throw new Error("No se pudo obtener la información de about_footer.");
+                const datos = await response.json();
+
+                document.getElementById('input-footer-quote-img').value = datos.footer_quote_img || '';
+                document.getElementById('input-footer-quote-autor').value = datos.footer_quote_autor || '';
+                document.getElementById('textarea-footer-quote-texto').value = datos.footer_quote_texto || '';
+                document.getElementById('input-footer-quote-profesion').value = datos.footer_quote_profesion || '';
+
+                document.getElementById('input-footer-booking-titulo').value = datos.footer_booking_titulo || '';
+                document.getElementById('textarea-footer-booking-descripcion').value = datos.footer_booking_descripcion || '';
+                document.getElementById('input-footer-booking-btn-texto').value = datos.footer_booking_btn_texto || '';
+                document.getElementById('input-footer-booking-btn-enlace').value = datos.footer_booking_btn_enlace || '';
+
+                document.getElementById('input-footer-sub-titulo').value = datos.footer_sub_titulo || '';
+                document.getElementById('textarea-footer-sub-descripcion').value = datos.footer_sub_descripcion || '';
+
+            } catch (err) {
+                console.error("Error al cargar la configuración de about_footer en el panel:", err);
+            }
+        }
+
+
+        async function guardarAboutFooterAdmin(e) {
+            e.preventDefault();
+
+            const payload = {
+                footer_quote_img: document.getElementById('input-footer-quote-img').value,
+                footer_quote_autor: document.getElementById('input-footer-quote-autor').value,
+                footer_quote_texto: document.getElementById('textarea-footer-quote-texto').value,
+                footer_quote_profesion: document.getElementById('input-footer-quote-profesion').value,
+                footer_booking_titulo: document.getElementById('input-footer-booking-titulo').value,
+                footer_booking_descripcion: document.getElementById('textarea-footer-booking-descripcion').value,
+                footer_booking_btn_texto: document.getElementById('input-footer-booking-btn-texto').value,
+                footer_booking_btn_enlace: document.getElementById('input-footer-booking-btn-enlace').value,
+                footer_sub_titulo: document.getElementById('input-footer-sub-titulo').value,
+                footer_sub_descripcion: document.getElementById('textarea-footer-sub-descripcion').value
+            };
+
+            try {
+                const response = await fetch('/api/about/footer', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error("No se pudo guardar la configuración.");
+                const result = await response.json();
+
+                alert("¡Éxito! " + result.message);
+                await cargarAboutFooterAdmin(); 
+            } catch (err) {
+                console.error("Error al persistir la información del footer:", err);
+                alert("Ocurrió un error al intentar registrar los cambios.");
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const footerForm = document.getElementById('form-about-footer');
+            if (footerForm) {
+                footerForm.addEventListener('submit', guardarAboutFooterAdmin);
+            }
+            cargarAboutFooterAdmin();
+        });
+
 
 
 
