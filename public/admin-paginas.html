@@ -13,7 +13,6 @@
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col font-sans">
-    <!-- Header  regresar admin-->
     <header class="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shadow-sm">
         <div class="flex items-center gap-3">
             <span class="text-xl font-bold tracking-tight text-teal-700">Ruumis <span class="text-slate-400 font-normal">| Editor CMS</span></span>
@@ -23,9 +22,7 @@
         </a>
     </header>
 
-    <!-- Páginas // Home, About, Rooms, Locations y Contacts -->
     <div class="flex flex-1">
-        <!-- Selección de Página -->
         <aside class="w-64 bg-white border-r border-slate-200 p-4 hidden md:flex flex-col gap-1 justify-between">
             <div class="space-y-1">
                 <span class="px-3 text-xs font-bold text-slate-400 uppercase tracking-wider block mb-3">Selecciona Página</span>
@@ -33,7 +30,7 @@
                 <button onclick="cambiarPaginaEditor('home')" id="btn-page-home" class="sidebar-item active w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 rounded-xl hover:bg-slate-50 text-left transition-all">
                     Home (Inicio)
                 </button>
-                <button onclick="cambiarPaginaEditor('about')" id="btn-page-about" class="sidebar-item active w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 rounded-xl hover:bg-slate-50 text-left transition-all">
+                <button onclick="cambiarPaginaEditor('about')" id="btn-page-about" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 rounded-xl hover:bg-slate-50 text-left transition-all">
                     About (Nosotros)
                 </button>
                 <button onclick="cambiarPaginaEditor('rooms')" id="btn-page-rooms" class="sidebar-item w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 rounded-xl hover:bg-slate-50 text-left transition-all">
@@ -634,126 +631,143 @@
             </div>
 
             <!--Editor About-->
-            <div id="tab-page-about" class="page-tab active space-y-8">
+            <div id="tab-page-about" class="page-tab space-y-8">
                 <div>
-                <h1 class="text-2xl font-bold text-slate-900">Editor de Página: About</h1>
+                    <h1 class="text-2xl font-bold text-slate-900">Editor de Página: About</h1>
+                    <p class="text-slate-500 text-sm">Modifica la sección de beneficios y el video promocional de la página About.</p>
                 </div>
+                
                 <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
                     <div class="border-b border-slate-100 pb-3">
-                        <h3 class="font-bold text-slate-800 text-base">About Page (Sobre nosotros)</h3>
+                        <h3 class="font-bold text-slate-800 text-base">ABOUT PAGE</h3>
+                        <p class="text-slate-400 text-xs">Contadores informativos de la página de nosotros.</p>
                     </div>
-                        <!-- BENEFITS SECTION star -->
-                        <div class="card mb-4 shadow-sm">
-                            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0"><i class="fas fa-handshake me-2"></i>BENEFITS SECTION: Sección Beneficios</h5>
+
+                    <!-- BENEFITS SECTION ABOUT start -->
+                    <div class="bg-white p-6 rounded-lg shadow mb-6">
+                        <form id="form-admin-benefits" enctype="multipart/form-data" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Título Principal de la Sección</label>
+                                    <input type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-teal-500" id="input-benefits-titulo" required>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Enlace del Video de YouTube / Vimeo</label>
+                                    <input type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-teal-500" id="input-benefits-video-link" placeholder="https://youtube.com/...">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Descripción de la Sección</label>
+                                    <textarea class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-teal-500" id="textarea-benefits-descripcion" rows="3" required></textarea>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <form id="form-admin-benefits" enctype="multipart/form-data">
-                                    
-                                    <div class="row">
-                                        <!-- Título y Descripción Principal -->
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label fw-bold">Título Principal de la Sección</label>
-                                            <input type="text" class="form-control" id="input-benefits-titulo" required>
+
+                            <hr class="border-slate-100">
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <!-- Beneficio 1 -->
+                                <div class="p-4 border border-slate-200 rounded-xl bg-white shadow-sm space-y-3">
+                                    <h6 class="text-sm font-bold text-teal-600 uppercase">Beneficio 1</h6>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-slate-500 uppercase">Valor (Número)</label>
+                                            <input type="number" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-teal-500" id="input-benefit1-valor" required>
                                         </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label fw-bold">Enlace del Video de YouTube / Vimeo</label>
-                                            <input type="text" class="form-control" id="input-benefits-video-link" placeholder="https://youtube.com/...">
-                                        </div>
-                                        <div class="col-md-12 mb-3">
-                                            <label class="form-label fw-bold">Descripción de la Sección</label>
-                                            <textarea class="form-control" id="textarea-benefits-descripcion" rows="2" required></textarea>
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-slate-500 uppercase">Sufijo (Ej: +, %)</label>
+                                            <input type="text" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-teal-500" id="input-benefit1-sufijo" maxLength="5" required>
                                         </div>
                                     </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase">Descripción</label>
+                                        <textarea class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-teal-500" id="textarea-benefit1-descripcion" rows="2" required></textarea>
+                                    </div>
+                                </div>
 
-                                    <hr class="my-4">
-
-                                    <!-- Beneficios Individuales (Contadores) -->
-                                    <div class="row">
-                                        <!-- Beneficio 1 -->
-                                        <div class="col-md-4 mb-3 border-end">
-                                            <h6 class="text-primary fw-bold mb-3">Beneficio 1</h6>
-                                            <div class="row">
-                                                <div class="col-6 mb-2">
-                                                    <label class="form-label small">Valor (Número)</label>
-                                                    <input type="number" class="form-control" id="input-benefit1-valor" required>
-                                                </div>
-                                                <div class="col-6 mb-2">
-                                                    <label class="form-label small">Sufijo (Ej: +, %)</label>
-                                                    <input type="text" class="form-control" id="input-benefit1-sufijo" maxLength="5" required>
-                                                </div>
-                                            </div>
-                                            <div class="mb-2">
-                                                <label class="form-label small">Descripción</label>
-                                                <textarea class="form-control" id="textarea-benefit1-descripcion" rows="2" required></textarea>
-                                            </div>
+                                <!-- Beneficio 2 -->
+                                <div class="p-4 border border-slate-200 rounded-xl bg-white shadow-sm space-y-3">
+                                    <h6 class="text-sm font-bold text-teal-600 uppercase">Beneficio 2</h6>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-slate-500 uppercase">Valor (Número)</label>
+                                            <input type="number" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-teal-500" id="input-benefit2-valor" required>
                                         </div>
-
-                                        <!-- Beneficio 2 -->
-                                        <div class="col-md-4 mb-3 border-end">
-                                            <h6 class="text-primary fw-bold mb-3">Beneficio 2</h6>
-                                            <div class="row">
-                                                <div class="col-6 mb-2">
-                                                    <label class="form-label small">Valor (Número)</label>
-                                                    <input type="number" class="form-control" id="input-benefit2-valor" required>
-                                                </div>
-                                                <div class="col-6 mb-2">
-                                                    <label class="form-label small">Sufijo (Ej: +, %)</label>
-                                                    <input type="text" class="form-control" id="input-benefit2-sufijo" maxLength="5" required>
-                                                </div>
-                                            </div>
-                                            <div class="mb-2">
-                                                <label class="form-label small">Descripción</label>
-                                                <textarea class="form-control" id="textarea-benefit2-descripcion" rows="2" required></textarea>
-                                            </div>
-                                        </div>
-
-                                        <!-- Beneficio 3 -->
-                                        <div class="col-md-4 mb-3">
-                                            <h6 class="text-primary fw-bold mb-3">Beneficio 3</h6>
-                                            <div class="row">
-                                                <div class="col-6 mb-2">
-                                                    <label class="form-label small">Valor (Número)</label>
-                                                    <input type="number" class="form-control" id="input-benefit3-valor" required>
-                                                </div>
-                                                <div class="col-6 mb-2">
-                                                    <label class="form-label small">Sufijo (Ej: +, %)</label>
-                                                    <input type="text" class="form-control" id="input-benefit3-sufijo" maxLength="5" required>
-                                                </div>
-                                            </div>
-                                            <div class="mb-2">
-                                                <label class="form-label small">Descripción</label>
-                                                <textarea class="form-control" id="textarea-benefit3-descripcion" rows="2" required></textarea>
-                                            </div>
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-slate-500 uppercase">Sufijo (Ej: +, %)</label>
+                                            <input type="text" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-teal-500" id="input-benefit2-sufijo" maxLength="5" required>
                                         </div>
                                     </div>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase">Descripción</label>
+                                        <textarea class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-teal-500" id="textarea-benefit2-descripcion" rows="2" required></textarea>
+                                    </div>
+                                </div>
 
-                                    <hr class="my-4">
-
-                                    <!-- Imagen de Portada del Video -->
-                                    <div class="row align-items-center">
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label fw-bold">Imagen de Portada (Video)</label>
-                                            <input type="file" class="form-control" id="input-benefits-imagen" accept="image/*">
-                                            <input type="hidden" id="url-benefits-imagen-actual">
-                                            <small class="text-muted">Formatos recomendados: JPG o PNG de alta resolución.</small>
+                                <!-- Beneficio 3 -->
+                                <div class="p-4 border border-slate-200 rounded-xl bg-white shadow-sm space-y-3">
+                                    <h6 class="text-sm font-bold text-teal-600 uppercase">Beneficio 3</h6>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-slate-500 uppercase">Valor (Número)</label>
+                                            <input type="number" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-teal-500" id="input-benefit3-valor" required>
                                         </div>
-                                        <div class="col-md-6 mb-3 text-center">
-                                            <p class="small fw-bold mb-1">Vista Previa de la Imagen Actual</p>
-                                            <img id="preview-benefits-imagen" src="" alt="Vista previa portada" class="img-thumbnail" style="max-height: 150px; object-fit: cover;">
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-slate-500 uppercase">Sufijo (Ej: +, %)</label>
+                                            <input type="text" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-teal-500" id="input-benefit3-sufijo" maxLength="5" required>
                                         </div>
                                     </div>
-
-                                    <div class="text-end mt-3">
-                                        <button type="submit" class="btn btn-success px-4">
-                                            <i class="fas fa-save me-1"></i> Guardar Cambios de Beneficios
-                                        </button>
+                                    <div>
+                                        <label class="block text-[10px] font-bold text-slate-500 uppercase">Descripción</label>
+                                        <textarea class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-teal-500" id="textarea-benefit3-descripcion" rows="2" required></textarea>
                                     </div>
-                                </form>
+                                </div>
                             </div>
-                        </div>
-                        <!-- BENEFITS SECTION end-->
 
+                            <hr class="border-slate-100">
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                                <div class="space-y-1.5">
+                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Imagen de Portada (Video)</label>
+                                    <input type="file" class="block w-full text-xs text-slate-600 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100" id="input-benefits-imagen" accept="image/*">
+                                    <input type="hidden" id="url-benefits-imagen-actual">
+                                    <p class="text-xs text-slate-400">Formatos recomendados: JPG o PNG de alta resolución.</p>
+                                </div>
+                                <div class="flex flex-col items-center p-3 bg-slate-50 rounded-xl border border-slate-200 w-full">
+                                    <span class="text-xs font-bold text-slate-500 uppercase mb-2">Vista Previa de la Imagen Actual</span>
+                                    <img id="preview-benefits-imagen" src="" alt="Vista previa portada" class="w-32 h-20 object-cover rounded-lg border border-slate-300">
+                                </div>
+                            </div>
+
+                            <div class="flex justify-end pt-2">
+                                <button type="submit" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold text-sm px-6 py-2.5 rounded-xl transition-all shadow-sm">
+                                    Guardar Cambios de Beneficios
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- BENEFITS SECTION ABOUT end -->
+
+                </div>
+            </div>
+
+
+            <div id="tab-page-rooms" class="page-tab space-y-8">
+                <div class="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm text-center">
+                    <h2 class="text-2xl font-bold text-slate-900">Editor de Página: Rooms (Habitaciones)</h2>
+                    <p class="text-slate-500 text-sm mt-2">Esta sección estará disponible próximamente para modificar las características de los alojamientos.</p>
+                </div>
+            </div>
+
+            <div id="tab-page-locations" class="page-tab space-y-8">
+                <div class="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm text-center">
+                    <h2 class="text-2xl font-bold text-slate-900">Editor de Página: Locations (Zonas)</h2>
+                    <p class="text-slate-500 text-sm mt-2">Esta sección estará disponible próximamente para configurar los barrios y zonas de interés.</p>
+                </div>
+            </div>
+
+            <div id="tab-page-contacts" class="page-tab space-y-8">
+                <div class="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm text-center">
+                    <h2 class="text-2xl font-bold text-slate-900">Editor de Página: Contacts (Contacto)</h2>
+                    <p class="text-slate-500 text-sm mt-2">Esta sección estará disponible próximamente para ajustar el formulario de contacto y redes sociales.</p>
                 </div>
             </div>
 
@@ -762,33 +776,80 @@
 
     <script>
 
-        function cambiarPaginaEditor(idPagina) {
+        // ==========================================
+        // FUNCIONES GLOBALES
+        // ==========================================
+        function obtenerRutaImagen(nombreImagen) {
+            if (!nombreImagen) return 'img/placeholder.jpg';
+            if (nombreImagen.startsWith('/') || nombreImagen.startsWith('http://') || nombreImagen.startsWith('https://')) {
+                return nombreImagen;
+            }
+            return `/uploads/${nombreImagen}`;
+        }
 
+        function cambiarPaginaEditor(idPagina) {
             document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
 
-            document.getElementById(`tab-page-${idPagina}`).classList.add('active');
-            document.getElementById(`btn-page-${idPagina}`).classList.add('active');
+            const tab = document.getElementById(`tab-page-${idPagina}`);
+            const btn = document.getElementById(`btn-page-${idPagina}`);
+
+            if (tab && btn) {
+                tab.classList.add('active');
+                btn.classList.add('active');
+            } else {
+                console.warn(`La pestaña o botón para '${idPagina}' no se encuentra en el DOM.`);
+            }
         }
 
+        // ==========================================
+        // CARGA INICIAL (DOMContentLoaded)
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarHeroAdmin();
+            consultarRoomsHome();
+            cargarRatingAdmin();
+            cargarSeccionReviewsAdmin();
+            cargarPromoAdmin();
 
+            if (document.getElementById('adm-about-titulo')) {
+                cargarAboutAdmin();
+            }
+
+            if (document.getElementById('form-contacts-section')) {
+                cargarContactsAdmin();
+                document.getElementById('form-contacts-section').addEventListener('submit', guardarContactsSection);
+            }
+
+            cargarBenefitsAdmin();
+            const formBenefits = document.getElementById("form-admin-benefits");
+            if (formBenefits) {
+                formBenefits.addEventListener("submit", guardarBenefitsAdmin);
+            }
+
+            const btnSubirImagen = document.getElementById('btn-subir-hero-img');
+            if (btnSubirImagen) {
+                btnSubirImagen.addEventListener('click', subirImagenHeroCMS);
+            }
+        });
+
+
+        // ==========================================
+        // HERO SECTION HOME
+        // ==========================================
         async function cargarHeroAdmin() {
             try {
-
                 const res = await fetch('/api/cms/home');
                 if (!res.ok) throw new Error("No se pudieron obtener los datos de la base de datos.");
                 const datos = await res.json();
                 
                 if (datos) {
-
                     if (document.getElementById('home-hero-titulo')) {
                         document.getElementById('home-hero-titulo').value = datos.hero_titulo || '';
                     }
                     if (document.getElementById('home-hero-descripcion')) {
                         document.getElementById('home-hero-descripcion').value = datos.hero_descripcion || '';
                     }
-                    
-
                     if (document.getElementById('home-lbl-checkin')) {
                         document.getElementById('home-lbl-checkin').value = datos.lbl_checkin || '';
                     }
@@ -808,19 +869,15 @@
                         document.getElementById('home-btn-search').value = datos.btn_search || '';
                     }
                     
-
                     const preview = document.getElementById('preview-hero-imagen');
                     if (preview && datos.hero_imagen) {
-                        preview.src = datos.hero_imagen.startsWith('/') || datos.hero_imagen.startsWith('http') 
-                            ? datos.hero_imagen 
-                            : `/uploads/${datos.hero_imagen}`;
+                        preview.src = obtenerRutaImagen(datos.hero_imagen);
                     }
                 }
             } catch (err) {
                 console.error("Error al cargar la configuración de la sección Hero:", err);
             }
         }
-
 
         async function guardarTextoCMS(columnaBD, inputId) {
             const nuevoValor = document.getElementById(inputId).value;
@@ -841,10 +898,6 @@
             }
         }
 
-    ///////////////////////////////////////////////////////////////////////////
-    //HEADER SECTION HOME start
-    ///////////////////////////////////////////////////////////////////////////
-
         async function actualizarTextoHero(columna, inputId) {
             const valor = document.getElementById(inputId).value;
             try {
@@ -864,7 +917,6 @@
             }
         }
 
-
         async function subirImagenHeroCMS() {
             const fileInput = document.getElementById('input-hero-imagen');
             const file = fileInput.files[0];
@@ -874,12 +926,10 @@
             formData.append('image', file); 
 
             try {
-
                 const resUpload = await fetch('/api/upload', { method: 'POST', body: formData });
                 const dataUpload = await resUpload.json();
                 
                 if (dataUpload.url) {
-
                     const resBD = await fetch('/api/cms/home/actualizar', {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
@@ -894,7 +944,7 @@
                         throw new Error(dataBD.error || "No se pudo actualizar la ruta en la base de datos.");
                     }
                 } else {
-                    throw new Error(dataUpload.error || "No se recibió una ruta de archivo local válida desde el servidor.");
+                    throw new Error(dataUpload.error || "No se recibió una ruta de archivo local válida.");
                 }
             } catch (error) {
                 alert("Error al procesar la imagen de forma local: " + error.message);
@@ -903,824 +953,658 @@
         }
 
 
-        document.addEventListener('DOMContentLoaded', () => {
-            cargarHeroAdmin();
-            
-            const btnSubirImagen = document.getElementById('btn-subir-hero-img');
-            if (btnSubirImagen) {
-                btnSubirImagen.addEventListener('click', subirImagenHeroCMS);
-            }
-        });
-
-
-    ///////////////////////////////////////////////////////////////////////////
-    //HEADER SECTION HOME end
-    ///////////////////////////////////////////////////////////////////////////
-
-    ///////////////////////////////////////////////////////////////////////////
-    //ROOMS SECTION start
-    ///////////////////////////////////////////////////////////////////////////
-
-    document.addEventListener('DOMContentLoaded', () => {
-    consultarRoomsHome();
-    });
-
-    async function consultarRoomsHome() {
-        try {
-            const res = await fetch('/api/home');
-            if (!res.ok) throw new Error("No se pudo obtener la configuración.");
-            const data = await res.json();
-            
-            if (data) {
-                document.getElementById('adm-rooms-titulo').value = data.rooms_titulo || '';
-                document.getElementById('adm-rooms-btn-ver-mas').value = data.rooms_btn_ver_mas || '';
-                document.getElementById('adm-rooms-lbl-precio-noche').value = data.rooms_lbl_precio_noche || '';
-                document.getElementById('adm-rooms-lbl-sleeps').value = data.rooms_lbl_sleeps || '';
-                document.getElementById('adm-rooms-lbl-beds').value = data.rooms_lbl_beds || '';
-                document.getElementById('adm-rooms-lbl-disponibilidad').value = data.rooms_lbl_disponibilidad || '';
-                document.getElementById('adm-rooms-card-titulo').value = data.rooms_card_titulo || '';
-                document.getElementById('adm-rooms-card-subtitulo').value = data.rooms_card_subtitulo || '';
-                document.getElementById('adm-rooms-card-linea1').value = data.rooms_card_linea1 || '';
-                document.getElementById('adm-rooms-card-linea2').value = data.rooms_card_linea2 || '';
-                document.getElementById('adm-rooms-card-btn').value = data.rooms_card_btn || '';
-            }
-        } catch (err) {
-            console.error("Error al cargar datos en el admin:", err);
-        }
-    }
-
-    async function guardarRoomsHome(e) {
-        e.preventDefault();
-        
-        const payload = {
-            rooms_titulo: document.getElementById('adm-rooms-titulo').value,
-            rooms_btn_ver_mas: document.getElementById('adm-rooms-btn-ver-mas').value,
-            rooms_lbl_precio_noche: document.getElementById('adm-rooms-lbl-precio-noche').value,
-            rooms_lbl_sleeps: document.getElementById('adm-rooms-lbl-sleeps').value,
-            rooms_lbl_beds: document.getElementById('adm-rooms-lbl-beds').value,
-            rooms_lbl_disponibilidad: document.getElementById('adm-rooms-lbl-disponibilidad').value,
-            rooms_card_titulo: document.getElementById('adm-rooms-card-titulo').value,
-            rooms_card_subtitulo: document.getElementById('adm-rooms-card-subtitulo').value,
-            rooms_card_linea1: document.getElementById('adm-rooms-card-linea1').value,
-            rooms_card_linea2: document.getElementById('adm-rooms-card-linea2').value,
-            rooms_card_btn: document.getElementById('adm-rooms-card-btn').value
-        };
-
-        try {
-            const res = await fetch('/api/home/rooms', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || "Error al actualizar.");
-            
-            alert("¡ROOMS SECTION actualizada con éxito!");
-        } catch (err) {
-            alert("Error: " + err.message);
-            console.error(err);
-        }
-    }
-        
-    ///////////////////////////////////////////////////////////////////////////
-    //ROOMS SECTION end
-    ///////////////////////////////////////////////////////////////////////////
-
-
-    ///////////////////////////////////////////////////////////////////////////
-    // ABOUT SECTION start
-    ///////////////////////////////////////////////////////////////////////////
-
-
-    async function cargarAboutAdmin() {
-        try {
-            const res = await fetch('/api/home/about');
-            const datos = await res.json();
-            if (!datos) return;
-
-
-            if (document.getElementById('adm-about-titulo')) {
-                document.getElementById('adm-about-titulo').value = datos.about_titulo || '';
-            }
-            if (document.getElementById('adm-about-descripcion')) {
-                document.getElementById('adm-about-descripcion').value = datos.about_descripcion || '';
-            }
-            
-
-            if (document.getElementById('adm-about-item1')) {
-                document.getElementById('adm-about-item1').value = datos.about_item1_text || '';
-            }
-            if (document.getElementById('adm-about-item2')) {
-                document.getElementById('adm-about-item2').value = datos.about_item2_text || '';
-            }
-            if (document.getElementById('adm-about-item3')) {
-                document.getElementById('adm-about-item3').value = datos.about_item3_text || '';
-            }
-            if (document.getElementById('adm-about-item4')) {
-                document.getElementById('adm-about-item4').value = datos.about_item4_text || '';
-            }
-            
-
-            if (document.getElementById('adm-about-btn1')) {
-                document.getElementById('adm-about-btn1').value = datos.about_btn1_text || '';
-            }
-            if (document.getElementById('adm-about-btn2')) {
-                document.getElementById('adm-about-btn2').value = datos.about_btn2_text || '';
-            }
-
-
-            if (document.getElementById('about-video-url')) {
-                document.getElementById('about-video-url').value = datos.about_video_url || '';
-            }
-        } catch (err) {
-            console.error("Error al cargar datos del About en el administrador:", err);
-        }
-    }
-
-
-    async function guardarAboutHome(e) {
-        e.preventDefault();
-        
-
-        const datos = {
-            about_titulo: document.getElementById('adm-about-titulo').value,
-            about_descripcion: document.getElementById('adm-about-descripcion').value,
-            about_video_url: document.getElementById('about-video-url').value, 
-            
-            about_item1_text: document.getElementById('adm-about-item1') ? document.getElementById('adm-about-item1').value : '',
-            about_item2_text: document.getElementById('adm-about-item2') ? document.getElementById('adm-about-item2').value : '',
-            about_item3_text: document.getElementById('adm-about-item3') ? document.getElementById('adm-about-item3').value : '',
-            about_item4_text: document.getElementById('adm-about-item4') ? document.getElementById('adm-about-item4').value : '',
-            about_btn1_text: document.getElementById('adm-about-btn1') ? document.getElementById('adm-about-btn1').value : '',
-            about_btn2_text: document.getElementById('adm-about-btn2') ? document.getElementById('adm-about-btn2').value : ''
-        };
-
-        try {
-            const res = await fetch('/api/home/about', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(datos)
-            });
-
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || "Error al actualizar la sección About.");
-
-            alert("¡Sección ABOUT actualizada con éxito!");
-            location.reload();
-        } catch (err) {
-            alert("Error: " + err.message);
-        }
-    }
-
-
-    document.addEventListener('DOMContentLoaded', () => {
-
-        if (document.getElementById('form-contacts-section')) {
-            cargarContactsAdmin();
-            document.getElementById('form-contacts-section').addEventListener('submit', guardarContactsSection);
-        }
-
-        if (document.getElementById('adm-about-titulo')) {
-            cargarAboutAdmin();
-        }
-    });
-
-
-    ///////////////////////////////////////////////////////////////////////////
-    // ABOUT SECTION end
-    ///////////////////////////////////////////////////////////////////////////
-
-    ///////////////////////////////////////////////////////////////////////////
-    // RATING SECTION start
-    ///////////////////////////////////////////////////////////////////////////
-
-
-    async function cargarRatingAdmin() {
-        try {
-            const res = await fetch('/api/home/rating');
-            const datosRaw = await res.json();
-            
-            console.log("Datos recibidos de /api/home/rating:", datosRaw);
-            
-            if (!datosRaw) return;
-
-            const datos = Array.isArray(datosRaw) ? datosRaw[0] : datosRaw;
-            if (!datos) return;
-
-            // Elemento 1 (Corregido a rating_item1_...)
-            if (document.getElementById('adm-rating-item1-num')) document.getElementById('adm-rating-item1-num').value = datos.rating_item1_num || '';
-            if (document.getElementById('adm-rating-item1-text')) document.getElementById('adm-rating-item1-text').value = datos.rating_item1_text || '';
-            if (document.getElementById('url-rating-item1-logo-actual')) document.getElementById('url-rating-item1-logo-actual').value = datos.rating_item1_logo || '';
-            if (datos.rating_item1_logo) {
-                const rutaLogo1 = datos.rating_item1_logo.startsWith('/uploads/') ? datos.rating_item1_logo : `/uploads/${datos.rating_item1_logo}`;
-                document.getElementById('prev-rating-item1-logo').src = rutaLogo1;
-            }
-
-            // Elemento 2 (Corregido a rating_item2_...)
-            if (document.getElementById('adm-rating-item2-num')) document.getElementById('adm-rating-item2-num').value = datos.rating_item2_num || '';
-            if (document.getElementById('adm-rating-item2-text')) document.getElementById('adm-rating-item2-text').value = datos.rating_item2_text || '';
-            if (document.getElementById('url-rating-item2-logo-actual')) document.getElementById('url-rating-item2-logo-actual').value = datos.rating_item2_logo || '';
-            if (datos.rating_item2_logo) {
-                const rutaLogo2 = datos.rating_item2_logo.startsWith('/uploads/') ? datos.rating_item2_logo : `/uploads/${datos.rating_item2_logo}`;
-                document.getElementById('prev-rating-item2-logo').src = rutaLogo2;
-            }
-
-            // Elemento 3 (Corregido a rating_item3_...)
-            if (document.getElementById('adm-rating-item3-num')) document.getElementById('adm-rating-item3-num').value = datos.rating_item3_num || '';
-            if (document.getElementById('adm-rating-item3-text')) document.getElementById('adm-rating-item3-text').value = datos.rating_item3_text || '';
-            if (document.getElementById('url-rating-item3-logo-actual')) document.getElementById('url-rating-item3-logo-actual').value = datos.rating_item3_logo || '';
-            if (datos.rating_item3_logo) {
-                const rutaLogo3 = datos.rating_item3_logo.startsWith('/uploads/') ? datos.rating_item3_logo : `/uploads/${datos.rating_item3_logo}`;
-                document.getElementById('prev-rating-item3-logo').src = rutaLogo3;
-            }
-
-            // Animación CSS
-            if (document.getElementById('adm-rating-animacion')) document.getElementById('adm-rating-animacion').value = datos.rating_animacion || '';
-
-        } catch (err) {
-            console.error("Error al cargar la sección Rating en el Admin:", err);
-        }
-    }
-
-
-    async function guardarRatingHome(e) {
-        e.preventDefault();
-        const formData = new FormData();
-
-        // Mapeamos tus IDs a las variables del FormData
-        formData.append('rating_num1', document.getElementById('adm-rating-item1-num').value);
-        formData.append('rating_text1', document.getElementById('adm-rating-item1-text').value);
-        formData.append('rating_logo1_actual', document.getElementById('url-rating-item1-logo-actual').value);
-
-        formData.append('rating_num2', document.getElementById('adm-rating-item2-num').value);
-        formData.append('rating_text2', document.getElementById('adm-rating-item2-text').value);
-        formData.append('rating_logo2_actual', document.getElementById('url-rating-item2-logo-actual').value);
-
-        formData.append('rating_num3', document.getElementById('adm-rating-item3-num').value);
-        formData.append('rating_text3', document.getElementById('adm-rating-item3-text').value);
-        formData.append('rating_logo3_actual', document.getElementById('url-rating-item3-logo-actual').value);
-        
-        // Agregamos la animación si la guardas en base de datos
-        formData.append('rating_animacion', document.getElementById('adm-rating-animacion').value);
-
-        // Leer archivos desde tus IDs de inputs tipo file
-        const logo1 = document.getElementById('input-rating-item1-logo').files[0];
-        if (logo1) formData.append('rating_logo1', logo1);
-
-        const logo2 = document.getElementById('input-rating-item2-logo').files[0];
-        if (logo2) formData.append('rating_logo2', logo2);
-
-        const logo3 = document.getElementById('input-rating-item3-logo').files[0];
-        if (logo3) formData.append('rating_logo3', logo3);
-
-        try {
-            const res = await fetch('/api/home/rating', {
-                method: 'PUT',
-                body: formData
-            });
-
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || "Error al actualizar la sección de Rating.");
-
-            alert("¡RATING SECTION actualizada con éxito!");
-            location.reload();
-        } catch (err) {
-            alert("Error al guardar: " + err.message);
-            console.error(err);
-        }
-    }
-
-
-    document.addEventListener('DOMContentLoaded', () => {
-        cargarRatingAdmin();
-    });
-
-
-    ///////////////////////////////////////////////////////////////////////////
-    // REVIEWS SECTION start
-    ///////////////////////////////////////////////////////////////////////////
-
-    async function cargarSeccionReviewsAdmin() {
-        try {
-            const res = await fetch('/api/home/reviews');
-            if (!res.ok) throw new Error("Error al obtener la lista de reviews.");
-            const data = await res.json();
-
-            // Prefilar el campo del título general
-            document.getElementById('adm-reviews-titulo-general').value = data.reviews_titulo;
-
-            // Limpiar y renderizar la lista completa de comentarios
-            const listaContenedor = document.getElementById('contenedor-lista-reviews');
-            listaContenedor.innerHTML = '';
-
-            if (data.comentarios && data.comentarios.length === 0) {
-                listaContenedor.innerHTML = `<p class="text-sm text-slate-400 italic p-4">No hay comentarios registrados.</p>`;
-                return;
-            }
-
-            data.comentarios.forEach(review => {
-                const card = document.createElement('div');
-                card.className = "p-4 bg-white border border-slate-200 rounded-lg shadow-sm grid grid-cols-1 gap-4";
-                card.innerHTML = `
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase">Nombre</label>
-                            <input type="text" id="edit-name-${review.id}" value="${review.name}" class="w-full px-2 py-1 border border-slate-300 rounded text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase">Fecha de Estancia</label>
-                            <input type="text" id="edit-date-${review.id}" value="${review.date_text}" class="w-full px-2 py-1 border border-slate-300 rounded text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase">Estrellas</label>
-                            <select id="edit-stars-${review.id}" class="w-full px-2 py-1 border border-slate-300 rounded text-sm bg-white">
-                                <option value="5" ${review.stars === 5 ? 'selected' : ''}>5 Estrellas</option>
-                                <option value="4" ${review.stars === 4 ? 'selected' : ''}>4 Estrellas</option>
-                                <option value="3" ${review.stars === 3 ? 'selected' : ''}>3 Estrellas</option>
-                                <option value="2" ${review.stars === 2 ? 'selected' : ''}>2 Estrellas</option>
-                                <option value="1" ${review.stars === 1 ? 'selected' : ''}>1 Estrella</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase">Título del Comentario</label>
-                            <input type="text" id="edit-title-${review.id}" value="${review.title}" class="w-full px-2 py-1 border border-slate-300 rounded text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase">Texto</label>
-                            <textarea id="edit-text-${review.id}" rows="2" class="w-full px-2 py-1 border border-slate-300 rounded text-sm">${review.text}</textarea>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-2 rounded border border-slate-200">
-                        <div class="flex items-center gap-2">
-                            <img id="prev-edit-bg-${review.id}" src="${review.bg_image}" class="w-10 h-10 object-cover rounded border">
-                            <div class="flex-1">
-                                <label class="block text-[10px] font-bold text-slate-500 uppercase">Cambiar Imagen Fondo</label>
-                                <input type="hidden" id="url-edit-bg-${review.id}" value="${review.bg_image}">
-                                <input type="file" class="text-xs text-slate-500 w-full" onchange="subirImagenReview('file-edit-bg-${review.id}', 'prev-edit-bg-${review.id}', 'url-edit-bg-${review.id}')" id="file-edit-bg-${review.id}">
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <img id="prev-edit-avatar-${review.id}" src="${review.avatar}" class="w-10 h-10 object-cover rounded border">
-                            <div class="flex-1">
-                                <label class="block text-[10px] font-bold text-slate-500 uppercase">Cambiar Avatar</label>
-                                <input type="hidden" id="url-edit-avatar-${review.id}" value="${review.avatar}">
-                                <input type="file" class="text-xs text-slate-500 w-full" onchange="subirImagenReview('file-edit-avatar-${review.id}', 'prev-edit-avatar-${review.id}', 'url-edit-avatar-${review.id}')" id="file-edit-avatar-${review.id}">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex justify-end gap-2 border-t border-slate-100 pt-2">
-                        <button type="button" onclick="guardarEdicionComentario(${review.id})" class="px-3 py-1 bg-teal-600 text-white rounded text-xs font-medium hover:bg-teal-700 transition">Guardar Cambios</button>
-                        <button type="button" onclick="eliminarComentario(${review.id})" class="px-3 py-1 bg-rose-600 text-white rounded text-xs font-medium hover:bg-rose-700 transition">Eliminar</button>
-                    </div>
-                `;
-                listaContenedor.appendChild(card);
-            });
-
-        } catch (err) {
-            console.error("Error al cargar la sección de administración:", err);
-        }
-    }
-
-    async function subirImagenReview(inputId, imagePreviewId, hiddenInputId) {
-        const fileInput = document.getElementById(inputId);
-        const file = fileInput.files[0];
-        if (!file) return;
-
-        const formData = new FormData();
-        formData.append('image', file);
-
-        try {
-            const res = await fetch('/api/upload', { method: 'POST', body: formData });
-            const data = await res.json();
-
-            if (data.url) {
-                // Guarda la ruta del servidor local (ej: /uploads/archivo.jpg) tanto en la vista como en el input oculto
-                document.getElementById(imagePreviewId).src = data.url;
-                document.getElementById(hiddenInputId).value = data.url;
-            } else {
-                alert("No se pudo obtener la ruta de almacenamiento local para la imagen.");
-            }
-        } catch (err) {
-            console.error("Error al subir archivo de forma local:", err);
-            alert("Ocurrió un error al guardar la imagen en el servidor.");
-        }
-    }
-
-
-    async function actualizarTituloReviews(event) {
-        event.preventDefault();
-        const titulo = document.getElementById('adm-reviews-titulo-general').value;
-
-        try {
-            const res = await fetch('/api/home/reviews/title', {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ reviews_titulo: titulo })
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error);
-
-            alert("¡Título general actualizado con éxito!");
-        } catch (err) {
-            alert("Error: " + err.message);
-        }
-    }
-
-
-    async function agregarComentario() {
-        const payload = {
-            name: document.getElementById('new-rev-name').value,
-            date_text: document.getElementById('new-rev-date').value,
-            stars: parseInt(document.getElementById('new-rev-stars').value),
-            title: document.getElementById('new-rev-title').value,
-            text: document.getElementById('new-rev-text').value,
-            bg_image: document.getElementById('url-new-rev-bg').value,
-            avatar: document.getElementById('url-new-rev-avatar').value
-        };
-
-        if (!payload.name || !payload.title || !payload.text) {
-            return alert("Por favor complete los campos de Nombre, Título y Texto del comentario.");
-        }
-
-        try {
-            const res = await fetch('/api/home/reviews', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error);
-
-            alert("¡Comentario añadido correctamente!");
-            
-            // Limpiar el formulario de ingreso
-            document.getElementById('new-rev-name').value = '';
-            document.getElementById('new-rev-date').value = '';
-            document.getElementById('new-rev-title').value = '';
-            document.getElementById('new-rev-text').value = '';
-            document.getElementById('url-new-rev-bg').value = 'img/placeholder.jpg';
-            document.getElementById('url-new-rev-avatar').value = 'img/placeholder.jpg';
-            document.getElementById('prev-new-rev-bg').src = 'img/placeholder.jpg';
-            document.getElementById('prev-new-rev-avatar').src = 'img/placeholder.jpg';
-
-            // Recargar la lista
-            cargarSeccionReviewsAdmin();
-        } catch (err) {
-            alert("Error al agregar: " + err.message);
-        }
-    }
-
-
-    async function guardarEdicionComentario(id) {
-        const payload = {
-            name: document.getElementById(`edit-name-${id}`).value,
-            date_text: document.getElementById(`edit-date-${id}`).value,
-            stars: parseInt(document.getElementById(`edit-stars-${id}`).value),
-            title: document.getElementById(`edit-title-${id}`).value,
-            text: document.getElementById(`edit-text-${id}`).value,
-            bg_image: document.getElementById(`url-edit-bg-${id}`).value,
-            avatar: document.getElementById(`url-edit-avatar-${id}`).value
-        };
-
-        try {
-            const res = await fetch(`/api/home/reviews/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error);
-
-            alert("¡Comentario actualizado correctamente!");
-            cargarSeccionReviewsAdmin();
-        } catch (err) {
-            alert("Error al actualizar: " + err.message);
-        }
-    }
-
-
-    async function eliminarComentario(id) {
-        if (!confirm("¿Está seguro de que desea eliminar permanentemente este comentario?")) return;
-
-        try {
-            const res = await fetch(`/api/home/reviews/${id}`, { method: 'DELETE' });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error);
-
-            alert("¡Comentario eliminado!");
-            cargarSeccionReviewsAdmin();
-        } catch (err) {
-            alert("Error al eliminar: " + err.message);
-        }
-    }
-
-
-    document.addEventListener('DOMContentLoaded', () => {
-        cargarSeccionReviewsAdmin();
-    });
-
-    ///////////////////////////////////////////////////////////////////////////
-    // REVIEWS SECTION end
-    ///////////////////////////////////////////////////////////////////////////
-
-    ///////////////////////////////////////////////////////////////////////////
-    // PROMO SECTION start
-    ///////////////////////////////////////////////////////////////////////////
-
-    async function cargarPromoAdmin() {
-        try {
-            const res = await fetch('/api/home/promo');
-            const data = await res.json();
-
-            document.getElementById('adm-promo-titulo').value = data.promo_titulo || '';
-            document.getElementById('adm-promo-descripcion').value = data.promo_descripcion || '';
-            document.getElementById('adm-promo-item1-title').value = data.promo_item1_title || '';
-            document.getElementById('adm-promo-item1-text').value = data.promo_item1_text || '';
-            document.getElementById('adm-promo-item2-title').value = data.promo_item2_title || '';
-            document.getElementById('adm-promo-item2-text').value = data.promo_item2_text || '';
-            document.getElementById('adm-promo-review-text').value = data.promo_review_text || '';
-            document.getElementById('adm-promo-review-name').value = data.promo_review_name || '';
-            document.getElementById('adm-promo-img-actual').value = data.promo_imagen || '';
-        } catch (err) {
-            console.error("Error al cargar configuración de la sección Promo:", err);
-        }
-    }
-
-
-    async function guardarPromoAdmin(e) {
-        e.preventDefault();
-        const formData = new FormData();
-
-        formData.append('promo_titulo', document.getElementById('adm-promo-titulo').value);
-        formData.append('promo_descripcion', document.getElementById('adm-promo-descripcion').value);
-        formData.append('promo_item1_title', document.getElementById('adm-promo-item1-title').value);
-        formData.append('promo_item1_text', document.getElementById('adm-promo-item1-text').value);
-        formData.append('promo_item2_title', document.getElementById('adm-promo-item2-title').value);
-        formData.append('promo_item2_text', document.getElementById('adm-promo-item2-text').value);
-        formData.append('promo_review_text', document.getElementById('adm-promo-review-text').value);
-        formData.append('promo_review_name', document.getElementById('adm-promo-review-name').value);
-        
-        formData.append('promo_imagen_actual', document.getElementById('adm-promo-img-actual').value);
-
-        const fileInput = document.getElementById('adm-promo-file');
-
-        if (fileInput && fileInput.files[0]) {
-            formData.append('promo_imagen', fileInput.files[0]);
-        }
-
-        try {
-            const res = await fetch('/api/home/promo', { method: 'PUT', body: formData });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || "Error al actualizar.");
-            
-            alert("¡PROMO SECTION guardada con éxito de forma local!");
-            cargarPromoAdmin(); 
-        } catch (err) {
-            alert("Error: " + err.message);
-            console.error(err);
-        }
-    }
-
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const formPromo = document.getElementById('form-promo-section');
-        if (formPromo) {
-            cargarPromoAdmin();
-            formPromo.addEventListener('submit', guardarPromoAdmin); 
-        }
-    });
-
-
-    ///////////////////////////////////////////////////////////////////////////
-    // PROMO SECTION end
-    ///////////////////////////////////////////////////////////////////////////
-
-    ///////////////////////////////////////////////////////////////////////////
-    // CONTACTS SECTION start
-    ///////////////////////////////////////////////////////////////////////////
-
-    async function cargarContactsAdmin() {
-        try {
-            const res = await fetch('/api/home/contacts'); 
-            const datos = await res.json();
-            if (!datos) return;
-
-            document.getElementById('adm-contacts-titulo').value = datos.contacts_titulo || '';
-            document.getElementById('adm-contacts-descripcion').value = datos.contacts_descripcion || '';
-            document.getElementById('url-contacts-imagen-actual').value = datos.contacts_imagen || '';
-
-            document.getElementById('adm-contacts-tel-titulo').value = datos.contacts_tel_titulo || '';
-            document.getElementById('adm-contacts-tel1').value = datos.contacts_tel1 || '';
-            document.getElementById('adm-contacts-tel2').value = datos.contacts_tel2 || '';
-
-            document.getElementById('adm-contacts-email-titulo').value = datos.contacts_email_titulo || '';
-            document.getElementById('adm-contacts-email1').value = datos.contacts_email1 || '';
-            document.getElementById('adm-contacts-email2').value = datos.contacts_email2 || '';
-
-            document.getElementById('adm-contacts-loc-titulo').value = datos.contacts_loc_titulo || '';
-            document.getElementById('adm-contacts-loc1').value = datos.contacts_loc1 || '';
-            document.getElementById('adm-contacts-loc2').value = datos.contacts_loc2 || '';
-
-            document.getElementById('adm-contacts-work-titulo').value = datos.contacts_work_titulo || '';
-            document.getElementById('adm-contacts-work1').value = datos.contacts_work1 || '';
-            document.getElementById('adm-contacts-work2').value = datos.contacts_work2 || '';
-        } catch (err) {
-            console.error("Error al cargar configuración de contactos en el Administrador:", err);
-        }
-    }
-
-
-    async function guardarContactsSection(event) {
-        event.preventDefault();
-
-        const formData = new FormData();
-        formData.append('contacts_titulo', document.getElementById('adm-contacts-titulo').value);
-        formData.append('contacts_descripcion', document.getElementById('adm-contacts-descripcion').value);
-        formData.append('contacts_imagen_actual', document.getElementById('url-contacts-imagen-actual').value);
-
-        formData.append('contacts_tel_titulo', document.getElementById('adm-contacts-tel-titulo').value);
-        formData.append('contacts_tel1', document.getElementById('adm-contacts-tel1').value);
-        formData.append('contacts_tel2', document.getElementById('adm-contacts-tel2').value);
-
-        formData.append('contacts_email_titulo', document.getElementById('adm-contacts-email-titulo').value);
-        formData.append('contacts_email1', document.getElementById('adm-contacts-email1').value);
-        formData.append('contacts_email2', document.getElementById('adm-contacts-email2').value);
-
-        formData.append('contacts_loc_titulo', document.getElementById('adm-contacts-loc-titulo').value);
-        formData.append('contacts_loc1', document.getElementById('adm-contacts-loc1').value);
-        formData.append('contacts_loc2', document.getElementById('adm-contacts-loc2').value);
-
-        formData.append('contacts_work_titulo', document.getElementById('adm-contacts-work-titulo').value);
-        formData.append('contacts_work1', document.getElementById('adm-contacts-work1').value);
-        formData.append('contacts_work2', document.getElementById('adm-contacts-work2').value);
-
-        const inputImagen = document.getElementById('input-contacts-imagen');
-        if (inputImagen && inputImagen.files[0]) {
-            formData.append('contacts_imagen', inputImagen.files[0]);
-        }
-
-        try {
-            const res = await fetch('/api/home/contacts', {
-                method: 'PUT',
-                body: formData
-            });
-
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || "Error al actualizar la sección de contactos.");
-
-            alert("¡CONTACTS SECTION actualizada localmente con éxito!");
-            location.reload();
-        } catch (err) {
-            alert("Error: " + err.message);
-            console.error(err);
-        }
-    }
-
-
-    document.addEventListener('DOMContentLoaded', () => {
-        if (document.getElementById('form-contacts-section')) {
-            cargarContactsAdmin();
-            document.getElementById('form-contacts-section').addEventListener('submit', guardarContactsSection);
-        }
-    });
-
-    ///////////////////////////////////////////////////////////////////////////
-    // CONTACTS SECTION end
-    ///////////////////////////////////////////////////////////////////////////
-
-    //////////////////////////////////////////////////////////////////////////
-    // (ABOUT) BENEFITS SECTION start
-    /////////////////////////////////////////////////////////////////////////
-
-    document.addEventListener("DOMContentLoaded", () => {
-        cargarBenefitsAdmin();
-
-        // Event listener para el envío del formulario
-        const formBenefits = document.getElementById("form-admin-benefits");
-        if (formBenefits) {
-            formBenefits.addEventListener("submit", guardarBenefitsAdmin);
-        }
-    });
-
-    // Función para cargar datos actuales en el formulario del Administrador
-    async function cargarBenefitsAdmin() {
-        try {
-            const response = await fetch('/api/about/benefits');
-            if (!response.ok) throw new Error("Error al obtener datos de Beneficios.");
-            const datos = await response.json();
-
-            if (datos) {
-                // Textos y Enlaces
-                document.getElementById('input-benefits-titulo').value = datos.benefits_titulo || '';
-                document.getElementById('textarea-benefits-descripcion').value = datos.benefits_descripcion || '';
-                document.getElementById('input-benefits-video-link').value = datos.benefits_video_link || '';
-
-                // Beneficio 1
-                document.getElementById('input-benefit1-valor').value = datos.benefit1_valor || 0;
-                document.getElementById('input-benefit1-sufijo').value = datos.benefit1_sufijo || '';
-                document.getElementById('textarea-benefit1-descripcion').value = datos.benefit1_descripcion || '';
-
-                // Beneficio 2
-                document.getElementById('input-benefit2-valor').value = datos.benefit2_valor || 0;
-                document.getElementById('input-benefit2-sufijo').value = datos.benefit2_sufijo || '';
-                document.getElementById('textarea-benefit2-descripcion').value = datos.benefit2_descripcion || '';
-
-                // Beneficio 3
-                document.getElementById('input-benefit3-valor').value = datos.benefit3_valor || 0;
-                document.getElementById('input-benefit3-sufijo').value = datos.benefit3_sufijo || '';
-                document.getElementById('textarea-benefit3-descripcion').value = datos.benefit3_descripcion || '';
-
-                // Imagen
-                document.getElementById('url-benefits-imagen-actual').value = datos.benefits_imagen || '';
+        // ==========================================
+        // ROOMS SECTION HOME
+        // ==========================================
+        async function consultarRoomsHome() {
+            try {
+                const res = await fetch('/api/home');
+                if (!res.ok) throw new Error("No se pudo obtener la configuración.");
+                const data = await res.json();
                 
-                // Render de vista previa segura
-                const previewImg = document.getElementById('preview-benefits-imagen');
-                if (previewImg) {
-                    previewImg.src = obtenerRutaImagen(datos.benefits_imagen);
+                if (data) {
+                    document.getElementById('adm-rooms-titulo').value = data.rooms_titulo || '';
+                    document.getElementById('adm-rooms-btn-ver-mas').value = data.rooms_btn_ver_mas || '';
+                    document.getElementById('adm-rooms-lbl-precio-noche').value = data.rooms_lbl_precio_noche || '';
+                    document.getElementById('adm-rooms-lbl-sleeps').value = data.rooms_lbl_sleeps || '';
+                    document.getElementById('adm-rooms-lbl-beds').value = data.rooms_lbl_beds || '';
+                    document.getElementById('adm-rooms-lbl-disponibilidad').value = data.rooms_lbl_disponibilidad || '';
+                    document.getElementById('adm-rooms-card-titulo').value = data.rooms_card_titulo || '';
+                    document.getElementById('adm-rooms-card-subtitulo').value = data.rooms_card_subtitulo || '';
+                    document.getElementById('adm-rooms-card-linea1').value = data.rooms_card_linea1 || '';
+                    document.getElementById('adm-rooms-card-linea2').value = data.rooms_card_linea2 || '';
+                    document.getElementById('adm-rooms-card-btn').value = data.rooms_card_btn || '';
                 }
+            } catch (err) {
+                console.error("Error al cargar datos en el admin:", err);
             }
-        } catch (err) {
-            console.error("Error al cargar la sección de beneficios en el administrador:", err);
-        }
-    }
-
-    // Función para guardar los cambios del Administrador
-    async function guardarBenefitsAdmin(e) {
-        e.preventDefault();
-
-        const formData = new FormData();
-        
-        // Adjuntar inputs de texto y numéricos
-        formData.append('benefits_titulo', document.getElementById('input-benefits-titulo').value);
-        formData.append('benefits_descripcion', document.getElementById('textarea-benefits-descripcion').value);
-        formData.append('benefits_video_link', document.getElementById('input-benefits-video-link').value);
-
-        // Adjuntar Beneficio 1
-        formData.append('benefit1_valor', document.getElementById('input-benefit1-valor').value);
-        formData.append('benefit1_sufijo', document.getElementById('input-benefit1-sufijo').value);
-        formData.append('benefit1_descripcion', document.getElementById('textarea-benefit1-descripcion').value);
-
-        // Adjuntar Beneficio 2
-        formData.append('benefit2_valor', document.getElementById('input-benefit2-valor').value);
-        formData.append('benefit2_sufijo', document.getElementById('input-benefit2-sufijo').value);
-        formData.append('benefit2_descripcion', document.getElementById('textarea-benefit2-descripcion').value);
-
-        // Adjuntar Beneficio 3
-        formData.append('benefit3_valor', document.getElementById('input-benefit3-valor').value);
-        formData.append('benefit3_sufijo', document.getElementById('input-benefit3-sufijo').value);
-        formData.append('benefit3_descripcion', document.getElementById('textarea-benefit3-descripcion').value);
-
-        // Adjuntar Imagen
-        formData.append('benefits_imagen_actual', document.getElementById('url-benefits-imagen-actual').value);
-        
-        const fileInput = document.getElementById('input-benefits-imagen');
-        if (fileInput && fileInput.files[0]) {
-            formData.append('benefits_imagen', fileInput.files[0]);
         }
 
-        try {
-            const response = await fetch('/api/about/benefits', {
-                method: 'PUT',
-                body: formData // Enviamos como multipart/form-data
-            });
+        async function guardarRoomsHome(e) {
+            e.preventDefault();
+            const payload = {
+                rooms_titulo: document.getElementById('adm-rooms-titulo').value,
+                rooms_btn_ver_mas: document.getElementById('adm-rooms-btn-ver-mas').value,
+                rooms_lbl_precio_noche: document.getElementById('adm-rooms-lbl-precio-noche').value,
+                rooms_lbl_sleeps: document.getElementById('adm-rooms-lbl-sleeps').value,
+                rooms_lbl_beds: document.getElementById('adm-rooms-lbl-beds').value,
+                rooms_lbl_disponibilidad: document.getElementById('adm-rooms-lbl-disponibilidad').value,
+                rooms_card_titulo: document.getElementById('adm-rooms-card-titulo').value,
+                rooms_card_subtitulo: document.getElementById('adm-rooms-card-subtitulo').value,
+                rooms_card_linea1: document.getElementById('adm-rooms-card-linea1').value,
+                rooms_card_linea2: document.getElementById('adm-rooms-card-linea2').value,
+                rooms_card_btn: document.getElementById('adm-rooms-card-btn').value
+            };
 
-            if (!response.ok) throw new Error("Error al intentar guardar los beneficios.");
-            const result = await response.json();
+            try {
+                const res = await fetch('/api/home/rooms', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Error al actualizar.");
+                alert("¡ROOMS SECTION actualizada con éxito!");
+            } catch (err) {
+                alert("Error: " + err.message);
+                console.error(err);
+            }
+        }
 
-            alert("¡Éxito! " + result.message);
+
+        // ==========================================
+        // ABOUT SECTION HOME
+        // ==========================================
+        async function cargarAboutAdmin() {
+            try {
+                const res = await fetch('/api/home/about');
+                const datos = await res.json();
+                if (!datos) return;
+
+                if (document.getElementById('adm-about-titulo')) {
+                    document.getElementById('adm-about-titulo').value = datos.about_titulo || '';
+                }
+                if (document.getElementById('adm-about-descripcion')) {
+                    document.getElementById('adm-about-descripcion').value = datos.about_descripcion || '';
+                }
+                if (document.getElementById('adm-about-item1')) {
+                    document.getElementById('adm-about-item1').value = datos.about_item1_text || '';
+                }
+                if (document.getElementById('adm-about-item2')) {
+                    document.getElementById('adm-about-item2').value = datos.about_item2_text || '';
+                }
+                if (document.getElementById('adm-about-item3')) {
+                    document.getElementById('adm-about-item3').value = datos.about_item3_text || '';
+                }
+                if (document.getElementById('adm-about-item4')) {
+                    document.getElementById('adm-about-item4').value = datos.about_item4_text || '';
+                }
+                if (document.getElementById('adm-about-btn1')) {
+                    document.getElementById('adm-about-btn1').value = datos.about_btn1_text || '';
+                }
+                if (document.getElementById('adm-about-btn2')) {
+                    document.getElementById('adm-about-btn2').value = datos.about_btn2_text || '';
+                }
+                if (document.getElementById('about-video-url')) {
+                    document.getElementById('about-video-url').value = datos.about_video_url || '';
+                }
+            } catch (err) {
+                console.error("Error al cargar datos del About en el administrador:", err);
+            }
+        }
+
+        async function guardarAboutHome(e) {
+            e.preventDefault();
+            const datos = {
+                about_titulo: document.getElementById('adm-about-titulo').value,
+                about_descripcion: document.getElementById('adm-about-descripcion').value,
+                about_video_url: document.getElementById('about-video-url').value, 
+                about_item1_text: document.getElementById('adm-about-item1') ? document.getElementById('adm-about-item1').value : '',
+                about_item2_text: document.getElementById('adm-about-item2') ? document.getElementById('adm-about-item2').value : '',
+                about_item3_text: document.getElementById('adm-about-item3') ? document.getElementById('adm-about-item3').value : '',
+                about_item4_text: document.getElementById('adm-about-item4') ? document.getElementById('adm-about-item4').value : '',
+                about_btn1_text: document.getElementById('adm-about-btn1') ? document.getElementById('adm-about-btn1').value : '',
+                about_btn2_text: document.getElementById('adm-about-btn2') ? document.getElementById('adm-about-btn2').value : ''
+            };
+
+            try {
+                const res = await fetch('/api/home/about', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datos)
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Error al actualizar la sección About.");
+                alert("¡Sección ABOUT actualizada con éxito!");
+                location.reload();
+            } catch (err) {
+                alert("Error: " + err.message);
+            }
+        }
+
+
+        // ==========================================
+        // RATING SECTION HOME
+        // ==========================================
+        async function cargarRatingAdmin() {
+            try {
+                const res = await fetch('/api/home/rating');
+                const datosRaw = await res.json();
+                if (!datosRaw) return;
+
+                const datos = Array.isArray(datosRaw) ? datosRaw[0] : datosRaw;
+                if (!datos) return;
+
+                // Elemento 1
+                if (document.getElementById('adm-rating-item1-num')) document.getElementById('adm-rating-item1-num').value = datos.rating_item1_num || '';
+                if (document.getElementById('adm-rating-item1-text')) document.getElementById('adm-rating-item1-text').value = datos.rating_item1_text || '';
+                if (document.getElementById('url-rating-item1-logo-actual')) document.getElementById('url-rating-item1-logo-actual').value = datos.rating_item1_logo || '';
+                if (datos.rating_item1_logo) {
+                    document.getElementById('prev-rating-item1-logo').src = obtenerRutaImagen(datos.rating_item1_logo);
+                }
+
+                // Elemento 2
+                if (document.getElementById('adm-rating-item2-num')) document.getElementById('adm-rating-item2-num').value = datos.rating_item2_num || '';
+                if (document.getElementById('adm-rating-item2-text')) document.getElementById('adm-rating-item2-text').value = datos.rating_item2_text || '';
+                if (document.getElementById('url-rating-item2-logo-actual')) document.getElementById('url-rating-item2-logo-actual').value = datos.rating_item2_logo || '';
+                if (datos.rating_item2_logo) {
+                    document.getElementById('prev-rating-item2-logo').src = obtenerRutaImagen(datos.rating_item2_logo);
+                }
+
+                // Elemento 3
+                if (document.getElementById('adm-rating-item3-num')) document.getElementById('adm-rating-item3-num').value = datos.rating_item3_num || '';
+                if (document.getElementById('adm-rating-item3-text')) document.getElementById('adm-rating-item3-text').value = datos.rating_item3_text || '';
+                if (document.getElementById('url-rating-item3-logo-actual')) document.getElementById('url-rating-item3-logo-actual').value = datos.rating_item3_logo || '';
+                if (datos.rating_item3_logo) {
+                    document.getElementById('prev-rating-item3-logo').src = obtenerRutaImagen(datos.rating_item3_logo);
+                }
+
+                if (document.getElementById('adm-rating-animacion')) document.getElementById('adm-rating-animacion').value = datos.rating_animacion || '';
+            } catch (err) {
+                console.error("Error al cargar la sección Rating en el Admin:", err);
+            }
+        }
+
+        async function guardarRatingHome(e) {
+            e.preventDefault();
+            const formData = new FormData();
+
+            formData.append('rating_num1', document.getElementById('adm-rating-item1-num').value);
+            formData.append('rating_text1', document.getElementById('adm-rating-item1-text').value);
+            formData.append('rating_logo1_actual', document.getElementById('url-rating-item1-logo-actual').value);
+
+            formData.append('rating_num2', document.getElementById('adm-rating-item2-num').value);
+            formData.append('rating_text2', document.getElementById('adm-rating-item2-text').value);
+            formData.append('rating_logo2_actual', document.getElementById('url-rating-item2-logo-actual').value);
+
+            formData.append('rating_num3', document.getElementById('adm-rating-item3-num').value);
+            formData.append('rating_text3', document.getElementById('adm-rating-item3-text').value);
+            formData.append('rating_logo3_actual', document.getElementById('url-rating-item3-logo-actual').value);
             
-            // Limpiamos el selector de archivo de imagen
-            if (fileInput) fileInput.value = '';
-            
-            // Recargamos el estado del formulario con el nuevo diseño
-            await cargarBenefitsAdmin();
-        } catch (err) {
-            console.error("Error al guardar cambios de beneficios:", err);
-            alert("Ocurrió un error al intentar guardar los datos.");
+            formData.append('rating_animacion', document.getElementById('adm-rating-animacion').value);
+
+            const logo1 = document.getElementById('input-rating-item1-logo').files[0];
+            if (logo1) formData.append('rating_logo1', logo1);
+
+            const logo2 = document.getElementById('input-rating-item2-logo').files[0];
+            if (logo2) formData.append('rating_logo2', logo2);
+
+            const logo3 = document.getElementById('input-rating-item3-logo').files[0];
+            if (logo3) formData.append('rating_logo3', logo3);
+
+            try {
+                const res = await fetch('/api/home/rating', { method: 'PUT', body: formData });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Error al actualizar la sección de Rating.");
+                alert("¡RATING SECTION actualizada con éxito!");
+                location.reload();
+            } catch (err) {
+                alert("Error al guardar: " + err.message);
+            }
         }
-    }
-
-    //////////////////////////////////////////////////////////////////////////
-    // (ABOUT) BENEFITS SECTION end
-    /////////////////////////////////////////////////////////////////////////
 
 
+        // ==========================================
+        // REVIEWS SECTION HOME
+        // ==========================================
+        async function cargarSeccionReviewsAdmin() {
+            try {
+                const res = await fetch('/api/home/reviews');
+                if (!res.ok) throw new Error("Error al obtener la lista de reviews.");
+                const data = await res.json();
+
+                document.getElementById('adm-reviews-titulo-general').value = data.reviews_titulo;
+                const listaContenedor = document.getElementById('contenedor-lista-reviews');
+                listaContenedor.innerHTML = '';
+
+                if (data.comentarios && data.comentarios.length === 0) {
+                    listaContenedor.innerHTML = `<p class="text-sm text-slate-400 italic p-4">No hay comentarios registrados.</p>`;
+                    return;
+                }
+
+                data.comentarios.forEach(review => {
+                    const card = document.createElement('div');
+                    card.className = "p-4 bg-white border border-slate-200 rounded-lg shadow-sm grid grid-cols-1 gap-4";
+                    card.innerHTML = `
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase">Nombre</label>
+                                <input type="text" id="edit-name-${review.id}" value="${review.name}" class="w-full px-2 py-1 border border-slate-300 rounded text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase">Fecha de Estancia</label>
+                                <input type="text" id="edit-date-${review.id}" value="${review.date_text}" class="w-full px-2 py-1 border border-slate-300 rounded text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase">Estrellas</label>
+                                <select id="edit-stars-${review.id}" class="w-full px-2 py-1 border border-slate-300 rounded text-sm bg-white">
+                                    <option value="5" ${review.stars === 5 ? 'selected' : ''}>5 Estrellas</option>
+                                    <option value="4" ${review.stars === 4 ? 'selected' : ''}>4 Estrellas</option>
+                                    <option value="3" ${review.stars === 3 ? 'selected' : ''}>3 Estrellas</option>
+                                    <option value="2" ${review.stars === 2 ? 'selected' : ''}>2 Estrellas</option>
+                                    <option value="1" ${review.stars === 1 ? 'selected' : ''}>1 Estrella</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase">Título del Comentario</label>
+                                <input type="text" id="edit-title-${review.id}" value="${review.title}" class="w-full px-2 py-1 border border-slate-300 rounded text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase">Texto</label>
+                                <textarea id="edit-text-${review.id}" rows="2" class="w-full px-2 py-1 border border-slate-300 rounded text-sm">${review.text}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-2 rounded border border-slate-200">
+                            <div class="flex items-center gap-2">
+                                <img id="prev-edit-bg-${review.id}" src="${review.bg_image}" class="w-10 h-10 object-cover rounded border">
+                                <div class="flex-1">
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase">Cambiar Imagen Fondo</label>
+                                    <input type="hidden" id="url-edit-bg-${review.id}" value="${review.bg_image}">
+                                    <input type="file" class="text-xs text-slate-500 w-full" onchange="subirImagenReview('file-edit-bg-${review.id}', 'prev-edit-bg-${review.id}', 'url-edit-bg-${review.id}')" id="file-edit-bg-${review.id}">
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <img id="prev-edit-avatar-${review.id}" src="${review.avatar}" class="w-10 h-10 object-cover rounded border">
+                                <div class="flex-1">
+                                    <label class="block text-[10px] font-bold text-slate-500 uppercase">Cambiar Avatar</label>
+                                    <input type="hidden" id="url-edit-avatar-${review.id}" value="${review.avatar}">
+                                    <input type="file" class="text-xs text-slate-500 w-full" onchange="subirImagenReview('file-edit-avatar-${review.id}', 'prev-edit-avatar-${review.id}', 'url-edit-avatar-${review.id}')" id="file-edit-avatar-${review.id}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end gap-2 border-t border-slate-100 pt-2">
+                            <button type="button" onclick="guardarEdicionComentario(${review.id})" class="px-3 py-1 bg-teal-600 text-white rounded text-xs font-medium hover:bg-teal-700 transition">Guardar Cambios</button>
+                            <button type="button" onclick="eliminarComentario(${review.id})" class="px-3 py-1 bg-rose-600 text-white rounded text-xs font-medium hover:bg-rose-700 transition">Eliminar</button>
+                        </div>
+                    `;
+                    listaContenedor.appendChild(card);
+                });
+            } catch (err) {
+                console.error("Error al cargar la sección de administración:", err);
+            }
+        }
+
+        async function subirImagenReview(inputId, imagePreviewId, hiddenInputId) {
+            const fileInput = document.getElementById(inputId);
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                const res = await fetch('/api/upload', { method: 'POST', body: formData });
+                const data = await res.json();
+
+                if (data.url) {
+                    document.getElementById(imagePreviewId).src = data.url;
+                    document.getElementById(hiddenInputId).value = data.url;
+                } else {
+                    alert("No se pudo obtener la ruta de almacenamiento local para la imagen.");
+                }
+            } catch (err) {
+                console.error("Error al subir archivo de forma local:", err);
+                alert("Ocurrió un error al guardar la imagen en el servidor.");
+            }
+        }
+
+        async function actualizarTituloReviews(event) {
+            event.preventDefault();
+            const titulo = document.getElementById('adm-reviews-titulo-general').value;
+
+            try {
+                const res = await fetch('/api/home/reviews/title', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ reviews_titulo: titulo })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+                alert("¡Título general actualizado con éxito!");
+            } catch (err) {
+                alert("Error: " + err.message);
+            }
+        }
+
+        async function agregarComentario() {
+            const payload = {
+                name: document.getElementById('new-rev-name').value,
+                date_text: document.getElementById('new-rev-date').value,
+                stars: parseInt(document.getElementById('new-rev-stars').value),
+                title: document.getElementById('new-rev-title').value,
+                text: document.getElementById('new-rev-text').value,
+                bg_image: document.getElementById('url-new-rev-bg').value,
+                avatar: document.getElementById('url-new-rev-avatar').value
+            };
+
+            if (!payload.name || !payload.title || !payload.text) {
+                return alert("Por favor complete los campos de Nombre, Título y Texto del comentario.");
+            }
+
+            try {
+                const res = await fetch('/api/home/reviews', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+
+                alert("¡Comentario añadido correctamente!");
+                
+                document.getElementById('new-rev-name').value = '';
+                document.getElementById('new-rev-date').value = '';
+                document.getElementById('new-rev-title').value = '';
+                document.getElementById('new-rev-text').value = '';
+                document.getElementById('url-new-rev-bg').value = 'img/placeholder.jpg';
+                document.getElementById('url-new-rev-avatar').value = 'img/placeholder.jpg';
+                document.getElementById('prev-new-rev-bg').src = 'img/placeholder.jpg';
+                document.getElementById('prev-new-rev-avatar').src = 'img/placeholder.jpg';
+
+                cargarSeccionReviewsAdmin();
+            } catch (err) {
+                alert("Error al agregar: " + err.message);
+            }
+        }
+
+        async function guardarEdicionComentario(id) {
+            const payload = {
+                name: document.getElementById(`edit-name-${id}`).value,
+                date_text: document.getElementById(`edit-date-${id}`).value,
+                stars: parseInt(document.getElementById(`edit-stars-${id}`).value),
+                title: document.getElementById(`edit-title-${id}`).value,
+                text: document.getElementById(`edit-text-${id}`).value,
+                bg_image: document.getElementById(`url-edit-bg-${id}`).value,
+                avatar: document.getElementById(`url-edit-avatar-${id}`).value
+            };
+
+            try {
+                const res = await fetch(`/api/home/reviews/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+
+                alert("¡Comentario actualizado correctamente!");
+                cargarSeccionReviewsAdmin();
+            } catch (err) {
+                alert("Error al actualizar: " + err.message);
+            }
+        }
+
+        async function eliminarComentario(id) {
+            if (!confirm("¿Está seguro de que desea eliminar permanentemente este comentario?")) return;
+
+            try {
+                const res = await fetch(`/api/home/reviews/${id}`, { method: 'DELETE' });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+                alert("¡Comentario eliminado!");
+                cargarSeccionReviewsAdmin();
+            } catch (err) {
+                alert("Error al eliminar: " + err.message);
+            }
+        }
 
 
-if (window.self !== window.top) {
-    const headerRedundante = document.querySelector('header');
-    if (headerRedundante) {
-        headerRedundante.style.display = 'none';
-    }
-    
-    document.body.classList.add('p-0', 'bg-white');
-}
+        // ==========================================
+        // PROMO SECTION HOME
+        // ==========================================
+        async function cargarPromoAdmin() {
+            try {
+                const res = await fetch('/api/home/promo');
+                const data = await res.json();
+
+                document.getElementById('adm-promo-titulo').value = data.promo_titulo || '';
+                document.getElementById('adm-promo-descripcion').value = data.promo_descripcion || '';
+                document.getElementById('adm-promo-item1-title').value = data.promo_item1_title || '';
+                document.getElementById('adm-promo-item1-text').value = data.promo_item1_text || '';
+                document.getElementById('adm-promo-item2-title').value = data.promo_item2_title || '';
+                document.getElementById('adm-promo-item2-text').value = data.promo_item2_text || '';
+                document.getElementById('adm-promo-review-text').value = data.promo_review_text || '';
+                document.getElementById('adm-promo-review-name').value = data.promo_review_name || '';
+                document.getElementById('adm-promo-img-actual').value = data.promo_imagen || '';
+            } catch (err) {
+                console.error("Error al cargar configuración de la sección Promo:", err);
+            }
+        }
+
+        async function guardarPromoAdmin(e) {
+            e.preventDefault();
+            const formData = new FormData();
+
+            formData.append('promo_titulo', document.getElementById('adm-promo-titulo').value);
+            formData.append('promo_descripcion', document.getElementById('adm-promo-descripcion').value);
+            formData.append('promo_item1_title', document.getElementById('adm-promo-item1-title').value);
+            formData.append('promo_item1_text', document.getElementById('adm-promo-item1-text').value);
+            formData.append('promo_item2_title', document.getElementById('adm-promo-item2-title').value);
+            formData.append('promo_item2_text', document.getElementById('adm-promo-item2-text').value);
+            formData.append('promo_review_text', document.getElementById('adm-promo-review-text').value);
+            formData.append('promo_review_name', document.getElementById('adm-promo-review-name').value);
+            formData.append('promo_imagen_actual', document.getElementById('adm-promo-img-actual').value);
+
+            const fileInput = document.getElementById('adm-promo-file');
+            if (fileInput && fileInput.files[0]) {
+                formData.append('promo_imagen', fileInput.files[0]);
+            }
+
+            try {
+                const res = await fetch('/api/home/promo', { method: 'PUT', body: formData });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Error al actualizar.");
+                
+                alert("¡PROMO SECTION guardada con éxito de forma local!");
+                cargarPromoAdmin(); 
+            } catch (err) {
+                alert("Error: " + err.message);
+                console.error(err);
+            }
+        }
+
+
+        // ==========================================
+        // CONTACTS SECTION HOME
+        // ==========================================
+        async function cargarContactsAdmin() {
+            try {
+                const res = await fetch('/api/home/contacts'); 
+                const datos = await res.json();
+                if (!datos) return;
+
+                document.getElementById('adm-contacts-titulo').value = datos.contacts_titulo || '';
+                document.getElementById('adm-contacts-descripcion').value = datos.contacts_descripcion || '';
+                document.getElementById('url-contacts-imagen-actual').value = datos.contacts_imagen || '';
+
+                document.getElementById('adm-contacts-tel-titulo').value = datos.contacts_tel_titulo || '';
+                document.getElementById('adm-contacts-tel1').value = datos.contacts_tel1 || '';
+                document.getElementById('adm-contacts-tel2').value = datos.contacts_tel2 || '';
+
+                document.getElementById('adm-contacts-email-titulo').value = datos.contacts_email_titulo || '';
+                document.getElementById('adm-contacts-email1').value = datos.contacts_email1 || '';
+                document.getElementById('adm-contacts-email2').value = datos.contacts_email2 || '';
+
+                document.getElementById('adm-contacts-loc-titulo').value = datos.contacts_loc_titulo || '';
+                document.getElementById('adm-contacts-loc1').value = datos.contacts_loc1 || '';
+                document.getElementById('adm-contacts-loc2').value = datos.contacts_loc2 || '';
+
+                document.getElementById('adm-contacts-work-titulo').value = datos.contacts_work_titulo || '';
+                document.getElementById('adm-contacts-work1').value = datos.contacts_work1 || '';
+                document.getElementById('adm-contacts-work2').value = datos.contacts_work2 || '';
+            } catch (err) {
+                console.error("Error al cargar configuración de contactos en el Administrador:", err);
+            }
+        }
+
+        async function guardarContactsSection(event) {
+            event.preventDefault();
+            const formData = new FormData();
+            formData.append('contacts_titulo', document.getElementById('adm-contacts-titulo').value);
+            formData.append('contacts_descripcion', document.getElementById('adm-contacts-descripcion').value);
+            formData.append('contacts_imagen_actual', document.getElementById('url-contacts-imagen-actual').value);
+
+            formData.append('contacts_tel_titulo', document.getElementById('adm-contacts-tel-titulo').value);
+            formData.append('contacts_tel1', document.getElementById('adm-contacts-tel1').value);
+            formData.append('contacts_tel2', document.getElementById('adm-contacts-tel2').value);
+
+            formData.append('contacts_email_titulo', document.getElementById('adm-contacts-email-titulo').value);
+            formData.append('contacts_email1', document.getElementById('adm-contacts-email1').value);
+            formData.append('contacts_email2', document.getElementById('adm-contacts-email2').value);
+
+            formData.append('contacts_loc_titulo', document.getElementById('adm-contacts-loc-titulo').value);
+            formData.append('contacts_loc1', document.getElementById('adm-contacts-loc1').value);
+            formData.append('contacts_loc2', document.getElementById('adm-contacts-loc2').value);
+
+            formData.append('contacts_work_titulo', document.getElementById('adm-contacts-work-titulo').value);
+            formData.append('contacts_work1', document.getElementById('adm-contacts-work1').value);
+            formData.append('contacts_work2', document.getElementById('adm-contacts-work2').value);
+
+            const inputImagen = document.getElementById('input-contacts-imagen');
+            if (inputImagen && inputImagen.files[0]) {
+                formData.append('contacts_imagen', inputImagen.files[0]);
+            }
+
+            try {
+                const res = await fetch('/api/home/contacts', {
+                    method: 'PUT',
+                    body: formData
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || "Error al actualizar la sección de contactos.");
+                alert("¡CONTACTS SECTION actualizada con éxito!");
+                location.reload();
+            } catch (err) {
+                alert("Error: " + err.message);
+                console.error(err);
+            }
+        }
+
+
+        // ==========================================
+        // BENEFITS SECTION ABOUT 
+        // ==========================================
+        async function cargarBenefitsAdmin() {
+            try {
+                const response = await fetch('/api/about/benefits');
+                if (!response.ok) throw new Error("Error al obtener datos de Beneficios.");
+                const datos = await response.json();
+
+                if (datos) {
+                    document.getElementById('input-benefits-titulo').value = datos.benefits_titulo || '';
+                    document.getElementById('textarea-benefits-descripcion').value = datos.benefits_descripcion || '';
+                    document.getElementById('input-benefits-video-link').value = datos.benefits_video_link || '';
+
+                    // Beneficio 1
+                    document.getElementById('input-benefit1-valor').value = datos.benefit1_valor || 0;
+                    document.getElementById('input-benefit1-sufijo').value = datos.benefit1_sufijo || '';
+                    document.getElementById('textarea-benefit1-descripcion').value = datos.benefit1_descripcion || '';
+
+                    // Beneficio 2
+                    document.getElementById('input-benefit2-valor').value = datos.benefit2_valor || 0;
+                    document.getElementById('input-benefit2-sufijo').value = datos.benefit2_sufijo || '';
+                    document.getElementById('textarea-benefit2-descripcion').value = datos.benefit2_descripcion || '';
+
+                    // Beneficio 3
+                    document.getElementById('input-benefit3-valor').value = datos.benefit3_valor || 0;
+                    document.getElementById('input-benefit3-sufijo').value = datos.benefit3_sufijo || '';
+                    document.getElementById('textarea-benefit3-descripcion').value = datos.benefit3_descripcion || '';
+
+                    // Imagen
+                    document.getElementById('url-benefits-imagen-actual').value = datos.benefits_imagen || '';
+                    
+                    const previewImg = document.getElementById('preview-benefits-imagen');
+                    if (previewImg) {
+                        previewImg.src = obtenerRutaImagen(datos.benefits_imagen);
+                    }
+                }
+            } catch (err) {
+                console.error("Error al cargar la sección de beneficios en el administrador:", err);
+            }
+        }
+
+        async function guardarBenefitsAdmin(e) {
+            e.preventDefault();
+            const formData = new FormData();
+            
+            formData.append('benefits_titulo', document.getElementById('input-benefits-titulo').value);
+            formData.append('benefits_descripcion', document.getElementById('textarea-benefits-descripcion').value);
+            formData.append('benefits_video_link', document.getElementById('input-benefits-video-link').value);
+
+            // Beneficio 1
+            formData.append('benefit1_valor', document.getElementById('input-benefit1-valor').value);
+            formData.append('benefit1_sufijo', document.getElementById('input-benefit1-sufijo').value);
+            formData.append('benefit1_descripcion', document.getElementById('textarea-benefit1-descripcion').value);
+
+            // Beneficio 2
+            formData.append('benefit2_valor', document.getElementById('input-benefit2-valor').value);
+            formData.append('benefit2_sufijo', document.getElementById('input-benefit2-sufijo').value);
+            formData.append('benefit2_descripcion', document.getElementById('textarea-benefit2-descripcion').value);
+
+            // Beneficio 3
+            formData.append('benefit3_valor', document.getElementById('input-benefit3-valor').value);
+            formData.append('benefit3_sufijo', document.getElementById('input-benefit3-sufijo').value);
+            formData.append('benefit3_descripcion', document.getElementById('textarea-benefit3-descripcion').value);
+
+            formData.append('benefits_imagen_actual', document.getElementById('url-benefits-imagen-actual').value);
+            
+            const fileInput = document.getElementById('input-benefits-imagen');
+            if (fileInput && fileInput.files[0]) {
+                formData.append('benefits_imagen', fileInput.files[0]);
+            }
+
+            try {
+                const response = await fetch('/api/about/benefits', {
+                    method: 'PUT',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error("Error al intentar guardar los beneficios.");
+                const result = await response.json();
+
+                alert("¡Éxito! " + result.message);
+                if (fileInput) fileInput.value = '';
+                await cargarBenefitsAdmin();
+            } catch (err) {
+                console.error("Error al guardar cambios de beneficios:", err);
+                alert("Ocurrió un error al intentar guardar los datos.");
+            }
+        }
+
+
+        if (window.self !== window.top) {
+            const headerRedundante = document.querySelector('header');
+            if (headerRedundante) {
+                headerRedundante.style.display = 'none';
+            }
+            document.body.classList.add('p-0', 'bg-white');
+        }
+
 
     </script>
 </body>
