@@ -635,126 +635,133 @@
 
             <!--Editor About-->
             <div id="tab-page-about" class="page-tab space-y-8">
+                <div>
                 <h1 class="text-2xl font-bold text-slate-900">Editor de Página: About</h1>
-
-                <!-- BENEFITS SECTION star -->
-                <div class="card mb-4 shadow-sm">
-                    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"><i class="fas fa-handshake me-2"></i>BENEFITS SECTION: Sección Beneficios</h5>
-                    </div>
-                    <div class="card-body">
-                        <form id="form-admin-benefits" enctype="multipart/form-data">
-                            
-                            <div class="row">
-                                <!-- Título y Descripción Principal -->
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Título Principal de la Sección</label>
-                                    <input type="text" class="form-control" id="input-benefits-titulo" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Enlace del Video de YouTube / Vimeo</label>
-                                    <input type="text" class="form-control" id="input-benefits-video-link" placeholder="https://youtube.com/...">
-                                </div>
-                                <div class="col-md-12 mb-3">
-                                    <label class="form-label fw-bold">Descripción de la Sección</label>
-                                    <textarea class="form-control" id="textarea-benefits-descripcion" rows="2" required></textarea>
-                                </div>
-                            </div>
-
-                            <hr class="my-4">
-
-                            <!-- Beneficios Individuales (Contadores) -->
-                            <div class="row">
-                                <!-- Beneficio 1 -->
-                                <div class="col-md-4 mb-3 border-end">
-                                    <h6 class="text-primary fw-bold mb-3">Beneficio 1</h6>
-                                    <div class="row">
-                                        <div class="col-6 mb-2">
-                                            <label class="form-label small">Valor (Número)</label>
-                                            <input type="number" class="form-control" id="input-benefit1-valor" required>
-                                        </div>
-                                        <div class="col-6 mb-2">
-                                            <label class="form-label small">Sufijo (Ej: +, %)</label>
-                                            <input type="text" class="form-control" id="input-benefit1-sufijo" maxLength="5" required>
-                                        </div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <label class="form-label small">Descripción</label>
-                                        <textarea class="form-control" id="textarea-benefit1-descripcion" rows="2" required></textarea>
-                                    </div>
-                                </div>
-
-                                <!-- Beneficio 2 -->
-                                <div class="col-md-4 mb-3 border-end">
-                                    <h6 class="text-primary fw-bold mb-3">Beneficio 2</h6>
-                                    <div class="row">
-                                        <div class="col-6 mb-2">
-                                            <label class="form-label small">Valor (Número)</label>
-                                            <input type="number" class="form-control" id="input-benefit2-valor" required>
-                                        </div>
-                                        <div class="col-6 mb-2">
-                                            <label class="form-label small">Sufijo (Ej: +, %)</label>
-                                            <input type="text" class="form-control" id="input-benefit2-sufijo" maxLength="5" required>
-                                        </div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <label class="form-label small">Descripción</label>
-                                        <textarea class="form-control" id="textarea-benefit2-descripcion" rows="2" required></textarea>
-                                    </div>
-                                </div>
-
-                                <!-- Beneficio 3 -->
-                                <div class="col-md-4 mb-3">
-                                    <h6 class="text-primary fw-bold mb-3">Beneficio 3</h6>
-                                    <div class="row">
-                                        <div class="col-6 mb-2">
-                                            <label class="form-label small">Valor (Número)</label>
-                                            <input type="number" class="form-control" id="input-benefit3-valor" required>
-                                        </div>
-                                        <div class="col-6 mb-2">
-                                            <label class="form-label small">Sufijo (Ej: +, %)</label>
-                                            <input type="text" class="form-control" id="input-benefit3-sufijo" maxLength="5" required>
-                                        </div>
-                                    </div>
-                                    <div class="mb-2">
-                                        <label class="form-label small">Descripción</label>
-                                        <textarea class="form-control" id="textarea-benefit3-descripcion" rows="2" required></textarea>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <hr class="my-4">
-
-                            <!-- Imagen de Portada del Video -->
-                            <div class="row align-items-center">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-bold">Imagen de Portada (Video)</label>
-                                    <input type="file" class="form-control" id="input-benefits-imagen" accept="image/*">
-                                    <input type="hidden" id="url-benefits-imagen-actual">
-                                    <small class="text-muted">Formatos recomendados: JPG o PNG de alta resolución.</small>
-                                </div>
-                                <div class="col-md-6 mb-3 text-center">
-                                    <p class="small fw-bold mb-1">Vista Previa de la Imagen Actual</p>
-                                    <img id="preview-benefits-imagen" src="" alt="Vista previa portada" class="img-thumbnail" style="max-height: 150px; object-fit: cover;">
-                                </div>
-                            </div>
-
-                            <div class="text-end mt-3">
-                                <button type="submit" class="btn btn-success px-4">
-                                    <i class="fas fa-save me-1"></i> Guardar Cambios de Beneficios
-                                </button>
-                            </div>
-                        </form>
-                    </div>
                 </div>
-                <!-- BENEFITS SECTION end-->
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+                    <div class="border-b border-slate-100 pb-3">
+                        <h3 class="font-bold text-slate-800 text-base">About Page (Sobre nosotros)</h3>
+                    </div>
+                        <!-- BENEFITS SECTION star -->
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="fas fa-handshake me-2"></i>BENEFITS SECTION: Sección Beneficios</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="form-admin-benefits" enctype="multipart/form-data">
+                                    
+                                    <div class="row">
+                                        <!-- Título y Descripción Principal -->
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold">Título Principal de la Sección</label>
+                                            <input type="text" class="form-control" id="input-benefits-titulo" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold">Enlace del Video de YouTube / Vimeo</label>
+                                            <input type="text" class="form-control" id="input-benefits-video-link" placeholder="https://youtube.com/...">
+                                        </div>
+                                        <div class="col-md-12 mb-3">
+                                            <label class="form-label fw-bold">Descripción de la Sección</label>
+                                            <textarea class="form-control" id="textarea-benefits-descripcion" rows="2" required></textarea>
+                                        </div>
+                                    </div>
 
+                                    <hr class="my-4">
+
+                                    <!-- Beneficios Individuales (Contadores) -->
+                                    <div class="row">
+                                        <!-- Beneficio 1 -->
+                                        <div class="col-md-4 mb-3 border-end">
+                                            <h6 class="text-primary fw-bold mb-3">Beneficio 1</h6>
+                                            <div class="row">
+                                                <div class="col-6 mb-2">
+                                                    <label class="form-label small">Valor (Número)</label>
+                                                    <input type="number" class="form-control" id="input-benefit1-valor" required>
+                                                </div>
+                                                <div class="col-6 mb-2">
+                                                    <label class="form-label small">Sufijo (Ej: +, %)</label>
+                                                    <input type="text" class="form-control" id="input-benefit1-sufijo" maxLength="5" required>
+                                                </div>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label small">Descripción</label>
+                                                <textarea class="form-control" id="textarea-benefit1-descripcion" rows="2" required></textarea>
+                                            </div>
+                                        </div>
+
+                                        <!-- Beneficio 2 -->
+                                        <div class="col-md-4 mb-3 border-end">
+                                            <h6 class="text-primary fw-bold mb-3">Beneficio 2</h6>
+                                            <div class="row">
+                                                <div class="col-6 mb-2">
+                                                    <label class="form-label small">Valor (Número)</label>
+                                                    <input type="number" class="form-control" id="input-benefit2-valor" required>
+                                                </div>
+                                                <div class="col-6 mb-2">
+                                                    <label class="form-label small">Sufijo (Ej: +, %)</label>
+                                                    <input type="text" class="form-control" id="input-benefit2-sufijo" maxLength="5" required>
+                                                </div>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label small">Descripción</label>
+                                                <textarea class="form-control" id="textarea-benefit2-descripcion" rows="2" required></textarea>
+                                            </div>
+                                        </div>
+
+                                        <!-- Beneficio 3 -->
+                                        <div class="col-md-4 mb-3">
+                                            <h6 class="text-primary fw-bold mb-3">Beneficio 3</h6>
+                                            <div class="row">
+                                                <div class="col-6 mb-2">
+                                                    <label class="form-label small">Valor (Número)</label>
+                                                    <input type="number" class="form-control" id="input-benefit3-valor" required>
+                                                </div>
+                                                <div class="col-6 mb-2">
+                                                    <label class="form-label small">Sufijo (Ej: +, %)</label>
+                                                    <input type="text" class="form-control" id="input-benefit3-sufijo" maxLength="5" required>
+                                                </div>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label small">Descripción</label>
+                                                <textarea class="form-control" id="textarea-benefit3-descripcion" rows="2" required></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <hr class="my-4">
+
+                                    <!-- Imagen de Portada del Video -->
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label fw-bold">Imagen de Portada (Video)</label>
+                                            <input type="file" class="form-control" id="input-benefits-imagen" accept="image/*">
+                                            <input type="hidden" id="url-benefits-imagen-actual">
+                                            <small class="text-muted">Formatos recomendados: JPG o PNG de alta resolución.</small>
+                                        </div>
+                                        <div class="col-md-6 mb-3 text-center">
+                                            <p class="small fw-bold mb-1">Vista Previa de la Imagen Actual</p>
+                                            <img id="preview-benefits-imagen" src="" alt="Vista previa portada" class="img-thumbnail" style="max-height: 150px; object-fit: cover;">
+                                        </div>
+                                    </div>
+
+                                    <div class="text-end mt-3">
+                                        <button type="submit" class="btn btn-success px-4">
+                                            <i class="fas fa-save me-1"></i> Guardar Cambios de Beneficios
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- BENEFITS SECTION end-->
+                         
+                </div>
             </div>
 
         </main>
     </div>
 
     <script>
+
         function cambiarPaginaEditor(idPagina) {
 
             document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
@@ -1714,6 +1721,7 @@ if (window.self !== window.top) {
     
     document.body.classList.add('p-0', 'bg-white');
 }
+
     </script>
 </body>
 </html>
