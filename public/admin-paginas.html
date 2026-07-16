@@ -634,7 +634,7 @@
             <div id="tab-page-about" class="page-tab space-y-8">
                 <div>
                     <h1 class="text-2xl font-bold text-slate-900">Editor de Página: About</h1>
-                    <p class="text-slate-500 text-sm">Modifica la sección de beneficios y el video promocional de la página About.</p>
+                    <p class="text-slate-500 text-sm">Modifica la página About.</p>
                 </div>
                 
                 <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
@@ -799,6 +799,13 @@
                 btn.classList.add('active');
             } else {
                 console.warn(`La pestaña o botón para '${idPagina}' no se encuentra en el DOM.`);
+            }
+
+            if (idPagina === 'about') {
+                cargarBenefitsAdmin();
+            } 
+            else if (idPagina === 'home') {
+                cargarHomeAdmin();
             }
         }
 
@@ -1595,6 +1602,7 @@
                 alert("Ocurrió un error al intentar guardar los datos.");
             }
         }
+
 
 
         if (window.self !== window.top) {
