@@ -1813,45 +1813,86 @@ app.get('/api/about/benefits', (req, res) => {
 
 app.put('/api/about/benefits', upload.single('benefits_imagen'), (req, res) => {
     const {
-        benefits_titulo, benefits_descripcion,
-        benefit1_valor, benefit1_sufijo, benefit1_descripcion,
-        benefit2_valor, benefit2_sufijo, benefit2_descripcion,
-        benefit3_valor, benefit3_sufijo, benefit3_descripcion,
-        benefits_video_link, benefits_imagen_actual
+        benefits_titulo,
+        benefits_descripcion,
+        benefit1_valor,
+        benefit1_sufijo,
+        benefit1_descripcion,
+        benefit2_valor,
+        benefit2_sufijo,
+        benefit2_descripcion,
+        benefit3_valor,
+        benefit3_sufijo,
+        benefit3_descripcion,
+        benefits_imagen_actual,
+        // NUEVOS CAMPOS ROOMS:
+        rooms_titulo,
+        rooms_boton_texto,
+        rooms_label_sleeps,
+        rooms_label_beds,
+        rooms_label_ver
     } = req.body;
 
     let benefits_imagen_url = benefits_imagen_actual;
     if (req.file) {
-        benefits_imagen_url = req.file.filename; 
+        benefits_imagen_url = req.file.filename;
     }
 
     const sql = `
-        UPDATE admin_about 
-        SET benefits_titulo = ?, benefits_descripcion = ?, 
-            benefit1_valor = ?, benefit1_sufijo = ?, benefit1_descripcion = ?, 
-            benefit2_valor = ?, benefit2_sufijo = ?, benefit2_descripcion = ?, 
-            benefit3_valor = ?, benefit3_sufijo = ?, benefit3_descripcion = ?, 
-            benefits_imagen = ?, benefits_video_link = ?
+        UPDATE admin_about SET 
+            benefits_titulo = ?, 
+            benefits_descripcion = ?,
+            benefit1_valor = ?, 
+            benefit1_sufijo = ?, 
+            benefit1_descripcion = ?,
+            benefit2_valor = ?, 
+            benefit2_sufijo = ?, 
+            benefit2_descripcion = ?,
+            benefit3_valor = ?, 
+            benefit3_sufijo = ?, 
+            benefit3_descripcion = ?,
+            benefits_imagen = ?,
+            -- nuevos valores rooms:
+            rooms_titulo = ?,
+            rooms_boton_texto = ?,
+            rooms_label_sleeps = ?,
+            rooms_label_beds = ?,
+            rooms_label_ver = ?
         WHERE id = 1
     `;
 
     db.query(sql, [
-        benefits_titulo, benefits_descripcion,
-        benefit1_valor, benefit1_sufijo, benefit1_descripcion,
-        benefit2_valor, benefit2_sufijo, benefit2_descripcion,
-        benefit3_valor, benefit3_sufijo, benefit3_descripcion,
-        benefits_imagen_url, benefits_video_link
+        benefits_titulo,
+        benefits_descripcion,
+        benefit1_valor,
+        benefit1_sufijo,
+        benefit1_descripcion,
+        benefit2_valor,
+        benefit2_sufijo,
+        benefit2_descripcion,
+        benefit3_valor,
+        benefit3_sufijo,
+        benefit3_descripcion,
+        benefits_imagen_url,
+        // VALORES ROOMS:
+        rooms_titulo,
+        rooms_boton_texto,
+        rooms_label_sleeps,
+        rooms_label_beds,
+        rooms_label_ver
     ], (err, result) => {
         if (err) {
             console.error("Error al actualizar la tabla admin_about:", err);
             return res.status(500).json({ error: "Error al guardar en la base de datos" });
         }
         res.json({ 
-            message: "¡Sección de Beneficios (About) actualizada con éxito!", 
+            message: "¡Sección de Beneficios y Habitaciones actualizada con éxito!", 
             benefits_imagen: benefits_imagen_url 
         });
     });
 });
+
+
 
 
 

@@ -1703,7 +1703,7 @@ async function cargarBenefitsPublico() {
             if (imgBenefits) {
                 imgBenefits.src = rutaLimpia;
                 imgBenefits.setAttribute('data-src', rutaLimpia);
-                imgBenefits.classList.remove('lazy'); // Quitamos lazy-load para evitar conflictos
+                imgBenefits.classList.remove('lazy'); 
             }
 
             if (srcBenefits) {
@@ -1713,6 +1713,28 @@ async function cargarBenefitsPublico() {
         } else {
             if (imgBenefits) imgBenefits.src = '/uploads/placeholder.jpg';
         }
+
+        /*Rooms section about */
+        if (document.getElementById('public-rooms-titulo')) {
+            document.getElementById('public-rooms-titulo').textContent = datos.rooms_titulo || 'Hostel rooms';
+        }
+
+        if (document.getElementById('public-rooms-boton-texto')) {
+            document.getElementById('public-rooms-boton-texto').textContent = datos.rooms_boton_texto || 'View all rooms';
+        }
+
+        document.querySelectorAll('.lbl-sleeps').forEach(el => {
+            el.textContent = datos.rooms_label_sleeps || 'Sleeps';
+        });
+
+        document.querySelectorAll('.lbl-beds').forEach(el => {
+            el.textContent = datos.rooms_label_beds || 'beds';
+        });
+
+        document.querySelectorAll('.lbl-ver-disponibilidad').forEach(el => {
+            el.textContent = datos.rooms_label_ver || 'See availability';
+        });
+
 
     } catch (err) {
         console.error("Error al renderizar la sección de beneficios (Frontend):", err);
