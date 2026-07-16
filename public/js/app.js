@@ -1639,7 +1639,6 @@ async function cargarBenefitsPublico() {
         const datos = await response.json();
         if (!datos) return;
 
-        // 1. Textos de Cabecera (Título y Descripción)
         if (document.getElementById('public-benefits-titulo')) {
             document.getElementById('public-benefits-titulo').textContent = datos.benefits_titulo || '';
         }
@@ -1647,28 +1646,21 @@ async function cargarBenefitsPublico() {
             document.getElementById('public-benefits-descripcion').textContent = datos.benefits_descripcion || '';
         }
 
-        // =====================================================================
-        // 2. PROCESAMIENTO DE NÚMEROS (CONTRARRESTANDO LA ANIMACIÓN DE LA PLANTILLA)
-        // =====================================================================
 
-        // --- BENEFICIO 1 ---
         const ben1Valor = document.getElementById('public-benefit1-valor');
         if (ben1Valor) {
             const valorReal = datos.benefit1_valor || 0;
             const sufijoReal = datos.benefit1_sufijo || '';
             
-            // Forzamos la actualización de los atributos para el script de animación
             ben1Valor.setAttribute('data-value', valorReal);
             ben1Valor.setAttribute('data-suffix', sufijoReal);
             
-            // Si el script de la animación ya se ejecutó, esto fuerza a que se pinte el valor real de la BD
-            ben1Valor.textContent = valorReal; 
+            ben1Valor.textContent = `${valorReal}${sufijoReal}`; 
         }
         if (document.getElementById('public-benefit1-descripcion')) {
             document.getElementById('public-benefit1-descripcion').textContent = datos.benefit1_descripcion || '';
         }
 
-        // --- BENEFICIO 2 ---
         const ben2Valor = document.getElementById('public-benefit2-valor');
         if (ben2Valor) {
             const valorReal = datos.benefit2_valor || 0;
@@ -1676,13 +1668,13 @@ async function cargarBenefitsPublico() {
             
             ben2Valor.setAttribute('data-value', valorReal);
             ben2Valor.setAttribute('data-suffix', sufijoReal);
-            ben2Valor.textContent = valorReal;
+            
+            ben2Valor.textContent = `${valorReal}${sufijoReal}`;
         }
         if (document.getElementById('public-benefit2-descripcion')) {
             document.getElementById('public-benefit2-descripcion').textContent = datos.benefit2_descripcion || '';
         }
 
-        // --- BENEFICIO 3 ---
         const ben3Valor = document.getElementById('public-benefit3-valor');
         if (ben3Valor) {
             const valorReal = datos.benefit3_valor || 0;
@@ -1690,15 +1682,13 @@ async function cargarBenefitsPublico() {
             
             ben3Valor.setAttribute('data-value', valorReal);
             ben3Valor.setAttribute('data-suffix', sufijoReal);
-            ben3Valor.textContent = valorReal;
+            
+            ben3Valor.textContent = `${valorReal}${sufijoReal}`;
         }
         if (document.getElementById('public-benefit3-descripcion')) {
             document.getElementById('public-benefit3-descripcion').textContent = datos.benefit3_descripcion || '';
         }
 
-        // =====================================================================
-        // 3. ENLACE DE VIDEO E IMAGEN DE PORTADA
-        // =====================================================================
         const linkVideo = document.getElementById('public-benefits-video-link');
         if (linkVideo) {
             linkVideo.href = datos.benefits_video_link || '#';
