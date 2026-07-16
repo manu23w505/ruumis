@@ -506,7 +506,7 @@
                                         <input type="text" id="adm-promo-titulo" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-teal-600 text-sm" required>
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Imagen de Fondo (Cloudinary)</label>
+                                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Imagen de Fondo</label>
                                         <input type="file" id="adm-promo-file" accept="image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100">
                                         <input type="hidden" id="adm-promo-img-actual">
                                     </div>
@@ -1463,7 +1463,6 @@ async function guardarContactsSection(event) {
 }
 
 
-// Inicialización de escuchas automáticas
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('form-contacts-section')) {
         cargarContactsAdmin();
@@ -1475,15 +1474,13 @@ document.addEventListener('DOMContentLoaded', () => {
 // CONTACTS SECTION end
 ///////////////////////////////////////////////////////////////////////////
 
-// Validar si la página se está cargando dentro de un iframe
+
 if (window.self !== window.top) {
-    // Buscar el header de navegación de admin-paginas y ocultarlo
     const headerRedundante = document.querySelector('header');
     if (headerRedundante) {
         headerRedundante.style.display = 'none';
     }
     
-    // Opcional: Si deseas remover márgenes externos del contenedor principal al estar embebido
     document.body.classList.add('p-0', 'bg-white');
 }
     </script>

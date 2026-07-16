@@ -1744,13 +1744,12 @@ app.put('/api/home/contacts', upload.single('contacts_imagen'), (req, res) => {
         contacts_email_titulo, contacts_email1, contacts_email2,
         contacts_loc_titulo, contacts_loc1, contacts_loc2,
         contacts_work_titulo, contacts_work1, contacts_work2,
-        contacts_imagen_actual // Respaldo enviado desde el frontend si no se sube una nueva
+        contacts_imagen_actual
     } = req.body;
 
-    // Si el usuario subió una foto nueva, construimos la ruta local relativa, de lo contrario usamos la actual
     let contacts_imagen_url = contacts_imagen_actual;
     if (req.file) {
-        contacts_imagen_url = `/uploads/images/${req.file.filename}`;
+        contacts_imagen_url = req.file.filename; 
     }
 
     const sql = `
@@ -1776,7 +1775,10 @@ app.put('/api/home/contacts', upload.single('contacts_imagen'), (req, res) => {
             console.error("Error al actualizar la tabla admin_home (Contacts):", err);
             return res.status(500).json({ error: "Error al guardar en la base de datos" });
         }
-        res.json({ message: "¡Sección CONTACTS actualizada localmente con éxito!", contacts_imagen: contacts_imagen_url });
+        res.json({ 
+            message: "¡Sección CONTACTS actualizada localmente con éxito!", 
+            contacts_imagen: contacts_imagen_url 
+        });
     });
 });
 

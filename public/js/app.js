@@ -1562,50 +1562,53 @@ document.addEventListener('DOMContentLoaded', () => {
 //================================================================
 // CONTACTS SECTION HOME
 //================================================================
-async function cargarContactsPublico() {
-    // FILTRO DE GUARDA: Evitar llamados en páginas sin el formulario/bloque de contacto
-    if (!document.getElementById('public-contacts-titulo') && !document.getElementById('public-contacts-img')) return;
 
+async function cargarContactsPublico() {
     try {
-        const res = await fetch('/api/home/contacts'); 
-        if (!res.ok) throw new Error("No se pudo obtener la sección de contactos de la base de datos.");
-        
-        const datos = await res.json();
+        const response = await fetch('/api/home/contacts');
+        if (!response.ok) throw new Error("No se pudo obtener la sección de contactos.");
+        const datos = await response.json();
         if (!datos) return;
 
-        // Títulos Principales
         if (document.getElementById('public-contacts-titulo')) document.getElementById('public-contacts-titulo').textContent = datos.contacts_titulo || '';
         if (document.getElementById('public-contacts-descripcion')) document.getElementById('public-contacts-descripcion').textContent = datos.contacts_descripcion || '';
-
-        // Teléfonos y atributos href correspondientes
+        
         if (document.getElementById('public-contacts-tel-titulo')) document.getElementById('public-contacts-tel-titulo').textContent = datos.contacts_tel_titulo || '';
-        const tel1 = document.getElementById('public-contacts-tel1');
-        if (tel1 && datos.contacts_tel1) { tel1.textContent = datos.contacts_tel1; tel1.href = `tel:${datos.contacts_tel1}`; }
-        const tel2 = document.getElementById('public-contacts-tel2');
-        if (tel2 && datos.contacts_tel2) { tel2.textContent = datos.contacts_tel2; tel2.href = `tel:${datos.contacts_tel2}`; }
+        if (document.getElementById('public-contacts-tel1')) document.getElementById('public-contacts-tel1').textContent = datos.contacts_tel1 || '';
+        if (document.getElementById('public-contacts-tel2')) document.getElementById('public-contacts-tel2').textContent = datos.contacts_tel2 || '';
 
-        // Emails y links directos mailto
         if (document.getElementById('public-contacts-email-titulo')) document.getElementById('public-contacts-email-titulo').textContent = datos.contacts_email_titulo || '';
-        const em1 = document.getElementById('public-contacts-email1');
-        if (em1 && datos.contacts_email1) { em1.textContent = datos.contacts_email1; em1.href = `mailto:${datos.contacts_email1}`; }
-        const em2 = document.getElementById('public-contacts-email2');
-        if (em2 && datos.contacts_email2) { em2.textContent = datos.contacts_email2; em2.href = `mailto:${datos.contacts_email2}`; }
+        if (document.getElementById('public-contacts-email1')) document.getElementById('public-contacts-email1').textContent = datos.contacts_email1 || '';
+        if (document.getElementById('public-contacts-email2')) document.getElementById('public-contacts-email2').textContent = datos.contacts_email2 || '';
 
-        // Ubicaciones
         if (document.getElementById('public-contacts-loc-titulo')) document.getElementById('public-contacts-loc-titulo').textContent = datos.contacts_loc_titulo || '';
         if (document.getElementById('public-contacts-loc1')) document.getElementById('public-contacts-loc1').textContent = datos.contacts_loc1 || '';
         if (document.getElementById('public-contacts-loc2')) document.getElementById('public-contacts-loc2').textContent = datos.contacts_loc2 || '';
 
-        // Horarios laborales
         if (document.getElementById('public-contacts-work-titulo')) document.getElementById('public-contacts-work-titulo').textContent = datos.contacts_work_titulo || '';
         if (document.getElementById('public-contacts-work1')) document.getElementById('public-contacts-work1').textContent = datos.contacts_work1 || '';
         if (document.getElementById('public-contacts-work2')) document.getElementById('public-contacts-work2').textContent = datos.contacts_work2 || '';
 
-        // Renderizado de Imagen de Cloudinary
         const imgContacts = document.getElementById('public-contacts-img');
-        if (imgContacts && datos.contacts_imagen) {
-            imgContacts.src = datos.contacts_imagen;
+        const srcContacts = document.getElementById('public-contacts-src-srcset'); 
+
+        if (datos.contacts_imagen) {
+            const rutaLimpia = obtenerRutaImagen(datos.contacts_imagen);
+            
+            if (imgContacts) {
+                imgContacts.src = rutaLimpia;
+                imgContacts.setAttribute('data-src', rutaLimpia);
+                imgContacts.classList.remove('lazy'); 
+            }
+
+            if (srcContacts) {
+                srcContacts.srcset = rutaLimpia;
+                srcContacts.setAttribute('data-srcset', rutaLimpia);
+            }
+        } else {
+            if (imgContacts) imgContacts.src = '/uploads/placeholder.jpg';
         }
+
     } catch (err) {
         console.error("Error al renderizar la sección de Contactos:", err);
     }
