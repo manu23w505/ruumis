@@ -30,17 +30,16 @@ async function apiCall(endpoint) {
     }
 }
 
- async function inicializarPagina() {
+async function inicializarPagina() {
     console.log("Iniciando carga de componentes...");
     
     try {
-        const configRaw = await apiCall('/api/configuracion'); // Asegúrate que este endpoint exista
+        const configRaw = await apiCall('/api/configuracion'); 
         if (!configRaw) {
             console.warn("No se pudo obtener la configuración de la API.");
             return;
         }
 
-        // SALVAVIDAS: Si la respuesta es un arreglo, tomamos el primer elemento automáticamente
         const config = Array.isArray(configRaw) ? configRaw[0] : configRaw;
         console.log("Datos de configuración cargados con éxito:", config);
 
@@ -48,7 +47,6 @@ async function apiCall(endpoint) {
             aplicarFavicon(config.favicon);
         }
 
-        // Función auxiliar mejorada para manejar logos y nombres de marca de forma condicional
         const inyectarLogo = (idElemento, archivoLogo) => {
             const elemento = document.getElementById(idElemento);
             if (!elemento) {
@@ -56,18 +54,16 @@ async function apiCall(endpoint) {
                 return;
             }
 
-            // Buscamos el contenedor principal (.brand) y el elemento de texto (.brand_name) antes de alterar el DOM
             const contenedorBrand = elemento.closest('.brand');
             const textoMarca = contenedorBrand ? contenedorBrand.querySelector('.brand_name') : null;
 
-            // Expresión regular para detectar formatos de imagen de forma segura (sin importar mayúsculas)
             const esImagenValida = archivoLogo && (
                 archivoLogo.startsWith('http') || 
                 /\.(jpg|jpeg|png|webp|svg|gif)$/i.test(archivoLogo)
             );
 
             if (esImagenValida) {
-                // Validamos si existe obtenerRutaImagen para evitar errores si no está definida
+
                 const srcFinal = typeof obtenerRutaImagen === 'function' ? obtenerRutaImagen(archivoLogo) : archivoLogo;
                 
                 elemento.outerHTML = `
@@ -78,21 +74,19 @@ async function apiCall(endpoint) {
                         style="width: 120px; height: 40px; object-fit: contain; background: transparent; display: inline-block; vertical-align: middle;"
                     />`;
 
-                // CONDICIONAL: Al tener un logo en imagen personalizado, ocultamos el texto de la marca
                 if (textoMarca) {
                     textoMarca.style.display = 'none';
                 }
             } 
-            // Si es código SVG directo insertado en la BD
+
             else if (archivoLogo && archivoLogo.includes('<svg')) {
                 elemento.outerHTML = archivoLogo;
 
-                // CONDICIONAL: Al tener un logo en SVG personalizado, ocultamos el texto de la marca
                 if (textoMarca) {
                     textoMarca.style.display = 'none';
                 }
             } 
-            // Si NO se tiene un logo cargado (vacío, nulo o indefinido)
+
             else {
                 if (typeof svgPorDefecto !== 'undefined') {
                     elemento.outerHTML = svgPorDefecto.replace('<svg ', `<svg id="${idElemento}" `);
@@ -100,22 +94,19 @@ async function apiCall(endpoint) {
                     console.warn(`No hay logo asignado para #${idElemento} y tampoco se encontró 'svgPorDefecto'.`);
                 }
 
-                // CONDICIONAL: Si no hay logo personalizado, mostramos el nombre de marca dinámico desde la BD
+
                 if (textoMarca) {
                     textoMarca.style.display = 'inline-block';
-                    textoMarca.textContent = config.nombre_marca || 'Hosteller'; // Fallback por si la BD está vacía
+                    textoMarca.textContent = config.nombre_marca || 'Hosteller'; 
                 }
             }
         };
 
-        // 2. Inyectar el Logo del Header (Barra principal y menú desplegable lateral)
         inyectarLogo('brandHeader', config.header_logo);
         inyectarLogo('brandOffset', config.header_logo);
 
-        // 3. Inyectar el Logo del Footer de manera independiente
         inyectarLogo('brandFooter', config.footer_logo);
         
-        // 4. Asegurar que todos los contenedores de marca lleven al inicio
         document.querySelectorAll('.brand').forEach(enlaceMarca => {
             enlaceMarca.setAttribute('href', '/');
         });
@@ -221,20 +212,16 @@ function renderizarAnunciosPublicos(anuncios) {
         return;
     }
 
-    contenedor.innerHTML = ''; // Limpiamos por completo el mensaje de "Cargando..."
+    contenedor.innerHTML = ''; 
 
     anuncios.forEach(anuncio => {
         try {
-            // 1. ===============================================
-            // PARSEO SEGURO DE IMÁGENES HACIA /UPLOADS/
-            // ===============================================
+
             let fotoPortada = 'placeholder.jpg';
             
-            // Evaluamos si trae imagen única principal
             if (anuncio.imagen && anuncio.imagen.trim() !== '') {
                 fotoPortada = anuncio.imagen.trim();
             } else if (anuncio.imagenes_adicionales) {
-                // Si por alguna razón la imagen está en el JSON adicional
                 try {
                     const arrayFotos = typeof anuncio.imagenes_adicionales === 'string' 
                         ? JSON.parse(anuncio.imagenes_adicionales) 
@@ -248,14 +235,10 @@ function renderizarAnunciosPublicos(anuncios) {
                 }
             }
 
-            // Normalizamos para no sobreescribir si ya trae HTTP
             const rutaImagen = (fotoPortada.startsWith('http') || fotoPortada.startsWith('/uploads/')) 
                 ? fotoPortada 
                 : `/uploads/${fotoPortada}`;
 
-            // 2. ===============================================
-            // ETIQUETAS DE PRECIO Y OFERTA
-            // ===============================================
             let precioHTML = `<p class="text-xl font-black text-slate-900">$${anuncio.precio || 0} <span class="text-xs font-normal text-slate-500">MXN / noche</span></p>`;
             let etiquetaOferta = '';
 
@@ -269,9 +252,6 @@ function renderizarAnunciosPublicos(anuncios) {
                 `;
             }
 
-            // 3. ===============================================
-            // ARMADO Y CREACIÓN DE LA TARJETA
-            // ===============================================
             const tarjeta = document.createElement('div');
             tarjeta.className = "bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between relative";
             

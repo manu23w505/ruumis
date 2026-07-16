@@ -395,7 +395,10 @@ app.get('/api/anuncios', (req, res) => {
         ORDER BY ${orden}
     `;
     db.query(sql, (err, results) => {
-        if (err) return res.status(500).json({ error: 'Error al obtener anuncios' });
+        if (err) {
+            console.error("ERROR CRÍTICO AL OBTENER ANUNCIOS:", err); 
+            return res.status(500).json({ error: 'Error al obtener anuncios', detalles: err.message });
+        }
         res.json(results);
     });
 });
