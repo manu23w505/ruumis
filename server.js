@@ -1972,6 +1972,77 @@ app.put('/api/about/stages', upload.single('stages_imagen'), (req, res) => {
 });
 
 
+// ==========================================
+// RULS SECTION
+// ==========================================
+
+
+app.get('/api/about/rules', (req, res) => {
+    const sql = `
+        SELECT 
+            rules_titulo, 
+            rules_item1, 
+            rules_item2, 
+            rules_item3, 
+            rules_item4, 
+            rules_contacto_titulo, 
+            rules_contacto_descripcion 
+        FROM admin_about 
+        WHERE id = 1
+    `;
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error("Error al obtener las reglas de admin_about:", err);
+            return res.status(500).json({ error: "Error al consultar la base de datos" });
+        }
+        if (result.length === 0) {
+            return res.status(404).json({ error: "Sección no encontrada" });
+        }
+        res.json(result[0]);
+    });
+});
+
+
+app.put('/api/about/rules', (req, res) => {
+    const { 
+        rules_titulo, 
+        rules_item1, 
+        rules_item2, 
+        rules_item3, 
+        rules_item4, 
+        rules_contacto_titulo, 
+        rules_contacto_descripcion 
+    } = req.body;
+
+    const sql = `
+        UPDATE admin_about SET 
+            rules_titulo = ?, 
+            rules_item1 = ?, 
+            rules_item2 = ?, 
+            rules_item3 = ?, 
+            rules_item4 = ?, 
+            rules_contacto_titulo = ?, 
+            rules_contacto_descripcion = ?
+        WHERE id = 1
+    `;
+
+    db.query(sql, [
+        rules_titulo, 
+        rules_item1, 
+        rules_item2, 
+        rules_item3, 
+        rules_item4, 
+        rules_contacto_titulo, 
+        rules_contacto_descripcion
+    ], (err, result) => {
+        if (err) {
+            console.error("Error al actualizar las reglas en admin_about:", err);
+            return res.status(500).json({ error: "Error al actualizar los datos en la base de datos" });
+        }
+        res.json({ message: "¡Sección de reglas y contacto actualizada con éxito!" });
+    });
+});
+
 
 
 cron.schedule('*/5 * * * *', () => {

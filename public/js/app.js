@@ -1796,3 +1796,50 @@ document.addEventListener('DOMContentLoaded', () => {
         cargarStagesPublico();
     }
 });
+
+//================================================================
+// RULES SECTION ABOUT
+//================================================================
+
+async function cargarRulesPublico() {
+    try {
+        const response = await fetch('/api/about/rules');
+        if (!response.ok) throw new Error("No se pudo consultar la API de reglas.");
+        const datos = await response.json();
+
+        const rulesTitulo = document.getElementById('public-rules-titulo');
+        if (rulesTitulo) rulesTitulo.textContent = datos.rules_titulo || '';
+
+        const rulesItem1 = document.getElementById('public-rules-item1');
+        if (rulesItem1) {
+            rulesItem1.innerHTML = `<i class="icon-check icon"></i> ${datos.rules_item1 || ''}`;
+        }
+        const rulesItem2 = document.getElementById('public-rules-item2');
+        if (rulesItem2) {
+            rulesItem2.innerHTML = `<i class="icon-check icon"></i> ${datos.rules_item2 || ''}`;
+        }
+        const rulesItem3 = document.getElementById('public-rules-item3');
+        if (rulesItem3) {
+            rulesItem3.innerHTML = `<i class="icon-check icon"></i> ${datos.rules_item3 || ''}`;
+        }
+        const rulesItem4 = document.getElementById('public-rules-item4');
+        if (rulesItem4) {
+            rulesItem4.innerHTML = `<i class="icon-check icon"></i> ${datos.rules_item4 || ''}`;
+        }
+
+        const contactoTitulo = document.getElementById('public-rules-contacto-titulo');
+        if (contactoTitulo) contactoTitulo.textContent = datos.rules_contacto_titulo || '';
+
+        const contactoDescripcion = document.getElementById('public-rules-contacto-descripcion');
+        if (contactoDescripcion) contactoDescripcion.textContent = datos.rules_contacto_descripcion || '';
+
+    } catch (err) {
+        console.error("Error al renderizar de forma pública la sección Rules:", err);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('public-rules-titulo')) {
+        cargarRulesPublico();
+    }
+});

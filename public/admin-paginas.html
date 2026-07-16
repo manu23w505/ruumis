@@ -855,6 +855,57 @@
                             </div>
                             <!-- STAGES SECTION ABOUT end -->
 
+                            <!-- RULES SECTION ABOUT start-->
+                            <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 mt-6">
+                                <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                    <span class="icon-file-text text-teal-600"></span> Edición de Reglas y Formulario de Consultas (Rules Section)
+                                </h3>
+                                <form id="form-about-rules" class="space-y-4">
+                                    <div>
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Título de la Sección de Reglas</label>
+                                        <input type="text" id="input-rules-titulo" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-teal-500" required>
+                                    </div>
+
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Regla 1</label>
+                                            <textarea id="textarea-rules-item1" rows="2" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-teal-500" required></textarea>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Regla 2</label>
+                                            <textarea id="textarea-rules-item2" rows="2" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-teal-500" required></textarea>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Regla 3</label>
+                                            <textarea id="textarea-rules-item3" rows="2" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-teal-500" required></textarea>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Regla 4 (Destacada / Importante)</label>
+                                            <textarea id="textarea-rules-item4" rows="2" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-teal-500" required></textarea>
+                                        </div>
+                                    </div>
+
+                                    <hr class="border-slate-100 my-4">
+
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Título de Contacto (Derecha)</label>
+                                            <input type="text" id="input-rules-contacto-titulo" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-teal-500" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Descripción del Formulario</label>
+                                            <textarea id="textarea-rules-contacto-descripcion" rows="2" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-teal-500" required></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex justify-end pt-2">
+                                        <button type="submit" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg shadow-sm transition-colors flex items-center gap-2">
+                                            <span class="icon-floppy-disk"></span> Guardar Sección de Reglas
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- RULES SECTION ABOUT end -->
 
                         </div>
 
@@ -1922,8 +1973,74 @@
             }
         });
 
+        //==========================================
+        // RULS SECTION ABOUT
+        //==========================================
 
-        
+        async function cargarRulesAdmin() {
+            try {
+                const response = await fetch('/api/about/rules');
+                if (!response.ok) throw new Error("Error al obtener los datos de las reglas.");
+                const datos = await response.json();
+
+                document.getElementById('input-rules-titulo').value = datos.rules_titulo || '';
+                document.getElementById('textarea-rules-item1').value = datos.rules_item1 || '';
+                document.getElementById('textarea-rules-item2').value = datos.rules_item2 || '';
+                document.getElementById('textarea-rules-item3').value = datos.rules_item3 || '';
+                document.getElementById('textarea-rules-item4').value = datos.rules_item4 || '';
+                document.getElementById('input-rules-contacto-titulo').value = datos.rules_contacto_titulo || '';
+                document.getElementById('textarea-rules-contacto-descripcion').value = datos.rules_contacto_descripcion || '';
+
+            } catch (err) {
+                console.error("Error al cargar las reglas en el Panel Admin:", err);
+            }
+        }
+
+
+        async function guardarRulesAdmin(e) {
+            e.preventDefault();
+
+            const payload = {
+                rules_titulo: document.getElementById('input-rules-titulo').value,
+                rules_item1: document.getElementById('textarea-rules-item1').value,
+                rules_item2: document.getElementById('textarea-rules-item2').value,
+                rules_item3: document.getElementById('textarea-rules-item3').value,
+                rules_item4: document.getElementById('textarea-rules-item4').value,
+                rules_contacto_titulo: document.getElementById('input-rules-contacto-titulo').value,
+                rules_contacto_descripcion: document.getElementById('textarea-rules-contacto-descripcion').value
+            };
+
+            try {
+                const response = await fetch('/api/about/rules', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error("No se pudo actualizar la sección.");
+                const result = await response.json();
+
+                alert("¡Éxito! " + result.message);
+                await cargarRulesAdmin(); 
+            } catch (err) {
+                console.error("Error al guardar las reglas:", err);
+                alert("Ocurrió un error al intentar guardar la sección.");
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const rulesForm = document.getElementById('form-about-rules');
+            if (rulesForm) {
+                rulesForm.addEventListener('submit', guardarRulesAdmin);
+            }
+            cargarRulesAdmin();
+        });
+
+
+
 
         if (window.self !== window.top) {
             const headerRedundante = document.querySelector('header');
