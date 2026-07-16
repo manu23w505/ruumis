@@ -907,6 +907,86 @@
                             </div>
                             <!-- RULES SECTION ABOUT end -->
 
+                            <!-- SECCTION FAQ start-->
+                            <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200 mt-6">
+                                <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                    <span class="icon-question text-teal-600"></span> Edición de Preguntas Frecuentes (FAQ Section)
+                                </h3>
+                                <form id="form-about-faq" class="space-y-6">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Título General</label>
+                                            <input type="text" id="input-faq-titulo" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-teal-500" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Descripción Corta</label>
+                                            <input type="text" id="input-faq-descripcion" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:border-teal-500" required>
+                                        </div>
+                                    </div>
+
+                                    <hr class="border-slate-100">
+
+                                    <div class="space-y-4">
+                                        <h4 class="text-sm font-bold text-slate-700">Acordeones de Preguntas y Respuestas</h4>
+                                        
+                                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
+                                            <span class="text-xs font-bold text-teal-700">PREGUNTA #1</span>
+                                            <input type="text" id="input-faq-q1" placeholder="Pregunta" class="w-full px-3 py-1.5 border border-slate-200 rounded-md mb-2 focus:border-teal-500 text-sm" required>
+                                            <textarea id="textarea-faq-a1" rows="2" placeholder="Respuesta" class="w-full px-3 py-1.5 border border-slate-200 rounded-md focus:border-teal-500 text-sm" required></textarea>
+                                        </div>
+
+                                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
+                                            <span class="text-xs font-bold text-teal-700">PREGUNTA #2</span>
+                                            <input type="text" id="input-faq-q2" placeholder="Pregunta" class="w-full px-3 py-1.5 border border-slate-200 rounded-md mb-2 focus:border-teal-500 text-sm" required>
+                                            <textarea id="textarea-faq-a2" rows="2" placeholder="Respuesta" class="w-full px-3 py-1.5 border border-slate-200 rounded-md focus:border-teal-500 text-sm" required></textarea>
+                                        </div>
+
+                                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
+                                            <span class="text-xs font-bold text-teal-700">PREGUNTA #3</span>
+                                            <input type="text" id="input-faq-q3" placeholder="Pregunta" class="w-full px-3 py-1.5 border border-slate-200 rounded-md mb-2 focus:border-teal-500 text-sm" required>
+                                            <textarea id="textarea-faq-a3" rows="2" placeholder="Respuesta" class="w-full px-3 py-1.5 border border-slate-200 rounded-md focus:border-teal-500 text-sm" required></textarea>
+                                        </div>
+
+                                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
+                                            <span class="text-xs font-bold text-teal-700">PREGUNTA #4</span>
+                                            <input type="text" id="input-faq-q4" placeholder="Pregunta" class="w-full px-3 py-1.5 border border-slate-200 rounded-md mb-2 focus:border-teal-500 text-sm" required>
+                                            <textarea id="textarea-faq-a4" rows="2" placeholder="Respuesta" class="w-full px-3 py-1.5 border border-slate-200 rounded-md focus:border-teal-500 text-sm" required></textarea>
+                                        </div>
+
+                                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
+                                            <span class="text-xs font-bold text-teal-700">PREGUNTA #5</span>
+                                            <input type="text" id="input-faq-q5" placeholder="Pregunta" class="w-full px-3 py-1.5 border border-slate-200 rounded-md mb-2 focus:border-teal-500 text-sm" required>
+                                            <textarea id="textarea-faq-a5" rows="2" placeholder="Respuesta" class="w-full px-3 py-1.5 border border-slate-200 rounded-md focus:border-teal-500 text-sm" required></textarea>
+                                        </div>
+                                    </div>
+
+                                    <hr class="border-slate-100">
+
+                                    <div class="bg-amber-50 p-4 rounded-lg border border-amber-200 space-y-3">
+                                        <h4 class="text-sm font-bold text-amber-800 flex items-center gap-1">
+                                            <span class="icon-info"></span> Configuración de Tarjeta "Do you have any questions?"
+                                        </h4>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-xs font-semibold uppercase text-amber-700 mb-1">Título de la Tarjeta</label>
+                                                <input type="text" id="input-faq-card-titulo" class="w-full px-3 py-2 border border-amber-200 rounded-lg focus:outline-none focus:border-amber-500 bg-white" required>
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold uppercase text-amber-700 mb-1">Descripción Corta</label>
+                                                <textarea id="textarea-faq-card-descripcion" rows="1" class="w-full px-3 py-2 border border-amber-200 rounded-lg focus:outline-none focus:border-amber-500 bg-white" required></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex justify-end pt-2">
+                                        <button type="submit" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg shadow-sm transition-colors flex items-center gap-2">
+                                            <span class="icon-floppy-disk"></span> Guardar Cambios FAQ
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- SECCTION FAQ end-->
+
                         </div>
 
             </div>
@@ -2039,6 +2119,76 @@
             cargarRulesAdmin();
         });
 
+        //=========================================
+        // SECTION FAQ ABOUT
+        //=========================================
+
+        async function cargarFaqAdmin() {
+            try {
+                const response = await fetch('/api/about/faq');
+                if (!response.ok) throw new Error("Error consultando la API de FAQ.");
+                const datos = await response.json();
+
+                document.getElementById('input-faq-titulo').value = datos.faq_titulo || '';
+                document.getElementById('input-faq-descripcion').value = datos.faq_descripcion || '';
+                
+                for (let i = 1; i <= 5; i++) {
+                    document.getElementById(`input-faq-q${i}`).value = datos[`faq_q${i}`] || '';
+                    document.getElementById(`textarea-faq-a${i}`).value = datos[`faq_a${i}`] || '';
+                }
+
+                document.getElementById('input-faq-card-titulo').value = datos.faq_card_titulo || '';
+                document.getElementById('textarea-faq-card-descripcion').value = datos.faq_card_descripcion || '';
+
+            } catch (err) {
+                console.error("Error al cargar FAQ en el Admin:", err);
+            }
+        }
+
+
+        async function guardarFaqAdmin(e) {
+            e.preventDefault();
+
+            const payload = {
+                faq_titulo: document.getElementById('input-faq-titulo').value,
+                faq_descripcion: document.getElementById('input-faq-descripcion').value,
+                faq_card_titulo: document.getElementById('input-faq-card-titulo').value,
+                faq_card_descripcion: document.getElementById('textarea-faq-card-descripcion').value
+            };
+
+            for (let i = 1; i <= 5; i++) {
+                payload[`faq_q${i}`] = document.getElementById(`input-faq-q${i}`).value;
+                payload[`faq_a${i}`] = document.getElementById(`textarea-faq-a${i}`).value;
+            }
+
+            try {
+                const response = await fetch('/api/about/faq', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error("No se pudo actualizar la sección FAQ.");
+                const result = await response.json();
+
+                alert("¡Éxito! " + result.message);
+                await cargarFaqAdmin();
+            } catch (err) {
+                console.error("Error al guardar la sección FAQ:", err);
+                alert("Ocurrió un problema al guardar la sección FAQ.");
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const faqForm = document.getElementById('form-about-faq');
+            if (faqForm) {
+                faqForm.addEventListener('submit', guardarFaqAdmin);
+            }
+            cargarFaqAdmin();
+        });
 
 
 

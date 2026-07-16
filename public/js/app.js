@@ -1843,3 +1843,53 @@ document.addEventListener('DOMContentLoaded', () => {
         cargarRulesPublico();
     }
 });
+
+//================================================================
+// SECTION FAQ ABOUT
+//================================================================
+
+async function cargarFaqPublico() {
+    try {
+        const response = await fetch('/api/about/faq');
+        if (!response.ok) throw new Error("No se pudo obtener la respuesta de la API de FAQ.");
+        const datos = await response.json();
+
+        const faqTitulo = document.getElementById('public-faq-titulo');
+        if (faqTitulo) faqTitulo.textContent = datos.faq_titulo || '';
+
+        const faqDescripcion = document.getElementById('public-faq-descripcion');
+        if (faqDescripcion) faqDescripcion.textContent = datos.faq_descripcion || '';
+
+        for (let i = 1; i <= 5; i++) {
+            const elPregunta = document.getElementById(`public-faq-q${i}`);
+            if (elPregunta) {
+                elPregunta.innerHTML = `
+                    ${datos[`faq_q${i}`] || ''}
+                    <span class="wrapper">
+                        <i class="icon-chevron_down icon transform"></i>
+                    </span>
+                `;
+            }
+
+            const elRespuesta = document.getElementById(`public-faq-a${i}`);
+            if (elRespuesta) {
+                elRespuesta.textContent = datos[`faq_a${i}`] || '';
+            }
+        }
+
+        const cardTitulo = document.getElementById('public-faq-card-titulo');
+        if (cardTitulo) cardTitulo.textContent = datos.faq_card_titulo || '';
+
+        const cardDescripcion = document.getElementById('public-faq-card-descripcion');
+        if (cardDescripcion) cardDescripcion.textContent = datos.faq_card_descripcion || '';
+
+    } catch (err) {
+        console.error("Error cargando de forma dinámica el componente FAQ público:", err);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('public-faq-titulo')) {
+        cargarFaqPublico();
+    }
+});

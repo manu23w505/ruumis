@@ -2044,6 +2044,80 @@ app.put('/api/about/rules', (req, res) => {
 });
 
 
+// ==========================================
+// RUTA: SECCIÓN DE PREGUNTAS FRECUENTES (FAQ)
+// ==========================================
+
+
+app.get('/api/about/faq', (req, res) => {
+    const sql = `
+        SELECT 
+            faq_titulo, faq_descripcion,
+            faq_q1, faq_a1,
+            faq_q2, faq_a2,
+            faq_q3, faq_a3,
+            faq_q4, faq_a4,
+            faq_q5, faq_a5,
+            faq_card_titulo, faq_card_descripcion 
+        FROM admin_about 
+        WHERE id = 1
+    `;
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error("Error al obtener FAQ de admin_about:", err);
+            return res.status(500).json({ error: "Error interno al consultar la base de datos" });
+        }
+        if (result.length === 0) {
+            return res.status(404).json({ error: "Sección FAQ no encontrada" });
+        }
+        res.json(result[0]);
+    });
+});
+
+
+app.put('/api/about/faq', (req, res) => {
+    const { 
+        faq_titulo, faq_descripcion,
+        faq_q1, faq_a1,
+        faq_q2, faq_a2,
+        faq_q3, faq_a3,
+        faq_q4, faq_a4,
+        faq_q5, faq_a5,
+        faq_card_titulo, faq_card_descripcion 
+    } = req.body;
+
+    const sql = `
+        UPDATE admin_about SET 
+            faq_titulo = ?, faq_descripcion = ?,
+            faq_q1 = ?, faq_a1 = ?,
+            faq_q2 = ?, faq_a2 = ?,
+            faq_q3 = ?, faq_a3 = ?,
+            faq_q4 = ?, faq_a4 = ?,
+            faq_q5 = ?, faq_a5 = ?,
+            faq_card_titulo = ?, faq_card_descripcion = ?
+        WHERE id = 1
+    `;
+
+    const params = [
+        faq_titulo, faq_descripcion,
+        faq_q1, faq_a1,
+        faq_q2, faq_a2,
+        faq_q3, faq_a3,
+        faq_q4, faq_a4,
+        faq_q5, faq_a5,
+        faq_card_titulo, faq_card_descripcion
+    ];
+
+    db.query(sql, params, (err, result) => {
+        if (err) {
+            console.error("Error al actualizar FAQ en admin_about:", err);
+            return res.status(500).json({ error: "Error al actualizar los datos en la base de datos" });
+        }
+        res.json({ message: "¡Sección de Preguntas Frecuentes (FAQ) actualizada con éxito!" });
+    });
+});
+
+
 
 cron.schedule('*/5 * * * *', () => {
     sincronizarCalendarios();
