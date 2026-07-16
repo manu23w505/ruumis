@@ -2316,8 +2316,6 @@
             e.preventDefault();
             const formData = new FormData();
             
-            formData.append('_method', 'PUT'); 
-            
             formData.append('footer_quote_autor', document.getElementById('input-footer-quote-autor').value);
             formData.append('footer_quote_texto', document.getElementById('textarea-footer-quote-texto').value);
             formData.append('footer_quote_profesion', document.getElementById('input-footer-quote-profesion').value);
@@ -2337,7 +2335,7 @@
 
             try {
                 const response = await fetch('/api/about/footer', {
-                    method: 'POST', 
+                    method: 'PUT', 
                     body: formData 
                 });
 
@@ -2349,7 +2347,7 @@
                 if (fileInput) fileInput.value = ''; 
                 await cargarAboutFooterAdmin();
             } catch (err) {
-                console.error("Error al persistir la información del footer:", err);
+                console.error("Error al persistir la información del footer:", err); //
                 alert("Ocurrió un error al intentar registrar los cambios.");
             }
         }

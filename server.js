@@ -2160,7 +2160,7 @@ app.put('/api/about/footer', upload.single('footer_quote_img'), (req, res) => {
     const rutaImagenFinal = req.file ? `/uploads/${req.file.filename}` : footer_quote_img_actual;
 
     const sql = `
-        UPDATE about_footer 
+        UPDATE admin_about 
         SET footer_quote_img = ?, 
             footer_quote_autor = ?, 
             footer_quote_texto = ?, 
@@ -2187,10 +2187,14 @@ app.put('/api/about/footer', upload.single('footer_quote_img'), (req, res) => {
         footer_sub_descripcion
     ], (err, result) => {
         if (err) {
-            console.error("Error al actualizar la tabla about_footer:", err);
+            console.error("Error al actualizar la sección footer de admin_about:", err);
             return res.status(500).json({ error: "Error interno al guardar en la base de datos" });
         }
-        res.json({ message: "¡Sección de Pie de Página actualizada con éxito!", footer_quote_img: rutaImagenFinal });
+        res.json({ 
+            success: true, 
+            message: "¡Sección de Pie de Página actualizada con éxito!", 
+            footer_quote_img: rutaImagenFinal 
+        });
     });
 });
 
