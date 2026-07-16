@@ -1794,6 +1794,66 @@ app.get('/api/home/contacts', (req, res) => {
 });
 
 
+// ==========================================
+// ABOUT (BENEFITS)
+// ==========================================
+
+
+app.get('/api/about/benefits', (req, res) => {
+    const sql = 'SELECT * FROM admin_about WHERE id = 1';
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error("Error al obtener la sección de beneficios:", err);
+            return res.status(500).json({ error: "Error interno del servidor" });
+        }
+        res.json(results[0] || {});
+    });
+});
+
+
+app.put('/api/about/benefits', upload.single('benefits_imagen'), (req, res) => {
+    const {
+        benefits_titulo, benefits_descripcion,
+        benefit1_valor, benefit1_sufijo, benefit1_descripcion,
+        benefit2_valor, benefit2_sufijo, benefit2_descripcion,
+        benefit3_valor, benefit3_sufijo, benefit3_descripcion,
+        benefits_video_link, benefits_imagen_actual
+    } = req.body;
+
+    let benefits_imagen_url = benefits_imagen_actual;
+    if (req.file) {
+        benefits_imagen_url = req.file.filename; 
+    }
+
+    const sql = `
+        UPDATE admin_about 
+        SET benefits_titulo = ?, benefits_descripcion = ?, 
+            benefit1_valor = ?, benefit1_sufijo = ?, benefit1_descripcion = ?, 
+            benefit2_valor = ?, benefit2_sufijo = ?, benefit2_descripcion = ?, 
+            benefit3_valor = ?, benefit3_sufijo = ?, benefit3_descripcion = ?, 
+            benefits_imagen = ?, benefits_video_link = ?
+        WHERE id = 1
+    `;
+
+    db.query(sql, [
+        benefits_titulo, benefits_descripcion,
+        benefit1_valor, benefit1_sufijo, benefit1_descripcion,
+        benefit2_valor, benefit2_sufijo, benefit2_descripcion,
+        benefit3_valor, benefit3_sufijo, benefit3_descripcion,
+        benefits_imagen_url, benefits_video_link
+    ], (err, result) => {
+        if (err) {
+            console.error("Error al actualizar la tabla admin_about:", err);
+            return res.status(500).json({ error: "Error al guardar en la base de datos" });
+        }
+        res.json({ 
+            message: "¡Sección de Beneficios (About) actualizada con éxito!", 
+            benefits_imagen: benefits_imagen_url 
+        });
+    });
+});
+
+
 
 cron.schedule('*/5 * * * *', () => {
     sincronizarCalendarios();

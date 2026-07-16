@@ -1620,3 +1620,90 @@ document.addEventListener('DOMContentLoaded', () => {
         cargarContactsPublico();
     }
 });
+
+//================================================================
+// ABOUT BENEFITS SECTION
+//================================================================
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    if (document.querySelector('.about_benefits')) {
+        cargarBenefitsPublico();
+    }
+});
+
+async function cargarBenefitsPublico() {
+    try {
+        const response = await fetch('/api/about/benefits');
+        if (!response.ok) throw new Error("No se pudo obtener la sección de beneficios.");
+        const datos = await response.json();
+        if (!datos) return;
+
+        // 1. Textos de Cabecera
+        if (document.getElementById('public-benefits-titulo')) {
+            document.getElementById('public-benefits-titulo').textContent = datos.benefits_titulo || '';
+        }
+        if (document.getElementById('public-benefits-descripcion')) {
+            document.getElementById('public-benefits-descripcion').textContent = datos.benefits_descripcion || '';
+        }
+
+        const ben1Valor = document.getElementById('public-benefit1-valor');
+        if (ben1Valor) {
+            ben1Valor.setAttribute('data-value', datos.benefit1_valor || 0);
+            ben1Valor.setAttribute('data-suffix', datos.benefit1_sufijo || '');
+            ben1Valor.textContent = datos.benefit1_valor || 0; 
+        }
+        if (document.getElementById('public-benefit1-descripcion')) {
+            document.getElementById('public-benefit1-descripcion').textContent = datos.benefit1_descripcion || '';
+        }
+
+        const ben2Valor = document.getElementById('public-benefit2-valor');
+        if (ben2Valor) {
+            ben2Valor.setAttribute('data-value', datos.benefit2_valor || 0);
+            ben2Valor.setAttribute('data-suffix', datos.benefit2_sufijo || '');
+            ben2Valor.textContent = datos.benefit2_valor || 0;
+        }
+        if (document.getElementById('public-benefit2-descripcion')) {
+            document.getElementById('public-benefit2-descripcion').textContent = datos.benefit2_descripcion || '';
+        }
+
+        const ben3Valor = document.getElementById('public-benefit3-valor');
+        if (ben3Valor) {
+            ben3Valor.setAttribute('data-value', datos.benefit3_valor || 0);
+            ben3Valor.setAttribute('data-suffix', datos.benefit3_sufijo || '');
+            ben3Valor.textContent = datos.benefit3_valor || 0;
+        }
+        if (document.getElementById('public-benefit3-descripcion')) {
+            document.getElementById('public-benefit3-descripcion').textContent = datos.benefit3_descripcion || '';
+        }
+
+        const linkVideo = document.getElementById('public-benefits-video-link');
+        if (linkVideo) {
+            linkVideo.href = datos.benefits_video_link || '#';
+        }
+
+        const imgBenefits = document.getElementById('public-benefits-img');
+        const srcBenefits = document.getElementById('public-benefits-src-srcset');
+
+        if (datos.benefits_imagen) {
+            const rutaLimpia = obtenerRutaImagen(datos.benefits_imagen);
+            
+            if (imgBenefits) {
+                imgBenefits.src = rutaLimpia;
+                imgBenefits.setAttribute('data-src', rutaLimpia);
+                imgBenefits.classList.remove('lazy'); 
+            }
+
+            if (srcBenefits) {
+                srcBenefits.srcset = rutaLimpia;
+                srcBenefits.setAttribute('data-srcset', rutaLimpia);
+            }
+        } else {
+            if (imgBenefits) imgBenefits.src = '/uploads/placeholder.jpg';
+        }
+
+    } catch (err) {
+        console.error("Error al renderizar la sección de beneficios (Frontend):", err);
+    }
+}
+
