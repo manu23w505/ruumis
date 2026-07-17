@@ -1209,8 +1209,16 @@
                                             <input type="text" id="input-services-title" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-semibold text-slate-700 mb-1">Ruta de la imagen lateral</label>
-                                            <input type="text" id="input-services-image" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="img/placeholder.jpg">
+                                            <label class="block text-sm font-semibold text-slate-700 mb-1">Imagen lateral de la sección</label>
+                                            <!-- Cambiado a tipo file para seleccionar archivos de forma segura -->
+                                            <input type="file" id="input-services-image" accept="image/*" 
+                                                class="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-sm file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100 cursor-pointer">
+                                            
+                                            <!-- Contenedor dinámico para mostrar la imagen guardada actualmente -->
+                                            <div id="preview-services-image" class="mt-3 hidden">
+                                                <p class="text-xs font-medium text-slate-400 mb-1">Imagen actual en el sitio:</p>
+                                                <img id="img-services-preview" src="" alt="Vista previa del servicio" class="h-16 w-auto object-cover rounded-md border border-slate-200 shadow-sm">
+                                            </div>
                                         </div>
                                     </div>
 
@@ -2669,87 +2677,100 @@
         // SERVICES SECTION (STAY SERVICES)
         //==========================================
 
-        async function cargarRoomsServicesAdmin() {
-            try {
-                const response = await fetch('/api/admin-services');
-                if (!response.ok) throw new Error("No se pudo obtener la información de rooms_services.");
-                const datos = await response.json();
+async function cargarRoomsServicesAdmin() {
+    try {
+        const response = await fetch('/api/admin-services');
+        if (!response.ok) throw new Error("No se pudo obtener la información de rooms_services.");
+        const datos = await response.json();
 
-                document.getElementById('input-services-title').value = datos.services_title || '';
-                document.getElementById('input-services-image').value = datos.services_image || '';
-
-                // Servicio 1
-                document.getElementById('input-service1-title').value = datos.service1_title || '';
-                document.getElementById('textarea-service1-text').value = datos.service1_text || '';
-
-                // Servicio 2
-                document.getElementById('input-service2-title').value = datos.service2_title || '';
-                document.getElementById('textarea-service2-text').value = datos.service2_text || '';
-
-                // Servicio 3
-                document.getElementById('input-service3-title').value = datos.service3_title || '';
-                document.getElementById('textarea-service3-text').value = datos.service3_text || '';
-
-            } catch (err) {
-                console.error("Error al cargar la configuración de rooms_services en el panel:", err);
-            }
+        document.getElementById('input-services-title').value = datos.services_title || '';
+        
+        // Los inputs de tipo "file" no permiten asignarles un valor por seguridad del navegador.
+        // Lo que hacemos es mostrar una vista previa de la imagen que ya está guardada en el servidor.
+        const previewCont = document.getElementById('preview-services-image');
+        const imgPreview = document.getElementById('img-services-preview');
+        
+        if (datos.services_image) {
+            imgPreview.src = datos.services_image;
+            previewCont.classList.remove('hidden');
+        } else {
+            previewCont.classList.add('hidden');
         }
 
-        async function guardarRoomsServicesAdmin(e) {
-            e.preventDefault();
-            
-            const datos = {
-                services_title: document.getElementById('input-services-title').value,
-                services_image: document.getElementById('input-services-image').value,
+        // Servicio 1
+        document.getElementById('input-service1-title').value = datos.service1_title || '';
+        document.getElementById('textarea-service1-text').value = datos.service1_text || '';
 
-                // Servicio 1
-                service1_title: document.getElementById('input-service1-title').value,
-                service1_text: document.getElementById('textarea-service1-text').value,
+        // Servicio 2
+        document.getElementById('input-service2-title').value = datos.service2_title || '';
+        document.getElementById('textarea-service2-text').value = datos.service2_text || '';
 
-                // Servicio 2
-                service2_title: document.getElementById('input-service2-title').value,
-                service2_text: document.getElementById('textarea-service2-text').value,
+        // Servicio 3
+        document.getElementById('input-service3-title').value = datos.service3_title || '';
+        document.getElementById('textarea-service3-text').value = datos.service3_text || '';
 
-                // Servicio 3
-                service3_title: document.getElementById('input-service3-title').value,
-                service3_text: document.getElementById('textarea-service3-text').value
-            };
+    } catch (err) {
+        console.error("Error al cargar la configuración de rooms_services en el panel:", err);
+    }
+}
 
-            try {
-                const response = await fetch('/api/admin-services', {
-                    method: 'POST', 
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(datos)
-                });
+async function guardarRoomsServicesAdmin(e) {
+    e.preventDefault();
+    
+    // Usamos FormData en lugar de un objeto plano para poder empaquetar el archivo binario
+    const formData = new FormData();
+    formData.append('services_title', document.getElementById('input-services-title').value);
+    
+    // Capturamos el archivo seleccionado si es que el usuario eligió uno nuevo
+    const imageInput = document.getElementById('input-services-image');
+    if (imageInput.files[0]) {
+        formData.append('services_image', imageInput.files[0]);
+    }
 
-                if (!response.ok) throw new Error("No se pudo guardar la configuración.");
-                const result = await response.json();
+    // Agregamos el resto de los campos de texto al FormData
+    formData.append('service1_title', document.getElementById('input-service1-title').value);
+    formData.append('service1_text', document.getElementById('textarea-service1-text').value);
+    
+    formData.append('service2_title', document.getElementById('input-service2-title').value);
+    formData.append('service2_text', document.getElementById('textarea-service2-text').value);
+    
+    formData.append('service3_title', document.getElementById('input-service3-title').value);
+    formData.append('service3_text', document.getElementById('textarea-service3-text').value);
 
-                alert("¡Éxito! " + result.message);
-                await cargarRoomsServicesAdmin();
-            } catch (err) {
-                console.error("Error al persistir la información de servicios:", err);
-                alert("Ocurrió un error al intentar registrar los cambios.");
-            }
-        }
-
-        // Modifica tu listener DOMContentLoaded para que también maneje Services
-        document.addEventListener('DOMContentLoaded', () => {
-            // ... (Tus listeners anteriores) ...
-            
-            const servicesForm = document.getElementById('form-rooms-services');
-            if (servicesForm) {
-                servicesForm.addEventListener('submit', guardarRoomsServicesAdmin);
-            }
-            
-            // Cargamos ambos servicios al inicializar la vista de administrador
-            cargarRoomsAmenitiesAdmin();
-            cargarRoomsServicesAdmin();
+    try {
+        const response = await fetch('/api/admin-services', {
+            method: 'POST', 
+            // IMPORTANTE: Al enviar un FormData NO debes declarar el 'Content-Type' manualmente.
+            // El navegador lo omitirá y creará automáticamente el encabezado correcto con el 'boundary'.
+            body: formData
         });
 
+        if (!response.ok) throw new Error("No se pudo guardar la configuración.");
+        const result = await response.json();
+
+        alert("¡Éxito! " + result.message);
         
+        // Limpiamos el input file para que no se quede el nombre del archivo viejo pegado
+        imageInput.value = ''; 
+        
+        await cargarRoomsServicesAdmin();
+    } catch (err) {
+        console.error("Error al persistir la información de servicios:", err);
+        alert("Ocurrió un error al intentar registrar los cambios.");
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const servicesForm = document.getElementById('form-rooms-services');
+    if (servicesForm) {
+        servicesForm.addEventListener('submit', guardarRoomsServicesAdmin);
+    }
+    
+    // Cargamos los servicios al inicializar
+    if (typeof cargarRoomsAmenitiesAdmin === 'function') cargarRoomsAmenitiesAdmin();
+    cargarRoomsServicesAdmin();
+});
+
 
 
         if (window.self !== window.top) {

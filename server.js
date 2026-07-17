@@ -2315,39 +2315,62 @@ app.get('/api/admin-services', (req, res) => {
     });
 });
 
+
 app.post('/api/admin-services', (req, res) => {
-    const {
-        services_title,
-        service1_title, service1_text,
-        service2_title, service2_text,
-        service3_title, service3_text,
-        services_image
-    } = req.body;
-
-    const query = `
-        UPDATE admin_rooms SET 
-            services_title = ?, 
-            service1_title = ?, service1_text = ?,
-            service2_title = ?, service2_text = ?,
-            service3_title = ?, service3_text = ?,
-            services_image = ?
-        WHERE id = 1
-    `;
-
-    const values = [
-        services_title,
-        service1_title, service1_text,
-        service2_title, service2_text,
-        service3_title, service3_text,
-        services_image
-    ];
-
-    db.query(query, values, (err, result) => {
-        if (err) {
-            console.error("Error al actualizar admin-services:", err);
-            return res.status(500).json({ error: "Error al actualizar la base de datos" });
+    // Ejecutamos multer manualmente dentro de la ruta para atrapar errores de forma limpia
+    upload.single('services_image')(req, res, function (err) {
+        if (err instanceof multer.MulterError) {
+            // Error específico de Multer (ej. archivo superior a 5MB)
+            return res.status(400).json({ error: `Error al subir imagen: ${err.message}` });
+        } else if (err) {
+            // Error de validación de formato
+            return res.status(400).json({ error: err.message });
         }
-        res.json({ success: true, message: "Servicios actualizados con éxito" });
+
+        // Una vez que Multer procesa la petición:
+        // - Los campos de texto estarán en req.body
+        // - El archivo (si se subió) estará en req.file
+        const {
+            services_title,
+            service1_title, service1_text,
+            service2_title, service2_text,
+            service3_title, service3_text
+        } = req.body;
+
+        // Construcción de consulta dinámica para proteger la imagen previa
+        let query = `
+            UPDATE admin_rooms SET 
+                services_title = ?, 
+                service1_title = ?, service1_text = ?,
+                service2_title = ?, service2_text = ?,
+                service3_title = ?, service3_text = ?
+        `;
+
+        const values = [
+            services_title,
+            service1_title, service1_text,
+            service2_title, service2_text,
+            service3_title, service3_text
+        ];
+
+        // ¿El usuario subió una imagen nueva?
+        if (req.file) {
+            // Agregamos la columna de imagen a la consulta y guardamos la ruta relativa
+            query += `, services_image = ?`;
+            // Guardamos la ruta que el navegador usará para renderizarla (ej: /uploads/archivo.png)
+            values.push(`/uploads/${req.file.filename}`);
+        }
+
+        // Cerramos el query con el identificador único
+        query += ` WHERE id = 1`;
+
+        db.query(query, values, (dbErr, result) => {
+            if (dbErr) {
+                console.error("Error al actualizar admin-services en DB:", dbErr);
+                return res.status(500).json({ error: "Error al actualizar la base de datos" });
+            }
+            res.json({ success: true, message: "Servicios actualizados con éxito" });
+        });
     });
 });
 
