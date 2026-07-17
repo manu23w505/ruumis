@@ -2224,6 +2224,69 @@ app.put('/api/about/footer', upload.single('footer_quote_img'), (req, res) => {
 });
 
 
+// ==========================================
+// SECTION AMENITIES (ROOMS)
+// ==========================================
+
+
+app.get('/api/admin-rooms', (req, res) => {
+    const query = 'SELECT * FROM admin_rooms WHERE id = 1';
+    
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("Error al obtener admin_rooms:", err);
+            return res.status(500).json({ error: "Error interno del servidor" });
+        }
+        
+        if (results.length > 0) {
+            res.json(results[0]);
+        } else {
+            res.status(404).json({ error: "Configuración no encontrada" });
+        }
+    });
+});
+
+
+app.post('/api/admin-rooms', (req, res) => {
+    const {
+        amenities_subtitle,
+        amenities_title,
+        amenity1_icon, amenity1_titulo, amenity1_descripcion,
+        amenity2_icon, amenity2_titulo, amenity2_descripcion,
+        amenity3_icon, amenity3_titulo, amenity3_descripcion,
+        amenity4_icon, amenity4_titulo, amenity4_descripcion
+    } = req.body;
+
+    const query = `
+        UPDATE admin_rooms SET 
+            amenities_subtitle = ?, 
+            amenities_title = ?, 
+            amenity1_icon = ?, amenity1_titulo = ?, amenity1_descripcion = ?,
+            amenity2_icon = ?, amenity2_titulo = ?, amenity2_descripcion = ?,
+            amenity3_icon = ?, amenity3_titulo = ?, amenity3_descripcion = ?,
+            amenity4_icon = ?, amenity4_titulo = ?, amenity4_descripcion = ?
+        WHERE id = 1
+    `;
+
+    const values = [
+        amenities_subtitle,
+        amenities_title,
+        amenity1_icon, amenity1_titulo, amenity1_descripcion,
+        amenity2_icon, amenity2_titulo, amenity2_descripcion,
+        amenity3_icon, amenity3_titulo, amenity3_descripcion,
+        amenity4_icon, amenity4_titulo, amenity4_descripcion
+    ];
+
+    db.query(query, values, (err, result) => {
+        if (err) {
+            console.error("Error al actualizar admin_rooms:", err);
+            return res.status(500).json({ error: "Error al actualizar la base de datos" });
+        }
+        res.json({ success: true, message: "Amenities actualizados con éxito" });
+    });
+});
+
+
 
 
 cron.schedule('*/5 * * * *', () => {

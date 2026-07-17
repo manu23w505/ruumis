@@ -1965,3 +1965,62 @@ document.addEventListener('DOMContentLoaded', () => {
         cargarAboutFooterPublico();
     }
 });
+
+//================================================================
+// SECTION AMENITIES ROOMS
+//================================================================
+
+async function cargarRoomsAmenitiesPublico() {
+    try {
+        const response = await fetch('/api/rooms/amenities');
+        if (!response.ok) throw new Error("No se pudo conectar a la API de amenities.");
+        const datos = await response.json();
+
+        const subtitle = document.getElementById('public-amenities-subtitle');
+        if (subtitle) subtitle.textContent = datos.amenities_subtitle || '';
+
+        const title = document.getElementById('public-amenities-title');
+        if (title) title.textContent = datos.amenities_title || '';
+
+        // Servicio 1
+        const a1Icon = document.getElementById('public-amenity1-icon');
+        if (a1Icon) a1Icon.className = datos.amenity1_icon || '';
+        const a1Titulo = document.getElementById('public-amenity1-titulo');
+        if (a1Titulo) a1Titulo.textContent = datos.amenity1_titulo || '';
+        const a1Desc = document.getElementById('public-amenity1-descripcion');
+        if (a1Desc) a1Desc.textContent = datos.amenity1_descripcion || '';
+
+        // Servicio 2
+        const a2Icon = document.getElementById('public-amenity2-icon');
+        if (a2Icon) a2Icon.className = datos.amenity2_icon || '';
+        const a2Titulo = document.getElementById('public-amenity2-titulo');
+        if (a2Titulo) a2Titulo.textContent = datos.amenity2_titulo || '';
+        const a2Desc = document.getElementById('public-amenity2-descripcion');
+        if (a2Desc) a2Desc.textContent = datos.amenity2_descripcion || '';
+
+        // Servicio 3
+        const a3Icon = document.getElementById('public-amenity3-icon');
+        if (a3Icon) a3Icon.className = datos.amenity3_icon || '';
+        const a3Titulo = document.getElementById('public-amenity3-titulo');
+        if (a3Titulo) a3Titulo.textContent = datos.amenity3_titulo || '';
+        const a3Desc = document.getElementById('public-amenity3-descripcion');
+        if (a3Desc) a3Desc.textContent = datos.amenity3_descripcion || '';
+
+        // Servicio 4
+        const a4Icon = document.getElementById('public-amenity4-icon');
+        if (a4Icon) a4Icon.className = datos.amenity4_icon || '';
+        const a4Titulo = document.getElementById('public-amenity4-titulo');
+        if (a4Titulo) a4Titulo.textContent = datos.amenity4_titulo || '';
+        const a4Desc = document.getElementById('public-amenity4-descripcion');
+        if (a4Desc) a4Desc.textContent = datos.amenity4_descripcion || '';
+
+    } catch (err) {
+        console.error("Error al inyectar datos de rooms_amenities público:", err);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('public-amenities-title')) {
+        cargarRoomsAmenitiesPublico();
+    }
+});
