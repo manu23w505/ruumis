@@ -2078,3 +2078,53 @@ document.addEventListener('DOMContentLoaded', () => {
         cargarRoomsServicesPublico();
     }
 });
+
+//================================================================
+// RULES ROOMS
+//================================================================
+
+// Función para renderizar dinámicamente las reglas del hostal
+async function inicializarReglasPublicas() {
+    try {
+        const response = await fetch('/api/admin-rules');
+        if (!response.ok) return; // Si hay error, se quedan los textos por defecto del HTML
+        
+        const datos = await response.json();
+
+        // Mapeo seguro de selectores públicos
+        const txtTitulo = document.getElementById('public-rules-titulo');
+        const item1 = document.getElementById('public-rules-item1');
+        const item2 = document.getElementById('public-rules-item2');
+        const item3 = document.getElementById('public-rules-item3');
+        const item4 = document.getElementById('public-rules-item4');
+        const contactTitulo = document.getElementById('public-rules-contacto-titulo');
+        const contactDesc = document.getElementById('public-rules-contacto-descripcion');
+
+        // Renderizado inyectando los iconos estructurales de tu plantilla original
+        if (txtTitulo && datos.rules_title) txtTitulo.textContent = datos.rules_title;
+        
+        if (item1 && datos.rules_item1) {
+            item1.innerHTML = `<i class="icon-check icon"></i> ${datos.rules_item1}`;
+        }
+        if (item2 && datos.rules_item2) {
+            item2.innerHTML = `<i class="icon-check icon"></i> ${datos.rules_item2}`;
+        }
+        if (item3 && datos.rules_item3) {
+            item3.innerHTML = `<i class="icon-check icon"></i> ${datos.rules_item3}`;
+        }
+        if (item4 && datos.rules_item4) {
+            item4.innerHTML = `<i class="icon-check icon"></i> ${datos.rules_item4}`;
+        }
+
+        if (contactTitulo && datos.rules_contact_title) contactTitulo.textContent = datos.rules_contact_title;
+        if (contactDesc && datos.rules_contact_desc) contactDesc.textContent = datos.rules_contact_desc;
+
+    } catch (err) {
+        console.error("Error al renderizar la sección pública de reglas:", err);
+    }
+}
+
+// Llama a la función al iniciar el script o dentro de tu listener DOMContentLoaded del app.js
+document.addEventListener('DOMContentLoaded', () => {
+    inicializarReglasPublicas();
+});

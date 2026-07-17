@@ -2374,6 +2374,73 @@ app.post('/api/admin-services', (req, res) => {
     });
 });
 
+// ==========================================
+// SECTION RULES & POLICIES ENDPOINTS
+// ==========================================
+
+// GET: Obtener las reglas y datos de contacto
+app.get('/api/admin-rules', (req, res) => {
+    const query = `
+        SELECT 
+            rules_title,
+            rules_item1, rules_item2, 
+            rules_item3, rules_item4,
+            rules_contact_title, rules_contact_desc
+        FROM admin_rooms WHERE id = 1
+    `;
+    
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("Error al obtener admin-rules:", err);
+            return res.status(500).json({ error: "Error interno del servidor" });
+        }
+        
+        if (results.length > 0) {
+            res.json(results[0]);
+        } else {
+            res.status(404).json({ error: "Configuración de reglas no encontrada" });
+        }
+    });
+});
+
+// POST: Actualizar las reglas y sección de contacto
+app.post('/api/admin-rules', (req, res) => {
+    const {
+        rules_title,
+        rules_item1, rules_item2,
+        rules_item3, rules_item4,
+        rules_contact_title, rules_contact_desc
+    } = req.body;
+
+    const query = `
+        UPDATE admin_rooms SET 
+            rules_title = ?, 
+            rules_item1 = ?, rules_item2 = ?,
+            rules_item3 = ?, rules_item4 = ?,
+            rules_contact_title = ?, rules_contact_desc = ?
+        WHERE id = 1
+    `;
+
+    const values = [
+        rules_title,
+        rules_item1, rules_item2,
+        rules_item3, rules_item4,
+        rules_contact_title, rules_contact_desc
+    ];
+
+    db.query(query, values, (err, result) => {
+        if (err) {
+            console.error("Error al actualizar admin-rules:", err);
+            return res.status(500).json({ error: "Error al actualizar la base de datos" });
+        }
+        res.json({ success: true, message: "Políticas y reglas actualizadas con éxito" });
+    });
+});
+
+
+
+
+
 
 
 cron.schedule('*/5 * * * *', () => {
