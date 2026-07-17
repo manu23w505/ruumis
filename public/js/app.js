@@ -511,6 +511,7 @@ function renderizarCalendarioVisual(mapaFechas, linkAirbnb) {
 
 document.addEventListener('DOMContentLoaded', () => {
     inicializarPagina();
+    cargarAnunciosPublicos(); 
 
     document.getElementById('filtro-busqueda')?.addEventListener('input', aplicarFiltros);
     document.getElementById('filtro-precio-min')?.addEventListener('input', aplicarFiltros);
