@@ -2521,6 +2521,82 @@ app.post('/api/admin-contacts', (req, res) => {
 });
 
 
+// ==========================================
+// LOCATIONS
+// ==========================================
+
+
+app.get('/api/admin-locations', (req, res) => {
+    const query = 'SELECT * FROM admin_locations WHERE id = 1';
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error al obtener ventajas:', err);
+            return res.status(500).json({ error: 'Error interno del servidor' });
+        }
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'No se encontraron registros iniciales' });
+        }
+        res.json(results[0]);
+    });
+});
+
+
+app.post('/api/admin-locations', (req, res) => {
+    const {
+        adv_subtitle,
+        adv_title,
+        adv_desc,
+        adv1_icon,
+        adv1_title,
+        adv1_desc,
+        adv2_icon,
+        adv2_title,
+        adv2_desc,
+        adv3_icon,
+        adv3_title,
+        adv3_desc
+    } = req.body;
+
+    const query = `
+        UPDATE admin_locations SET 
+            adv_subtitle = ?, 
+            adv_title = ?, 
+            adv_desc = ?, 
+            adv1_icon = ?, 
+            adv1_title = ?, 
+            adv1_desc = ?, 
+            adv2_icon = ?, 
+            adv2_title = ?, 
+            adv2_desc = ?, 
+            adv3_icon = ?, 
+            adv3_title = ?, 
+            adv3_desc = ?
+        WHERE id = 1
+    `;
+
+    const values = [
+        adv_subtitle,
+        adv_title,
+        adv_desc,
+        adv1_icon,
+        adv1_title,
+        adv1_desc,
+        adv2_icon,
+        adv2_title,
+        adv2_desc,
+        adv3_icon,
+        adv3_title,
+        adv3_desc
+    ];
+
+    db.query(query, values, (err, result) => {
+        if (err) {
+            console.error('Error al actualizar ventajas:', err);
+            return res.status(500).json({ error: 'Error al actualizar los datos en la base de datos' });
+        }
+        res.json({ message: 'Sección de ventajas actualizada correctamente' });
+    });
+});
 
 
 

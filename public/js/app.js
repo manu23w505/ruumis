@@ -2217,3 +2217,65 @@ async function inicializarContactosPublicos() {
 document.addEventListener('DOMContentLoaded', () => {
     inicializarContactosPublicos();
 });
+
+
+
+//================================================================
+// BENEFITS SECTION LOCATIONS
+//================================================================
+
+function renderPublicAdvantages() {
+    fetch('/api/admin-locations')
+        .then(res => {
+            if (!res.ok) throw new Error("Error al obtener las ventajas");
+            return res.json();
+        })
+        .then(data => {
+            // Encabezados principales de la sección
+            const sub = document.getElementById('public-advantages-subtitle');
+            const title = document.getElementById('public-advantages-title');
+            const desc = document.getElementById('public-advantages-description');
+
+            if (sub) sub.innerText = data.adv_subtitle;
+            if (title) title.innerText = data.adv_title;
+            if (desc) desc.innerText = data.adv_desc;
+
+            // Ventaja 1
+            const icon1 = document.getElementById('public-advantage1-icon');
+            const title1 = document.getElementById('public-advantage1-titulo');
+            const desc1 = document.getElementById('public-advantage1-descripcion');
+            
+            if (icon1) icon1.className = data.adv1_icon;
+            if (title1) title1.innerText = data.adv1_title;
+            if (desc1) desc1.innerText = data.adv1_desc;
+
+            // Ventaja 2
+            const icon2 = document.getElementById('public-advantage2-icon');
+            const title2 = document.getElementById('public-advantage2-titulo');
+            const desc2 = document.getElementById('public-advantage2-descripcion');
+
+            if (icon2) icon2.className = data.adv2_icon;
+            if (title2) title2.innerText = data.adv2_title;
+            if (desc2) desc2.innerText = data.adv2_desc;
+
+            // Ventaja 3
+            const icon3 = document.getElementById('public-advantage3-icon');
+            const title3 = document.getElementById('public-advantage3-titulo');
+            const desc3 = document.getElementById('public-advantage3-descripcion');
+
+            if (icon3) icon3.className = data.adv3_icon;
+            if (title3) title3.innerText = data.adv3_title;
+            if (desc3) desc3.innerText = data.adv3_desc;
+        })
+        .catch(err => {
+            console.error("Error cargando la sección de ventajas públicas:", err);
+        });
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Si en tu página de locations existe el elemento principal de ventajas, ejecuta el renderizado
+    if (document.getElementById('public-advantages-title')) {
+        renderPublicAdvantages();
+    }
+});

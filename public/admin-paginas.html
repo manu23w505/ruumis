@@ -1457,7 +1457,99 @@
                             </div>
                             <!-- SECTION CONTACT INFO end-->
 
-                            
+                            <!-- SECCIÓN DE VENTAJAS (LOCATIONS) -->
+                            <div class="card mb-4" style="border-radius: 16px; border: 1px solid #eee;">
+                                <div class="card-header bg-white py-3" style="border-bottom: 1px solid #eee;">
+                                    <h1>LOCATIONS PAGES</h1>
+                                    <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-geo-alt-fill me-2 text-cyan"></i>BENEFITS SECTION</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="form-admin-locations">
+                                        <!-- Encabezado de la sección -->
+                                        <div class="row g-3 mb-4 pb-3" style="border-bottom: 1px dashed #eee;">
+                                            <div class="col-md-4">
+                                                <label class="form-label fw-bold">Subtítulo Sección</label>
+                                                <input type="text" id="adv_subtitle" class="form-control" placeholder="Ej: The Ruumis Advantage" required>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <label class="form-label fw-bold">Título Principal de la Sección</label>
+                                                <input type="text" id="adv_title" class="form-control" placeholder="Ej: Why Our Locations Are Built Different" required>
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label fw-bold">Descripción Corta</label>
+                                                <textarea id="adv_desc" class="form-control" rows="2" placeholder="Escribe la descripción de introducción..." required></textarea>
+                                            </div>
+                                        </div>
+
+                                        <!-- Ventajas individuales -->
+                                        <div class="row g-4 mb-4">
+                                            <!-- Ventaja 1 -->
+                                            <div class="col-md-4">
+                                                <div class="p-3" style="background: #fbfbfb; border-radius: 12px; border: 1px solid #eee;">
+                                                    <h6 class="fw-bold text-primary mb-3">Ventaja 1</h6>
+                                                    <div class="mb-2">
+                                                        <label class="form-label small fw-semibold">Icono (Clase CSS)</label>
+                                                        <input type="text" id="adv1_icon" class="form-control form-control-sm" placeholder="Ej: icon-location" required>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label class="form-label small fw-semibold">Título</label>
+                                                        <input type="text" id="adv1_title" class="form-control form-control-sm" required>
+                                                    </div>
+                                                    <div>
+                                                        <label class="form-label small fw-semibold">Descripción</label>
+                                                        <textarea id="adv1_desc" class="form-control form-control-sm" rows="3" required></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Ventaja 2 -->
+                                            <div class="col-md-4">
+                                                <div class="p-3" style="background: #fbfbfb; border-radius: 12px; border: 1px solid #eee;">
+                                                    <h6 class="fw-bold text-primary mb-3">Ventaja 2</h6>
+                                                    <div class="mb-2">
+                                                        <label class="form-label small fw-semibold">Icono (Clase CSS)</label>
+                                                        <input type="text" id="adv2_icon" class="form-control form-control-sm" placeholder="Ej: icon-lock" required>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label class="form-label small fw-semibold">Título</label>
+                                                        <input type="text" id="adv2_title" class="form-control form-control-sm" required>
+                                                    </div>
+                                                    <div>
+                                                        <label class="form-label small fw-semibold">Descripción</label>
+                                                        <textarea id="adv2_desc" class="form-control form-control-sm" rows="3" required></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Ventaja 3 -->
+                                            <div class="col-md-4">
+                                                <div class="p-3" style="background: #fbfbfb; border-radius: 12px; border: 1px solid #eee;">
+                                                    <h6 class="fw-bold text-primary mb-3">Ventaja 3</h6>
+                                                    <div class="mb-2">
+                                                        <label class="form-label small fw-semibold">Icono (Clase CSS)</label>
+                                                        <input type="text" id="adv3_icon" class="form-control form-control-sm" placeholder="Ej: icon-users" required>
+                                                    </div>
+                                                    <div class="mb-2">
+                                                        <label class="form-label small fw-semibold">Título</label>
+                                                        <input type="text" id="adv3_title" class="form-control form-control-sm" required>
+                                                    </div>
+                                                    <div>
+                                                        <label class="form-label small fw-semibold">Descripción</label>
+                                                        <textarea id="adv3_desc" class="form-control form-control-sm" rows="3" required></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Botón Guardar -->
+                                        <div class="text-end">
+                                            <button type="submit" class="btn btn-primary px-4 fw-bold" style="border-radius: 8px;">
+                                                <i class="bi bi-save me-2"></i>Guardar Cambios Ubicaciones
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
 
                         </div>
 
@@ -3114,6 +3206,90 @@
             cargarRoomsContactsAdmin();
         });
 
+
+        //==========================================
+        // BENEFITS LOCATIONS
+        //==========================================        
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadLocationsAdmin();
+
+            const formLocations = document.getElementById("form-admin-locations");
+            if (formLocations) {
+                formLocations.addEventListener("submit", (e) => {
+                    e.preventDefault();
+                    saveLocationsAdmin();
+                });
+            }
+        });
+
+
+        function loadLocationsAdmin() {
+            fetch('/api/admin-locations')
+                .then(res => {
+                    if (!res.ok) throw new Error("No se pudo obtener la información de ubicaciones");
+                    return res.json();
+                })
+                .then(data => {
+                    document.getElementById("adv_subtitle").value = data.adv_subtitle;
+                    document.getElementById("adv_title").value = data.adv_title;
+                    document.getElementById("adv_desc").value = data.adv_desc;
+
+                    document.getElementById("adv1_icon").value = data.adv1_icon;
+                    document.getElementById("adv1_title").value = data.adv1_title;
+                    document.getElementById("adv1_desc").value = data.adv1_desc;
+
+                    document.getElementById("adv2_icon").value = data.adv2_icon;
+                    document.getElementById("adv2_title").value = data.adv2_title;
+                    document.getElementById("adv2_desc").value = data.adv2_desc;
+
+                    document.getElementById("adv3_icon").value = data.adv3_icon;
+                    document.getElementById("adv3_title").value = data.adv3_title;
+                    document.getElementById("adv3_desc").value = data.adv3_desc;
+                })
+                .catch(err => {
+                    console.error("Error al cargar datos en panel:", err);
+                });
+        }
+
+
+        function saveLocationsAdmin() {
+            const updatedData = {
+                adv_subtitle: document.getElementById("adv_subtitle").value,
+                adv_title: document.getElementById("adv_title").value,
+                adv_desc: document.getElementById("adv_desc").value,
+
+                adv1_icon: document.getElementById("adv1_icon").value,
+                adv1_title: document.getElementById("adv1_title").value,
+                adv1_desc: document.getElementById("adv1_desc").value,
+
+                adv2_icon: document.getElementById("adv2_icon").value,
+                adv2_title: document.getElementById("adv2_title").value,
+                adv2_desc: document.getElementById("adv2_desc").value,
+
+                adv3_icon: document.getElementById("adv3_icon").value,
+                adv3_title: document.getElementById("adv3_title").value,
+                adv3_desc: document.getElementById("adv3_desc").value
+            };
+
+            fetch('/api/admin-locations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedData)
+            })
+            .then(res => res.json())
+            .then(data => {
+                // Aquí puedes usar un modal propio o un SweetAlert para avisar
+                alert("¡Éxito! " + data.message);
+                loadLocationsAdmin(); // Recargamos campos
+            })
+            .catch(err => {
+                console.error("Error al guardar ventajas:", err);
+                alert("Ocurrió un error al intentar guardar los cambios.");
+            });
+        }
 
 
 
