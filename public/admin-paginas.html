@@ -1192,7 +1192,123 @@
                                 </form>
                             </div>
                             <!-- SECTION AMENITIES (ROOMS) end -->
-                 
+
+                            <!-- SECTION STAGES (ROOMS) start -->
+                            <div class="bg-white rounded-xl shadow-md p-6 mb-8 border border-slate-100">
+                                <div class="border-b border-slate-100 pb-4 mb-6">
+                                    <h2 class="text-xl font-bold text-slate-800"> BOOKING STAGES SECTION</h2>
+                                    <p class="text-sm text-slate-500">Modifica las etapas para reservar una habitación.</p>
+                                </div>
+
+                                <form id="form-stages-admin" enctype="multipart/form-data" class="space-y-6">
+                                    <!-- Título General de la sección -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1">Título de la Sección</label>
+                                        <input type="text" id="input-stages-title" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm text-slate-800 focus:outline-none focus:border-sky-500" placeholder="Ej: Stages of booking a room">
+                                    </div>
+
+                                    <hr class="border-slate-100 my-6">
+
+                                    <!-- Grid de los 3 pasos -->
+                                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                        
+                                        <!-- Paso 1 -->
+                                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-100 flex flex-col justify-between">
+                                            <div>
+                                                <h3 class="font-bold text-sky-500 mb-3 text-sm border-b border-slate-200 pb-2 flex items-center gap-2">
+                                                    <span class="flex items-center justify-center w-5 h-5 rounded-full bg-sky-100 text-sky-600 text-xs font-bold">1</span>
+                                                    Paso 1
+                                                </h3>
+                                                <div class="space-y-3">
+                                                    <div>
+                                                        <label class="block text-xs font-semibold text-slate-500 mb-1">Título</label>
+                                                        <input type="text" id="input-stage1-title" class="w-full px-3 py-1.5 border border-slate-200 rounded text-xs focus:outline-none focus:border-sky-500" placeholder="Título del paso 1">
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-xs font-semibold text-slate-500 mb-1">Descripción / Texto</label>
+                                                        <textarea id="textarea-stage1-text" rows="3" class="w-full px-3 py-1.5 border border-slate-200 rounded text-xs focus:outline-none focus:border-sky-500" placeholder="Contenido del paso 1"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Paso 2 -->
+                                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-100 flex flex-col justify-between">
+                                            <div>
+                                                <h3 class="font-bold text-sky-500 mb-3 text-sm border-b border-slate-200 pb-2 flex items-center gap-2">
+                                                    <span class="flex items-center justify-center w-5 h-5 rounded-full bg-sky-100 text-sky-600 text-xs font-bold">2</span>
+                                                    Paso 2
+                                                </h3>
+                                                <div class="space-y-3">
+                                                    <div>
+                                                        <label class="block text-xs font-semibold text-slate-500 mb-1">Título</label>
+                                                        <input type="text" id="input-stage2-title" class="w-full px-3 py-1.5 border border-slate-200 rounded text-xs focus:outline-none focus:border-sky-500" placeholder="Título del paso 2">
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-xs font-semibold text-slate-500 mb-1">Descripción / Texto</label>
+                                                        <textarea id="textarea-stage2-text" rows="3" class="w-full px-3 py-1.5 border border-slate-200 rounded text-xs focus:outline-none focus:border-sky-500" placeholder="Contenido del paso 2"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Paso 3 -->
+                                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-100 flex flex-col justify-between">
+                                            <div>
+                                                <h3 class="font-bold text-sky-500 mb-3 text-sm border-b border-slate-200 pb-2 flex items-center gap-2">
+                                                    <span class="flex items-center justify-center w-5 h-5 rounded-full bg-sky-100 text-sky-600 text-xs font-bold">3</span>
+                                                    Paso 3
+                                                </h3>
+                                                <div class="space-y-3">
+                                                    <div>
+                                                        <label class="block text-xs font-semibold text-slate-500 mb-1">Título</label>
+                                                        <input type="text" id="input-stage3-title" class="w-full px-3 py-1.5 border border-slate-200 rounded text-xs focus:outline-none focus:border-sky-500" placeholder="Título del paso 3">
+                                                    </div>
+                                                    <div>
+                                                        <label class="block text-xs font-semibold text-slate-500 mb-1">Descripción / Texto</label>
+                                                        <textarea id="textarea-stage3-text" rows="3" class="w-full px-3 py-1.5 border border-slate-200 rounded text-xs focus:outline-none focus:border-sky-500" placeholder="Contenido del paso 3"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <hr class="border-slate-100 my-6">
+
+                                    <!-- Botón de acción e Imagen -->
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <div>
+                                            <label class="block text-sm font-semibold text-slate-700 mb-1">Texto del Botón</label>
+                                            <input type="text" id="input-stages-btn-text" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-sky-500" placeholder="Ej: Choose room">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-semibold text-slate-700 mb-1">Enlace del Botón (Link)</label>
+                                            <input type="text" id="input-stages-btn-link" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-sky-500" placeholder="Ej: # o url">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-semibold text-slate-700 mb-1">Imagen Lateral (Stages)</label>
+                                            <input type="file" id="input-stages-image" accept="image/*" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-xs file:mr-4 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100">
+                                            <input type="hidden" id="input-existing-stages-image">
+                                            
+                                            <div class="mt-3 flex items-center gap-3">
+                                                <img id="preview-stages-image" src="" alt="Vista previa" class="h-16 w-16 rounded-lg object-cover border border-slate-200 bg-slate-50">
+                                                <div>
+                                                    <small class="text-xs text-slate-400 block">Vista previa de la imagen seleccionada.</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Botón de guardado -->
+                                    <div class="flex justify-end pt-4 border-t border-slate-100">
+                                        <button type="submit" class="bg-sky-500 text-white text-sm font-semibold px-6 py-2.5 rounded-lg hover:bg-sky-600 transition shadow-sm">
+                                            Actualizar Sección Stages
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- SECTION STAGES (ROOMS) end-->                       
 
 
                         </div>
@@ -2584,8 +2700,140 @@
             cargarRoomsAmenitiesAdmin();
         });
 
+        //==========================================
+        // STAGES SECTION ROOMS
+        //==========================================
+
+        document.getElementById('input-stages-image').addEventListener('change', function(e) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const preview = document.getElementById('preview-stages-image');
+                if (preview) preview.src = event.target.result;
+            }
+            if (e.target.files[0]) {
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
 
 
+        async function cargarStagesAdmin() {
+            try {
+                const response = await fetch('/api/admin-stages');
+                if (!response.ok) throw new Error("Error al obtener los datos de Stages.");
+                
+                const datos = await response.json();
+                console.log("Datos cargados del servidor:", datos);
+
+                // Función auxiliar segura para inyectar valores en los inputs
+                const setVal = (id, val) => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.value = val || '';
+                    } else {
+                        console.warn(`[Cargar] No se encontró el elemento HTML con ID: '${id}'`);
+                    }
+                };
+
+                setVal('input-stages-title', datos.stages_title);
+                
+                setVal('input-stage1-title', datos.stage1_title);
+                setVal('textarea-stage1-text', datos.stage1_text);
+
+                setVal('input-stage2-title', datos.stage2_title);
+                setVal('textarea-stage2-text', datos.stage2_text);
+
+                setVal('input-stage3-title', datos.stage3_title);
+                setVal('textarea-stage3-text', datos.stage3_text);
+
+                setVal('input-stages-btn-text', datos.stages_btn_text);
+                setVal('input-stages-btn-link', datos.stages_btn_link);
+                
+                setVal('input-existing-stages-image', datos.stages_image);
+                
+                const previewImg = document.getElementById('preview-stages-image');
+                if (previewImg) {
+                    previewImg.src = datos.stages_image ? `/${datos.stages_image}` : '/img/placeholder.jpg';
+                }
+
+            } catch (err) {
+                console.error("Error al cargar Stages en el panel:", err);
+            }
+        }
+
+
+        async function guardarStagesAdmin(e) {
+            e.preventDefault();
+            console.log("=== Ejecutando guardarStagesAdmin ===");
+            
+            // Función auxiliar segura para obtener valores de los inputs sin romper el script
+            const getVal = (id) => {
+                const el = document.getElementById(id);
+                if (!el) {
+                    console.warn(`[Guardar] No se encontró el elemento HTML con ID: '${id}'. Se enviará vacío.`);
+                    return '';
+                }
+                return el.value;
+            };
+
+            const formData = new FormData();
+
+            formData.append('stages_title', getVal('input-stages-title'));
+            
+            formData.append('stage1_title', getVal('input-stage1-title'));
+            formData.append('stage1_text', getVal('textarea-stage1-text'));
+
+            formData.append('stage2_title', getVal('input-stage2-title'));
+            formData.append('stage2_text', getVal('textarea-stage2-text'));
+
+            formData.append('stage3_title', getVal('input-stage3-title'));
+            formData.append('stage3_text', getVal('textarea-stage3-text'));
+
+            formData.append('stages_btn_text', getVal('input-stages-btn-text'));
+            formData.append('stages_btn_link', getVal('input-stages-btn-link'));
+            formData.append('existing_stages_image', getVal('input-existing-stages-image'));
+
+            const fileInput = document.getElementById('input-stages-image');
+            if (fileInput && fileInput.files && fileInput.files[0]) {
+                formData.append('stages_image', fileInput.files[0]);
+                console.log("Nueva imagen detectada para subir:", fileInput.files[0].name);
+            }
+
+            // Mostramos en la consola los datos exactos listos para enviarse
+            console.log("Datos que se enviarán al servidor:");
+            for (let pair of formData.entries()) {
+                console.log(` -> ${pair[0]}: ${pair[1]}`);
+            }
+
+            try {
+                const response = await fetch('/api/admin-stages', {
+                    method: 'POST',
+                    body: formData 
+                });
+
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(errData.error || "Error en la petición de guardado.");
+                }
+                
+                const result = await response.json();
+                console.log("Respuesta del servidor:", result);
+
+                alert(result.message);
+                await cargarStagesAdmin(); 
+            } catch (err) {
+                console.error("Error al actualizar la sección Stages:", err);
+                alert("No se pudo actualizar la sección de Stages. Revisa los detalles en la consola de tu navegador.");
+            }
+        }
+
+        const formStages = document.getElementById('form-stages-admin');
+        if (formStages) {
+            formStages.addEventListener('submit', guardarStagesAdmin);
+        } else {
+            console.error("ERROR CRÍTICO: No se encontró el formulario con ID 'form-stages-admin' en el HTML.");
+        }
+
+        document.addEventListener('DOMContentLoaded', cargarStagesAdmin);
 
         if (window.self !== window.top) {
             const headerRedundante = document.querySelector('header');
