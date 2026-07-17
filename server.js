@@ -1357,12 +1357,37 @@ app.put('/api/config/favicon', (req, res) => {
 });
 
 app.get('/api/configuracion', (req, res) => {
-    db.query("SELECT * FROM admin_configuracion WHERE id = 1", (err, result) => {
+    db.query("SELECT clave, valor FROM configuracion_general", (err, resultsGeneral) => {
         if (err) {
-            console.error("❌ ERROR REAL EN DB:", err); // <--- ESTO TE DIRÁ EL COLAZO EXACTO EN TU TERMINAL
-            return res.status(500).json({ error: "Error en base de datos" });
+            console.error("❌ ERROR EN configuracion_general:", err);
+            return res.status(500).json({ error: "Error al obtener configuración general" });
         }
-        res.json(result[0] || {});
+
+        const config = {};
+        if (resultsGeneral && Array.isArray(resultsGeneral)) {
+            resultsGeneral.forEach(row => {
+                config[row.clave] = row.valor;
+            });
+        }
+
+        db.query("SELECT favicon FROM configuracion WHERE favicon IS NOT NULL AND favicon != '' LIMIT 1", (errFav, resultsFav) => {
+            if (errFav) {
+                console.error("❌ ERROR AL TRAER FAVICON DE configuracion:", errFav);
+                config.favicon = 'default.jpg';
+            } else {
+                config.favicon = (resultsFav && resultsFav[0] && resultsFav[0].favicon) 
+                    ? resultsFav[0].favicon 
+                    : 'default.jpg';
+            }
+            const respuestaFinal = {
+                id: 1,
+                nombre_marca: config.nombre_marca || 'Ruumis',
+                favicon: config.favicon,
+                header_logo: config.header_logo || 'default.jpg',
+                footer_logo: config.footer_logo || 'default.jpg'
+            };
+            res.json(respuestaFinal);
+        });
     });
 });
 
@@ -1381,7 +1406,6 @@ app.get('/api/cms/home', (req, res) => {
     });
 });
 
-// Endpoint dinámico para actualizar textos/imágenes del Home (Ya lo tienes bien)
 app.put('/api/cms/home/actualizar', (req, res) => {
     const { columna, valor } = req.body;
 
