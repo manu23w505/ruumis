@@ -2286,6 +2286,70 @@ app.post('/api/admin-rooms', (req, res) => {
     });
 });
 
+// ==========================================
+// SECTION SERVICES (STAY SERVICES)
+// ==========================================
+
+app.get('/api/admin-services', (req, res) => {
+    const query = `
+        SELECT 
+            services_title, 
+            service1_title, service1_text, 
+            service2_title, service2_text, 
+            service3_title, service3_text, 
+            services_image 
+        FROM admin_rooms WHERE id = 1
+    `;
+    
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("Error al obtener admin-services:", err);
+            return res.status(500).json({ error: "Error interno del servidor" });
+        }
+        
+        if (results.length > 0) {
+            res.json(results[0]);
+        } else {
+            res.status(404).json({ error: "Configuración de servicios no encontrada" });
+        }
+    });
+});
+
+app.post('/api/admin-services', (req, res) => {
+    const {
+        services_title,
+        service1_title, service1_text,
+        service2_title, service2_text,
+        service3_title, service3_text,
+        services_image
+    } = req.body;
+
+    const query = `
+        UPDATE admin_rooms SET 
+            services_title = ?, 
+            service1_title = ?, service1_text = ?,
+            service2_title = ?, service2_text = ?,
+            service3_title = ?, service3_text = ?,
+            services_image = ?
+        WHERE id = 1
+    `;
+
+    const values = [
+        services_title,
+        service1_title, service1_text,
+        service2_title, service2_text,
+        service3_title, service3_text,
+        services_image
+    ];
+
+    db.query(query, values, (err, result) => {
+        if (err) {
+            console.error("Error al actualizar admin-services:", err);
+            return res.status(500).json({ error: "Error al actualizar la base de datos" });
+        }
+        res.json({ success: true, message: "Servicios actualizados con éxito" });
+    });
+});
 
 
 

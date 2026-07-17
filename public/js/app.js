@@ -2025,3 +2025,56 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+//================================================================
+// SECTION SERVICES ROOMS
+//================================================================
+
+async function cargarRoomsServicesPublico() {
+    try {
+        const response = await fetch('/api/admin-services');
+        if (!response.ok) throw new Error("No se pudo conectar a la API de servicios.");
+        const datos = await response.json();
+
+        // Título de la sección
+        const mainTitle = document.getElementById('public-services-title');
+        if (mainTitle) mainTitle.textContent = datos.services_title || '';
+
+        // Imagen lateral
+        const servicesImage = document.getElementById('public-services-image');
+        if (servicesImage) servicesImage.src = datos.services_image || 'img/placeholder.jpg';
+
+        // Servicio 1
+        const s1Titulo = document.getElementById('public-service1-title');
+        if (s1Titulo) s1Titulo.textContent = datos.service1_title || '';
+        const s1Texto = document.getElementById('public-service1-text');
+        if (s1Texto) s1Texto.textContent = datos.service1_text || '';
+
+        // Servicio 2
+        const s2Titulo = document.getElementById('public-service2-title');
+        if (s2Titulo) s2Titulo.textContent = datos.service2_title || '';
+        const s2Texto = document.getElementById('public-service2-text');
+        if (s2Texto) s2Texto.textContent = datos.service2_text || '';
+
+        // Servicio 3
+        const s3Titulo = document.getElementById('public-service3-title');
+        if (s3Titulo) s3Titulo.textContent = datos.service3_title || '';
+        const s3Texto = document.getElementById('public-service3-text');
+        if (s3Texto) s3Texto.textContent = datos.service3_text || '';
+
+    } catch (err) {
+        console.error("Error al inyectar datos de rooms_services público:", err);
+    }
+}
+
+// Actualiza tu listener DOMContentLoaded en app.js
+document.addEventListener('DOMContentLoaded', () => {
+    // Si existe el título de amenities, carga amenities
+    if (document.getElementById('public-amenities-title')) {
+        cargarRoomsAmenitiesPublico();
+    }
+    
+    // Si existe el título de servicios, carga servicios
+    if (document.getElementById('public-services-title')) {
+        cargarRoomsServicesPublico();
+    }
+});
