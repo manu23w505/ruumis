@@ -284,9 +284,9 @@
         <section class="about_stages section">
             <div class="container d-xl-flex align-items-center">
                 <div class="about_stages-main col-xl-6">
-                <h2 class="about_stages-main_header" data-aos="fade-right">
-                                {{ $stages_title ?? 'Stages of booking a room' }}
-                            </h2>
+                    <h2 class="about_stages-main_header" data-aos="fade-right" id="public-stages-title">
+                                    Stages of booking a room
+                                </h2>
                     <ul class="about_stages-main_list">
                         <li class="list-item d-flex align-items-sm-center" data-aos="fade-up">
                             <div class="media">
@@ -376,8 +376,8 @@
                                 </span>
                             </div>
                             <div class="main">
-                                <h4 class="main_title">{{ $stage1_title ?? 'Room reservation' }}</h4>
-                                <p class="main_text">{{ $stage1_text ?? 'Integer eget aliquet nibh praesent tristique magna sit amet purus' }}</p>
+                                <h4 class="main_title" id="public-stage1-title">Room reservation</h4>
+                                <p class="main_text" id="public-stage1-text">Integer eget aliquet nibh praesent tristique magna sit amet purus</p>
                             </div>
                         </li>
                         <li class="list-item d-flex align-items-sm-center" data-aos="fade-up" data-aos-delay="50">
@@ -404,8 +404,8 @@
                                 </span>
                             </div>
                             <div class="main">
-                                <h4 class="main_title">{{ $stage2_title ?? 'Filling in documents and payment' }}</h4>
-                                <p class="main_text">{{ $stage2_text ?? 'Leo duis ut diam quam. Sed velit dignissim sodales ut eu' }}</p>
+                                <h4 class="main_title" id="public-stage2-title">Filling in documents and payment</h4>
+                                <p class="main_text" id="public-stage2-text">Leo duis ut diam quam. Sed velit dignissim sodales ut eu</p>
                             </div>
                         </li>
                         <li class="list-item d-flex align-items-sm-center" data-aos="fade-up" data-aos-delay="100">
@@ -434,21 +434,21 @@
                                 </span>
                             </div>
                             <div class="main">
-                                <h4 class="main_title">{{ $stage3_title ?? 'Сheck in hostel' }}</h4>
-                                <p class="main_text">{{ $stage3_text ?? 'Vulputate enim nulla aliquet porttitor. Sagittis nisl rhoncus mattis rhoncus' }}</p>
+                                <h4 class="main_title" id="public-stage3-title">Сheck in hostel</h4>
+                                <p class="main_text" id="public-stage3-text">Vulputate enim nulla aliquet porttitor. Sagittis nisl rhoncus mattis rhoncus</p>
                             </div>
                         </li>
                     </ul>
                     <div class="wrapper" data-aos="fade-up">
-                        <a class="about_stages-main_btn btn theme-element theme-element--accent" href="{{ $stages_btn_link ?? '#' }}">
-                            {{ $stages_btn_text ?? 'Choose room' }}
+                        <a class="about_stages-main_btn btn theme-element theme-element--accent" id="public-stages-btn" href="#">
+                            Choose room
                         </a>
                     </div>
                 </div>
                 <div class="about_stages-media col-xl-6" data-aos="fade-in">
                     <picture>
-                        <source data-srcset="{{ $stages_image ?? 'img/placeholder.jpg' }}" srcset="{{ $stages_image ?? 'img/placeholder.jpg' }}" />
-                        <img class="lazy" data-src="{{ $stages_image ?? 'img/placeholder.jpg' }}" src="{{ $stages_image ?? 'img/placeholder.jpg' }}" alt="media" />
+                        <source id="public-stages-source" data-srcset="img/placeholder.jpg" srcset="img/placeholder.jpg" />
+                        <img id="public-stages-img" class="lazy" data-src="img/placeholder.jpg" src="img/placeholder.jpg" alt="media" />
                     </picture>
                 </div>
             </div>

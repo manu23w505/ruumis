@@ -2333,14 +2333,26 @@ app.post('/api/admin-stages', upload.single('stages_image'), (req, res) => {
     }
 
     const query = `
-        UPDATE admin_rooms SET 
-            stages_title = ?, 
-            stage1_title = ?, stage1_text = ?, 
-            stage2_title = ?, stage2_text = ?, 
-            stage3_title = ?, stage3_text = ?, 
-            stages_btn_text = ?, stages_btn_link = ?, 
-            stages_image = ?
-        WHERE id = 1
+        INSERT INTO admin_rooms (
+            id, 
+            stages_title, 
+            stage1_title, stage1_text, 
+            stage2_title, stage2_text, 
+            stage3_title, stage3_text, 
+            stages_btn_text, stages_btn_link, 
+            stages_image
+        ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE 
+            stages_title = VALUES(stages_title), 
+            stage1_title = VALUES(stage1_title), 
+            stage1_text = VALUES(stage1_text), 
+            stage2_title = VALUES(stage2_title), 
+            stage2_text = VALUES(stage2_text), 
+            stage3_title = VALUES(stage3_title), 
+            stage3_text = VALUES(stage3_text), 
+            stages_btn_text = VALUES(stages_btn_text), 
+            stages_btn_link = VALUES(stages_btn_link), 
+            stages_image = VALUES(stages_image)
     `;
 
     const values = [
