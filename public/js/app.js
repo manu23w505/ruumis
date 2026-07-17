@@ -1972,7 +1972,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function cargarRoomsAmenitiesPublico() {
     try {
-        const response = await fetch('/api/rooms/amenities');
+        const response = await fetch('/api/admin-rooms');
         if (!response.ok) throw new Error("No se pudo conectar a la API de amenities.");
         const datos = await response.json();
 

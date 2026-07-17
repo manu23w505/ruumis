@@ -2488,7 +2488,8 @@
 
         async function cargarRoomsAmenitiesAdmin() {
             try {
-                const response = await fetch('/api/rooms/amenities');
+                // CORRECCIÓN: Apuntar al endpoint correcto del backend
+                const response = await fetch('/api/admin-rooms');
                 if (!response.ok) throw new Error("No se pudo obtener la información de rooms_amenities.");
                 const datos = await response.json();
 
@@ -2520,37 +2521,44 @@
             }
         }
 
+
         async function guardarRoomsAmenitiesAdmin(e) {
             e.preventDefault();
-            const formData = new FormData();
             
-            formData.append('amenities_subtitle', document.getElementById('input-amenities-subtitle').value);
-            formData.append('amenities_title', document.getElementById('input-amenities-title').value);
+            // CORRECCIÓN: En lugar de usar FormData(), estructuramos un objeto plano JSON
+            const datos = {
+                amenities_subtitle: document.getElementById('input-amenities-subtitle').value,
+                amenities_title: document.getElementById('input-amenities-title').value,
 
-            // Servicio 1
-            formData.append('amenity1_icon', document.getElementById('input-amenity1-icon').value);
-            formData.append('amenity1_titulo', document.getElementById('input-amenity1-titulo').value);
-            formData.append('amenity1_descripcion', document.getElementById('textarea-amenity1-descripcion').value);
+                // Servicio 1
+                amenity1_icon: document.getElementById('input-amenity1-icon').value,
+                amenity1_titulo: document.getElementById('input-amenity1-titulo').value,
+                amenity1_descripcion: document.getElementById('textarea-amenity1-descripcion').value,
 
-            // Servicio 2
-            formData.append('amenity2_icon', document.getElementById('input-amenity2-icon').value);
-            formData.append('amenity2_titulo', document.getElementById('input-amenity2-titulo').value);
-            formData.append('amenity2_descripcion', document.getElementById('textarea-amenity2-descripcion').value);
+                // Servicio 2
+                amenity2_icon: document.getElementById('input-amenity2-icon').value,
+                amenity2_titulo: document.getElementById('input-amenity2-titulo').value,
+                amenity2_descripcion: document.getElementById('textarea-amenity2-descripcion').value,
 
-            // Servicio 3
-            formData.append('amenity3_icon', document.getElementById('input-amenity3-icon').value);
-            formData.append('amenity3_titulo', document.getElementById('input-amenity3-titulo').value);
-            formData.append('amenity3_descripcion', document.getElementById('textarea-amenity3-descripcion').value);
+                // Servicio 3
+                amenity3_icon: document.getElementById('input-amenity3-icon').value,
+                amenity3_titulo: document.getElementById('input-amenity3-titulo').value,
+                amenity3_descripcion: document.getElementById('textarea-amenity3-descripcion').value,
 
-            // Servicio 4
-            formData.append('amenity4_icon', document.getElementById('input-amenity4-icon').value);
-            formData.append('amenity4_titulo', document.getElementById('input-amenity4-titulo').value);
-            formData.append('amenity4_descripcion', document.getElementById('textarea-amenity4-descripcion').value);
+                // Servicio 4
+                amenity4_icon: document.getElementById('input-amenity4-icon').value,
+                amenity4_titulo: document.getElementById('input-amenity4-titulo').value,
+                amenity4_descripcion: document.getElementById('textarea-amenity4-descripcion').value
+            };
 
             try {
-                const response = await fetch('/api/rooms/amenities', {
-                    method: 'PUT', 
-                    body: formData 
+                // CORRECCIÓN: Endpoint '/api/admin-rooms', método 'POST' y envío de cabecera JSON
+                const response = await fetch('/api/admin-rooms', {
+                    method: 'POST', 
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(datos)
                 });
 
                 if (!response.ok) throw new Error("No se pudo guardar la configuración.");
@@ -2563,6 +2571,7 @@
                 alert("Ocurrió un error al intentar registrar los cambios.");
             }
         }
+
 
         document.addEventListener('DOMContentLoaded', () => {
             const amenitiesForm = document.getElementById('form-rooms-amenities');

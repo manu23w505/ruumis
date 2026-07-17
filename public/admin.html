@@ -11,7 +11,7 @@
     <link rel="stylesheet preload" as="style" href="css/libs.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
-    <link rel="stylesheet" href="css/index.min.css" />
+    <link rel="stylesheet" href="css/room.min.css" />
 
     <style>
         /* Scrollbar sutil y minimalista */
@@ -1947,7 +1947,7 @@ function cerrarModalEditarCorreo() {
 
 // CONTROLADOR DEL HEADER EN EL PANEL DE ADMIN
 
-// 1. Cargar todos los datos actuales desde la Base de Datos e inyectarlos en la interfaz
+// Cargar los datos actuales 
 async function obtenerDatosHeaderAdmin() {
     try {
         const response = await fetch('/api/header-completo');
@@ -2031,7 +2031,7 @@ async function obtenerDatosHeaderAdmin() {
 }
 
 
-// 2. Procesar el envío del Formulario de Identidad (Marca y Logos)
+// Formulario de Identidad (Marca y Logos)
 document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -2099,7 +2099,7 @@ document.getElementById('formMarcaLogo')?.addEventListener('submit', async (e) =
 });
 
 
-// 3. Función para actualizar una página individual de la tabla
+// Actualizar una página individual de la tabla
 async function guardarCambiosPagina(id) {
     const nombre_visible = document.getElementById(`nombre-${id}`).value;
     let url_estetica = document.getElementById(`url-${id}`).value;
@@ -2122,7 +2122,7 @@ async function guardarCambiosPagina(id) {
     }
 }
 
-// 4. Procesar la actualización en lote de todas las Redes Sociales
+// Actualización de todas las Redes Sociales
 document.getElementById('formRedesSociales')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const inputs = document.querySelectorAll('.input-red-social');
