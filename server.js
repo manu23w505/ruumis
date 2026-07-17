@@ -1358,7 +1358,10 @@ app.put('/api/config/favicon', (req, res) => {
 
 app.get('/api/configuracion', (req, res) => {
     db.query("SELECT * FROM admin_configuracion WHERE id = 1", (err, result) => {
-        if (err) return res.status(500).json({ error: "Error en base de datos" });
+        if (err) {
+            console.error("❌ ERROR REAL EN DB:", err); // <--- ESTO TE DIRÁ EL COLAZO EXACTO EN TU TERMINAL
+            return res.status(500).json({ error: "Error en base de datos" });
+        }
         res.json(result[0] || {});
     });
 });

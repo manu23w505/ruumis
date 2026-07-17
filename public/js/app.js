@@ -204,6 +204,24 @@ function extraerArregloImagenes(campo) {
     return campo.replace(/[\[\]"']/g, '').split(',').map(f => f.trim()).filter(Boolean);
 }
 
+async function cargarAnunciosPublicos() {
+    console.log("Iniciando carga de anuncios públicos...");
+    
+    const anuncios = await apiCall('/api/anuncios'); 
+    
+    if (anuncios) {
+        todosLosAnuncios = anuncios; 
+        
+        renderizarAnunciosPublicos(todosLosAnuncios);
+    } else {
+        const contenedor = document.getElementById('contenedor-anuncios');
+        if (contenedor) {
+            contenedor.innerHTML = '<p class="text-slate-500 col-span-full text-center py-8">Error al conectar con el servidor para cargar habitaciones.</p>';
+        }
+    }
+}
+
+
 function renderizarAnunciosPublicos(anuncios) {
     const contenedor = document.getElementById('contenedor-anuncios');
     
