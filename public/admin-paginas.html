@@ -1081,7 +1081,7 @@
                             <!-- SECTION FOOTER ABOUT end-->
 
                             <!--ROOMS-->
-                            <!-- SECTION AMENITIES (ROOMS) -->
+                            <!-- SECTION AMENITIES (ROOMS) start -->
                             <div class="bg-white rounded-xl shadow-md p-6 mb-8 border border-slate-100">
                                 <div class="border-b border-slate-100 pb-4 mb-6">
                                     <h1 class="text-xl font-bold text-slate-800"> ROOMS</h1>
@@ -1191,6 +1191,106 @@
                                     </div>
                                 </form>
                             </div>
+                            <!-- SECTION AMENITIES (ROOMS) end -->
+
+                            <!-- SECTION STAGES (ROOMS) start -->
+                            <div class="bg-white rounded-xl shadow-md p-6 mb-8 border border-slate-100">
+                                <form id="form-stages-admin" enctype="multipart/form-data" class="mb-5">
+                                    <div class="card shadow-sm border-0">
+                                        <div class="card-header bg-primary text-white d-flex align-items-center justify-content-between">
+                                            <h5 class="mb-0"><i class="fas fa-route me-2"></i>Sección: Stages of Booking</h5>
+                                            <span class="badge bg-light text-primary">ID: 1</span>
+                                        </div>
+                                        <div class="card-body">
+                                            <!-- Título General de la sección -->
+                                            <div class="row mb-4">
+                                                <div class="col-md-12">
+                                                    <label class="form-label fw-bold">Título de la Sección</label>
+                                                    <input type="text" id="input-stages-title" class="form-control" placeholder="Ej: Stages of booking a room">
+                                                </div>
+                                            </div>
+
+                                            <!-- Grid de los 3 pasos -->
+                                            <div class="row g-3 mb-4">
+                                                <!-- Paso 1 -->
+                                                <div class="col-lg-4">
+                                                    <div class="p-3 border rounded bg-light">
+                                                        <h6 class="text-primary fw-bold mb-3"><i class="fas fa-circle-1 me-1"></i>Paso 1</h6>
+                                                        <div class="mb-2">
+                                                            <label class="form-label small">Título</label>
+                                                            <input type="text" id="input-stage1-title" class="form-control" placeholder="Título del paso 1">
+                                                        </div>
+                                                        <div>
+                                                            <label class="form-label small">Descripción / Texto</label>
+                                                            <textarea id="textarea-stage1-text" class="form-control" rows="3" placeholder="Contenido del paso 1"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Paso 2 -->
+                                                <div class="col-lg-4">
+                                                    <div class="p-3 border rounded bg-light">
+                                                        <h6 class="text-primary fw-bold mb-3"><i class="fas fa-circle-2 me-1"></i>Paso 2</h6>
+                                                        <div class="mb-2">
+                                                            <label class="form-label small">Título</label>
+                                                            <input type="text" id="input-stage2-title" class="form-control" placeholder="Título del paso 2">
+                                                        </div>
+                                                        <div>
+                                                            <label class="form-label small">Descripción / Texto</label>
+                                                            <textarea id="textarea-stage2-text" class="form-control" rows="3" placeholder="Contenido del paso 2"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Paso 3 -->
+                                                <div class="col-lg-4">
+                                                    <div class="p-3 border rounded bg-light">
+                                                        <h6 class="text-primary fw-bold mb-3"><i class="fas fa-circle-3 me-1"></i>Paso 3</h6>
+                                                        <div class="mb-2">
+                                                            <label class="form-label small">Título</label>
+                                                            <input type="text" id="input-stage3-title" class="form-control" placeholder="Título del paso 3">
+                                                        </div>
+                                                        <div>
+                                                            <label class="form-label small">Descripción / Texto</label>
+                                                            <textarea id="textarea-stage3-text" class="form-control" rows="3" placeholder="Contenido del paso 3"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Botón de acción e Imagen -->
+                                            <div class="row g-3">
+                                                <div class="col-md-4">
+                                                    <label class="form-label fw-bold">Texto del Botón</label>
+                                                    <input type="text" id="input-stages-btn-text" class="form-control" placeholder="Ej: Choose room">
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label fw-bold">Enlace del Botón (Link)</label>
+                                                    <input type="text" id="input-stages-btn-link" class="form-control" placeholder="Ej: # o url">
+                                                </div>
+                                                
+                                                <div class="col-md-4">
+                                                    <label class="form-label fw-bold">Imagen Lateral (Stages)</label>
+                                                    <input type="file" id="input-stages-image" accept="image/*" class="form-control mb-2">
+                                                    <!-- Input oculto para recordar la ruta actual -->
+                                                    <input type="hidden" id="input-existing-stages-image">
+                                                    
+                                                    <div class="mt-2 d-flex align-items-center gap-2">
+                                                        <img id="preview-stages-image" src="" alt="Vista previa" class="img-thumbnail" style="max-height: 80px; min-width: 80px; object-fit: cover;">
+                                                        <div>
+                                                            <small class="text-muted d-block">Vista previa de la imagen seleccionada.</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer text-end bg-transparent border-0 pe-4 pb-4">
+                                            <button type="submit" class="btn btn-primary px-4">Actualizar Sección Stages</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- SECTION STAGES (ROOMS) end-->                            
 
                         </div>
 
@@ -2581,7 +2681,97 @@
             cargarRoomsAmenitiesAdmin();
         });
 
+        //==========================================
+        // STAGES SECTION ROOMS
+        //==========================================
 
+        document.getElementById('input-stages-image').addEventListener('change', function(e) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('preview-stages-image').src = event.target.result;
+            }
+            if (e.target.files[0]) {
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+
+
+        async function cargarStagesAdmin() {
+            try {
+                const response = await fetch('/api/admin-stages');
+                if (!response.ok) throw new Error("Error al obtener los datos de Stages.");
+                
+                const datos = await response.json();
+
+                document.getElementById('input-stages-title').value = datos.stages_title || '';
+                
+                document.getElementById('input-stage1-title').value = datos.stage1_title || '';
+                document.getElementById('textarea-stage1-text').value = datos.stage1_text || '';
+
+                document.getElementById('input-stage2-title').value = datos.stage2_title || '';
+                document.getElementById('textarea-stage2-text').value = datos.stage2_text || '';
+
+                document.getElementById('input-stage3-title').value = datos.stage3_title || '';
+                document.getElementById('textarea-stage3-text').value = datos.stage3_text || '';
+
+                document.getElementById('input-stages-btn-text').value = datos.stages_btn_text || '';
+                document.getElementById('input-stages-btn-link').value = datos.stages_btn_link || '';
+                
+                document.getElementById('input-existing-stages-image').value = datos.stages_image || '';
+                document.getElementById('preview-stages-image').src = datos.stages_image ? `/${datos.stages_image}` : '/img/placeholder.jpg';
+
+            } catch (err) {
+                console.error("Error al cargar Stages en el panel:", err);
+            }
+        }
+
+
+        async function guardarStagesAdmin(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+
+            formData.append('stages_title', document.getElementById('input-stages-title').value);
+            
+            formData.append('stage1_title', document.getElementById('input-stage1-title').value);
+            formData.append('stage1_text', document.getElementById('textarea-stage1-text').value);
+
+            formData.append('stage2_title', document.getElementById('input-stage2-title').value);
+            formData.append('stage2_text', document.getElementById('textarea-stage2-text').value);
+
+            formData.append('stage3_title', document.getElementById('input-stage3-title').value);
+            formData.append('stage3_text', document.getElementById('textarea-stage3-text').value);
+
+            formData.append('stages_btn_text', document.getElementById('input-stages-btn-text').value);
+            formData.append('stages_btn_link', document.getElementById('input-stages-btn-link').value);
+            formData.append('existing_stages_image', document.getElementById('input-existing-stages-image').value);
+
+
+            const fileInput = document.getElementById('input-stages-image');
+            if (fileInput.files[0]) {
+                formData.append('stages_image', fileInput.files[0]);
+            }
+
+            try {
+                const response = await fetch('/api/admin-stages', {
+                    method: 'POST',
+                    body: formData 
+                });
+
+                if (!response.ok) throw new Error("Error en la petición de guardado.");
+                const result = await response.json();
+
+                alert(result.message);
+                await cargarStagesAdmin(); 
+            } catch (err) {
+                console.error("Error al actualizar la sección Stages:", err);
+                alert("No se pudo actualizar la sección de Stages.");
+            }
+        }
+
+
+        document.getElementById('form-stages-admin').addEventListener('submit', guardarStagesAdmin);
+        document.addEventListener('DOMContentLoaded', cargarStagesAdmin);
 
 
         if (window.self !== window.top) {

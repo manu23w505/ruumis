@@ -2286,6 +2286,80 @@ app.post('/api/admin-rooms', (req, res) => {
     });
 });
 
+// ==========================================
+// STAGES OF BOOKING ROOMS
+// ==========================================
+
+
+app.get('/api/admin-stages', (req, res) => {
+    const query = `
+        SELECT 
+            stages_title, 
+            stage1_title, stage1_text, 
+            stage2_title, stage2_text, 
+            stage3_title, stage3_text, 
+            stages_btn_text, stages_btn_link, 
+            stages_image 
+        FROM admin_rooms 
+        WHERE id = 1
+    `;
+    
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("Error al obtener admin-stages:", err);
+            return res.status(500).json({ error: "Error al consultar la base de datos" });
+        }
+        if (results.length > 0) {
+            res.json(results[0]);
+        } else {
+            res.status(404).json({ error: "Configuración de Stages no encontrada" });
+        }
+    });
+});
+
+app.post('/api/admin-stages', upload.single('stages_image'), (req, res) => {
+    const {
+        stages_title,
+        stage1_title, stage1_text,
+        stage2_title, stage2_text,
+        stage3_title, stage3_text,
+        stages_btn_text, stages_btn_link,
+        existing_stages_image
+    } = req.body;
+
+    let final_image_path = existing_stages_image || 'img/placeholder.jpg';
+    if (req.file) {
+        final_image_path = 'img/' + req.file.filename;
+    }
+
+    const query = `
+        UPDATE admin_rooms SET 
+            stages_title = ?, 
+            stage1_title = ?, stage1_text = ?, 
+            stage2_title = ?, stage2_text = ?, 
+            stage3_title = ?, stage3_text = ?, 
+            stages_btn_text = ?, stages_btn_link = ?, 
+            stages_image = ?
+        WHERE id = 1
+    `;
+
+    const values = [
+        stages_title,
+        stage1_title, stage1_text,
+        stage2_title, stage2_text,
+        stage3_title, stage3_text,
+        stages_btn_text, stages_btn_link,
+        final_image_path
+    ];
+
+    db.query(query, values, (err, result) => {
+        if (err) {
+            console.error("Error al actualizar admin-stages:", err);
+            return res.status(500).json({ error: "Error al guardar en la base de datos" });
+        }
+        res.json({ success: true, message: "¡Sección de Stages actualizada correctamente!" });
+    });
+});
 
 
 
