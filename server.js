@@ -379,25 +379,20 @@ app.delete('/api/tipos-propiedad/:id', (req, res) => {
 // GET: OBTENER ANUNCIOS
 // ==========================================
 app.get('/api/anuncios', (req, res) => {
-    const orden = req.query.admin === 'true' ? 'a.id DESC' : 'RAND()';
-
     const sql = `
         SELECT a.*, 
-               u.nombre AS ubicacion_nombre,
-               z.nombre AS zona, 
                c.nombre AS ciudad, 
+               z.nombre AS zona, 
                t.nombre AS tipo_propiedad
         FROM anuncios a
-        LEFT JOIN ubicaciones u ON a.ubicacion_id = u.id
-        LEFT JOIN zonas z ON u.zona_id = z.id
-        LEFT JOIN ciudades c ON z.ciudad_id = c.id
+        LEFT JOIN zonas z ON a.zona_id = z.id
+        LEFT JOIN ciudades c ON z.ciudad_id = c.id 
         LEFT JOIN tipos_propiedad t ON a.tipo_propiedad_id = t.id
-        ORDER BY ${orden}
     `;
     db.query(sql, (err, results) => {
         if (err) {
-            console.error("ERROR CRÍTICO AL OBTENER ANUNCIOS:", err); 
-            return res.status(500).json({ error: 'Error al obtener anuncios', detalles: err.message });
+            console.error("Error al obtener anuncios:", err);
+            return res.status(500).json({ error: 'Error al obtener anuncios' });
         }
         res.json(results);
     });
