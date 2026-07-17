@@ -18,6 +18,23 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #f8fafc; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        /* Efectos de transición para ventajas y botones */
+        .advantage-card {
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .advantage-card:hover {
+            transform: translateY(-5px);
+            border-color: #bae6fd !important; /* cyan-200 */
+            box-shadow: 0 12px 24px rgba(14, 165, 233, 0.08) !important;
+        }
+        .btn-cyan {
+            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .btn-cyan:hover {
+            background-color: #38bdf8 !important; /* cyan-400 */
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(14, 165, 233, 0.4) !important;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen font-sans flex flex-col justify-between">
@@ -156,72 +173,91 @@
                 </div>
             </div>
         </section>
+        <br><br><br>
 
         <!-- 3. VALUE PROPOSITION SECTION (Why our locations are superior) -->
-        <section class="bg-white border-y border-slate-200 py-16 px-4">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center max-w-3xl mx-auto mb-12">
-                    <span class="text-xs font-bold uppercase tracking-widest text-cyan-600">The Ruumis Advantage</span>
-                    <h2 class="text-3xl font-black text-slate-900 mt-2">Why Our Locations Are Built Different</h2>
-                    <p class="text-slate-500 mt-3">We curate every residential zone with academic focus, daily comfort, and local exploration in mind.</p>
+        <section class="value_proposition section" style="padding: 80px 0; background-color: #ffffff; border-top: 1px solid #eee; border-bottom: 1px solid #eee;">
+            <div class="container">
+                <div class="text-center mb-5" data-aos="fade-up">
+                    <span id="public-advantages-subtitle" class="theme-element theme-element--accent" style="font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: #0ea5e9; font-weight: 700;">
+                        The Ruumis Advantage
+                    </span>
+                    <h2 id="public-advantages-title" class="mt-2" style="font-size: 36px; font-weight: 800; color: #0f172a;">
+                        Why Our Locations Are Built Different
+                    </h2>
+                    <p id="public-advantages-description" class="text-muted mx-auto mt-2" style="max-width: 600px; font-size: 15px;">
+                        We curate every residential zone with academic focus, daily comfort, and local exploration in mind.
+                    </p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-4">
+                <div class="row g-4">
                     <!-- Advantage 1 -->
-                    <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100 hover:border-cyan-100 transition-all">
-                        <div class="w-12 h-12 bg-cyan-50 text-cyan-600 rounded-xl flex items-center justify-center mb-4 font-bold text-xl">
-                            <span class="icon-location"></span>
+                    <div class="col-md-4 col-sm-12" data-aos="fade-up" data-aos-delay="0">
+                        <div class="advantage-card text-center p-4 h-100" style="background: #fbfbfb; border: 1px solid #eee; border-radius: 16px;">
+                            <div class="icon-wrapper mb-3" style="color: #0ea5e9;">
+                                <span id="public-advantage1-icon" class="icon-location" style="font-size: 32px;"></span>
+                            </div>
+                            <h5 id="public-advantage1-titulo" style="font-weight: 700; color: #0f172a; margin-bottom: 12px;">Campus Proximity</h5>
+                            <p id="public-advantage1-descripcion" class="text-muted" style="font-size: 14px; margin-bottom: 0; line-height: 1.6;">
+                                Never worry about being late. All complexes are selected to minimize travel time to universities and public transit lines.
+                            </p>
                         </div>
-                        <h3 class="font-bold text-lg text-slate-900 mb-2">Campus Proximity</h3>
-                        <p class="text-slate-500 text-sm leading-relaxed">
-                            Never worry about being late. All complexes are selected to minimize travel time to universities and public transit lines.
-                        </p>
                     </div>
 
                     <!-- Advantage 2 -->
-                    <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100 hover:border-cyan-100 transition-all">
-                        <div class="w-12 h-12 bg-cyan-50 text-cyan-600 rounded-xl flex items-center justify-center mb-4 font-bold text-xl">
-                            <span class="icon-lock"></span>
+                    <div class="col-md-4 col-sm-12" data-aos="fade-up" data-aos-delay="50">
+                        <div class="advantage-card text-center p-4 h-100" style="background: #fbfbfb; border: 1px solid #eee; border-radius: 16px;">
+                            <div class="icon-wrapper mb-3" style="color: #0ea5e9;">
+                                <span id="public-advantage2-icon" class="icon-lock" style="font-size: 32px;"></span>
+                            </div>
+                            <h5 id="public-advantage2-titulo" style="font-weight: 700; color: #0f172a; margin-bottom: 12px;">Safe & Monitored Zones</h5>
+                            <p id="public-advantage2-descripcion" class="text-muted" style="font-size: 14px; margin-bottom: 0; line-height: 1.6;">
+                                Your safety is non-negotiable. Our residential complexes are situated in secure neighborhoods with active community surveillance.
+                            </p>
                         </div>
-                        <h3 class="font-bold text-lg text-slate-900 mb-2">Safe & Monitored Zones</h3>
-                        <p class="text-slate-500 text-sm leading-relaxed">
-                            Your safety is non-negotiable. Our residential complexes are situated in secure neighborhoods with active community surveillance.
-                        </p>
                     </div>
 
                     <!-- Advantage 3 -->
-                    <div class="p-6 bg-slate-50 rounded-2xl border border-slate-100 hover:border-cyan-100 transition-all">
-                        <div class="w-12 h-12 bg-cyan-50 text-cyan-600 rounded-xl flex items-center justify-center mb-4 font-bold text-xl">
-                            <span class="icon-users"></span>
+                    <div class="col-md-4 col-sm-12" data-aos="fade-up" data-aos-delay="100">
+                        <div class="advantage-card text-center p-4 h-100" style="background: #fbfbfb; border: 1px solid #eee; border-radius: 16px;">
+                            <div class="icon-wrapper mb-3" style="color: #0ea5e9;">
+                                <span id="public-advantage3-icon" class="icon-users" style="font-size: 32px;"></span>
+                            </div>
+                            <h5 id="public-advantage3-titulo" style="font-weight: 700; color: #0f172a; margin-bottom: 12px;">Vibrant Communities</h5>
+                            <p id="public-advantage3-descripcion" class="text-muted" style="font-size: 14px; margin-bottom: 0; line-height: 1.6;">
+                                Surround yourself with coffee shops, supermarkets, parks, and gyms, giving you the best balance between studies and personal life.
+                            </p>
                         </div>
-                        <h3 class="font-bold text-lg text-slate-900 mb-2">Vibrant Communities</h3>
-                        <p class="text-slate-500 text-sm leading-relaxed">
-                            Surround yourself with coffee shops, supermarkets, parks, and gyms, giving you the best balance between studies and personal life.
-                        </p>
                     </div>
                 </div>
             </div>
         </section>
+        <br><br><br>
 
         <!-- 4. CALL TO ACTION SECTION -->
-        <section class="max-w-5xl mx-auto px-4 my-16">
-            <div class="bg-slate-900 text-white rounded-3xl p-8 md:p-12 shadow-xl relative overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-r from-cyan-600/20 to-transparent pointer-events-none"></div>
-                <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div class="max-w-xl text-center md:text-left">
-                        <h3 class="text-2xl md:text-3xl font-extrabold mb-3">Still not sure which zone is right for you?</h3>
-                        <p class="text-slate-300 text-sm md:text-base">
-                            Our booking agents are ready to give you a personalized virtual tour and recommend the best neighborhood for your university course.
-                        </p>
-                    </div>
-                    <div>
-                        <a href="contacts.html" class="inline-flex items-center justify-center px-6 py-3.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-sm transition-colors shadow-lg">
-                            Get in Touch with an Expert
-                        </a>
+        <section class="cta_consultation section" style="padding: 80px 0;">
+            <div class="container">
+                <div class="cta-banner position-relative overflow-hidden p-4 p-md-5 text-white" style="background-color: #0f172a; border-radius: 24px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);" data-aos="zoom-in">
+                    <!-- Capa de gradiente sutil detrás del contenido -->
+                    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(90deg, rgba(14, 165, 233, 0.12) 0%, rgba(14, 165, 233, 0) 100%); pointer-events: none; z-index: 1;"></div>
+                    
+                    <div class="position-relative d-flex flex-column flex-md-row align-items-center justify-content-between gap-4" style="z-index: 2;">
+                        <div class="text-center text-md-start">
+                            <h3 id="public-cta-title" class="fw-bold mb-2" style="font-size: 28px; color: #ffffff;">Still not sure which zone is right for you?</h3>
+                            <p id="public-cta-text" class="text-white-50 mb-0" style="font-size: 15px; line-height: 1.6; max-width: 580px;">
+                                Our booking agents are ready to give you a personalized virtual tour and recommend the best neighborhood for your university course.
+                            </p>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <a id="public-cta-button" href="contacts.html" class="btn btn-cyan px-4 py-3 fw-bold" style="background-color: #0ea5e9; color: #0f172a; border-radius: 12px; border: none; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(14, 165, 233, 0.25); text-decoration: none;">
+                                Get in Touch with an Expert
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
+        <br><br><br>
     </main>
 
     
