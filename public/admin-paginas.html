@@ -1344,7 +1344,121 @@
                             </div>
                             <!-- SECTION RULES & POLICIES end-->
 
+                            <!-- SECTION CONTACT INFO start -->
+                            <div class="bg-white rounded-xl shadow-md p-6 mb-8 border border-slate-100">
+                                <div class="border-b border-slate-100 pb-4 mb-6">
+                                    <h1 class="text-xl font-bold text-slate-800">ROOMS</h1>
+                                    <h2 class="text-xl font-bold text-slate-800">CONTACT SECTION (GET IN TOUCH)</h2>
+                                    <p class="text-sm text-slate-500">Modifica los datos de contacto y la imagen de presentación lateral.</p>
+                                </div>
+
+                                <form id="form-rooms-contacts" class="space-y-6">
+                                    <!-- Título principal, Subtítulo y Carga de Imagen -->
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div class="md:col-span-2 space-y-4">
+                                            <div>
+                                                <label class="block text-sm font-semibold text-slate-700 mb-1">Título principal</label>
+                                                <input type="text" id="input-contacts-title" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-semibold text-slate-700 mb-1">Descripción corta</label>
+                                                <textarea id="textarea-contacts-desc" rows="3" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"></textarea>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
+                                            <label class="block text-sm font-semibold text-slate-700 mb-2">Imagen lateral de Showcase</label>
+                                            <input type="file" id="input-contacts-image" accept="image/*" 
+                                                class="w-full text-xs file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100 cursor-pointer">
+                                            
+                                            <div id="preview-contacts-image" class="mt-4 hidden">
+                                                <p class="text-xs font-medium text-slate-400 mb-1">Vista previa actual:</p>
+                                                <img id="img-contacts-preview" src="" alt="Vista previa de contacto" class="h-24 w-full object-cover rounded-md border border-slate-200 shadow-sm">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <hr class="border-slate-100 my-6">
+
+                                    <!-- Grid de los 4 canales de contacto -->
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <!-- Bloque Teléfonos -->
+                                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-100 space-y-3">
+                                            <div class="border-b pb-2">
+                                                <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Etiqueta Canal 1</label>
+                                                <input type="text" id="input-contacts-tel-title" class="w-full mt-1 px-2 py-1 border border-slate-200 rounded text-xs font-semibold">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs text-slate-500 mb-1">Teléfono Principal</label>
+                                                <input type="text" id="input-contacts-tel1" class="w-full px-3 py-1.5 border border-slate-200 rounded text-xs">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs text-slate-500 mb-1">Teléfono Alternativo</label>
+                                                <input type="text" id="input-contacts-tel2" class="w-full px-3 py-1.5 border border-slate-200 rounded text-xs">
+                                            </div>
+                                        </div>
+
+                                        <!-- Bloque Emails -->
+                                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-100 space-y-3">
+                                            <div class="border-b pb-2">
+                                                <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Etiqueta Canal 2</label>
+                                                <input type="text" id="input-contacts-email-title" class="w-full mt-1 px-2 py-1 border border-slate-200 rounded text-xs font-semibold">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs text-slate-500 mb-1">Email Principal</label>
+                                                <input type="email" id="input-contacts-email1" class="w-full px-3 py-1.5 border border-slate-200 rounded text-xs">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs text-slate-500 mb-1">Email de Soporte/Info</label>
+                                                <input type="email" id="input-contacts-email2" class="w-full px-3 py-1.5 border border-slate-200 rounded text-xs">
+                                            </div>
+                                        </div>
+
+                                        <!-- Bloque Ubicación -->
+                                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-100 space-y-3">
+                                            <div class="border-b pb-2">
+                                                <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Etiqueta Canal 3</label>
+                                                <input type="text" id="input-contacts-loc-title" class="w-full mt-1 px-2 py-1 border border-slate-200 rounded text-xs font-semibold">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs text-slate-500 mb-1">Calle y Número</label>
+                                                <input type="text" id="input-contacts-loc1" class="w-full px-3 py-1.5 border border-slate-200 rounded text-xs">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs text-slate-500 mb-1">Ciudad, Estado y Código Postal</label>
+                                                <input type="text" id="input-contacts-loc2" class="w-full px-3 py-1.5 border border-slate-200 rounded text-xs">
+                                            </div>
+                                        </div>
+
+                                        <!-- Bloque Horarios -->
+                                        <div class="p-4 bg-slate-50 rounded-lg border border-slate-100 space-y-3">
+                                            <div class="border-b pb-2">
+                                                <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Etiqueta Canal 4</label>
+                                                <input type="text" id="input-contacts-work-title" class="w-full mt-1 px-2 py-1 border border-slate-200 rounded text-xs font-semibold">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs text-slate-500 mb-1">Días de Atención</label>
+                                                <input type="text" id="input-contacts-work1" class="w-full px-3 py-1.5 border border-slate-200 rounded text-xs">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs text-slate-500 mb-1">Horario Laboral</label>
+                                                <input type="text" id="input-contacts-work2" class="w-full px-3 py-1.5 border border-slate-200 rounded text-xs">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Botón de guardado -->
+                                    <div class="flex justify-end pt-4">
+                                        <button type="submit" class="bg-sky-500 text-white text-sm font-semibold px-6 py-2.5 rounded-lg hover:bg-sky-600 transition shadow-sm">
+                                            Guardar Información de Contacto
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- SECTION CONTACT INFO end-->
+
                             
+
                         </div>
 
             </div>
@@ -2894,6 +3008,113 @@
             }
             cargarRoomsRulesAdmin();
         });
+
+        //==========================================
+        // CONTACTS ROOMS
+        //==========================================
+
+        async function cargarRoomsContactsAdmin() {
+            try {
+                const response = await fetch('/api/admin-contacts');
+                if (!response.ok) throw new Error("No se pudo conectar al servidor.");
+                const datos = await response.json();
+
+                // Cargar campos globales
+                document.getElementById('input-contacts-title').value = datos.contacts_title || '';
+                document.getElementById('textarea-contacts-desc').value = datos.contacts_desc || '';
+
+                // Vista previa de imagen
+                const previewCont = document.getElementById('preview-contacts-image');
+                const imgPreview = document.getElementById('img-contacts-preview');
+                if (datos.contacts_image) {
+                    imgPreview.src = datos.contacts_image;
+                    previewCont.classList.remove('hidden');
+                } else {
+                    previewCont.classList.add('hidden');
+                }
+
+                // Teléfonos
+                document.getElementById('input-contacts-tel-title').value = datos.contacts_tel_title || '';
+                document.getElementById('input-contacts-tel1').value = datos.contacts_tel1 || '';
+                document.getElementById('input-contacts-tel2').value = datos.contacts_tel2 || '';
+
+                // Emails
+                document.getElementById('input-contacts-email-title').value = datos.contacts_email_title || '';
+                document.getElementById('input-contacts-email1').value = datos.contacts_email1 || '';
+                document.getElementById('input-contacts-email2').value = datos.contacts_email2 || '';
+
+                // Ubicación
+                document.getElementById('input-contacts-loc-title').value = datos.contacts_loc_title || '';
+                document.getElementById('input-contacts-loc1').value = datos.contacts_loc1 || '';
+                document.getElementById('input-contacts-loc2').value = datos.contacts_loc2 || '';
+
+                // Horarios
+                document.getElementById('input-contacts-work-title').value = datos.contacts_work_title || '';
+                document.getElementById('input-contacts-work1').value = datos.contacts_work1 || '';
+                document.getElementById('input-contacts-work2').value = datos.contacts_work2 || '';
+
+            } catch (err) {
+                console.error("Error al recuperar datos de contacto:", err);
+            }
+        }
+
+        async function guardarRoomsContactsAdmin(e) {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append('contacts_title', document.getElementById('input-contacts-title').value);
+            formData.append('contacts_desc', document.getElementById('textarea-contacts-desc').value);
+
+            // Adjuntar archivo si existe uno seleccionado
+            const imageInput = document.getElementById('input-contacts-image');
+            if (imageInput.files[0]) {
+                formData.append('contacts_image', imageInput.files[0]);
+            }
+
+            // Añadir resto de variables de contacto al FormData
+            formData.append('contacts_tel_title', document.getElementById('input-contacts-tel-title').value);
+            formData.append('contacts_tel1', document.getElementById('input-contacts-tel1').value);
+            formData.append('contacts_tel2', document.getElementById('input-contacts-tel2').value);
+
+            formData.append('contacts_email_title', document.getElementById('input-contacts-email-title').value);
+            formData.append('contacts_email1', document.getElementById('input-contacts-email1').value);
+            formData.append('contacts_email2', document.getElementById('input-contacts-email2').value);
+
+            formData.append('contacts_loc_title', document.getElementById('input-contacts-loc-title').value);
+            formData.append('contacts_loc1', document.getElementById('input-contacts-loc1').value);
+            formData.append('contacts_loc2', document.getElementById('input-contacts-loc2').value);
+
+            formData.append('contacts_work_title', document.getElementById('input-contacts-work-title').value);
+            formData.append('contacts_work1', document.getElementById('input-contacts-work1').value);
+            formData.append('contacts_work2', document.getElementById('input-contacts-work2').value);
+
+            try {
+                const response = await fetch('/api/admin-contacts', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error("Error al procesar la actualización.");
+                const result = await response.json();
+
+                alert("¡Datos de contacto guardados!");
+                imageInput.value = ''; // Limpiar el campo del archivo
+                await cargarRoomsContactsAdmin();
+            } catch (err) {
+                console.error("Error al persistir cambios de contacto:", err);
+                alert("Ocurrió un error al subir la información de contacto.");
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const contactsForm = document.getElementById('form-rooms-contacts');
+            if (contactsForm) {
+                contactsForm.addEventListener('submit', guardarRoomsContactsAdmin);
+            }
+            cargarRoomsContactsAdmin();
+        });
+
+
 
 
 

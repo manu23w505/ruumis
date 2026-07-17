@@ -2128,3 +2128,92 @@ async function inicializarReglasPublicas() {
 document.addEventListener('DOMContentLoaded', () => {
     inicializarReglasPublicas();
 });
+
+
+//================================================================
+// CONTACTS ROOMS
+//================================================================
+
+
+async function inicializarContactosPublicos() {
+    try {
+        const response = await fetch('/api/admin-contacts');
+        if (!response.ok) return; // Si hay error, se conservan los textos estáticos del HTML
+
+        const datos = await response.json();
+
+        // Mapeo seguro de elementos del DOM
+        const txtTitulo = document.getElementById('public-contacts-titulo');
+        const txtDesc = document.getElementById('public-contacts-descripcion');
+        
+        const telTitle = document.getElementById('public-contacts-tel-titulo');
+        const tel1 = document.getElementById('public-contacts-tel1');
+        const tel2 = document.getElementById('public-contacts-tel2');
+
+        const emailTitle = document.getElementById('public-contacts-email-titulo');
+        const email1 = document.getElementById('public-contacts-email1');
+        const email2 = document.getElementById('public-contacts-email2');
+
+        const locTitle = document.getElementById('public-contacts-loc-titulo');
+        const loc1 = document.getElementById('public-contacts-loc1');
+        const loc2 = document.getElementById('public-contacts-loc2');
+
+        const workTitle = document.getElementById('public-contacts-work-titulo');
+        const work1 = document.getElementById('public-contacts-work1');
+        const work2 = document.getElementById('public-contacts-work2');
+
+        const imgShowcase = document.getElementById('public-contacts-img');
+
+        // Asignación de datos
+        if (txtTitulo && datos.contacts_title) txtTitulo.textContent = datos.contacts_title;
+        if (txtDesc && datos.contacts_desc) txtDesc.textContent = datos.contacts_desc;
+
+        // Teléfonos y enlaces (tel:)
+        if (telTitle && datos.contacts_tel_title) telTitle.textContent = datos.contacts_tel_title;
+        if (tel1 && datos.contacts_tel1) {
+            tel1.textContent = datos.contacts_tel1;
+            // Limpia espacios y caracteres especiales para el href
+            const cleanTel1 = datos.contacts_tel1.replace(/[^0-9+]/g, '');
+            tel1.setAttribute('href', `tel:${cleanTel1}`);
+        }
+        if (tel2 && datos.contacts_tel2) {
+            tel2.textContent = datos.contacts_tel2;
+            const cleanTel2 = datos.contacts_tel2.replace(/[^0-9+]/g, '');
+            tel2.setAttribute('href', `tel:${cleanTel2}`);
+        }
+
+        // Emails y enlaces (mailto:)
+        if (emailTitle && datos.contacts_email_title) emailTitle.textContent = datos.contacts_email_title;
+        if (email1 && datos.contacts_email1) {
+            email1.textContent = datos.contacts_email1;
+            email1.setAttribute('href', `mailto:${datos.contacts_email1.trim()}`);
+        }
+        if (email2 && datos.contacts_email2) {
+            email2.textContent = datos.contacts_email2;
+            email2.setAttribute('href', `mailto:${datos.contacts_email2.trim()}`);
+        }
+
+        // Ubicación
+        if (locTitle && datos.contacts_loc_title) locTitle.textContent = datos.contacts_loc_title;
+        if (loc1 && datos.contacts_loc1) loc1.textContent = datos.contacts_loc1;
+        if (loc2 && datos.contacts_loc2) loc2.textContent = datos.contacts_loc2;
+
+        // Horarios
+        if (workTitle && datos.contacts_work_title) workTitle.textContent = datos.contacts_work_title;
+        if (work1 && datos.contacts_work1) work1.textContent = datos.contacts_work1;
+        if (work2 && datos.contacts_work2) work2.textContent = datos.contacts_work2;
+
+        // Imagen lateral
+        if (imgShowcase && datos.contacts_image) {
+            imgShowcase.setAttribute('src', datos.contacts_image);
+        }
+
+    } catch (err) {
+        console.error("Error al renderizar los datos de contacto en la vista pública:", err);
+    }
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    inicializarContactosPublicos();
+});

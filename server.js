@@ -2437,7 +2437,88 @@ app.post('/api/admin-rules', (req, res) => {
     });
 });
 
+// ==========================================
+// SECTION CONTACT ROOMS
+// ==========================================
 
+
+app.get('/api/admin-contacts', (req, res) => {
+    const query = `
+        SELECT 
+            contacts_title, contacts_desc,
+            contacts_tel_title, contacts_tel1, contacts_tel2,
+            contacts_email_title, contacts_email1, contacts_email2,
+            contacts_loc_title, contacts_loc1, contacts_loc2,
+            contacts_work_title, contacts_work1, contacts_work2,
+            contacts_image
+        FROM admin_rooms WHERE id = 1
+    `;
+    
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("Error al obtener admin-contacts:", err);
+            return res.status(500).json({ error: "Error interno del servidor" });
+        }
+        
+        if (results.length > 0) {
+            res.json(results[0]);
+        } else {
+            res.status(404).json({ error: "Configuración de contacto no encontrada" });
+        }
+    });
+});
+
+
+app.post('/api/admin-contacts', (req, res) => {
+    upload.single('contacts_image')(req, res, function (err) {
+        if (err instanceof multer.MulterError) {
+            return res.status(400).json({ error: `Error de carga: ${err.message}` });
+        } else if (err) {
+            return res.status(400).json({ error: err.message });
+        }
+
+        const {
+            contacts_title, contacts_desc,
+            contacts_tel_title, contacts_tel1, contacts_tel2,
+            contacts_email_title, contacts_email1, contacts_email2,
+            contacts_loc_title, contacts_loc1, contacts_loc2,
+            contacts_work_title, contacts_work1, contacts_work2
+        } = req.body;
+
+        let query = `
+            UPDATE admin_rooms SET 
+                contacts_title = ?, contacts_desc = ?,
+                contacts_tel_title = ?, contacts_tel1 = ?, contacts_tel2 = ?,
+                contacts_email_title = ?, contacts_email1 = ?, contacts_email2 = ?,
+                contacts_loc_title = ?, contacts_loc1 = ?, contacts_loc2 = ?,
+                contacts_work_title = ?, contacts_work1 = ?, contacts_work2 = ?
+        `;
+
+        const values = [
+            contacts_title, contacts_desc,
+            contacts_tel_title, contacts_tel1, contacts_tel2,
+            contacts_email_title, contacts_email1, contacts_email2,
+            contacts_loc_title, contacts_loc1, contacts_loc2,
+            contacts_work_title, contacts_work1, contacts_work2
+        ];
+
+        // Si se subió un nuevo archivo, actualizamos el path de la imagen
+        if (req.file) {
+            query += `, contacts_image = ?`;
+            values.push(`/uploads/${req.file.filename}`);
+        }
+
+        query += ` WHERE id = 1`;
+
+        db.query(query, values, (dbErr, result) => {
+            if (dbErr) {
+                console.error("Error al actualizar admin-contacts:", dbErr);
+                return res.status(500).json({ error: "Error al guardar en la base de datos" });
+            }
+            res.json({ success: true, message: "Información de contacto actualizada con éxito" });
+        });
+    });
+});
 
 
 
