@@ -2318,6 +2318,10 @@ app.get('/api/admin-stages', (req, res) => {
 });
 
 app.post('/api/admin-stages', upload.single('stages_image'), (req, res) => {
+    console.log("=== API POST /api/admin-stages llamada ===");
+    console.log("Body recibido:", req.body);
+    console.log("Archivo recibido:", req.file);
+
     const {
         stages_title,
         stage1_title, stage1_text,
@@ -2332,44 +2336,58 @@ app.post('/api/admin-stages', upload.single('stages_image'), (req, res) => {
         final_image_path = 'img/' + req.file.filename;
     }
 
-    const query = `
-        INSERT INTO admin_rooms (
-            id, 
-            stages_title, 
-            stage1_title, stage1_text, 
-            stage2_title, stage2_text, 
-            stage3_title, stage3_text, 
-            stages_btn_text, stages_btn_link, 
-            stages_image
-        ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ON DUPLICATE KEY UPDATE 
-            stages_title = VALUES(stages_title), 
-            stage1_title = VALUES(stage1_title), 
-            stage1_text = VALUES(stage1_text), 
-            stage2_title = VALUES(stage2_title), 
-            stage2_text = VALUES(stage2_text), 
-            stage3_title = VALUES(stage3_title), 
-            stage3_text = VALUES(stage3_text), 
-            stages_btn_text = VALUES(stages_btn_text), 
-            stages_btn_link = VALUES(stages_btn_link), 
-            stages_image = VALUES(stages_image)
+    // 1. Intentamos actualizar el registro existente con id = 1
+    const updateQuery = `
+        UPDATE admin_rooms SET 
+            stages_title = ?, 
+            stage1_title = ?, stage1_text = ?, 
+            stage2_title = ?, stage2_text = ?, 
+            stage3_title = ?, stage3_text = ?, 
+            stages_btn_text = ?, stages_btn_link = ?, 
+            stages_image = ?
+        WHERE id = 1
     `;
 
     const values = [
-        stages_title,
-        stage1_title, stage1_text,
-        stage2_title, stage2_text,
-        stage3_title, stage3_text,
-        stages_btn_text, stages_btn_link,
+        stages_title || '',
+        stage1_title || '', stage1_text || '',
+        stage2_title || '', stage2_text || '',
+        stage3_title || '', stage3_text || '',
+        stages_btn_text || '', stages_btn_link || '',
         final_image_path
     ];
 
-    db.query(query, values, (err, result) => {
+    db.query(updateQuery, values, (err, result) => {
         if (err) {
-            console.error("Error al actualizar admin-stages:", err);
-            return res.status(500).json({ error: "Error al guardar en la base de datos" });
+            console.error("Error al actualizar en la base de datos:", err);
+            return res.status(500).json({ error: "Error al guardar en la base de datos", details: err.message });
         }
-        res.json({ success: true, message: "¡Sección de Stages actualizada correctamente!" });
+
+        // 2. Si no se afectó ninguna fila, significa que el id = 1 no existe; lo creamos
+        if (result.affectedRows === 0) {
+            console.log("No existe la fila con id = 1, procediendo a insertarla...");
+            const insertQuery = `
+                INSERT INTO admin_rooms (
+                    id, stages_title, 
+                    stage1_title, stage1_text, 
+                    stage2_title, stage2_text, 
+                    stage3_title, stage3_text, 
+                    stages_btn_text, stages_btn_link, 
+                    stages_image
+                ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `;
+            db.query(insertQuery, values, (insertErr) => {
+                if (insertErr) {
+                    console.error("Error al insertar fila inicial:", insertErr);
+                    return res.status(500).json({ error: "Error al crear el registro inicial", details: insertErr.message });
+                }
+                console.log("¡Registro inicial id = 1 creado con éxito!");
+                return res.json({ success: true, message: "¡Sección de Stages creada y guardada correctamente!" });
+            });
+        } else {
+            console.log("¡Registro id = 1 actualizado con éxito!");
+            return res.json({ success: true, message: "¡Sección de Stages actualizada correctamente!" });
+        }
     });
 });
 

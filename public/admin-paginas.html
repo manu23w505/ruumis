@@ -1310,7 +1310,7 @@
                             </div>
                             <!-- SECTION STAGES (ROOMS) end-->                       
 
-                            
+
                         </div>
 
             </div>
@@ -2700,14 +2700,15 @@
             cargarRoomsAmenitiesAdmin();
         });
 
-        //==========================================
+//==========================================
         // STAGES SECTION ROOMS
         //==========================================
 
         document.getElementById('input-stages-image').addEventListener('change', function(e) {
             const reader = new FileReader();
             reader.onload = function(event) {
-                document.getElementById('preview-stages-image').src = event.target.result;
+                const preview = document.getElementById('preview-stages-image');
+                if (preview) preview.src = event.target.result;
             }
             if (e.target.files[0]) {
                 reader.readAsDataURL(e.target.files[0]);
@@ -2721,23 +2722,38 @@
                 if (!response.ok) throw new Error("Error al obtener los datos de Stages.");
                 
                 const datos = await response.json();
+                console.log("Datos cargados del servidor:", datos);
 
-                document.getElementById('input-stages-title').value = datos.stages_title || '';
+                // Función auxiliar segura para inyectar valores en los inputs
+                const setVal = (id, val) => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.value = val || '';
+                    } else {
+                        console.warn(`[Cargar] No se encontró el elemento HTML con ID: '${id}'`);
+                    }
+                };
+
+                setVal('input-stages-title', datos.stages_title);
                 
-                document.getElementById('input-stage1-title').value = datos.stage1_title || '';
-                document.getElementById('textarea-stage1-text').value = datos.stage1_text || '';
+                setVal('input-stage1-title', datos.stage1_title);
+                setVal('textarea-stage1-text', datos.stage1_text);
 
-                document.getElementById('input-stage2-title').value = datos.stage2_title || '';
-                document.getElementById('textarea-stage2-text').value = datos.stage2_text || '';
+                setVal('input-stage2-title', datos.stage2_title);
+                setVal('textarea-stage2-text', datos.stage2_text);
 
-                document.getElementById('input-stage3-title').value = datos.stage3_title || '';
-                document.getElementById('textarea-stage3-text').value = datos.stage3_text || '';
+                setVal('input-stage3-title', datos.stage3_title);
+                setVal('textarea-stage3-text', datos.stage3_text);
 
-                document.getElementById('input-stages-btn-text').value = datos.stages_btn_text || '';
-                document.getElementById('input-stages-btn-link').value = datos.stages_btn_link || '';
+                setVal('input-stages-btn-text', datos.stages_btn_text);
+                setVal('input-stages-btn-link', datos.stages_btn_link);
                 
-                document.getElementById('input-existing-stages-image').value = datos.stages_image || '';
-                document.getElementById('preview-stages-image').src = datos.stages_image ? `/${datos.stages_image}` : '/img/placeholder.jpg';
+                setVal('input-existing-stages-image', datos.stages_image);
+                
+                const previewImg = document.getElementById('preview-stages-image');
+                if (previewImg) {
+                    previewImg.src = datos.stages_image ? `/${datos.stages_image}` : '/img/placeholder.jpg';
+                }
 
             } catch (err) {
                 console.error("Error al cargar Stages en el panel:", err);
@@ -2747,28 +2763,45 @@
 
         async function guardarStagesAdmin(e) {
             e.preventDefault();
+            console.log("=== Ejecutando guardarStagesAdmin ===");
             
+            // Función auxiliar segura para obtener valores de los inputs sin romper el script
+            const getVal = (id) => {
+                const el = document.getElementById(id);
+                if (!el) {
+                    console.warn(`[Guardar] No se encontró el elemento HTML con ID: '${id}'. Se enviará vacío.`);
+                    return '';
+                }
+                return el.value;
+            };
+
             const formData = new FormData();
 
-            formData.append('stages_title', document.getElementById('input-stages-title').value);
+            formData.append('stages_title', getVal('input-stages-title'));
             
-            formData.append('stage1_title', document.getElementById('input-stage1-title').value);
-            formData.append('stage1_text', document.getElementById('textarea-stage1-text').value);
+            formData.append('stage1_title', getVal('input-stage1-title'));
+            formData.append('stage1_text', getVal('textarea-stage1-text'));
 
-            formData.append('stage2_title', document.getElementById('input-stage2-title').value);
-            formData.append('stage2_text', document.getElementById('textarea-stage2-text').value);
+            formData.append('stage2_title', getVal('input-stage2-title'));
+            formData.append('stage2_text', getVal('textarea-stage2-text'));
 
-            formData.append('stage3_title', document.getElementById('input-stage3-title').value);
-            formData.append('stage3_text', document.getElementById('textarea-stage3-text').value);
+            formData.append('stage3_title', getVal('input-stage3-title'));
+            formData.append('stage3_text', getVal('textarea-stage3-text'));
 
-            formData.append('stages_btn_text', document.getElementById('input-stages-btn-text').value);
-            formData.append('stages_btn_link', document.getElementById('input-stages-btn-link').value);
-            formData.append('existing_stages_image', document.getElementById('input-existing-stages-image').value);
-
+            formData.append('stages_btn_text', getVal('input-stages-btn-text'));
+            formData.append('stages_btn_link', getVal('input-stages-btn-link'));
+            formData.append('existing_stages_image', getVal('input-existing-stages-image'));
 
             const fileInput = document.getElementById('input-stages-image');
-            if (fileInput.files[0]) {
+            if (fileInput && fileInput.files && fileInput.files[0]) {
                 formData.append('stages_image', fileInput.files[0]);
+                console.log("Nueva imagen detectada para subir:", fileInput.files[0].name);
+            }
+
+            // Mostramos en la consola los datos exactos listos para enviarse
+            console.log("Datos que se enviarán al servidor:");
+            for (let pair of formData.entries()) {
+                console.log(` -> ${pair[0]}: ${pair[1]}`);
             }
 
             try {
@@ -2777,21 +2810,30 @@
                     body: formData 
                 });
 
-                if (!response.ok) throw new Error("Error en la petición de guardado.");
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({}));
+                    throw new Error(errData.error || "Error en la petición de guardado.");
+                }
+                
                 const result = await response.json();
+                console.log("Respuesta del servidor:", result);
 
                 alert(result.message);
                 await cargarStagesAdmin(); 
             } catch (err) {
                 console.error("Error al actualizar la sección Stages:", err);
-                alert("No se pudo actualizar la sección de Stages.");
+                alert("No se pudo actualizar la sección de Stages. Revisa los detalles en la consola de tu navegador.");
             }
         }
 
+        const formStages = document.getElementById('form-stages-admin');
+        if (formStages) {
+            formStages.addEventListener('submit', guardarStagesAdmin);
+        } else {
+            console.error("ERROR CRÍTICO: No se encontró el formulario con ID 'form-stages-admin' en el HTML.");
+        }
 
-        document.getElementById('form-stages-admin').addEventListener('submit', guardarStagesAdmin);
         document.addEventListener('DOMContentLoaded', cargarStagesAdmin);
-
 
         if (window.self !== window.top) {
             const headerRedundante = document.querySelector('header');
