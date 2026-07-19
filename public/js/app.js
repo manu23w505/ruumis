@@ -2315,10 +2315,6 @@ document.addEventListener("DOMContentLoaded", () => {
     loadConsultationFront();
 });
 
-const imgMobileElem = document.getElementById('public-cta-img-mobile');
-if (imgMobileElem && data.cta_img) {
-    imgMobileElem.setAttribute('src', `/${data.cta_img}`);
-}
 
 //================================================================
 // WORKS (CORREGIDO Y SEGURO)
