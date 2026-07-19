@@ -2321,41 +2321,52 @@ if (imgMobileElem && data.cta_img) {
 }
 
 //================================================================
-//  CONSULTATIONS SECTION LOCATIONS
+//  WORKS SECTION LOCATIONS (CORREGIDO Y DEFENSIVO)
 //================================================================
 
 function loadHowItWorksFront() {
     fetch('/api/locations/how-it-works')
         .then(response => response.json())
-        .then(data => {
-            if (data) {
-                // Inyección de encabezados principales
-                const subElem = document.getElementById('public-how-subtitle');
-                const titleElem = document.getElementById('public-how-title');
-                const descElem = document.getElementById('public-how-desc');
+        .then(responseBlob => {
+            // 1. Diagnóstico: Abre la consola (F12) para ver qué responde tu servidor
+            console.log("Datos recibidos desde la API /how-it-works:", responseBlob);
 
-                if (subElem) subElem.innerText = data.how_subtitle;
-                if (titleElem) titleElem.innerText = data.how_title;
-                if (descElem) descElem.innerText = data.how_desc;
+            if (!responseBlob) return;
 
-                // Paso 1
-                const s1Title = document.getElementById('public-step1-title');
-                const s1Desc = document.getElementById('public-step1-desc');
-                if (s1Title) s1Title.innerText = data.step1_title;
-                if (s1Desc) s1Desc.innerText = data.step1_desc;
-
-                // Paso 2
-                const s2Title = document.getElementById('public-step2-title');
-                const s2Desc = document.getElementById('public-step2-desc');
-                if (s2Title) s2Title.innerText = data.step2_title;
-                if (s2Desc) s2Desc.innerText = data.step2_desc;
-
-                // Paso 3
-                const s3Title = document.getElementById('public-step3-title');
-                const s3Desc = document.getElementById('public-step3-desc');
-                if (s3Title) s3Title.innerText = data.step3_title;
-                if (s3Desc) s3Desc.innerText = data.step3_desc;
+            // 2. Normalizar la respuesta por si viene envuelta en { data: ... } o es un Array [ ... ]
+            let data = responseBlob;
+            if (responseBlob.data) {
+                data = responseBlob.data;
+            } else if (Array.isArray(responseBlob) && responseBlob.length > 0) {
+                data = responseBlob[0];
             }
+
+            // 3. Inyección segura en el DOM
+            const subElem = document.getElementById('public-how-subtitle');
+            const titleElem = document.getElementById('public-how-title');
+            const descElem = document.getElementById('public-how-desc');
+
+            if (subElem && data.how_subtitle) subElem.innerText = data.how_subtitle;
+            if (titleElem && data.how_title) titleElem.innerText = data.how_title;
+            if (descElem && data.how_desc) descElem.innerText = data.how_desc;
+
+            // Paso 1
+            const s1Title = document.getElementById('public-step1-title');
+            const s1Desc = document.getElementById('public-step1-desc');
+            if (s1Title && data.step1_title) s1Title.innerText = data.step1_title;
+            if (s1Desc && data.step1_desc) s1Desc.innerText = data.step1_desc;
+
+            // Paso 2
+            const s2Title = document.getElementById('public-step2-title');
+            const s2Desc = document.getElementById('public-step2-desc');
+            if (s2Title && data.step2_title) s2Title.innerText = data.step2_title;
+            if (s2Desc && data.step2_desc) s2Desc.innerText = data.step2_desc;
+
+            // Paso 3
+            const s3Title = document.getElementById('public-step3-title');
+            const s3Desc = document.getElementById('public-step3-desc');
+            if (s3Title && data.step3_title) s3Title.innerText = data.step3_title;
+            if (s3Desc && data.step3_desc) s3Desc.innerText = data.step3_desc;
         })
         .catch(error => console.error("Error drawing workflow sequence steps:", error));
 }
