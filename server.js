@@ -2758,7 +2758,12 @@ app.get('/api/contacts-secondary', (req, res) => {
 });
 
 // POST Endpoint: Upsert texts and process new image streams
-app.post('/api/contacts-secondary', upload, (req, res) => {
+app.post('/api/contacts-secondary', upload.fields([
+    { name: 'r1_logo', maxCount: 1 },
+    { name: 'r2_logo', maxCount: 1 },
+    { name: 'r3_logo', maxCount: 1 },
+    { name: 'r4_logo', maxCount: 1 }
+]), (req, res) => {
     const data = req.body;
 
     // Fetch existing settings row to evaluate image fallbacks
