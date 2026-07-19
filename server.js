@@ -2748,25 +2748,6 @@ app.put('/api/cms/contacts', (req, res) => {
 // ==========================================
 
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Configure Multer storage engine
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/');
-    },
-    filename: (req, file, cb) => {
-        cb(null, 'logo-' + Date.now() + path.extname(file.originalname));
-    }
-});
-
-const upload = multer({ storage: storage }).fields([
-    { name: 'r1_logo', maxCount: 1 },
-    { name: 'r2_logo', maxCount: 1 },
-    { name: 'r3_logo', maxCount: 1 },
-    { name: 'r4_logo', maxCount: 1 }
-]);
-
 // GET Endpoint: Fetch secondary metrics settings
 app.get('/api/contacts-secondary', (req, res) => {
     const sql = 'SELECT * FROM admin_contacts_secondary WHERE id = 1';
