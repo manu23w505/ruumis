@@ -2640,7 +2640,7 @@ app.post('/api/locations/consultation', upload.single('cta_img'), (req, res) => 
 });
 
 // ==========================================
-// WORKS SECTION LOCATIONS
+// WORKS SECTION LOCATIONS (BACKEND OPTIMIZADO)
 // ==========================================
 
 app.get('/api/locations/how-it-works', (req, res) => {
@@ -2656,12 +2656,32 @@ app.get('/api/locations/how-it-works', (req, res) => {
             console.error('Error fetching How It Works data:', err);
             return res.status(500).json({ error: 'Database reading error.' });
         }
+        
+        // Si el registro ID = 1 no existe todavía, enviamos los valores por defecto
+        if (!results || results.length === 0 || results[0].how_title === null) {
+            return res.json({
+                how_subtitle: 'Fácil y Rápido',
+                how_title: '¿Cómo asegurar tu Ruumis?',
+                how_desc: 'Olvídate del papeleo infinito. Nuestro proceso es 100% digital y diseñado para tu comodidad.',
+                step1_title: 'Encuentra tu zona',
+                step1_desc: 'Explora nuestros complejos cercanos a las principales universidades y elige el que mejor se adapte a tu estilo de vida.',
+                step2_title: 'Agenda un Tour Virtual',
+                step2_desc: 'Conoce las instalaciones en tiempo real con uno de nuestros asesores a través de una videollamada interactiva, sin salir de casa.',
+                step3_title: '¡Reserva y mudate!',
+                step3_desc: 'Firma tu contrato digital, realiza tu depósito seguro y prepárate para vivir la mejor experiencia universitaria.'
+            });
+        }
+        
         res.json(results[0]);
     });
 });
 
-
 app.post('/api/locations/how-it-works', (req, res) => {
+    // Validar que el body no venga vacío por falta de middleware
+    if (!req.body || Object.keys(req.body).length === 0) {
+        return res.status(400).json({ error: 'Falta el middleware express.json() en tu servidor.' });
+    }
+
     const { 
         how_subtitle, how_title, how_desc, 
         step1_title, step1_desc, 
@@ -2690,7 +2710,17 @@ app.post('/api/locations/how-it-works', (req, res) => {
             console.error('Error updating How It Works:', err);
             return res.status(500).json({ error: 'Failed to update content flow.' });
         }
-        res.json({ success: true, message: 'Process workflow sequence updated successfully!' });
+        
+        // Si no afectó ninguna fila es porque el ID 1 no existe, intentamos insertarlo
+        if (result.affectedRows === 0) {
+            const insertQuery = `INSERT INTO admin_locations (id, how_subtitle, how_title, how_desc, step1_title, step1_desc, step2_title, step2_desc, step3_title, step3_desc) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            db.query(insertQuery, values, (inErr) => {
+                if (inErr) return res.status(500).json({ error: 'Failed to insert missing row.' });
+                return res.json({ success: true, message: 'Row created and workflow updated!' });
+            });
+        } else {
+            res.json({ success: true, message: 'Process workflow sequence updated successfully!' });
+        }
     });
 });
 

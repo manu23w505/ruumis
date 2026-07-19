@@ -2321,52 +2321,42 @@ if (imgMobileElem && data.cta_img) {
 }
 
 //================================================================
-//  WORKS SECTION LOCATIONS (CORREGIDO Y DEFENSIVO)
+// PUBLIC VIEW - HOW IT WORKS (CORREGIDO Y SEGURO)
 //================================================================
 
 function loadHowItWorksFront() {
     fetch('/api/locations/how-it-works')
         .then(response => response.json())
-        .then(responseBlob => {
-            // 1. Diagnóstico: Abre la consola (F12) para ver qué responde tu servidor
-            console.log("Datos recibidos desde la API /how-it-works:", responseBlob);
+        .then(data => {
+            if (!data) return;
 
-            if (!responseBlob) return;
-
-            // 2. Normalizar la respuesta por si viene envuelta en { data: ... } o es un Array [ ... ]
-            let data = responseBlob;
-            if (responseBlob.data) {
-                data = responseBlob.data;
-            } else if (Array.isArray(responseBlob) && responseBlob.length > 0) {
-                data = responseBlob[0];
-            }
-
-            // 3. Inyección segura en el DOM
+            // Selección de elementos
             const subElem = document.getElementById('public-how-subtitle');
             const titleElem = document.getElementById('public-how-title');
             const descElem = document.getElementById('public-how-desc');
 
-            if (subElem && data.how_subtitle) subElem.innerText = data.how_subtitle;
-            if (titleElem && data.how_title) titleElem.innerText = data.how_title;
-            if (descElem && data.how_desc) descElem.innerText = data.how_desc;
+            // Inyección controlada evaluando que la propiedad exista en el objeto
+            if (subElem && data.how_subtitle !== undefined) subElem.innerText = data.how_subtitle;
+            if (titleElem && data.how_title !== undefined) titleElem.innerText = data.how_title;
+            if (descElem && data.how_desc !== undefined) descElem.innerText = data.how_desc;
 
             // Paso 1
             const s1Title = document.getElementById('public-step1-title');
             const s1Desc = document.getElementById('public-step1-desc');
-            if (s1Title && data.step1_title) s1Title.innerText = data.step1_title;
-            if (s1Desc && data.step1_desc) s1Desc.innerText = data.step1_desc;
+            if (s1Title && data.step1_title !== undefined) s1Title.innerText = data.step1_title;
+            if (s1Desc && data.step1_desc !== undefined) s1Desc.innerText = data.step1_desc;
 
             // Paso 2
             const s2Title = document.getElementById('public-step2-title');
             const s2Desc = document.getElementById('public-step2-desc');
-            if (s2Title && data.step2_title) s2Title.innerText = data.step2_title;
-            if (s2Desc && data.step2_desc) s2Desc.innerText = data.step2_desc;
+            if (s2Title && data.step2_title !== undefined) s2Title.innerText = data.step2_title;
+            if (s2Desc && data.step2_desc !== undefined) s2Desc.innerText = data.step2_desc;
 
             // Paso 3
             const s3Title = document.getElementById('public-step3-title');
             const s3Desc = document.getElementById('public-step3-desc');
-            if (s3Title && data.step3_title) s3Title.innerText = data.step3_title;
-            if (s3Desc && data.step3_desc) s3Desc.innerText = data.step3_desc;
+            if (s3Title && data.step3_title !== undefined) s3Title.innerText = data.step3_title;
+            if (s3Desc && data.step3_desc !== undefined) s3Desc.innerText = data.step3_desc;
         })
         .catch(error => console.error("Error drawing workflow sequence steps:", error));
 }
