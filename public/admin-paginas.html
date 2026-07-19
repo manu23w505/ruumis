@@ -1885,6 +1885,90 @@
                             </div>
                             <!-- CONTACTS SECTION end -->
 
+                            <!-- CONTACTS SECONDARY SECTION start -->
+                            <div class="card my-5 shadow-sm">
+                                <div class="card-header bg-secondary text-white">
+                                    <h4 class="m-0">Edit Secondary Contacts & Platform Ratings</h4>
+                                </div>
+                                <div class="card-body">
+                                    <form id="form-contacts-secondary" enctype="multipart/form-data">
+                                        
+                                        <div class="mb-4">
+                                            <label for="adm_section_title" class="form-label font-weight-bold">Section Header Title</label>
+                                            <input type="text" class="form-control" id="adm_section_title" name="section_title" required>
+                                        </div>
+
+                                        <div class="row">
+                                            <!-- Card 1 -->
+                                            <div class="col-md-6 mb-4 border-end">
+                                                <h5 class="text-primary border-bottom pb-2">Rating Card 1</h5>
+                                                <div class="row g-2 mb-2">
+                                                    <div class="col-6"><input type="text" class="form-control" id="adm_r1_level" name="r1_level" placeholder="Level (8.3)" required></div>
+                                                    <div class="col-6"><input type="text" class="form-control" id="adm_r1_max" name="r1_max" placeholder="Max (/10)" required></div>
+                                                </div>
+                                                <div class="mb-2"><input type="text" class="form-control" id="adm_r1_reviews" name="r1_reviews" placeholder="Reviews subtext" required></div>
+                                                <div class="mb-2">
+                                                    <label class="small text-muted">Platform Image Logo</label>
+                                                    <input type="file" class="form-control form-control-sm" name="r1_logo" accept="image/*">
+                                                    <img id="prev_r1" class="img-thumbnail mt-2" style="max-height: 35px; display:none;">
+                                                </div>
+                                            </div>
+
+                                            <!-- Card 2 -->
+                                            <div class="col-md-6 mb-4">
+                                                <h5 class="text-primary border-bottom pb-2">Rating Card 2</h5>
+                                                <div class="row g-2 mb-2">
+                                                    <div class="col-6"><input type="text" class="form-control" id="adm_r2_level" name="r2_level" placeholder="Level (4.6)" required></div>
+                                                    <div class="col-6"><input type="text" class="form-control" id="adm_r2_max" name="r2_max" placeholder="Max (/5)" required></div>
+                                                </div>
+                                                <div class="mb-2"><input type="text" class="form-control" id="adm_r2_reviews" name="r2_reviews" placeholder="Reviews subtext" required></div>
+                                                <div class="mb-2">
+                                                    <label class="small text-muted">Platform Image Logo</label>
+                                                    <input type="file" class="form-control form-control-sm" name="r2_logo" accept="image/*">
+                                                    <img id="prev_r2" class="img-thumbnail mt-2" style="max-height: 35px; display:none;">
+                                                </div>
+                                            </div>
+
+                                            <!-- Card 3 -->
+                                            <div class="col-md-6 mb-4 border-end">
+                                                <h5 class="text-primary border-bottom pb-2">Rating Card 3</h5>
+                                                <div class="row g-2 mb-2">
+                                                    <div class="col-6"><input type="text" class="form-control" id="adm_r3_level" name="r3_level" placeholder="Level (4.9)" required></div>
+                                                    <div class="col-6"><input type="text" class="form-control" id="adm_r3_max" name="r3_max" placeholder="Max (/5)" required></div>
+                                                </div>
+                                                <div class="mb-2"><input type="text" class="form-control" id="adm_r3_reviews" name="r3_reviews" placeholder="Reviews subtext" required></div>
+                                                <div class="mb-2">
+                                                    <label class="small text-muted">Platform Image Logo</label>
+                                                    <input type="file" class="form-control form-control-sm" name="r3_logo" accept="image/*">
+                                                    <img id="prev_r3" class="img-thumbnail mt-2" style="max-height: 35px; display:none;">
+                                                </div>
+                                            </div>
+
+                                            <!-- Card 4 -->
+                                            <div class="col-md-6 mb-4">
+                                                <h5 class="text-primary border-bottom pb-2">Rating Card 4</h5>
+                                                <div class="mb-2"><input type="text" class="form-control" id="adm_r4_level" name="r4_level" placeholder="Level (98%)" required></div>
+                                                <div class="mb-2"><input type="text" class="form-control" id="adm_r4_reviews" name="r4_reviews" placeholder="Reviews subtext" required></div>
+                                                <div class="mb-2">
+                                                    <label class="small text-muted">Platform Image Logo</label>
+                                                    <input type="file" class="form-control form-control-sm" name="r4_logo" accept="image/*">
+                                                    <img id="prev_r4" class="img-thumbnail mt-2" style="max-height: 35px; display:none;">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+                                        <h5 class="text-dark">Feedback Form Headers</h5>
+                                        <div class="mb-3">
+                                            <input type="text" class="form-control mb-2" id="adm_form_title" name="form_title" placeholder="Form Title" required>
+                                            <textarea class="form-control" id="adm_form_description" name="form_description" rows="2" placeholder="Form Text Description..." required></textarea>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary px-4">Update Configuration</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <!-- CONTACTS SECONDARY SECTION end -->
                         </div>
 
             </div>
@@ -3842,6 +3926,78 @@
         }
 
 
+        //==========================================
+        // CONTACTS SECONDARY SECTION 
+        //==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            const cmsForm = document.getElementById('form-contacts-secondary');
+
+            // Fetch values to fill form controls
+            fetch('/api/contacts-secondary')
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.id) {
+                        document.getElementById('adm_section_title').value = data.section_title;
+                        
+                        // Populate Row Elements
+                        document.getElementById('adm_r1_level').value = data.r1_level;
+                        document.getElementById('adm_r1_max').value = data.r1_max;
+                        document.getElementById('adm_r1_reviews').value = data.r1_reviews;
+                        if(data.r1_logo) { 
+                            document.getElementById('prev_r1').src = '/' + data.r1_logo; 
+                            document.getElementById('prev_r1').style.display = 'block'; 
+                        }
+
+                        document.getElementById('adm_r2_level').value = data.r2_level;
+                        document.getElementById('adm_r2_max').value = data.r2_max;
+                        document.getElementById('adm_r2_reviews').value = data.r2_reviews;
+                        if(data.r2_logo) { 
+                            document.getElementById('prev_r2').src = '/' + data.r2_logo; 
+                            document.getElementById('prev_r2').style.display = 'block'; 
+                        }
+
+                        document.getElementById('adm_r3_level').value = data.r3_level;
+                        document.getElementById('adm_r3_max').value = data.r3_max;
+                        document.getElementById('adm_r3_reviews').value = data.r3_reviews;
+                        if(data.r3_logo) { 
+                            document.getElementById('prev_r3').src = '/' + data.r3_logo; 
+                            document.getElementById('prev_r3').style.display = 'block'; 
+                        }
+
+                        document.getElementById('adm_r4_level').value = data.r4_level;
+                        document.getElementById('adm_r4_reviews').value = data.r4_reviews;
+                        if(data.r4_logo) { 
+                            document.getElementById('prev_r4').src = '/' + data.r4_logo; 
+                            document.getElementById('prev_r4').style.display = 'block'; 
+                        }
+
+                        // Populate form text headers
+                        document.getElementById('adm_form_title').value = data.form_title;
+                        document.getElementById('adm_form_description').value = data.form_description;
+                    }
+                })
+                .catch(err => console.error('Error rendering dashboard view state:', err));
+
+            // Async Update logic execution handler
+            cmsForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const payload = new FormData(cmsForm);
+
+                fetch('/api/contacts-secondary', {
+                    method: 'POST',
+                    body: payload
+                })
+                .then(res => res.json())
+                .then(result => {
+                    alert(result.message || 'Updated successfully.');
+                    window.location.reload();
+                })
+                .catch(err => {
+                    console.error('Submission failed:', err);
+                    alert('An error occurred while updating settings.');
+                });
+            });
+        });
 
 
     

@@ -2706,7 +2706,7 @@ app.post('/api/locations/how-it-works', (req, res) => {
 });
 
 // ==========================================
-// MÓDULO CONTACTS SECTION
+// MCONTACTS SECTION
 // ==========================================
 
 // Obtener los datos de contacto
@@ -2743,7 +2743,88 @@ app.put('/api/cms/contacts', (req, res) => {
     });
 });
 
+// ==========================================
+// CONTACTS SECONDARY SECTION
+// ==========================================
 
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Configure Multer storage engine
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, 'logo-' + Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage: storage }).fields([
+    { name: 'r1_logo', maxCount: 1 },
+    { name: 'r2_logo', maxCount: 1 },
+    { name: 'r3_logo', maxCount: 1 },
+    { name: 'r4_logo', maxCount: 1 }
+]);
+
+// GET Endpoint: Fetch secondary metrics settings
+app.get('/api/contacts-secondary', (req, res) => {
+    const sql = 'SELECT * FROM admin_contacts_secondary WHERE id = 1';
+    db.query(sql, (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(results[0] || {});
+    });
+});
+
+// POST Endpoint: Upsert texts and process new image streams
+app.post('/api/contacts-secondary', upload, (req, res) => {
+    const data = req.body;
+
+    // Fetch existing settings row to evaluate image fallbacks
+    db.query('SELECT r1_logo, r2_logo, r3_logo, r4_logo FROM admin_contacts_secondary WHERE id = 1', (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+
+        const existing = results[0] || {};
+        
+        // Retain existing path strings if alternative image updates were omitted
+        const img1 = (req.files && req.files['r1_logo']) ? 'uploads/' + req.files['r1_logo'][0].filename : (existing.r1_logo || 'uploads/default_logo1.png');
+        const img2 = (req.files && req.files['r2_logo']) ? 'uploads/' + req.files['r2_logo'][0].filename : (existing.r2_logo || 'uploads/default_logo2.png');
+        const img3 = (req.files && req.files['r3_logo']) ? 'uploads/' + req.files['r3_logo'][0].filename : (existing.r3_logo || 'uploads/default_logo3.png');
+        const img4 = (req.files && req.files['r4_logo']) ? 'uploads/' + req.files['r4_logo'][0].filename : (existing.r4_logo || 'uploads/default_logo4.png');
+
+        const saveSql = `
+            INSERT INTO admin_contacts_secondary (
+                id, section_title, 
+                r1_level, r1_max, r1_reviews, r1_logo,
+                r2_level, r2_max, r2_reviews, r2_logo,
+                r3_level, r3_max, r3_reviews, r3_logo,
+                r4_level, r4_reviews, r4_logo,
+                form_title, form_description
+            ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+                section_title = VALUES(section_title),
+                r1_level = VALUES(r1_level), r1_max = VALUES(r1_max), r1_reviews = VALUES(r1_reviews), r1_logo = VALUES(r1_logo),
+                r2_level = VALUES(r2_level), r2_max = VALUES(r2_max), r2_reviews = VALUES(r2_reviews), r2_logo = VALUES(r2_logo),
+                r3_level = VALUES(r3_level), r3_max = VALUES(r3_max), r3_reviews = VALUES(r3_reviews), r3_logo = VALUES(r3_logo),
+                r4_level = VALUES(r4_level), r4_reviews = VALUES(r4_reviews), r4_logo = VALUES(r4_logo),
+                form_title = VALUES(form_title), form_description = VALUES(form_description)
+        `;
+
+        const values = [
+            data.section_title,
+            data.r1_level, data.r1_max, data.r1_reviews, img1,
+            data.r2_level, data.r2_max, data.r2_reviews, img2,
+            data.r3_level, data.r3_max, data.r3_reviews, img3,
+            data.r4_level, data.r4_reviews, img4,
+            data.form_title, data.form_description
+        ];
+
+        db.query(saveSql, values, (err) => {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ message: 'Secondary contacts section updated cleanly!' });
+        });
+    });
+});
 
 
 cron.schedule('*/5 * * * *', () => {
