@@ -1886,87 +1886,145 @@
                             <!-- CONTACTS SECTION end -->
 
                             <!-- CONTACTS SECONDARY SECTION start -->
-                            <div class="card my-5 shadow-sm">
-                                <div class="card-header bg-secondary text-white">
-                                    <h4 class="m-0">Edit Secondary Contacts & Platform Ratings</h4>
+                            <div class="bg-white rounded-xl shadow-md p-6 mb-8 border border-slate-100">
+                                <div class="border-b border-slate-100 pb-4 mb-6">
+                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Integrations / Metrics</span>
+                                    <h1 class="text-xl font-bold text-slate-800 flex items-center">
+                                        <i class="bi bi-star-fill mr-2 text-sky-500"></i>Edit Secondary Contacts & Platform Ratings
+                                    </h1>
+                                    <p class="text-sm text-slate-500 mt-1">Configure external rating cards, scores, platform icons, and the custom feedback form header.</p>
                                 </div>
-                                <div class="card-body">
-                                    <form id="form-contacts-secondary" enctype="multipart/form-data">
-                                        
-                                        <div class="mb-4">
-                                            <label for="adm_section_title" class="form-label font-weight-bold">Section Header Title</label>
-                                            <input type="text" class="form-control" id="adm_section_title" name="section_title" required>
-                                        </div>
 
-                                        <div class="row">
+                                <form id="form-contacts-secondary" enctype="multipart/form-data" class="space-y-6">
+                                    
+                                    <!-- SECCIÓN 1: ENCABEZADO GENERAL -->
+                                    <div class="bg-slate-50 p-5 rounded-xl border border-slate-100 space-y-4">
+                                        <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">General Information</h3>
+                                        <div>
+                                            <label for="adm_section_title" class="block text-xs font-semibold text-slate-600 mb-1">Section Header Title</label>
+                                            <input type="text" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" id="adm_section_title" name="section_title" required>
+                                        </div>
+                                    </div>
+
+                                    <!-- SECCIÓN 2: PLATFORM RATINGS -->
+                                    <div class="bg-slate-50 p-5 rounded-xl border border-slate-100 space-y-4">
+                                        <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Platform Rating Cards</h3>
+                                        
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <!-- Card 1 -->
-                                            <div class="col-md-6 mb-4 border-end">
-                                                <h5 class="text-primary border-bottom pb-2">Rating Card 1</h5>
-                                                <div class="row g-2 mb-2">
-                                                    <div class="col-6"><input type="text" class="form-control" id="adm_r1_level" name="r1_level" placeholder="Level (8.3)" required></div>
-                                                    <div class="col-6"><input type="text" class="form-control" id="adm_r1_max" name="r1_max" placeholder="Max (/10)" required></div>
+                                            <div class="bg-white p-4 rounded-xl border border-slate-200/60 space-y-3">
+                                                <h4 class="text-xs font-bold text-sky-500 uppercase tracking-wider border-b border-slate-100 pb-2">Rating Card 1</h4>
+                                                <div class="grid grid-cols-2 gap-2">
+                                                    <div>
+                                                        <label for="adm_r1_level" class="block text-[11px] font-semibold text-slate-500 mb-1">Level</label>
+                                                        <input type="text" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" id="adm_r1_level" name="r1_level" placeholder="Level (8.3)" required>
+                                                    </div>
+                                                    <div>
+                                                        <label for="adm_r1_max" class="block text-[11px] font-semibold text-slate-500 mb-1">Max Score</label>
+                                                        <input type="text" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" id="adm_r1_max" name="r1_max" placeholder="Max (/10)" required>
+                                                    </div>
                                                 </div>
-                                                <div class="mb-2"><input type="text" class="form-control" id="adm_r1_reviews" name="r1_reviews" placeholder="Reviews subtext" required></div>
-                                                <div class="mb-2">
-                                                    <label class="small text-muted">Platform Image Logo</label>
-                                                    <input type="file" class="form-control form-control-sm" name="r1_logo" accept="image/*">
-                                                    <img id="prev_r1" class="img-thumbnail mt-2" style="max-height: 35px; display:none;">
+                                                <div>
+                                                    <label for="adm_r1_reviews" class="block text-[11px] font-semibold text-slate-500 mb-1">Reviews Subtext</label>
+                                                    <input type="text" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" id="adm_r1_reviews" name="r1_reviews" placeholder="Reviews subtext" required>
+                                                </div>
+                                                <div>
+                                                    <label class="block text-[11px] font-semibold text-slate-500 mb-1">Platform Image Logo</label>
+                                                    <input type="file" class="w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 border border-slate-200 rounded-lg p-1 bg-white focus:outline-none focus:border-sky-500 transition" name="r1_logo" accept="image/*">
+                                                    <img id="prev_r1" class="rounded-lg border border-slate-200 mt-2 p-1 bg-white" style="max-height: 35px; display:none;">
                                                 </div>
                                             </div>
 
                                             <!-- Card 2 -->
-                                            <div class="col-md-6 mb-4">
-                                                <h5 class="text-primary border-bottom pb-2">Rating Card 2</h5>
-                                                <div class="row g-2 mb-2">
-                                                    <div class="col-6"><input type="text" class="form-control" id="adm_r2_level" name="r2_level" placeholder="Level (4.6)" required></div>
-                                                    <div class="col-6"><input type="text" class="form-control" id="adm_r2_max" name="r2_max" placeholder="Max (/5)" required></div>
+                                            <div class="bg-white p-4 rounded-xl border border-slate-200/60 space-y-3">
+                                                <h4 class="text-xs font-bold text-sky-500 uppercase tracking-wider border-b border-slate-100 pb-2">Rating Card 2</h4>
+                                                <div class="grid grid-cols-2 gap-2">
+                                                    <div>
+                                                        <label for="adm_r2_level" class="block text-[11px] font-semibold text-slate-500 mb-1">Level</label>
+                                                        <input type="text" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" id="adm_r2_level" name="r2_level" placeholder="Level (4.6)" required>
+                                                    </div>
+                                                    <div>
+                                                        <label for="adm_r2_max" class="block text-[11px] font-semibold text-slate-500 mb-1">Max Score</label>
+                                                        <input type="text" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" id="adm_r2_max" name="r2_max" placeholder="Max (/5)" required>
+                                                    </div>
                                                 </div>
-                                                <div class="mb-2"><input type="text" class="form-control" id="adm_r2_reviews" name="r2_reviews" placeholder="Reviews subtext" required></div>
-                                                <div class="mb-2">
-                                                    <label class="small text-muted">Platform Image Logo</label>
-                                                    <input type="file" class="form-control form-control-sm" name="r2_logo" accept="image/*">
-                                                    <img id="prev_r2" class="img-thumbnail mt-2" style="max-height: 35px; display:none;">
+                                                <div>
+                                                    <label for="adm_r2_reviews" class="block text-[11px] font-semibold text-slate-500 mb-1">Reviews Subtext</label>
+                                                    <input type="text" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" id="adm_r2_reviews" name="r2_reviews" placeholder="Reviews subtext" required>
+                                                </div>
+                                                <div>
+                                                    <label class="block text-[11px] font-semibold text-slate-500 mb-1">Platform Image Logo</label>
+                                                    <input type="file" class="w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 border border-slate-200 rounded-lg p-1 bg-white focus:outline-none focus:border-sky-500 transition" name="r2_logo" accept="image/*">
+                                                    <img id="prev_r2" class="rounded-lg border border-slate-200 mt-2 p-1 bg-white" style="max-height: 35px; display:none;">
                                                 </div>
                                             </div>
 
                                             <!-- Card 3 -->
-                                            <div class="col-md-6 mb-4 border-end">
-                                                <h5 class="text-primary border-bottom pb-2">Rating Card 3</h5>
-                                                <div class="row g-2 mb-2">
-                                                    <div class="col-6"><input type="text" class="form-control" id="adm_r3_level" name="r3_level" placeholder="Level (4.9)" required></div>
-                                                    <div class="col-6"><input type="text" class="form-control" id="adm_r3_max" name="r3_max" placeholder="Max (/5)" required></div>
+                                            <div class="bg-white p-4 rounded-xl border border-slate-200/60 space-y-3">
+                                                <h4 class="text-xs font-bold text-sky-500 uppercase tracking-wider border-b border-slate-100 pb-2">Rating Card 3</h4>
+                                                <div class="grid grid-cols-2 gap-2">
+                                                    <div>
+                                                        <label for="adm_r3_level" class="block text-[11px] font-semibold text-slate-500 mb-1">Level</label>
+                                                        <input type="text" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" id="adm_r3_level" name="r3_level" placeholder="Level (4.9)" required>
+                                                    </div>
+                                                    <div>
+                                                        <label for="adm_r3_max" class="block text-[11px] font-semibold text-slate-500 mb-1">Max Score</label>
+                                                        <input type="text" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" id="adm_r3_max" name="r3_max" placeholder="Max (/5)" required>
+                                                    </div>
                                                 </div>
-                                                <div class="mb-2"><input type="text" class="form-control" id="adm_r3_reviews" name="r3_reviews" placeholder="Reviews subtext" required></div>
-                                                <div class="mb-2">
-                                                    <label class="small text-muted">Platform Image Logo</label>
-                                                    <input type="file" class="form-control form-control-sm" name="r3_logo" accept="image/*">
-                                                    <img id="prev_r3" class="img-thumbnail mt-2" style="max-height: 35px; display:none;">
+                                                <div>
+                                                    <label for="adm_r3_reviews" class="block text-[11px] font-semibold text-slate-500 mb-1">Reviews Subtext</label>
+                                                    <input type="text" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" id="adm_r3_reviews" name="r3_reviews" placeholder="Reviews subtext" required>
+                                                </div>
+                                                <div>
+                                                    <label class="block text-[11px] font-semibold text-slate-500 mb-1">Platform Image Logo</label>
+                                                    <input type="file" class="w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 border border-slate-200 rounded-lg p-1 bg-white focus:outline-none focus:border-sky-500 transition" name="r3_logo" accept="image/*">
+                                                    <img id="prev_r3" class="rounded-lg border border-slate-200 mt-2 p-1 bg-white" style="max-height: 35px; display:none;">
                                                 </div>
                                             </div>
 
                                             <!-- Card 4 -->
-                                            <div class="col-md-6 mb-4">
-                                                <h5 class="text-primary border-bottom pb-2">Rating Card 4</h5>
-                                                <div class="mb-2"><input type="text" class="form-control" id="adm_r4_level" name="r4_level" placeholder="Level (98%)" required></div>
-                                                <div class="mb-2"><input type="text" class="form-control" id="adm_r4_reviews" name="r4_reviews" placeholder="Reviews subtext" required></div>
-                                                <div class="mb-2">
-                                                    <label class="small text-muted">Platform Image Logo</label>
-                                                    <input type="file" class="form-control form-control-sm" name="r4_logo" accept="image/*">
-                                                    <img id="prev_r4" class="img-thumbnail mt-2" style="max-height: 35px; display:none;">
+                                            <div class="bg-white p-4 rounded-xl border border-slate-200/60 space-y-3">
+                                                <h4 class="text-xs font-bold text-sky-500 uppercase tracking-wider border-b border-slate-100 pb-2">Rating Card 4</h4>
+                                                <div>
+                                                    <label for="adm_r4_level" class="block text-[11px] font-semibold text-slate-500 mb-1">Level</label>
+                                                    <input type="text" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" id="adm_r4_level" name="r4_level" placeholder="Level (98%)" required>
+                                                </div>
+                                                <div>
+                                                    <label for="adm_r4_reviews" class="block text-[11px] font-semibold text-slate-500 mb-1">Reviews Subtext</label>
+                                                    <input type="text" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" id="adm_r4_reviews" name="r4_reviews" placeholder="Reviews subtext" required>
+                                                </div>
+                                                <div>
+                                                    <label class="block text-[11px] font-semibold text-slate-500 mb-1">Platform Image Logo</label>
+                                                    <input type="file" class="w-full text-xs text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 border border-slate-200 rounded-lg p-1 bg-white focus:outline-none focus:border-sky-500 transition" name="r4_logo" accept="image/*">
+                                                    <img id="prev_r4" class="rounded-lg border border-slate-200 mt-2 p-1 bg-white" style="max-height: 35px; display:none;">
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <hr>
-                                        <h5 class="text-dark">Feedback Form Headers</h5>
-                                        <div class="mb-3">
-                                            <input type="text" class="form-control mb-2" id="adm_form_title" name="form_title" placeholder="Form Title" required>
-                                            <textarea class="form-control" id="adm_form_description" name="form_description" rows="2" placeholder="Form Text Description..." required></textarea>
+                                    <!-- SECCIÓN 3: FEEDBACK FORM HEADERS -->
+                                    <div class="bg-slate-50 p-5 rounded-xl border border-slate-100 space-y-4">
+                                        <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Feedback Form Headers</h3>
+                                        <div class="grid grid-cols-1 gap-4">
+                                            <div>
+                                                <label for="adm_form_title" class="block text-xs font-semibold text-slate-600 mb-1">Form Title</label>
+                                                <input type="text" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" id="adm_form_title" name="form_title" placeholder="Form Title" required>
+                                            </div>
+                                            <div>
+                                                <label for="adm_form_description" class="block text-xs font-semibold text-slate-600 mb-1">Form Text Description</label>
+                                                <textarea class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" id="adm_form_description" name="form_description" rows="2" placeholder="Form Text Description..." required></textarea>
+                                            </div>
                                         </div>
+                                    </div>
 
-                                        <button type="submit" class="btn btn-primary px-4">Update Configuration</button>
-                                    </form>
-                                </div>
+                                    <!-- ACCIONES -->
+                                    <div class="flex justify-end pt-2">
+                                        <button type="submit" class="bg-sky-500 hover:bg-sky-600 text-white text-sm font-semibold px-6 py-2.5 rounded-lg transition shadow-sm flex items-center gap-2">
+                                            <i class="bi bi-save-fill"></i> Update Configuration
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
                             <!-- CONTACTS SECONDARY SECTION end -->
                         </div>
