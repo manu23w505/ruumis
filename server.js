@@ -2705,7 +2705,43 @@ app.post('/api/locations/how-it-works', (req, res) => {
     });
 });
 
+// ==========================================
+// MÓDULO CONTACTS SECTION
+// ==========================================
 
+// Obtener los datos de contacto
+app.get('/api/cms/contacts', (req, res) => {
+    const sql = "SELECT * FROM admin_contacts WHERE id = 1";
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.error("Error fetching admin_contacts:", err);
+            return res.status(500).json({ error: err.message });
+        }
+        if (result.length === 0) {
+            return res.status(404).json({ error: "Contacts configuration not found." });
+        }
+        res.json(result[0]);
+    });
+});
+
+// Actualizar los datos de contacto
+app.put('/api/cms/contacts', (req, res) => {
+    const { title, description, phone1, phone2, email1, email2, footer_title, footer_text1, footer_text2, map_url } = req.body;
+    
+    const sql = `
+        UPDATE admin_contacts 
+        SET title = ?, description = ?, phone1 = ?, phone2 = ?, email1 = ?, email2 = ?, footer_title = ?, footer_text1 = ?, footer_text2 = ?, map_url = ?
+        WHERE id = 1
+    `;
+    
+    db.query(sql, [title, description, phone1, phone2, email1, email2, footer_title, footer_text1, footer_text2, map_url], (err, result) => {
+        if (err) {
+            console.error("Error updating admin_contacts:", err);
+            return res.status(500).json({ error: err.message });
+        }
+        res.json({ message: "Contacts section updated successfully!" });
+    });
+});
 
 
 

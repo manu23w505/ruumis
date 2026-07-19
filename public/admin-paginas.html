@@ -1763,6 +1763,74 @@
                             </div>
                             <!-- WORKS SECTION end -->
 
+                            <!-- CONTACTS SECTION start -->
+                            <div class="card card-primary mt-4">
+                                <div class="card-header">
+                                    <h3 class="card-title">Edit Contacts Section</h3>
+                                </div>
+                                <form id="form-admin-contacts">
+                                    <div class="card-body">
+                                        <!-- Header -->
+                                        <div class="row">
+                                            <div class="form-group col-md-6">
+                                                <label for="contact-title">Section Title</label>
+                                                <input type="text" class="form-control" id="contact-title" required>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="contact-desc">Section Description</label>
+                                                <textarea class="form-control" id="contact-desc" rows="2" required></textarea>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Phones & Emails -->
+                                        <div class="row">
+                                            <div class="form-group col-md-3">
+                                                <label for="contact-phone1">Phone 1</label>
+                                                <input type="text" class="form-control" id="contact-phone1" required>
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label for="contact-phone2">Phone 2</label>
+                                                <input type="text" class="form-control" id="contact-phone2">
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label for="contact-email1">Email 1</label>
+                                                <input type="email" class="form-control" id="contact-email1" required>
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <label for="contact-email2">Email 2</label>
+                                                <input type="email" class="form-control" id="contact-email2">
+                                            </div>
+                                        </div>
+
+                                        <!-- Footer & Maps -->
+                                        <div class="row">
+                                            <div class="form-group col-md-6">
+                                                <label for="contact-footer-title">Footer Title / Question</label>
+                                                <input type="text" class="form-control" id="contact-footer-title" required>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="contact-map-url">Google Maps Embed URL</label>
+                                                <input type="url" class="form-control" id="contact-map-url" placeholder="https://www.google.com/maps/embed?..." required>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="form-group col-md-6">
+                                                <label for="contact-footer-text1">Footer Paragraph 1</label>
+                                                <textarea class="form-control" id="contact-footer-text1" rows="3" required></textarea>
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="contact-footer-text2">Footer Paragraph 2</label>
+                                                <textarea class="form-control" id="contact-footer-text2" rows="3"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- CONTACTS SECTION end-->
 
                         </div>
 
@@ -3650,6 +3718,71 @@
     });
 
 
+        //==========================================
+        // CONTACTS SECTION 
+        //==========================================
+
+        document.addEventListener("DOMContentLoaded", () => {
+    loadAdminContacts();
+
+    document.getElementById("form-admin-contacts").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        
+        const updatedData = {
+            title: document.getElementById("contact-title").value,
+            description: document.getElementById("contact-desc").value,
+            phone1: document.getElementById("contact-phone1").value,
+            phone2: document.getElementById("contact-phone2").value,
+            email1: document.getElementById("contact-email1").value,
+            email2: document.getElementById("contact-email2").value,
+            footer_title: document.getElementById("contact-footer-title").value,
+            footer_text1: document.getElementById("contact-footer-text1").value,
+            footer_text2: document.getElementById("contact-footer-text2").value,
+            map_url: document.getElementById("contact-map-url").value
+        };
+
+        try {
+            const response = await fetch('/api/cms/contacts', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedData)
+            });
+
+            if (response.ok) {
+                alert("Contacts section updated successfully!");
+            } else {
+                alert("Failed to update contacts section.");
+            }
+        } catch (error) {
+            console.error("Error saving contacts settings:", error);
+        }
+    });
+});
+
+        async function loadAdminContacts() {
+            try {
+                const response = await fetch('/api/cms/contacts');
+                if (!response.ok) throw new Error("Could not fetch contacts data");
+                const data = await response.json();
+
+                document.getElementById("contact-title").value = data.title;
+                document.getElementById("contact-desc").value = data.description;
+                document.getElementById("contact-phone1").value = data.phone1;
+                document.getElementById("contact-phone2").value = data.phone2;
+                document.getElementById("contact-email1").value = data.email1;
+                document.getElementById("contact-email2").value = data.email2;
+                document.getElementById("contact-footer-title").value = data.footer_title;
+                document.getElementById("contact-footer-text1").value = data.footer_text1;
+                document.getElementById("contact-footer-text2").value = data.footer_text2;
+                document.getElementById("contact-map-url").value = data.map_url;
+            } catch (error) {
+                console.error("Error loading contacts configuration:", error);
+            }
+        }
+
+
+
+        
     
         if (window.self !== window.top) {
             const headerRedundante = document.querySelector('header');
