@@ -3711,64 +3711,72 @@
         // WORKS SECTION LOCATIONS
         //==========================================     
         document.addEventListener("DOMContentLoaded", () => {
-        const howForm = document.getElementById("form-admin-how");
+            const howForm = document.getElementById("form-admin-how");
 
-        // 1. Cargar datos desde la API al iniciar el panel de administración
-        fetch('/api/locations/how-it-works')
-            .then(response => response.json())
-            .then(data => {
-                if (data) {
-                    document.getElementById("how_subtitle").value = data.how_subtitle || "";
-                    document.getElementById("how_title").value = data.how_title || "";
-                    document.getElementById("how_desc").value = data.how_desc || "";
-                    
-                    document.getElementById("step1_title").value = data.step1_title || "";
-                    document.getElementById("step1_desc").value = data.step1_desc || "";
-                    
-                    document.getElementById("step2_title").value = data.step2_title || "";
-                    document.getElementById("step2_desc").value = data.step2_desc || "";
-                    
-                    document.getElementById("step3_title").value = data.step3_title || "";
-                    document.getElementById("step3_desc").value = data.step3_desc || "";
-                }
-            })
-            .catch(error => console.error("Error retrieving step sequences:", error));
+            // 1. Cargar datos desde la API correcta al iniciar el panel
+            fetch('/api/cms/locations') // <-- CAMBIADO: Antes tenías '/api/locations/how-it-works'
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Server responded with status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data) {
+                        // Asignar los valores usando guiones bajos (_) que corresponden a los inputs del formulario
+                        document.getElementById("how_subtitle").value = data.how_subtitle || "";
+                        document.getElementById("how_title").value = data.how_title || "";
+                        document.getElementById("how_desc").value = data.how_desc || "";
+                        
+                        document.getElementById("step1_title").value = data.step1_title || "";
+                        document.getElementById("step1_desc").value = data.step1_desc || "";
+                        
+                        document.getElementById("step2_title").value = data.step2_title || "";
+                        document.getElementById("step2_desc").value = data.step2_desc || "";
+                        
+                        document.getElementById("step3_title").value = data.step3_title || "";
+                        document.getElementById("step3_desc").value = data.step3_desc || "";
+                    }
+                })
+                .catch(error => console.error("Error retrieving step sequences:", error));
 
-        // 2. Enviar actualización del contenido vía JSON
-        howForm.addEventListener("submit", (e) => {
-            e.preventDefault();
+            // 2. Enviar actualización del contenido vía JSON (Este se queda igual, el POST es correcto)
+            if (howForm) {
+                howForm.addEventListener("submit", (e) => {
+                    e.preventDefault();
 
-            const payload = {
-                how_subtitle: document.getElementById("how_subtitle").value,
-                how_title: document.getElementById("how_title").value,
-                how_desc: document.getElementById("how_desc").value,
-                step1_title: document.getElementById("step1_title").value,
-                step1_desc: document.getElementById("step1_desc").value,
-                step2_title: document.getElementById("step2_title").value,
-                step2_desc: document.getElementById("step2_desc").value,
-                step3_title: document.getElementById("step3_title").value,
-                step3_desc: document.getElementById("step3_desc").value
-            };
+                    const payload = {
+                        how_subtitle: document.getElementById("how_subtitle").value,
+                        how_title: document.getElementById("how_title").value,
+                        how_desc: document.getElementById("how_desc").value,
+                        step1_title: document.getElementById("step1_title").value,
+                        step1_desc: document.getElementById("step1_desc").value,
+                        step2_title: document.getElementById("step2_title").value,
+                        step2_desc: document.getElementById("step2_desc").value,
+                        step3_title: document.getElementById("step3_title").value,
+                        step3_desc: document.getElementById("step3_desc").value
+                    };
 
-            fetch('/api/locations/how-it-works', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    alert("Process flow sequence updated successfully!");
-                } else {
-                    alert("Could not update the steps database structure.");
-                }
-            })
-            .catch(error => {
-                console.error("Error connecting with steps updates API:", error);
-                alert("Network operation error.");
-            });
+                    fetch('/api/locations/how-it-works', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            alert("Process flow sequence updated successfully!");
+                        } else {
+                            alert("Could not update the steps database structure.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error connecting with steps updates API:", error);
+                        alert("Network operation error.");
+                    });
+                });
+            }
         });
-    });
 
 
         //==========================================
