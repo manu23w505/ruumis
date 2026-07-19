@@ -2639,6 +2639,64 @@ app.post('/api/locations/consultation', upload.single('cta_img'), (req, res) => 
     });
 });
 
+// ==========================================
+// WORKS SECTION LOCATIONS
+// ==========================================
+
+app.get('/api/locations/how-it-works', (req, res) => {
+    const query = `
+        SELECT how_subtitle, how_title, how_desc, 
+               step1_title, step1_desc, 
+               step2_title, step2_desc, 
+               step3_title, step3_desc 
+        FROM admin_locations WHERE id = 1
+    `;
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching How It Works data:', err);
+            return res.status(500).json({ error: 'Database reading error.' });
+        }
+        res.json(results[0]);
+    });
+});
+
+
+app.post('/api/locations/how-it-works', (req, res) => {
+    const { 
+        how_subtitle, how_title, how_desc, 
+        step1_title, step1_desc, 
+        step2_title, step2_desc, 
+        step3_title, step3_desc 
+    } = req.body;
+
+    const query = `
+        UPDATE admin_locations 
+        SET how_subtitle = ?, how_title = ?, how_desc = ?, 
+            step1_title = ?, step1_desc = ?, 
+            step2_title = ?, step2_desc = ?, 
+            step3_title = ?, step3_desc = ? 
+        WHERE id = 1
+    `;
+
+    const values = [
+        how_subtitle, how_title, how_desc, 
+        step1_title, step1_desc, 
+        step2_title, step2_desc, 
+        step3_title, step3_desc
+    ];
+
+    db.query(query, values, (err, result) => {
+        if (err) {
+            console.error('Error updating How It Works:', err);
+            return res.status(500).json({ error: 'Failed to update content flow.' });
+        }
+        res.json({ success: true, message: 'Process workflow sequence updated successfully!' });
+    });
+});
+
+
+
+
 
 
 cron.schedule('*/5 * * * *', () => {

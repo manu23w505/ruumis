@@ -2314,3 +2314,53 @@ function loadConsultationFront() {
 document.addEventListener("DOMContentLoaded", () => {
     loadConsultationFront();
 });
+
+const imgMobileElem = document.getElementById('public-cta-img-mobile');
+if (imgMobileElem && data.cta_img) {
+    imgMobileElem.setAttribute('src', `/${data.cta_img}`);
+}
+
+//================================================================
+//  CONSULTATIONS SECTION LOCATIONS
+//================================================================
+
+function loadHowItWorksFront() {
+    fetch('/api/locations/how-it-works')
+        .then(response => response.json())
+        .then(data => {
+            if (data) {
+                // Inyección de encabezados principales
+                const subElem = document.getElementById('public-how-subtitle');
+                const titleElem = document.getElementById('public-how-title');
+                const descElem = document.getElementById('public-how-desc');
+
+                if (subElem) subElem.innerText = data.how_subtitle;
+                if (titleElem) titleElem.innerText = data.how_title;
+                if (descElem) descElem.innerText = data.how_desc;
+
+                // Paso 1
+                const s1Title = document.getElementById('public-step1-title');
+                const s1Desc = document.getElementById('public-step1-desc');
+                if (s1Title) s1Title.innerText = data.step1_title;
+                if (s1Desc) s1Desc.innerText = data.step1_desc;
+
+                // Paso 2
+                const s2Title = document.getElementById('public-step2-title');
+                const s2Desc = document.getElementById('public-step2-desc');
+                if (s2Title) s2Title.innerText = data.step2_title;
+                if (s2Desc) s2Desc.innerText = data.step2_desc;
+
+                // Paso 3
+                const s3Title = document.getElementById('public-step3-title');
+                const s3Desc = document.getElementById('public-step3-desc');
+                if (s3Title) s3Title.innerText = data.step3_title;
+                if (s3Desc) s3Desc.innerText = data.step3_desc;
+            }
+        })
+        .catch(error => console.error("Error drawing workflow sequence steps:", error));
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadHowItWorksFront();
+});
+
