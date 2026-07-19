@@ -2321,7 +2321,7 @@ if (imgMobileElem && data.cta_img) {
 }
 
 //================================================================
-// PUBLIC VIEW - HOW IT WORKS (CORREGIDO Y SEGURO)
+// WORKS (CORREGIDO Y SEGURO)
 //================================================================
 
 function loadHowItWorksFront() {
