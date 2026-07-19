@@ -2331,9 +2331,9 @@ function loadHowItWorksFront() {
             if (!data) return;
 
             // Selección de elementos
-            const subElem = document.getElementById('public-how-subtitle');
-            const titleElem = document.getElementById('public-how-title');
-            const descElem = document.getElementById('public-how-desc');
+            const subElem = document.getElementById('how-subtitle');
+            const titleElem = document.getElementById('how-title');
+            const descElem = document.getElementById('how-desc');
 
             // Inyección controlada evaluando que la propiedad exista en el objeto
             if (subElem && data.how_subtitle !== undefined) subElem.innerText = data.how_subtitle;
@@ -2341,20 +2341,20 @@ function loadHowItWorksFront() {
             if (descElem && data.how_desc !== undefined) descElem.innerText = data.how_desc;
 
             // Paso 1
-            const s1Title = document.getElementById('public-step1-title');
-            const s1Desc = document.getElementById('public-step1-desc');
+            const s1Title = document.getElementById('step1-title');
+            const s1Desc = document.getElementById('step1-desc');
             if (s1Title && data.step1_title !== undefined) s1Title.innerText = data.step1_title;
             if (s1Desc && data.step1_desc !== undefined) s1Desc.innerText = data.step1_desc;
 
             // Paso 2
-            const s2Title = document.getElementById('public-step2-title');
-            const s2Desc = document.getElementById('public-step2-desc');
+            const s2Title = document.getElementById('step2-title');
+            const s2Desc = document.getElementById('step2-desc');
             if (s2Title && data.step2_title !== undefined) s2Title.innerText = data.step2_title;
             if (s2Desc && data.step2_desc !== undefined) s2Desc.innerText = data.step2_desc;
 
             // Paso 3
-            const s3Title = document.getElementById('public-step3-title');
-            const s3Desc = document.getElementById('public-step3-desc');
+            const s3Title = document.getElementById('step3-title');
+            const s3Desc = document.getElementById('step3-desc');
             if (s3Title && data.step3_title !== undefined) s3Title.innerText = data.step3_title;
             if (s3Desc && data.step3_desc !== undefined) s3Desc.innerText = data.step3_desc;
         })
