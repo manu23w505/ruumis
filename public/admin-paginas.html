@@ -1764,111 +1764,126 @@
                             <!-- WORKS SECTION end -->
 
                             <!-- CONTACTS SECTION start -->
-                            <div class="card card-primary mt-4">
-                                <div class="card-header">
-                                    <h3 class="card-title"><i class="fas fa-address-book mr-2"></i>Edit Contacts Section</h3>
+                            <div class="bg-white rounded-xl shadow-md p-6 mb-8 border border-slate-100">
+                                <div class="border-b border-slate-100 pb-4 mb-6">
+                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Site Pages / Locations</span>
+                                    <h1 class="text-xl font-bold text-slate-800 flex items-center">
+                                        <i class="bi bi-person-lines-fill mr-2 text-sky-500"></i>Edit Contacts Section
+                                    </h1>
+                                    <p class="text-sm text-slate-500 mt-1">Manage public contact details, main communication channels, and location map.</p>
                                 </div>
-                                
-                                <form id="form-admin-contacts">
-                                    <div class="card-body">
-                                        
-                                        <!-- 1. Header Information -->
-                                        <div class="row">
-                                            <div class="col-md-6 form-group">
-                                                <label for="contact-title" class="font-weight-bold">Section Title</label>
-                                                <input type="text" class="form-control" id="contact-title" placeholder="e.g., Contacts" required>
+
+                                <form id="form-admin-contacts" class="space-y-6">
+                                    <!-- SECCIÓN 1: ENCABEZADO GENERAL -->
+                                    <div class="bg-slate-50 p-5 rounded-xl border border-slate-100 space-y-4">
+                                        <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">General Information</h3>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label for="contact-title" class="block text-xs font-semibold text-slate-600 mb-1">Section Title</label>
+                                                <input type="text" id="contact-title" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" placeholder="e.g., Contacts" required>
                                             </div>
-                                            <div class="col-md-6 form-group">
-                                                <label for="contact-desc" class="font-weight-bold">Section Description</label>
-                                                <textarea class="form-control" id="contact-desc" rows="2" placeholder="Enter short introductory text..." required></textarea>
+                                            <div>
+                                                <label for="contact-desc" class="block text-xs font-semibold text-slate-600 mb-1">Section Description</label>
+                                                <textarea id="contact-desc" rows="2" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" placeholder="Enter short introductory text..." required></textarea>
                                             </div>
                                         </div>
-
-                                        <hr class="my-4">
-
-                                        <!-- 2. Phone Numbers & Emails -->
-                                        <div class="row">
-                                            <div class="col-md-3 form-group">
-                                                <label for="contact-phone1" class="font-weight-bold">Phone Number 1</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                                                    </div>
-                                                    <input type="text" class="form-control" id="contact-phone1" placeholder="(123) 456-7890" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3 form-group">
-                                                <label for="contact-phone2" class="font-weight-bold">Phone Number 2 (Optional)</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                                                    </div>
-                                                    <input type="text" class="form-control" id="contact-phone2" placeholder="(123) 456-7890">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3 form-group">
-                                                <label for="contact-email1" class="font-weight-bold">Primary Email</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                                    </div>
-                                                    <input type="email" class="form-control" id="contact-email1" placeholder="contact@domain.com" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-3 form-group">
-                                                <label for="contact-email2" class="font-weight-bold">Secondary Email (Optional)</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                                    </div>
-                                                    <input type="email" class="form-control" id="contact-email2" placeholder="info@domain.com">
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <hr class="my-4">
-
-                                        <!-- 3. Footer Titles & Google Maps External URL -->
-                                        <div class="row">
-                                            <div class="col-md-6 form-group">
-                                                <label for="contact-footer-title" class="font-weight-bold">Footer Title / Question</label>
-                                                <input type="text" class="form-control" id="contact-footer-title" placeholder="e.g., Still have questions?" required>
-                                            </div>
-                                            <div class="col-md-6 form-group">
-                                                <label for="contact-map-url" class="font-weight-bold">Google Maps Embed URL</label>
-                                                <div class="input-group">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><i class="fas fa-map-marked-alt"></i></span>
-                                                    </div>
-                                                    <input type="url" class="form-control" id="contact-map-url" placeholder="https://www.google.com/maps/embed?pb=..." required>
-                                                </div>
-                                                <small class="form-text text-muted">Paste only the <code>src</code> attribute link found inside the Google Maps iframe code.</small>
-                                            </div>
-                                        </div>
-
-                                        <!-- 4. Footer Detailed Text Blocks -->
-                                        <div class="row">
-                                            <div class="col-md-6 form-group">
-                                                <label for="contact-footer-text1" class="font-weight-bold">Footer Paragraph 1</label>
-                                                <textarea class="form-control" id="contact-footer-text1" rows="3" placeholder="Write additional help guidelines..." required></textarea>
-                                            </div>
-                                            <div class="col-md-6 form-group">
-                                                <label for="contact-footer-text2" class="font-weight-bold">Footer Paragraph 2 (Optional)</label>
-                                                <textarea class="form-control" id="contact-footer-text2" rows="3" placeholder="Write backup or policy notes..."></textarea>
-                                            </div>
-                                        </div>
-
                                     </div>
-                                    
-                                    <!-- Action Footer -->
-                                    <div class="card-footer d-flex justify-content-end">
-                                        <button type="submit" class="btn btn-primary px-4">
-                                            <i class="fas fa-save mr-2"></i>Save Changes
+
+                                    <!-- SECCIÓN 2: TELÉFONOS Y CORREOS -->
+                                    <div class="bg-slate-50 p-5 rounded-xl border border-slate-100 space-y-4">
+                                        <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Phone Numbers & Emails</h3>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                            <!-- Teléfono 1 -->
+                                            <div>
+                                                <label for="contact-phone1" class="block text-xs font-semibold text-slate-600 mb-1">Phone Number 1</label>
+                                                <div class="relative">
+                                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-sm">
+                                                        <i class="bi bi-telephone-fill"></i>
+                                                    </div>
+                                                    <input type="text" id="contact-phone1" class="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" placeholder="(123) 456-7890" required>
+                                                </div>
+                                            </div>
+
+                                            <!-- Teléfono 2 -->
+                                            <div>
+                                                <label for="contact-phone2" class="block text-xs font-semibold text-slate-600 mb-1">Phone Number 2 (Optional)</label>
+                                                <div class="relative">
+                                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-sm">
+                                                        <i class="bi bi-telephone"></i>
+                                                    </div>
+                                                    <input type="text" id="contact-phone2" class="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" placeholder="(123) 456-7890">
+                                                </div>
+                                            </div>
+
+                                            <!-- Email 1 -->
+                                            <div>
+                                                <label for="contact-email1" class="block text-xs font-semibold text-slate-600 mb-1">Primary Email</label>
+                                                <div class="relative">
+                                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-sm">
+                                                        <i class="bi bi-envelope-fill"></i>
+                                                    </div>
+                                                    <input type="email" id="contact-email1" class="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" placeholder="contact@domain.com" required>
+                                                </div>
+                                            </div>
+
+                                            <!-- Email 2 -->
+                                            <div>
+                                                <label for="contact-email2" class="block text-xs font-semibold text-slate-600 mb-1">Secondary Email (Optional)</label>
+                                                <div class="relative">
+                                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-sm">
+                                                        <i class="bi bi-envelope"></i>
+                                                    </div>
+                                                    <input type="email" id="contact-email2" class="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" placeholder="info@domain.com">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- SECCIÓN 3: UBICACIÓN Y PREGUNTAS -->
+                                    <div class="bg-slate-50 p-5 rounded-xl border border-slate-100 space-y-4">
+                                        <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Footer Title & Map URL</h3>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label for="contact-footer-title" class="block text-xs font-semibold text-slate-600 mb-1">Footer Title / Question</label>
+                                                <input type="text" id="contact-footer-title" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" placeholder="e.g., Still have questions?" required>
+                                            </div>
+                                            <div>
+                                                <label for="contact-map-url" class="block text-xs font-semibold text-slate-600 mb-1">Google Maps Embed URL</label>
+                                                <div class="relative">
+                                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-sm">
+                                                        <i class="bi bi-geo-alt-fill"></i>
+                                                    </div>
+                                                    <input type="url" id="contact-map-url" class="w-full pl-9 pr-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" placeholder="https://www.google.com/maps/embed?pb=..." required>
+                                                </div>
+                                                <small class="block text-[11px] text-slate-400 mt-1">Paste only the <code class="text-pink-500 font-mono">src</code> attribute link found inside the Google Maps iframe code.</small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- SECCIÓN 4: PÁRRAFOS DEL PIE DE PÁGINA -->
+                                    <div class="bg-slate-50 p-5 rounded-xl border border-slate-100 space-y-4">
+                                        <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Footer Text Blocks</h3>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div>
+                                                <label for="contact-footer-text1" class="block text-[11px] font-semibold text-slate-500 mb-1">Footer Paragraph 1</label>
+                                                <textarea id="contact-footer-text1" rows="4" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs bg-white focus:outline-none focus:border-sky-500 transition" placeholder="Write additional help guidelines..." required></textarea>
+                                            </div>
+                                            <div>
+                                                <label for="contact-footer-text2" class="block text-[11px] font-semibold text-slate-500 mb-1">Footer Paragraph 2 (Optional)</label>
+                                                <textarea id="contact-footer-text2" rows="4" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs bg-white focus:outline-none focus:border-sky-500 transition" placeholder="Write backup or policy notes..."></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- ACCIONES -->
+                                    <div class="flex justify-end pt-2">
+                                        <button type="submit" class="bg-sky-500 hover:bg-sky-600 text-white text-sm font-semibold px-6 py-2.5 rounded-lg transition shadow-sm flex items-center gap-2">
+                                            <i class="bi bi-save-fill"></i> Save Changes
                                         </button>
                                     </div>
                                 </form>
                             </div>
-                            <!-- CONTACTS SECTION end-->
+                            <!-- CONTACTS SECTION end -->
 
                         </div>
 
