@@ -2598,6 +2598,47 @@ app.post('/api/admin-locations', (req, res) => {
     });
 });
 
+// ==========================================
+// CONSULTATION SECTION LOCATIONS
+// ==========================================
+
+
+app.get('/api/locations/consultation', (req, res) => {
+    const query = 'SELECT cta_title, cta_text, cta_btn_text, cta_btn_url, cta_img FROM admin_locations WHERE id = 1';
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching CTA data:', err);
+            return res.status(500).json({ error: 'Database error.' });
+        }
+        res.json(results[0]);
+    });
+});
+
+// POST: Actualizar textos y procesar la imagen (si se sube una nueva)
+app.post('/api/locations/consultation', upload.single('cta_img'), (req, res) => {
+    const { cta_title, cta_text, cta_btn_text, cta_btn_url, current_cta_img } = req.body;
+    
+    // Si viene un archivo nuevo usamos su ruta; si no, conservamos la que ya estaba
+    let final_img = current_cta_img;
+    if (req.file) {
+        final_img = 'uploads/' + req.file.filename;
+    }
+
+    const query = `
+        UPDATE admin_locations 
+        SET cta_title = ?, cta_text = ?, cta_btn_text = ?, cta_btn_url = ?, cta_img = ? 
+        WHERE id = 1
+    `;
+
+    db.query(query, [cta_title, cta_text, cta_btn_text, cta_btn_url, final_img], (err, result) => {
+        if (err) {
+            console.error('Error updating CTA data:', err);
+            return res.status(500).json({ error: 'Failed to update database.' });
+        }
+        res.json({ success: true, message: 'Consultation section updated successfully!', cta_img: final_img });
+    });
+});
+
 
 
 cron.schedule('*/5 * * * *', () => {

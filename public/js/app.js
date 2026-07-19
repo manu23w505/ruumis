@@ -2279,3 +2279,38 @@ document.addEventListener("DOMContentLoaded", () => {
         renderPublicAdvantages();
     }
 });
+
+//================================================================
+//  CONSULTATIONS SECTION LOCATIONS
+//================================================================
+
+function loadConsultationFront() {
+    fetch('/api/locations/consultation')
+        .then(response => response.json())
+        .then(data => {
+            if (data) {
+                const titleElem = document.getElementById('public-cta-title');
+                const textElem = document.getElementById('public-cta-text');
+                const btnElem = document.getElementById('public-cta-button');
+                const imgElem = document.getElementById('public-cta-img');
+
+                if (titleElem) titleElem.innerText = data.cta_title;
+                if (textElem) textElem.innerText = data.cta_text;
+                
+                if (btnElem) {
+                    btnElem.innerText = data.cta_btn_text;
+                    // Solución definitiva al error de redirección en Render:
+                    btnElem.setAttribute('href', data.cta_btn_url);
+                }
+
+                if (imgElem && data.cta_img) {
+                    imgElem.setAttribute('src', `/${data.cta_img}`);
+                }
+            }
+        })
+        .catch(error => console.error("Error drawing consultation UI elements:", error));
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadConsultationFront();
+});

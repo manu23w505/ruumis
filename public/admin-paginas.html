@@ -1457,148 +1457,221 @@
                             </div>
                             <!-- SECTION CONTACT INFO end-->
 
-                            <!-- SECCIÓN DE VENTAJAS (LOCATIONS) start -->
-                            <div class="card mb-5" style="border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03); overflow: hidden;">
-                                <!-- Cabecera de la Tarjeta -->
-                                <div class="card-header bg-white py-4 px-4" style="border-bottom: 1px solid #f1f5f9; position: relative;">
-                                    <!-- Indicador lateral decorativo -->
-                                    <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background-color: #0ea5e9;"></div>
-                                    
-                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-                                        <div>
-                                            <span class="text-uppercase fw-bold text-muted mb-1 d-block" style="font-size: 11px; letter-spacing: 1.5px;">Páginas del Sitio / Locations</span>
-                                            <h4 class="mb-0 fw-bold text-dark d-flex align-items-center" style="font-size: 18px; letter-spacing: -0.3px;">
-                                                <i class="bi bi-geo-alt-fill me-2" style="color: #0ea5e9;"></i>Editar Sección de Ventajas
-                                            </h4>
-                                        </div>
-                                        <span class="badge" style="background-color: #e0f2fe; color: #0369a1; font-weight: 600; padding: 6px 12px; border-radius: 30px; font-size: 12px;">
-                                            Módulo Activo
-                                        </span>
+                            <!-- SECTION ADVANTAGES (LOCATIONS) start -->
+                            <div class="bg-white rounded-xl shadow-md p-6 mb-8 border border-slate-100">
+                                
+                                <!-- Header Block -->
+                                <div class="border-b border-slate-100 pb-4 mb-6 flex flex-wrap justify-between items-center gap-4">
+                                    <div>
+                                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Site Pages / Locations</span>
+                                        <h1 class="text-xl font-bold text-slate-800 flex items-center">
+                                            <i class="bi bi-geo-alt-fill mr-2 text-sky-500"></i>Edit Advantages Section
+                                        </h1>
+                                        <p class="text-sm text-slate-500 mt-1">Modify the section introduction and the details for the three main advantage cards.</p>
                                     </div>
+                                    <span class="bg-sky-50 text-sky-700 text-xs font-semibold px-3 py-1 rounded-full border border-sky-100 shadow-sm">
+                                        Active Module
+                                    </span>
                                 </div>
 
-                                <!-- Cuerpo de la Tarjeta -->
-                                <div class="card-body p-4" style="background-color: #ffffff;">
-                                    <form id="form-admin-locations">
+                                <form id="form-admin-locations" class="space-y-6">
+                                    
+                                    <!-- SUB-SECTION 1: GENERAL INFORMATION -->
+                                    <div class="space-y-4">
+                                        <div class="flex items-center gap-2">
+                                            <span class="flex items-center justify-center w-6 h-6 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold">1</span>
+                                            <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wide">Main Section Header</h3>
+                                        </div>
                                         
-                                        <!-- SUB-SECCIÓN: INFORMACIÓN GENERAL -->
-                                        <div class="mb-4">
-                                            <div class="d-flex align-items-center mb-3">
-                                                <span class="me-2 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; background: #f0fdf4; color: #16a34a; border-radius: 50%; font-size: 12px; font-weight: bold;">1</span>
-                                                <h6 class="mb-0 fw-bold text-dark" style="font-size: 14px;">Encabezado Principal de la Sección</h6>
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                            <div class="md:col-span-1">
+                                                <label class="block text-xs font-semibold text-slate-600 mb-1">Subtitle (Top Pill)</label>
+                                                <input type="text" id="adv_subtitle" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" placeholder="e.g., The Ruumis Advantage" required>
                                             </div>
-                                            
-                                            <div class="row g-3 p-3 mb-4" style="background-color: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px;">
-                                                <div class="col-md-4">
-                                                    <label class="form-label small fw-bold text-secondary">Subtítulo (Pill superior)</label>
-                                                    <input type="text" id="adv_subtitle" class="form-control form-control-custom" placeholder="Ej: The Ruumis Advantage" style="border-radius: 8px; border: 1px solid #cbd5e1; padding: 10px; font-size: 14px;" required>
+                                            <div class="md:col-span-2">
+                                                <label class="block text-xs font-semibold text-slate-600 mb-1">Main Title</label>
+                                                <input type="text" id="adv_title" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" placeholder="e.g., Why Our Locations Are Built Different" required>
+                                            </div>
+                                            <div class="col-span-1 md:col-span-3">
+                                                <label class="block text-xs font-semibold text-slate-600 mb-1">Introductory Description</label>
+                                                <textarea id="adv_desc" rows="2" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" placeholder="Briefly describe what this section is about..." required></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <hr class="border-slate-100 my-6">
+
+                                    <!-- SUB-SECTION 2: INDIVIDUAL ADVANTAGES -->
+                                    <div class="space-y-4">
+                                        <div class="flex items-center gap-2">
+                                            <span class="flex items-center justify-center w-6 h-6 bg-emerald-50 text-emerald-600 rounded-full text-xs font-bold">2</span>
+                                            <h3 class="text-sm font-bold text-slate-700 uppercase tracking-wide">Individual Advantage Cards</h3>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                            <!-- Advantage 1 -->
+                                            <div class="p-4 bg-slate-50 rounded-lg border border-slate-100 space-y-3">
+                                                <div class="flex justify-between items-center border-b border-slate-200 pb-2 mb-1">
+                                                    <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded uppercase tracking-wider">Advantage 01</span>
+                                                    <i class="bi bi-1-circle-fill text-slate-400 text-lg"></i>
                                                 </div>
-                                                <div class="col-md-8">
-                                                    <label class="form-label small fw-bold text-secondary">Título Principal</label>
-                                                    <input type="text" id="adv_title" class="form-control form-control-custom" placeholder="Ej: Why Our Locations Are Built Different" style="border-radius: 8px; border: 1px solid #cbd5e1; padding: 10px; font-size: 14px;" required>
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Icon (CSS Class)</label>
+                                                    <div class="flex rounded-lg shadow-sm">
+                                                        <span class="inline-flex items-center px-2.5 rounded-l-lg border border-r-0 border-slate-200 bg-white text-slate-400 text-sm">
+                                                            <i class="bi bi-code-slash"></i>
+                                                        </span>
+                                                        <input type="text" id="adv1_icon" class="w-full px-3 py-1.5 border border-slate-200 rounded-r-lg text-sm focus:outline-none focus:border-sky-500 transition" placeholder="e.g., icon-location" required>
+                                                    </div>
                                                 </div>
-                                                <div class="col-12">
-                                                    <label class="form-label small fw-bold text-secondary">Descripción de Introducción</label>
-                                                    <textarea id="adv_desc" class="form-control form-control-custom" rows="2" placeholder="Describe brevemente de qué trata esta sección..." style="border-radius: 8px; border: 1px solid #cbd5e1; padding: 10px; font-size: 14px;" required></textarea>
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Title</label>
+                                                    <input type="text" id="adv1_title" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-sky-500 transition" required>
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Short Description</label>
+                                                    <textarea id="adv1_desc" rows="3" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-sky-500 transition" required></textarea>
+                                                </div>
+                                            </div>
+
+                                            <!-- Advantage 2 -->
+                                            <div class="p-4 bg-slate-50 rounded-lg border border-slate-100 space-y-3">
+                                                <div class="flex justify-between items-center border-b border-slate-200 pb-2 mb-1">
+                                                    <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded uppercase tracking-wider">Advantage 02</span>
+                                                    <i class="bi bi-2-circle-fill text-slate-400 text-lg"></i>
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Icon (CSS Class)</label>
+                                                    <div class="flex rounded-lg shadow-sm">
+                                                        <span class="inline-flex items-center px-2.5 rounded-l-lg border border-r-0 border-slate-200 bg-white text-slate-400 text-sm">
+                                                            <i class="bi bi-code-slash"></i>
+                                                        </span>
+                                                        <input type="text" id="adv2_icon" class="w-full px-3 py-1.5 border border-slate-200 rounded-r-lg text-sm focus:outline-none focus:border-sky-500 transition" placeholder="e.g., icon-lock" required>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Title</label>
+                                                    <input type="text" id="adv2_title" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-sky-500 transition" required>
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Short Description</label>
+                                                    <textarea id="adv2_desc" rows="3" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-sky-500 transition" required></textarea>
+                                                </div>
+                                            </div>
+
+                                            <!-- Advantage 3 -->
+                                            <div class="p-4 bg-slate-50 rounded-lg border border-slate-100 space-y-3">
+                                                <div class="flex justify-between items-center border-b border-slate-200 pb-2 mb-1">
+                                                    <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded uppercase tracking-wider">Advantage 03</span>
+                                                    <i class="bi bi-3-circle-fill text-slate-400 text-lg"></i>
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Icon (CSS Class)</label>
+                                                    <div class="flex rounded-lg shadow-sm">
+                                                        <span class="inline-flex items-center px-2.5 rounded-l-lg border border-r-0 border-slate-200 bg-white text-slate-400 text-sm">
+                                                            <i class="bi bi-code-slash"></i>
+                                                        </span>
+                                                        <input type="text" id="adv3_icon" class="w-full px-3 py-1.5 border border-slate-200 rounded-r-lg text-sm focus:outline-none focus:border-sky-500 transition" placeholder="e.g., icon-users" required>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Title</label>
+                                                    <input type="text" id="adv3_title" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-sky-500 transition" required>
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Short Description</label>
+                                                    <textarea id="adv3_desc" rows="3" class="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-sky-500 transition" required></textarea>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <!-- SUB-SECCIÓN: DETALLE DE LAS 3 VENTAJAS -->
-                                        <div class="mb-4">
-                                            <div class="d-flex align-items-center mb-3">
-                                                <span class="me-2 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; background: #f0fdf4; color: #16a34a; border-radius: 50%; font-size: 12px; font-weight: bold;">2</span>
-                                                <h6 class="mb-0 fw-bold text-dark" style="font-size: 14px;">Tarjetas de Ventajas Individuales</h6>
-                                            </div>
-
-                                            <div class="row g-4">
-                                                <!-- Ventaja 1 -->
-                                                <div class="col-md-4">
-                                                    <div class="p-3 h-100" style="background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.01);">
-                                                        <div class="d-flex align-items-center justify-content-between mb-3 pb-2" style="border-bottom: 1px solid #f1f5f9;">
-                                                            <span class="badge" style="background-color: #f0fdf4; color: #15803d; font-weight: 700; border-radius: 6px;">Ventaja 01</span>
-                                                            <i class="bi bi-1-circle-fill text-muted" style="font-size: 18px;"></i>
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label class="form-label small fw-bold text-secondary mb-1">Icono (Clase CSS)</label>
-                                                            <div class="input-group input-group-sm">
-                                                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-code-slash text-muted"></i></span>
-                                                                <input type="text" id="adv1_icon" class="form-control" placeholder="Ej: icon-location" style="border-radius: 0 6px 6px 0;" required>
-                                                            </div>
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label class="form-label small fw-bold text-secondary mb-1">Título</label>
-                                                            <input type="text" id="adv1_title" class="form-control form-control-sm" style="border-radius: 6px;" required>
-                                                        </div>
-                                                        <div>
-                                                            <label class="form-label small fw-bold text-secondary mb-1">Descripción corta</label>
-                                                            <textarea id="adv1_desc" class="form-control form-control-sm" rows="3" style="border-radius: 6px; font-size: 13px;" required></textarea>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Ventaja 2 -->
-                                                <div class="col-md-4">
-                                                    <div class="p-3 h-100" style="background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.01);">
-                                                        <div class="d-flex align-items-center justify-content-between mb-3 pb-2" style="border-bottom: 1px solid #f1f5f9;">
-                                                            <span class="badge" style="background-color: #f0fdf4; color: #15803d; font-weight: 700; border-radius: 6px;">Ventaja 02</span>
-                                                            <i class="bi bi-2-circle-fill text-muted" style="font-size: 18px;"></i>
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label class="form-label small fw-bold text-secondary mb-1">Icono (Clase CSS)</label>
-                                                            <div class="input-group input-group-sm">
-                                                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-code-slash text-muted"></i></span>
-                                                                <input type="text" id="adv2_icon" class="form-control" placeholder="Ej: icon-lock" style="border-radius: 0 6px 6px 0;" required>
-                                                            </div>
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label class="form-label small fw-bold text-secondary mb-1">Título</label>
-                                                            <input type="text" id="adv2_title" class="form-control form-control-sm" style="border-radius: 6px;" required>
-                                                        </div>
-                                                        <div>
-                                                            <label class="form-label small fw-bold text-secondary mb-1">Descripción corta</label>
-                                                            <textarea id="adv2_desc" class="form-control form-control-sm" rows="3" style="border-radius: 6px; font-size: 13px;" required></textarea>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Ventaja 3 -->
-                                                <div class="col-md-4">
-                                                    <div class="p-3 h-100" style="background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.01);">
-                                                        <div class="d-flex align-items-center justify-content-between mb-3 pb-2" style="border-bottom: 1px solid #f1f5f9;">
-                                                            <span class="badge" style="background-color: #f0fdf4; color: #15803d; font-weight: 700; border-radius: 6px;">Ventaja 03</span>
-                                                            <i class="bi bi-3-circle-fill text-muted" style="font-size: 18px;"></i>
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label class="form-label small fw-bold text-secondary mb-1">Icono (Clase CSS)</label>
-                                                            <div class="input-group input-group-sm">
-                                                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-code-slash text-muted"></i></span>
-                                                                <input type="text" id="adv3_icon" class="form-control" placeholder="Ej: icon-users" style="border-radius: 0 6px 6px 0;" required>
-                                                            </div>
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label class="form-label small fw-bold text-secondary mb-1">Título</label>
-                                                            <input type="text" id="adv3_title" class="form-control form-control-sm" style="border-radius: 6px;" required>
-                                                        </div>
-                                                        <div>
-                                                            <label class="form-label small fw-bold text-secondary mb-1">Descripción corta</label>
-                                                            <textarea id="adv3_desc" class="form-control form-control-sm" rows="3" style="border-radius: 6px; font-size: 13px;" required></textarea>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Botón Guardar -->
-                                        <div class="text-end pt-3" style="border-top: 1px solid #f1f5f9;">
-                                            <button type="submit" class="btn btn-primary px-4 py-2 fw-bold d-inline-flex align-items-center gap-2" style="border-radius: 10px; background-color: #0ea5e9; border: none; transition: all 0.2s ease; font-size: 14px;">
-                                                <i class="bi bi-cloud-arrow-up-fill" style="font-size: 16px;"></i> Guardar Ubicaciones
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
+                                    <!-- Botón de guardado -->
+                                    <div class="flex justify-end pt-4 border-t border-slate-100">
+                                        <button type="submit" class="bg-sky-500 hover:bg-sky-600 text-white text-sm font-semibold px-6 py-2.5 rounded-lg transition shadow-sm flex items-center gap-2">
+                                            <i class="bi bi-cloud-arrow-up-fill text-base"></i> Save Advantages Data
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
-                            <!-- SECCIÓN DE VENTAJAS (LOCATIONS) end -->
+                            <!-- SECTION ADVANTAGES (LOCATIONS) end -->
+
+                            <!-- CONSULTATION SECTION start -->
+                            <div class="bg-white rounded-xl shadow-md p-6 mb-8 border border-slate-100">
+                                <div class="border-b border-slate-100 pb-4 mb-6">
+                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Site Pages / Locations</span>
+                                    <h1 class="text-xl font-bold text-slate-800 flex items-center">
+                                        <i class="bi bi-image-text mr-2 text-sky-500"></i>Edit Consultation Banner & Image
+                                    </h1>
+                                    <p class="text-sm text-slate-500 mt-1">Manage titles, description text, upload a promotional image, and manually set the button redirection URL.</p>
+                                </div>
+
+                                <form id="form-admin-consultation" enctype="multipart/form-data" class="space-y-6">
+                                    <!-- Input oculto para rastrear la imagen actual si no se cambia -->
+                                    <input type="hidden" id="current_cta_img">
+
+                                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                        
+                                        <!-- COLUMNAS IZQUIERDA: TEXTOS Y ENLACE -->
+                                        <div class="lg:col-span-2 space-y-4 bg-slate-50 p-5 rounded-xl border border-slate-100">
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-600 mb-1">Banner Title</label>
+                                                <input type="text" id="cta_title" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" required>
+                                            </div>
+
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-600 mb-1">Description / Subtext</label>
+                                                <textarea id="cta_text" rows="4" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" required></textarea>
+                                            </div>
+
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Button Text</label>
+                                                    <input type="text" id="cta_btn_text" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" required>
+                                                </div>
+                                                <div>
+                                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Button Redirection URL (Manual Link)</label>
+                                                    <input type="text" id="cta_btn_url" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:border-sky-500 transition" placeholder="e.g., contacts.html or /acerca" required>
+                                                    <p class="text-[10px] text-slate-400 mt-1">Fixes Render routes. Enter relative paths like <span class="font-mono bg-slate-200 px-1 rounded">/acerca</span> or files directly.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- COLUMNA DERECHA: SELECCIÓN DE IMAGEN Y PREVIEW -->
+                                        <div class="p-5 bg-slate-50 rounded-xl border border-slate-100 flex flex-col justify-between space-y-4">
+                                            <div>
+                                                <label class="block text-xs font-semibold text-slate-600 mb-2">Banner Asset Image</label>
+                                                
+                                                <!-- Contenedor del Preview -->
+                                                <div class="w-full h-40 bg-slate-200 rounded-lg overflow-hidden border border-slate-300 flex items-center justify-center relative mb-3">
+                                                    <img id="cta_img_preview" src="" alt="Preview" class="w-full h-full object-cover hidden">
+                                                    <div id="preview_placeholder" class="text-center p-4 text-slate-400">
+                                                        <i class="bi bi-image text-3xl block mb-1"></i>
+                                                        <span class="text-xs">No image uploaded</span>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Selector Personalizado -->
+                                                <label class="block w-full text-center bg-white border border-slate-300 hover:border-slate-400 text-slate-700 text-xs font-medium px-4 py-2.5 rounded-lg cursor-pointer transition shadow-sm">
+                                                    <i class="bi bi-folder-plus mr-1"></i> Seleccionar imagen
+                                                    <input type="file" id="cta_img" accept="image/*" class="hidden">
+                                                </label>
+                                            </div>
+                                            <p class="text-[11px] text-slate-400">
+                                                * Tip: Use a transparent PNG or a landscape illustration to maintain harmony inside the public banner.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex justify-end pt-2">
+                                        <button type="submit" class="bg-sky-500 hover:bg-sky-600 text-white text-sm font-semibold px-6 py-2.5 rounded-lg transition shadow-sm flex items-center gap-2">
+                                            <i class="bi bi-cloud-arrow-up-fill"></i> Save Consultation Settings
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- CONSULTATION SECTION end -->
+
                         </div>
 
             </div>
@@ -3339,7 +3412,86 @@
             });
         }
 
+        //==========================================
+        // CONSULTATIONS SECTION LOCATIONS
+        //==========================================     
 
+        document.addEventListener("DOMContentLoaded", () => {
+        const ctaForm = document.getElementById("form-admin-consultation");
+        const imgInput = document.getElementById("cta_img");
+        const imgPreview = document.getElementById("cta_img_preview");
+        const previewPlaceholder = document.getElementById("preview_placeholder");
+
+        // 1. Cargar datos actuales desde el servidor al abrir la página
+        fetch('/api/locations/consultation')
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
+                    document.getElementById("cta_title").value = data.cta_title || "";
+                    document.getElementById("cta_text").value = data.cta_text || "";
+                    document.getElementById("cta_btn_text").value = data.cta_btn_text || "";
+                    document.getElementById("cta_btn_url").value = data.cta_btn_url || "";
+                    document.getElementById("current_cta_img").value = data.cta_img || "";
+
+                    if (data.cta_img) {
+                        imgPreview.src = `/${data.cta_img}`;
+                        imgPreview.classList.remove("hidden");
+                        previewPlaceholder.classList.add("hidden");
+                    }
+                }
+            })
+            .catch(error => console.error("Error loading consultation data:", error));
+
+        // 2. Previsualizar la imagen local de forma instantánea al cambiar de archivo
+        imgInput.addEventListener("change", function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imgPreview.src = e.target.result;
+                    imgPreview.classList.remove("hidden");
+                    previewPlaceholder.classList.add("hidden");
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // 3. Enviar formulario con archivos binarios vía FormData
+        ctaForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const formData = new FormData();
+            formData.append("cta_title", document.getElementById("cta_title").value);
+            formData.append("cta_text", document.getElementById("cta_text").value);
+            formData.append("cta_btn_text", document.getElementById("cta_btn_text").value);
+            formData.append("cta_btn_url", document.getElementById("cta_btn_url").value);
+            formData.append("current_cta_img", document.getElementById("current_cta_img").value);
+
+            if (imgInput.files[0]) {
+                formData.append("cta_img", imgInput.files[0]);
+            }
+
+            fetch('/api/locations/consultation', {
+                method: 'POST',
+                body: formData // Importante: Multer lee FormData sin definirle un Content-Type header manual
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert("Consultation section updated successfully!");
+                    if (result.cta_img) {
+                        document.getElementById("current_cta_img").value = result.cta_img;
+                    }
+                } else {
+                    alert("Error saving configurations.");
+                }
+            })
+            .catch(error => {
+                console.error("Error updating banner:", error);
+                alert("Network connection error.");
+            });
+        });
+    });
 
 
         if (window.self !== window.top) {
