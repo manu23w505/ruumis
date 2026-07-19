@@ -2640,39 +2640,20 @@ app.post('/api/locations/consultation', upload.single('cta_img'), (req, res) => 
 });
 
 // ==========================================
-// WORKS SECTION LOCATIONS (BACKEND OPTIMIZADO)
+// MÓDULO LOCATIONS (HOW IT WORKS SECTION)
 // ==========================================
 
-app.get('/api/locations/how-it-works', (req, res) => {
-    const query = `
-        SELECT how_subtitle, how_title, how_desc, 
-               step1_title, step1_desc, 
-               step2_title, step2_desc, 
-               step3_title, step3_desc 
-        FROM admin_locations WHERE id = 1
-    `;
-    db.query(query, (err, results) => {
+app.get('/api/cms/locations', (req, res) => {
+    const sql = "SELECT * FROM admin_locations WHERE id = 1";
+    db.query(sql, (err, result) => {
         if (err) {
-            console.error('Error fetching How It Works data:', err);
-            return res.status(500).json({ error: 'Database reading error.' });
+            console.error("Error al obtener datos de admin_locations:", err);
+            return res.status(500).json({ error: err.message });
         }
-        
-        // Si el registro ID = 1 no existe todavía, enviamos los valores por defecto
-        if (!results || results.length === 0 || results[0].how_title === null) {
-            return res.json({
-                how_subtitle: 'Fácil y Rápido',
-                how_title: '¿Cómo asegurar tu Ruumis?',
-                how_desc: 'Olvídate del papeleo infinito. Nuestro proceso es 100% digital y diseñado para tu comodidad.',
-                step1_title: 'Encuentra tu zona',
-                step1_desc: 'Explora nuestros complejos cercanos a las principales universidades y elige el que mejor se adapte a tu estilo de vida.',
-                step2_title: 'Agenda un Tour Virtual',
-                step2_desc: 'Conoce las instalaciones en tiempo real con uno de nuestros asesores a través de una videollamada interactiva, sin salir de casa.',
-                step3_title: '¡Reserva y mudate!',
-                step3_desc: 'Firma tu contrato digital, realiza tu depósito seguro y prepárate para vivir la mejor experiencia universitaria.'
-            });
+        if (result.length === 0) {
+            return res.status(404).json({ error: "Configuración de la sección no encontrada." });
         }
-        
-        res.json(results[0]);
+        res.json(result[0]);
     });
 });
 
