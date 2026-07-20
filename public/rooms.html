@@ -164,62 +164,97 @@
             <p class="text-slate-500 max-w-xl mx-auto">Encuentra tu espacio ideal. Habitaciones totalmente amuebladas y listas para mudarte hoy mismo.</p>
         </div>
 
-        <div class="bg-slate-50 border border-slate-200 p-6 rounded-2xl shadow-sm mb-10 flex flex-col gap-4">
-            <!-- Row 1: Search, City and Zone -->
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
-                <div class="w-full md:col-span-4">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">What are you looking for?</label>
-                    <input type="text" id="filtro-busqueda" placeholder="e.g. Loft, Pool, Furnished..." 
-                        class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
-                </div>
-
-                <div class="w-full md:col-span-4">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">City</label>
-                    <select id="filtro-ciudad" 
-                        class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer">
-                        <option value="">All cities</option>
-                    </select>
-                </div>
-
-                <div class="w-full md:col-span-4">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Zone / Neighborhood</label>
-                    <select id="filtro-zona" disabled 
-                        class="w-full bg-slate-100 text-slate-400 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-cyan-500 transition-colors disabled:cursor-not-allowed">
-                        <option value="">Select a city first</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Row 2: Prices, Guests and Clean Button -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Minimum Price (MXN)</label>
-                    <input type="number" id="filtro-precio-min" placeholder="Minimum" 
-                        class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Maximum Price (MXN)</label>
-                    <input type="number" id="filtro-precio-max" placeholder="Maximum" 
-                        class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
-                </div>
-
-                <div class="w-full">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Guests</label>
-                    <div class="flex items-center justify-between bg-white border border-slate-200 rounded-xl px-4 py-2.5">
-                        <button type="button" onclick="cambiarHuespedes(-1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold select-none cursor-pointer">-</button>
-                        <span id="display-huespedes" class="font-bold text-slate-900">1</span>
-                        <button type="button" onclick="cambiarHuespedes(1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold select-none cursor-pointer">+</button>
+        <form class="booking" id="form-buscador" action="#" method="post" autocomplete="off" data-type="booking" data-aos="fade-up">
+            <!-- Row 1: Search text, City and Zone selection -->
+            <div class="item-wrapper d-sm-flex flex-wrap flex-lg-nowrap align-items-lg-center mb-4 gap-3">
+                
+                <!-- Search Field -->
+                <div class="booking_group d-flex flex-column flex-grow-1">
+                    <label class="booking_group-label h5" for="filtro-busqueda">What are you looking for?</label>
+                    <div class="booking_group-wrapper">
+                        <i class="icon-user icon"></i>
+                        <input type="text" id="filtro-busqueda" placeholder="e.g. Loft, Pool, Furnished..." 
+                            class="booking_group-field field" />
                     </div>
                 </div>
 
-                <div>
-                    <button id="btn-limpiar" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2.5 px-4 rounded-xl text-sm transition-colors cursor-pointer">
+                <!-- City Select -->
+                <div class="booking_group d-flex flex-column">
+                    <label class="booking_group-label h5" for="filtro-ciudad">City</label>
+                    <div class="booking_group-wrapper">
+                        <i class="icon-calendar icon"></i>
+                        <select id="filtro-ciudad" class="booking_group-field field cursor-pointer">
+                            <option value="">All cities</option>
+                        </select>
+                        <i class="icon-chevron_down icon"></i>
+                    </div>
+                </div>
+
+                <!-- Zone Select -->
+                <div class="booking_group d-flex flex-column">
+                    <label class="booking_group-label h5" for="filtro-zona">Zone / Neighborhood</label>
+                    <div class="booking_group-wrapper">
+                        <i class="icon-calendar icon"></i>
+                        <select id="filtro-zona" disabled class="booking_group-field field disabled:cursor-not-allowed">
+                            <option value="">Select a city first</option>
+                        </select>
+                        <i class="icon-chevron_down icon"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 2: Price ranges, Guests dropdown and action actions -->
+            <div class="item-wrapper d-sm-flex flex-wrap flex-lg-nowrap align-items-lg-center gap-3">
+                
+                <!-- Min Price -->
+                <div class="booking_group d-flex flex-column">
+                    <label class="booking_group-label h5" for="filtro-precio-min">Minimum Price (MXN)</label>
+                    <div class="booking_group-wrapper">
+                        <i class="icon-calendar icon"></i>
+                        <input type="number" id="filtro-precio-min" placeholder="Minimum" class="booking_group-field field" />
+                    </div>
+                </div>
+
+                <!-- Max Price -->
+                <div class="booking_group d-flex flex-column">
+                    <label class="booking_group-label h5" for="filtro-precio-max">Maximum Price (MXN)</label>
+                    <div class="booking_group-wrapper">
+                        <i class="icon-calendar icon"></i>
+                        <input type="number" id="filtro-precio-max" placeholder="Maximum" class="booking_group-field field" />
+                    </div>
+                </div>
+
+                <!-- Dynamic Guests Selector Dropdown -->
+                <div class="booking_group d-flex flex-column">
+                    <span class="booking_group-label h5" id="render-lbl-guests">Guests</span>
+                    <div class="booking_group-wrapper booking_group-wrapper--guests">
+                        <i class="icon-user icon"></i>
+                        <div class="booking_group-field dropdown-toggle" role="presentation" id="guests" data-bs-toggle="collapse" data-bs-target="#bookingDropdown">
+                            <span id="display-huespedes">1</span> Guest(s)
+                        </div> 
+                        <div class="booking_group-dropdown collapse" id="bookingDropdown">
+                            <div class="content">
+                                <div class="booking_group-dropdown_wrapper d-flex align-items-center justify-content-between">
+                                    <label class="label h5" for="adults">Total Count</label>
+                                    <div class="main d-flex align-items-center justify-content-between">
+                                        <a class="qty_minus qty-changer d-flex align-items-center justify-content-center" href="#" onclick="event.preventDefault(); cambiarHuespedes(-1)">-</a>
+                                        <input class="field required text-center" id="adults" name="adults" type="text" value="1" readonly />
+                                        <a class="qty_plus qty-changer d-flex align-items-center justify-content-center" href="#" onclick="event.preventDefault(); cambiarHuespedes(1)">+</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clear Action Button Element -->
+                <div class="d-flex align-items-center flex-grow-1" style="padding-top: 24px;">
+                    <button type="button" id="btn-limpiar" class="booking_btn btn" style="background-color: #dee2e6; color: #495057; border-radius: 8px; width: 100%; transition: all 0.3s ease;">
                         Clear Filters
                     </button>
                 </div>
             </div>
-        </div>
+        </form>
 
         <br> <br> <br>
         <div id="contenedor-anuncios" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

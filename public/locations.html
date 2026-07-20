@@ -156,22 +156,29 @@
         <!-- 2. FILTER & RESULTS GRID SECTION -->
         <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <!-- Filter Bar -->
-            <div class="bg-slate-50 border border-slate-200 p-6 rounded-2xl shadow-sm mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-                <div class="w-full sm:w-80">
-                    <label for="filtro-ciudad-ubi" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-                        Filter by City
-                    </label>
-                    <select id="filtro-ciudad-ubi" onchange="filtrarUbicaciones()" 
-                        class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer">
-                        <option value="">All Cities</option>
-                    </select>
+            <form class="booking" id="form-buscador-ubi" action="#" method="post" autocomplete="off" data-type="booking" data-aos="fade-up">
+                <div class="item-wrapper d-sm-flex flex-wrap align-items-center justify-content-between w-full gap-3">
+                    
+                    <!-- City Selection Group -->
+                    <div class="booking_group d-flex flex-column" style="min-width: 300px;">
+                        <label class="booking_group-label h5" for="filtro-ciudad-ubi">Filter by City</label>
+                        <div class="booking_group-wrapper">
+                            <i class="icon-calendar icon"></i>
+                            <select id="filtro-ciudad-ubi" onchange="filtrarUbicaciones()" class="booking_group-field field cursor-pointer">
+                                <option value="">All Cities</option>
+                            </select>
+                            <i class="icon-chevron_down icon"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Styled Dynamic Results Counter -->
+                    <div class="text-xs text-slate-500 font-medium bg-white px-4 py-2.5 rounded-xl align-self-sm-end mt-2 mt-sm-0" 
+                        style="border: 1px solid #dee2e6; border-radius: 8px; padding: 12px 20px; height: fit-content; min-height: 50px; display: flex; align-items: center; background: #f8f9fa;">
+                        <span>Showing <span id="contador-ubicaciones" class="font-bold text-cyan-600" style="color: #0dcaf0; font-weight: bold;">0</span> location(s)</span>
+                    </div>
+
                 </div>
-                
-                <!-- Contador estilizado a juego con los elementos del filtro principal -->
-                <div class="text-xs text-slate-500 font-medium bg-white border border-slate-200 px-4 py-2.5 rounded-xl shadow-sm self-start sm:self-auto">
-                    Showing <span id="contador-ubicaciones" class="font-bold text-cyan-600">0</span> location(s)
-                </div>
-            </div>
+            </form>
             <br><br><br>
 
             <!-- Locations Grid Container -->
