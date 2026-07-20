@@ -2358,6 +2358,7 @@ async function cargarSeccionHowItWorks() {
 // CONTACTS SECTION
 //================================================================
 
+// Modifica el DOMContentLoaded existente para que también llame a la nueva función
 document.addEventListener("DOMContentLoaded", () => {
     if (document.getElementById("public-contact-title")) {
         renderPublicContacts();
@@ -2369,6 +2370,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+// Nueva función para renderizar la sección de métricas y calificaciones
 async function renderSecondaryContacts() {
     try {
         const response = await fetch('/api/contacts-secondary');
@@ -2427,4 +2429,59 @@ async function renderSecondaryContacts() {
         console.error("Error setting secondary contacts view:", error);
     }
 }
+
+async function renderPublicContacts() {
+    try {
+        const response = await fetch('/api/cms/contacts');
+        if (!response.ok) throw new Error("Error loading dynamic contact details");
+        const data = await response.json();
+
+        // Cabecera
+        document.getElementById("public-contact-title").innerText = data.title;
+        document.getElementById("public-contact-desc").innerText = data.description;
+
+        // Teléfonos (Texto y Enlace href)
+        const p1 = document.getElementById("public-phone1");
+        p1.innerText = data.phone1;
+        p1.href = `tel:${data.phone1.replace(/\D/g, "")}`;
+        
+        const p2 = document.getElementById("public-phone2");
+        if(data.phone2) {
+            p2.innerText = data.phone2;
+            p2.href = `tel:${data.phone2.replace(/\D/g, "")}`;
+            p2.style.display = "block";
+        } else {
+            p2.style.display = "none";
+        }
+
+        // Correos electrónicos
+        const e1 = document.getElementById("public-email1");
+        e1.innerText = data.email1;
+        e1.href = `mailto:${data.email1}`;
+
+        const e2 = document.getElementById("public-email2");
+        if(data.email2) {
+            e2.innerText = data.email2;
+            e2.href = `mailto:${data.email2}`;
+            e2.style.display = "block";
+        } else {
+            p2.style.display = "none";
+        }
+
+        // Footer adicional
+        document.getElementById("public-contact-footer-title").innerText = data.footer_title;
+        document.getElementById("public-contact-text1").innerText = data.footer_text1;
+        document.getElementById("public-contact-text2").innerText = data.footer_text2;
+
+        // Carga dinámica de Google Maps vía Iframe
+        const mapIframe = document.getElementById("public-map-iframe");
+        if (mapIframe && data.map_url) {
+            mapIframe.src = data.map_url;
+        }
+
+    } catch (error) {
+        console.error("Error setting public contacts view:", error);
+    }
+}
+
 
