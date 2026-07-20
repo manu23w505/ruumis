@@ -165,45 +165,47 @@
         </div>
 
         <div class="bg-slate-50 border border-slate-200 p-6 rounded-2xl shadow-sm mb-10 flex flex-col gap-4">
+            <!-- Row 1: Search, City and Zone -->
             <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                 <div class="w-full md:col-span-4">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">¿Qué estás buscando?</label>
-                    <input type="text" id="filtro-busqueda" placeholder="Ej. Loft, Alberca, Amueblado..." 
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">What are you looking for?</label>
+                    <input type="text" id="filtro-busqueda" placeholder="e.g. Loft, Pool, Furnished..." 
                         class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
                 </div>
 
                 <div class="w-full md:col-span-4">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Ciudad</label>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">City</label>
                     <select id="filtro-ciudad" 
                         class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer">
-                        <option value="">Todas las ciudades</option>
+                        <option value="">All cities</option>
                     </select>
                 </div>
 
                 <div class="w-full md:col-span-4">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Zona / Colonia</label>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Zone / Neighborhood</label>
                     <select id="filtro-zona" disabled 
                         class="w-full bg-slate-100 text-slate-400 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-cyan-500 transition-colors disabled:cursor-not-allowed">
-                        <option value="">Selecciona una ciudad primero</option>
+                        <option value="">Select a city first</option>
                     </select>
                 </div>
             </div>
 
+            <!-- Row 2: Prices, Guests and Clean Button -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Precio Mínimo (MXN)</label>
-                    <input type="number" id="filtro-precio-min" placeholder="Mínimo" 
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Minimum Price (MXN)</label>
+                    <input type="number" id="filtro-precio-min" placeholder="Minimum" 
                         class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Precio Máximo (MXN)</label>
-                    <input type="number" id="filtro-precio-max" placeholder="Máximo" 
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Maximum Price (MXN)</label>
+                    <input type="number" id="filtro-precio-max" placeholder="Maximum" 
                         class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
                 </div>
 
                 <div class="w-full">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Huéspedes</label>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Guests</label>
                     <div class="flex items-center justify-between bg-white border border-slate-200 rounded-xl px-4 py-2.5">
                         <button type="button" onclick="cambiarHuespedes(-1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold select-none cursor-pointer">-</button>
                         <span id="display-huespedes" class="font-bold text-slate-900">1</span>
@@ -213,7 +215,7 @@
 
                 <div>
                     <button id="btn-limpiar" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2.5 px-4 rounded-xl text-sm transition-colors cursor-pointer">
-                        Limpiar Filtros
+                        Clear Filters
                     </button>
                 </div>
             </div>
