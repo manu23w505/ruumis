@@ -2333,21 +2333,21 @@ async function cargarSeccionHowItWorks() {
         const data = await response.json();
         
         // 2. Inyectamos los datos en el encabezado de la sección
-        document.getElementById('how-subtitle').innerText = data.how_subtitle;
-        document.getElementById('how-title').innerText = data.how_title;
+        document.getElementById('how_subtitle').innerText = data.how_subtitle;
+        document.getElementById('how_title').innerText = data.how_title;
         document.getElementById('how-desc').innerText = data.how_desc;
         
         // 3. Inyectamos los datos del Paso 1
-        document.getElementById('step1-title').innerText = data.step1_title;
-        document.getElementById('step1-desc').innerText = data.step1_desc;
+        document.getElementById('step1_title').innerText = data.step1_title;
+        document.getElementById('step1_desc').innerText = data.step1_desc;
         
         // 4. Inyectamos los datos del Paso 2
-        document.getElementById('step2-title').innerText = data.step2_title;
-        document.getElementById('step2-desc').innerText = data.step2_desc;
+        document.getElementById('step2_title').innerText = data.step2_title;
+        document.getElementById('step2_desc').innerText = data.step2_desc;
         
         // 5. Inyectamos los datos del Paso 3
-        document.getElementById('step3-title').innerText = data.step3_title;
-        document.getElementById('step3-desc').innerText = data.step3_desc;
+        document.getElementById('step3_title').innerText = data.step3_title;
+        document.getElementById('step3_desc').innerText = data.step3_desc;
         
     } catch (error) {
         console.error("Error al cargar dinámicamente la sección How It Works:", error);
