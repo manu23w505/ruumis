@@ -113,14 +113,14 @@
                         <div>
                             <span class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Content Management</span>
                             <div class="space-y-1">
-                                <button onclick="cambiarPestana('tab-habitaciones', this)" class="sidebar-btn active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm bg-slate-100 text-slate-900 font-medium transition-all text-left">
-                                    Rooms
-                                </button>
-                                <button onclick="cambiarPestana('tab-ubicaciones', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all text-left">
-                                    Locations / Maps
-                                </button>
                                 <button onclick="cambiarPestana('tab-categorias', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all text-left">
                                     Property Types
+                                </button>
+                                <button onclick="cambiarPestana('tab-ubicaciones', this); cargarUbicaciones();" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all text-left">
+                                    Locations / Maps
+                                </button>
+                                <button onclick="cambiarPestana('tab-habitaciones', this)" class="sidebar-btn active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm bg-slate-100 text-slate-900 font-medium transition-all text-left">
+                                    Rooms
                                 </button>
                                 <button onclick="cambiarPestana('tab-preguntas', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all text-left">
                                     Frequently Asked Questions
