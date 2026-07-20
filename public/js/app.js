@@ -2359,64 +2359,72 @@ async function cargarSeccionHowItWorks() {
 //================================================================
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Si estás en la página de contactos, ejecuta la carga dinámica
     if (document.getElementById("public-contact-title")) {
         renderPublicContacts();
     }
+    
+    // Si existe el título secundario, carga la segunda sección
+    if (document.getElementById("public-secondary-title")) {
+        renderSecondaryContacts();
+    }
 });
 
-async function renderPublicContacts() {
+async function renderSecondaryContacts() {
     try {
-        const response = await fetch('/api/cms/contacts');
-        if (!response.ok) throw new Error("Error loading dynamic contact details");
+        const response = await fetch('/api/contacts-secondary');
+        if (!response.ok) throw new Error("Error loading secondary metrics");
         const data = await response.json();
 
-        // Cabecera
-        document.getElementById("public-contact-title").innerText = data.title;
-        document.getElementById("public-contact-desc").innerText = data.description;
+        if (!data || !data.id) return; // Si está vacío, no hace nada
 
-        // Teléfonos (Texto y Enlace href)
-        const p1 = document.getElementById("public-phone1");
-        p1.innerText = data.phone1;
-        p1.href = `tel:${data.phone1.replace(/\D/g, "")}`;
-        
-        const p2 = document.getElementById("public-phone2");
-        if(data.phone2) {
-            p2.innerText = data.phone2;
-            p2.href = `tel:${data.phone2.replace(/\D/g, "")}`;
-            p2.style.display = "block";
-        } else {
-            p2.style.display = "none";
+        // Título Principal
+        document.getElementById("public-secondary-title").innerText = data.section_title;
+
+        // CARD 1
+        document.getElementById("public-r1-level").innerText = data.r1_level;
+        document.getElementById("public-r1-max").innerText = data.r1_max;
+        document.getElementById("public-r1-reviews").innerText = data.r1_reviews;
+        if (data.r1_logo) {
+            const img1 = document.getElementById("public-r1-logo");
+            img1.src = '/' + data.r1_logo;
+            img1.style.display = "block";
         }
 
-        // Correos electrónicos
-        const e1 = document.getElementById("public-email1");
-        e1.innerText = data.email1;
-        e1.href = `mailto:${data.email1}`;
-
-        const e2 = document.getElementById("public-email2");
-        if(data.email2) {
-            e2.innerText = data.email2;
-            e2.href = `mailto:${data.email2}`;
-            e2.style.display = "block";
-        } else {
-            p2.style.display = "none";
+        // CARD 2
+        document.getElementById("public-r2-level").innerText = data.r2_level;
+        document.getElementById("public-r2-max").innerText = data.r2_max;
+        document.getElementById("public-r2-reviews").innerText = data.r2_reviews;
+        if (data.r2_logo) {
+            const img2 = document.getElementById("public-r2-logo");
+            img2.src = '/' + data.r2_logo;
+            img2.style.display = "block";
         }
 
-        // Footer adicional
-        document.getElementById("public-contact-footer-title").innerText = data.footer_title;
-        document.getElementById("public-contact-text1").innerText = data.footer_text1;
-        document.getElementById("public-contact-text2").innerText = data.footer_text2;
-
-        // Carga dinámica de Google Maps vía Iframe
-        const mapIframe = document.getElementById("public-map-iframe");
-        if (mapIframe && data.map_url) {
-            mapIframe.src = data.map_url;
+        // CARD 3
+        document.getElementById("public-r3-level").innerText = data.r3_level;
+        document.getElementById("public-r3-max").innerText = data.r3_max;
+        document.getElementById("public-r3-reviews").innerText = data.r3_reviews;
+        if (data.r3_logo) {
+            const img3 = document.getElementById("public-r3-logo");
+            img3.src = '/' + data.r3_logo;
+            img3.style.display = "block";
         }
+
+        // CARD 4
+        document.getElementById("public-r4-level").innerText = data.r4_level;
+        document.getElementById("public-r4-reviews").innerText = data.r4_reviews;
+        if (data.r4_logo) {
+            const img4 = document.getElementById("public-r4-logo");
+            img4.src = '/' + data.r4_logo;
+            img4.style.display = "block";
+        }
+
+        // Formulario Textos
+        document.getElementById("public-form-title").innerText = data.form_title;
+        document.getElementById("public-form-desc").innerText = data.form_description;
 
     } catch (error) {
-        console.error("Error setting public contacts view:", error);
+        console.error("Error setting secondary contacts view:", error);
     }
 }
-
 
