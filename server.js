@@ -5,7 +5,7 @@ const path = require('path');
 const multer = require('multer');
 const ical = require('node-ical');
 const cron = require('node-cron');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const fs = require('fs'); // Importamos fs para asegurarnos de que las carpetas existan
 
