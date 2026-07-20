@@ -381,11 +381,13 @@ app.delete('/api/tipos-propiedad/:id', (req, res) => {
 app.get('/api/anuncios', (req, res) => {
     const sql = `
         SELECT a.*, 
+               u.nombre AS ubicacion_nombre,
                c.nombre AS ciudad, 
                z.nombre AS zona, 
                t.nombre AS tipo_propiedad
         FROM anuncios a
-        LEFT JOIN zonas z ON a.zona_id = z.id
+        LEFT JOIN ubicaciones u ON a.ubicacion_id = u.id
+        LEFT JOIN zonas z ON u.zona_id = z.id
         LEFT JOIN ciudades c ON z.ciudad_id = c.id 
         LEFT JOIN tipos_propiedad t ON a.tipo_propiedad_id = t.id
     `;

@@ -156,32 +156,78 @@ async function manejarCambioCiudad() {
     aplicarFiltros();
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+    cargarUbicacionesEnSelector();
+    document.getElementById('filtro-busqueda')?.addEventListener('input', aplicarFiltros);
+    document.getElementById('filtro-ubicacion')?.addEventListener('change', aplicarFiltros);
+    document.getElementById('filtro-precio-min')?.addEventListener('input', aplicarFiltros);
+    document.getElementById('filtro-precio-max')?.addEventListener('input', aplicarFiltros);
+    document.getElementById('btn-limpiar')?.addEventListener('click', limpiarFiltros);
+});
+
+async function cargarUbicacionesEnSelector() {
+    try {
+        const response = await fetch('/api/ubicaciones');
+        const ubicaciones = await response.json();
+        const selectUbicacion = document.getElementById('filtro-ubicacion');
+        
+        if (!selectUbicacion) return;
+
+        ubicaciones.forEach(u => {
+            const option = document.createElement('option');
+            option.value = u.id; // Filtramos basándonos en la id de la ubicación física
+            // Esto renderizará algo estético como: "Torre Altus (Norte, León)"
+            option.textContent = `${u.nombre || 'Complejo'} (${u.zona_nombre}, ${u.ciudad_nombre})`;
+            selectUbicacion.appendChild(option);
+        });
+    } catch (error) {
+        console.error("Error al cargar ubicaciones en el buscador frontal:", error);
+    }
+}
+
+window.cambiarHuespedes = function(val) {
+    contadorHuespedes = Math.max(1, contadorHuespedes + val);
+    const display = document.getElementById('display-huespedes');
+    if (display) display.innerText = contadorHuespedes;
+    aplicarFiltros();
+};
+
 function aplicarFiltros() {
     const busqueda = document.getElementById('filtro-busqueda')?.value.toLowerCase() || '';
-    const ciudad = document.getElementById('filtro-ciudad')?.value || ''; // Trae el nombre texto
-    const zona = document.getElementById('filtro-zona')?.value || ''; // Trae el nombre texto
+    const ubicacionIdSelected = document.getElementById('filtro-ubicacion')?.value || ''; 
     const precioMin = parseFloat(document.getElementById('filtro-precio-min')?.value) || 0;
     const precioMax = parseFloat(document.getElementById('filtro-precio-max')?.value) || Infinity;
 
     const filtrados = todosLosAnuncios.filter(a => {
+        // La barra libre busca coincidencias globales por texto
         const coincideBusqueda = a.titulo.toLowerCase().includes(busqueda) || 
                                  a.descripcion.toLowerCase().includes(busqueda) || 
                                  (a.zona && a.zona.toLowerCase().includes(busqueda)) ||
+                                 (a.ciudad && a.ciudad.toLowerCase().includes(busqueda)) ||
                                  (a.ubicacion_nombre && a.ubicacion_nombre.toLowerCase().includes(busqueda));
                                  
-        // Comparamos el nombre de la ciudad directamente con lo que viene del JOIN en el anuncio
-        const coincideCiudad = ciudad === "" || (a.ciudad || a.ciudad_nombre) === ciudad;
-        
-        // Comparamos el nombre de la zona directamente
-        const coincideZona = zona === "" || (a.zona || a.zona_nombre) === zona;
+        // Filtro estricto por la ID de ubicación seleccionada
+        const coincideUbicacion = ubicacionIdSelected === "" || String(a.ubicacion_id) === String(ubicacionIdSelected);
         
         const coincidePrecio = a.precio >= precioMin && a.precio <= precioMax;
         const coincideHuespedes = a.capacidad_personas ? (a.capacidad_personas >= contadorHuespedes) : true;
 
-        return coincideBusqueda && coincideCiudad && coincideZona && coincidePrecio && coincideHuespedes;
+        return coincideBusqueda && coincideUbicacion && coincidePrecio && coincideHuespedes;
     });
 
     renderizarTarjetas(filtrados);
+}
+
+function limpiarFiltros() {
+    if(document.getElementById('filtro-busqueda')) document.getElementById('filtro-busqueda').value = '';
+    if(document.getElementById('filtro-precio-min')) document.getElementById('filtro-precio-min').value = '';
+    if(document.getElementById('filtro-precio-max')) document.getElementById('filtro-precio-max').value = '';
+    if(document.getElementById('filtro-ubicacion')) document.getElementById('filtro-ubicacion').value = '';
+
+    contadorHuespedes = 1;
+    if(document.getElementById('display-huespedes')) document.getElementById('display-huespedes').innerText = '1';
+    
+    renderizarTarjetas(todosLosAnuncios);
 }
 
 function extraerArregloImagenes(campo) {
@@ -432,22 +478,6 @@ window.cambiarHuespedes = function(val) {
     aplicarFiltros();
 };
 
-function limpiarFiltros() {
-    if(document.getElementById('filtro-busqueda')) document.getElementById('filtro-busqueda').value = '';
-    if(document.getElementById('filtro-precio-min')) document.getElementById('filtro-precio-min').value = '';
-    if(document.getElementById('filtro-precio-max')) document.getElementById('filtro-precio-max').value = '';
-    if(document.getElementById('filtro-ciudad')) document.getElementById('filtro-ciudad').value = '';
-    
-    const selectZona = document.getElementById('filtro-zona');
-    if(selectZona) {
-        selectZona.innerHTML = '<option value="">Selecciona una ciudad primero</option>';
-        selectZona.disabled = true;
-    }
-
-    contadorHuespedes = 1;
-    if(document.getElementById('display-huespedes')) document.getElementById('display-huespedes').innerText = '1';
-    renderizarTarjetas(todosLosAnuncios);
-}
 
 window.verCalendario = async function(id) {
     const modal = document.getElementById('modal-calendario');

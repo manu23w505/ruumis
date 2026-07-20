@@ -165,7 +165,7 @@
         <form class="booking" id="form-buscador" action="#" method="post" autocomplete="off" data-type="booking" data-aos="fade-up" 
             style="background: #fff; border-radius: 16px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); border: 1px solid #dee2e6; display: flex !important; flex-direction: column !important; gap: 24px !important; width: 100% !important; box-sizing: border-box !important;">
             
-            <!-- Fila 1: Texto de búsqueda, Selección de Ciudad y Zona -->
+            <!-- Fila 1: Texto de búsqueda y Selección de Ubicación Unificada -->
             <div class="item-wrapper" style="display: flex !important; flex-wrap: wrap !important; gap: 20px !important; align-items: flex-end !important; width: 100% !important;">
                 
                 <!-- Campo de Búsqueda General -->
@@ -177,22 +177,12 @@
                     </div>
                 </div>
 
-                <!-- Selector de Ciudad -->
-                <div class="booking_group" style="display: flex !important; flex-direction: column !important; flex: 1 1 200px !important; min-width: 200px !important;">
-                    <label class="booking_group-label h5" for="filtro-ciudad" style="font-size: 13px !important; font-weight: 700 !important; color: #495057 !important; text-transform: uppercase !important; margin-bottom: 8px !important; display: block !important; letter-spacing: 0.5px;">City</label>
+                <!-- Selector Único de Ubicación (Integra Complejo, Zona y Ciudad) -->
+                <div class="booking_group" style="display: flex !important; flex-direction: column !important; flex: 2 1 300px !important; min-width: 260px !important;">
+                    <label class="booking_group-label h5" for="filtro-ubicacion" style="font-size: 13px !important; font-weight: 700 !important; color: #495057 !important; text-transform: uppercase !important; margin-bottom: 8px !important; display: block !important; letter-spacing: 0.5px;">Location</label>
                     <div class="booking_group-wrapper" style="position: relative !important; display: block !important; width: 100% !important; height: auto !important;">
-                        <select id="filtro-ciudad" class="booking_group-field field cursor-pointer" style="width: 100% !important; height: 50px !important; padding: 0 16px !important; border: 1px solid #ced4da !important; border-radius: 8px !important; background: #fff !important; font-size: 15px !important; outline: none !important; appearance: auto !important; box-sizing: border-box !important;">
-                            <option value="">All cities</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Selector de Zona / Vecindario -->
-                <div class="booking_group" style="display: flex !important; flex-direction: column !important; flex: 1 1 200px !important; min-width: 220px !important;">
-                    <label class="booking_group-label h5" for="filtro-zona" style="font-size: 13px !important; font-weight: 700 !important; color: #495057 !important; text-transform: uppercase !important; margin-bottom: 8px !important; display: block !important; letter-spacing: 0.5px;">Zone / Neighborhood</label>
-                    <div class="booking_group-wrapper" style="position: relative !important; display: block !important; width: 100% !important; height: auto !important;">
-                        <select id="filtro-zona" disabled class="booking_group-field field" style="width: 100% !important; height: 50px !important; padding: 0 16px !important; border: 1px solid #dee2e6 !important; border-radius: 8px !important; background: #e9ecef !important; color: #6c757d !important; font-size: 15px !important; outline: none !important; appearance: auto !important; cursor: not-allowed !important; box-sizing: border-box !important;">
-                            <option value="">Select a city first</option>
+                        <select id="filtro-ubicacion" class="booking_group-field field cursor-pointer" style="width: 100% !important; height: 50px !important; padding: 0 16px !important; border: 1px solid #ced4da !important; border-radius: 8px !important; background: #fff !important; font-size: 15px !important; outline: none !important; appearance: auto !important; box-sizing: border-box !important;">
+                            <option value="">All Locations</option>
                         </select>
                     </div>
                 </div>
@@ -200,7 +190,6 @@
 
             <!-- Fila 2: Rangos de Precios, Selector de Huéspedes Fijo y Botón de Limpieza -->
             <div class="item-wrapper" style="display: flex !important; flex-wrap: wrap !important; gap: 20px !important; align-items: flex-end !important; width: 100% !important;">
-                
                 <!-- Precio Mínimo -->
                 <div class="booking_group" style="display: flex !important; flex-direction: column !important; flex: 1 1 180px !important; min-width: 160px !important;">
                     <label class="booking_group-label h5" for="filtro-precio-min" style="font-size: 13px !important; font-weight: 700 !important; color: #495057 !important; text-transform: uppercase !important; margin-bottom: 8px !important; display: block !important; letter-spacing: 0.5px;">Min Price (MXN)</label>
@@ -217,25 +206,17 @@
                     </div>
                 </div>
 
-                <!-- Selector Fijo de Huéspedes (Sin menú desplegable externo) -->
+                <!-- Selector Fijo de Huéspedes -->
                 <div class="booking_group" style="display: flex !important; flex-direction: column !important; flex: 1 1 180px !important; min-width: 190px !important;">
                     <span class="booking_group-label h5" id="render-lbl-guests" style="font-size: 13px !important; font-weight: 700 !important; color: #495057 !important; text-transform: uppercase !important; margin-bottom: 8px !important; display: block !important; letter-spacing: 0.5px;">Guests</span>
                     <div class="booking_group-wrapper booking_group-wrapper--guests" style="position: relative !important; display: block !important; width: 100% !important; height: auto !important;">
                         <div class="booking_group-field" style="width: 100% !important; height: 50px !important; padding: 0 12px !important; border: 1px solid #ced4da !important; border-radius: 8px !important; background: #fff !important; font-size: 15px !important; display: flex !important; align-items: center !important; justify-content: space-between !important; box-sizing: border-box !important;">
-                            
-                            <!-- Botón de Restar (-) -->
-                            <a class="qty_minus qty-changer d-flex align-items-center justify-content-center" href="#" onclick="event.preventDefault(); cambiarHuespedes(-1)" 
-                            style="width: 32px; height: 32px; background: #f1f3f5; color: #495057; border-radius: 50%; text-decoration: none; font-weight: bold; font-size: 16px; user-select: none;">-</a>
-                            
-                            <!-- Contador Central (Sigue usando tus mismos IDs) -->
+                            <a class="qty_minus qty-changer d-flex align-items-center justify-content-center" href="#" onclick="event.preventDefault(); cambiarHuespedes(-1)" style="width: 32px; height: 32px; background: #f1f3f5; color: #495057; border-radius: 50%; text-decoration: none; font-weight: bold; font-size: 16px; user-select: none;">-</a>
                             <div style="font-weight: 600; color: #212529; text-align: center; flex-grow: 1; user-select: none;">
                                 <span id="display-huespedes">1</span> Guest(s)
                                 <input id="adults" name="adults" type="hidden" value="1" />
                             </div>
-                            
-                            <!-- Botón de Sumar (+) -->
-                            <a class="qty_plus qty-changer d-flex align-items-center justify-content-center" href="#" onclick="event.preventDefault(); cambiarHuespedes(1)" 
-                            style="width: 32px; height: 32px; background: #f1f3f5; color: #495057; border-radius: 50%; text-decoration: none; font-weight: bold; font-size: 16px; user-select: none;">+</a>
+                            <a class="qty_plus qty-changer d-flex align-items-center justify-content-center" href="#" onclick="event.preventDefault(); cambiarHuespedes(1)" style="width: 32px; height: 32px; background: #f1f3f5; color: #495057; border-radius: 50%; text-decoration: none; font-weight: bold; font-size: 16px; user-select: none;">+</a>
                         </div> 
                     </div>
                 </div>
