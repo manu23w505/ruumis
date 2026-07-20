@@ -215,7 +215,8 @@ function aplicarFiltros() {
         return coincideBusqueda && coincideUbicacion && coincidePrecio && coincideHuespedes;
     });
 
-    renderizarTarjetas(filtrados);
+    // CORRECCIÓN: Cambiado de renderizarTarjetas a renderizarAnunciosPublicos
+    renderizarAnunciosPublicos(filtrados);
 }
 
 function limpiarFiltros() {
@@ -227,7 +228,8 @@ function limpiarFiltros() {
     contadorHuespedes = 1;
     if(document.getElementById('display-huespedes')) document.getElementById('display-huespedes').innerText = '1';
     
-    renderizarTarjetas(todosLosAnuncios);
+    // CORRECCIÓN: Cambiado de renderizarTarjetas a renderizarAnunciosPublicos
+    renderizarAnunciosPublicos(todosLosAnuncios);
 }
 
 function extraerArregloImagenes(campo) {
