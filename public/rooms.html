@@ -163,6 +163,7 @@
             <h2 class="text-4xl font-extrabold mb-4 bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">Habitaciones Disponibles</h2>
             <p class="text-slate-500 max-w-xl mx-auto">Encuentra tu espacio ideal. Habitaciones totalmente amuebladas y listas para mudarte hoy mismo.</p>
         </div>
+        <br><br>
 
         <form class="booking" id="form-buscador" action="#" method="post" autocomplete="off" data-type="booking" data-aos="fade-up" 
             style="background: #fff; border-radius: 16px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); border: 1px solid #dee2e6; display: flex !important; flex-direction: column !important; gap: 24px !important; width: 100% !important; box-sizing: border-box !important;">
@@ -200,7 +201,7 @@
                 </div>
             </div>
 
-            <!-- Fila 2: Rangos de Precios, Dropdown de Huéspedes y Botón de Limpieza -->
+            <!-- Fila 2: Rangos de Precios, Selector de Huéspedes Fijo y Botón de Limpieza -->
             <div class="item-wrapper" style="display: flex !important; flex-wrap: wrap !important; gap: 20px !important; align-items: flex-end !important; width: 100% !important;">
                 
                 <!-- Precio Mínimo -->
@@ -219,26 +220,26 @@
                     </div>
                 </div>
 
-                <!-- Selector Dinámico de Huéspedes -->
-                <div class="booking_group" style="display: flex !important; flex-direction: column !important; flex: 1 1 180px !important; min-width: 180px !important; position: relative !important;">
+                <!-- Selector Fijo de Huéspedes (Sin menú desplegable externo) -->
+                <div class="booking_group" style="display: flex !important; flex-direction: column !important; flex: 1 1 180px !important; min-width: 190px !important;">
                     <span class="booking_group-label h5" id="render-lbl-guests" style="font-size: 13px !important; font-weight: 700 !important; color: #495057 !important; text-transform: uppercase !important; margin-bottom: 8px !important; display: block !important; letter-spacing: 0.5px;">Guests</span>
                     <div class="booking_group-wrapper booking_group-wrapper--guests" style="position: relative !important; display: block !important; width: 100% !important; height: auto !important;">
-                        <div class="booking_group-field dropdown-toggle" role="presentation" id="guests" data-bs-toggle="collapse" data-bs-target="#bookingDropdown" 
-                            style="width: 100% !important; height: 50px !important; padding: 0 16px !important; border: 1px solid #ced4da !important; border-radius: 8px !important; background: #fff !important; font-size: 15px !important; display: flex !important; align-items: center !important; cursor: pointer !important; justify-content: space-between !important; box-sizing: border-box !important;">
-                            <span><span id="display-huespedes">1</span> Guest(s)</span>
-                        </div> 
-                        <div class="booking_group-dropdown collapse" id="bookingDropdown" style="position: absolute !important; top: 100% !important; left: 0 !important; width: 100% !important; background: #fff !important; border: 1px solid #ced4da !important; border-radius: 8px !important; box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important; z-index: 999 !important;">
-                            <div class="content" style="padding: 12px !important;">
-                                <div class="booking_group-dropdown_wrapper d-flex align-items-center justify-content-between">
-                                    <label class="label h5 mb-0" for="adults" style="font-size: 14px !important; font-weight: 600 !important; margin-bottom: 0 !important;">Total</label>
-                                    <div class="main d-flex align-items-center gap-2">
-                                        <a class="qty_minus qty-changer d-flex align-items-center justify-content-center" href="#" onclick="event.preventDefault(); cambiarHuespedes(-1)" style="width: 28px; height: 28px; background: #f1f3f5; color: #495057; border-radius: 50%; text-decoration: none; font-weight: bold;">-</a>
-                                        <input class="field required text-center" id="adults" name="adults" type="text" value="1" readonly style="width: 35px; border: none; font-weight: bold; background: transparent;" />
-                                        <a class="qty_plus qty-changer d-flex align-items-center justify-content-center" href="#" onclick="event.preventDefault(); cambiarHuespedes(1)" style="width: 28px; height: 28px; background: #f1f3f5; color: #495057; border-radius: 50%; text-decoration: none; font-weight: bold;">+</a>
-                                    </div>
-                                </div>
+                        <div class="booking_group-field" style="width: 100% !important; height: 50px !important; padding: 0 12px !important; border: 1px solid #ced4da !important; border-radius: 8px !important; background: #fff !important; font-size: 15px !important; display: flex !important; align-items: center !important; justify-content: space-between !important; box-sizing: border-box !important;">
+                            
+                            <!-- Botón de Restar (-) -->
+                            <a class="qty_minus qty-changer d-flex align-items-center justify-content-center" href="#" onclick="event.preventDefault(); cambiarHuespedes(-1)" 
+                            style="width: 32px; height: 32px; background: #f1f3f5; color: #495057; border-radius: 50%; text-decoration: none; font-weight: bold; font-size: 16px; user-select: none;">-</a>
+                            
+                            <!-- Contador Central (Sigue usando tus mismos IDs) -->
+                            <div style="font-weight: 600; color: #212529; text-align: center; flex-grow: 1; user-select: none;">
+                                <span id="display-huespedes">1</span> Guest(s)
+                                <input id="adults" name="adults" type="hidden" value="1" />
                             </div>
-                        </div>
+                            
+                            <!-- Botón de Sumar (+) -->
+                            <a class="qty_plus qty-changer d-flex align-items-center justify-content-center" href="#" onclick="event.preventDefault(); cambiarHuespedes(1)" 
+                            style="width: 32px; height: 32px; background: #f1f3f5; color: #495057; border-radius: 50%; text-decoration: none; font-weight: bold; font-size: 16px; user-select: none;">+</a>
+                        </div> 
                     </div>
                 </div>
 
