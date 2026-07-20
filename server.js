@@ -2706,7 +2706,7 @@ app.post('/api/locations/how-it-works', (req, res) => {
 });
 
 // ==========================================
-// MCONTACTS SECTION
+// CONTACTS SECTION
 // ==========================================
 
 // Obtener los datos de contacto
