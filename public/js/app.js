@@ -2335,7 +2335,7 @@ async function cargarSeccionHowItWorks() {
         // 2. Inyectamos los datos en el encabezado de la sección
         document.getElementById('how_subtitle').innerText = data.how_subtitle;
         document.getElementById('how_title').innerText = data.how_title;
-        document.getElementById('how-desc').innerText = data.how_desc;
+        document.getElementById('how_desc').innerText = data.how_desc;
         
         // 3. Inyectamos los datos del Paso 1
         document.getElementById('step1_title').innerText = data.step1_title;
