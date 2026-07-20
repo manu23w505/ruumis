@@ -102,62 +102,62 @@
                 <div>
                     <div class="p-6 border-b border-slate-100">
                         <h1 class="text-xl font-bold text-slate-800 tracking-wider">ADMIN PANEL</h1>
-                        <p class="text-xs text-slate-400 font-normal">Panel Administrativo</p>
+                        <p class="text-xs text-slate-400 font-normal">Administrative Panel</p>
                     </div>
                     
                     <nav class="p-4 space-y-1">
                         <button onclick="cambiarPestana('tab-habitaciones', this)" class="sidebar-btn active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm bg-slate-100 text-slate-900 font-medium transition-all text-left">
-                            Habitaciones
+                            Rooms
                         </button>
                         <button onclick="cambiarPestana('tab-ubicaciones', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all text-left">
-                            Ubicaciones / Mapas
+                            Locations / Maps
                         </button>
                         <button onclick="cambiarPestana('tab-categorias', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all text-left">
-                            Tipos de Propiedad
+                            Property Types
                         </button>
                         <button onclick="cambiarPestana('tab-preguntas', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all text-left">
-                            Preguntas Frecuentes
+                            Frequently Asked Questions
                         </button>
                         <button onclick="cambiarPestana('tab-contacto', this); cargarCorreoDestino();" class="sidebar-btn w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 transition-colors text-slate-500 hover:bg-slate-50 hover:text-slate-900 text-sm">
-                            Configurar Contacto
+                            Configure Contact
                         </button>
                         <button onclick="cambiarPestana('tab-header', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all text-left">
-                            Configurar Header
+                            Configure Header
                         </button>
                         <button onclick="cambiarPestana('tab-footer', this)" class="sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all text-left">
-                            Gestión de Footer
+                            Footer Management
                         </button>
 
                         <button onclick="cambiarPestana('tab-paginas-cms', this)" class="sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 rounded-xl hover:bg-slate-50 text-left transition-all">
                             <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                             </svg>
-                            <span>Editar Web (CMS)</span>
+                            <span>Edit Website (CMS)</span>
                         </button>
 
                         <div class="mt-6 pt-4 border-t border-slate-200">
-                            <span class="px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Páginas Web</span>
+                            <span class="px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Web Pages</span>
                             <a href="admin-paginas.html" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 rounded-xl transition-all">
                                 <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                 </svg>
-                                Editar Contenido Páginas Web
+                                Edit Web Page Content
                             </a>
                         </div>
 
                         <div class="pt-4 border-t border-slate-100 my-2">
-                            <span class="px-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Próximamente</span>
+                            <span class="px-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">Coming Soon</span>
                             <button disabled class="w-full flex items-center gap-3 px-4 py-2.5 text-xs text-slate-300 text-left cursor-not-allowed">
-                                Ajustes del Sistema
+                                System Settings
                             </button>
                         </div>
                     </nav>
                 </div>
 
                 <div class="p-4 border-t border-slate-100 bg-slate-50/50 flex flex-col gap-2">
-                    <a href="index.html" target="_blank" class="text-xs text-center text-slate-500 hover:text-slate-800 font-medium py-1 transition-colors">Ver Sitio Público →</a>
+                    <a href="index.html" target="_blank" class="text-xs text-center text-slate-500 hover:text-slate-800 font-medium py-1 transition-colors">View Public Site →</a>
                     <button onclick="cerrarSesion()" class="w-full text-xs text-center bg-rose-50 text-rose-600 border border-rose-100 py-2 rounded-xl hover:bg-rose-600 hover:text-white transition-all cursor-pointer font-bold">
-                        Cerrar Sesión
+                        Log Out
                     </button>
                 </div>
             </aside>
@@ -165,15 +165,15 @@
             <!-- CONTENIDO PRINCIPAL -->
             <main class="flex-grow p-6 md:p-10 max-w-6xl mx-auto w-full overflow-x-hidden">
                 
-                <!-- SECCIÓN HABITACIONES -->
+                <!-- ROOMS SECTION -->
                 <section id="tab-habitaciones" class="tab-content active space-y-6">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <h2 class="text-2xl font-bold text-slate-900">Inventario de Habitaciones</h2>
-                            <p class="text-slate-500 text-sm">Modifica, elimina o agrega nuevas opciones de hospedaje al catálogo público.</p>
+                            <h2 class="text-2xl font-bold text-slate-900">Room Inventory</h2>
+                            <p class="text-slate-500 text-sm">Modify, delete, or add new lodging options to the public catalog.</p>
                         </div>
                         <button onclick="abrirModalCrear()" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-5 py-2.5 rounded-xl transition-colors shadow-sm cursor-pointer whitespace-nowrap text-sm">
-                            + Crear Nuevo Anuncio
+                            + Create New Listing
                         </button>
                     </div>
 
@@ -182,10 +182,10 @@
                             <table class="w-full text-left border-collapse whitespace-nowrap">
                                 <thead>
                                     <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-sm font-medium">
-                                        <th class="p-4">Propiedad</th>
-                                        <th class="p-4">Ubicación</th>
-                                        <th class="p-4">Precio</th>
-                                        <th class="p-4 text-right">Acciones</th>
+                                        <th class="p-4">Property</th>
+                                        <th class="p-4">Location</th>
+                                        <th class="p-4">Price</th>
+                                        <th class="p-4 text-right">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tabla-anuncios-body" class="divide-y divide-slate-100"></tbody>
@@ -194,15 +194,15 @@
                     </div>
                 </section>
 
-                <!-- SECCIÓN UBICACIONES -->
+                <!-- LOCATIONS SECTION -->
                 <section id="tab-ubicaciones" class="tab-content space-y-6">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <h2 class="text-2xl font-bold text-slate-900">Ubicaciones y Complejos</h2>
-                            <p class="text-slate-500 text-sm">Administra los mapas, zonas y especificaciones de las propiedades.</p>
+                            <h2 class="text-2xl font-bold text-slate-900">Locations and Complexes</h2>
+                            <p class="text-slate-500 text-sm">Manage maps, zones, and property specifications.</p>
                         </div>
                         <button onclick="abrirModalUbicacion()" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-5 py-2.5 rounded-xl transition-colors shadow-sm cursor-pointer whitespace-nowrap text-sm">
-                            + Nueva Ubicación con Mapa
+                            + New Location with Map
                         </button>
                     </div>
 
@@ -211,26 +211,26 @@
                             <table class="w-full text-left border-collapse text-sm">
                                 <thead>
                                     <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-medium sticky top-0 z-10">
-                                        <th class="p-4">Ciudad</th>
-                                        <th class="p-4">Zona / Colonia</th>
-                                        <th class="p-4 text-right">Acciones</th>
+                                        <th class="p-4">City</th>
+                                        <th class="p-4">Zone / Neighborhood</th>
+                                        <th class="p-4 text-right">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tabla-ubicaciones-body" class="divide-y divide-slate-100"></tbody>
                             </table>
                         </div>
                     </div>
-            </section>
+                </section>
 
-                <!-- SECCIÓN CATEGORÍAS -->
+                <!-- CATEGORIES SECTION -->
                 <section id="tab-categorias" class="tab-content space-y-6">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <h2 class="text-2xl font-bold text-slate-900">Tipos de Propiedades</h2>
-                            <p class="text-slate-500 text-sm">Categorías de clasificación para los listados (ej. Loft, Departamento, Cuarto Privado).</p>
+                            <h2 class="text-2xl font-bold text-slate-900">Property Types</h2>
+                            <p class="text-slate-500 text-sm">Classification categories for listings (e.g., Loft, Apartment, Private Room).</p>
                         </div>
                         <button onclick="abrirModalTipoPropiedad()" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-5 py-2.5 rounded-xl transition-colors shadow-sm cursor-pointer whitespace-nowrap text-sm">
-                            + Tipo Propiedad
+                            + Property Type
                         </button>
                     </div>
 
@@ -238,8 +238,8 @@
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
                                 <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-medium">
-                                    <th class="p-4">Nombre del Tipo / Categoría</th>
-                                    <th class="p-4 text-right">Acciones</th>
+                                    <th class="p-4">Type / Category Name</th>
+                                    <th class="p-4 text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="tabla-tipos-body" class="divide-y divide-slate-100"></tbody>
@@ -247,15 +247,15 @@
                     </div>
                 </section>
 
-                <!-- SECCIÓN PREGUNTAS -->
+                <!-- QUESTIONS SECTION -->
                 <section id="tab-preguntas" class="tab-content space-y-6">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <h2 class="text-2xl font-bold text-slate-900">Gestión de Preguntas Frecuentes</h2>
-                            <p class="text-slate-500 text-sm">Administra los textos del acordeón de soporte de la Landing Page. <span class="font-medium text-slate-600">(Límite: 6 preguntas)</span></p>
+                            <h2 class="text-2xl font-bold text-slate-900">FAQ Management</h2>
+                            <p class="text-slate-500 text-sm">Manage the support accordion text for the Landing Page. <span class="font-medium text-slate-600">(Limit: 6 questions)</span></p>
                         </div>
                         <button onclick="abrirModalPregunta()" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-5 py-2.5 rounded-xl transition-colors shadow-sm cursor-pointer whitespace-nowrap text-sm">
-                            + Nueva Pregunta
+                            + New Question
                         </button>
                     </div>
 
@@ -265,9 +265,9 @@
                                 <thead>
                                     <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-medium">
                                         <th class="p-4 w-16 text-center">ID</th>
-                                        <th class="p-4">Pregunta</th>
-                                        <th class="p-4">Respuesta de la Plantilla</th>
-                                        <th class="p-4 text-center w-32">Acciones</th>
+                                        <th class="p-4">Question</th>
+                                        <th class="p-4">Template Response</th>
+                                        <th class="p-4 text-center w-32">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tabla-preguntas-body" class="divide-y divide-slate-100"></tbody>
@@ -276,72 +276,71 @@
                     </div>
                 </section>
 
-                <!-- SECCIÓN CONTACTO -->
+                <!-- CONTACT SECTION -->
                 <section id="tab-contacto" class="tab-content space-y-6">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <h2 class="text-2xl font-bold text-slate-900">Configuración de Mensajes de Contacto</h2>
-                            <p class="text-slate-500 text-sm">Define y administra el correo electrónico al cual llegarán las notificaciones del sitio.</p>
+                            <h2 class="text-2xl font-bold text-slate-900">Contact Messages Configuration</h2>
+                            <p class="text-slate-500 text-sm">Define and manage the email address where site notifications will be sent.</p>
                         </div>
                     </div>
 
                     <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm max-w-2xl">
-                        <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-3">Correo configurado actualmente</h3>
+                        <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-3">Currently configured email</h3>
                         <div class="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl p-4">
                             <div class="flex items-center gap-3">
-                                <input type="email" id="vista-email-actual" readonly class="bg-transparent border-none text-slate-700 font-medium text-sm focus:outline-none w-64" value="Cargando...">
+                                <input type="email" id="vista-email-actual" readonly class="bg-transparent border-none text-slate-700 font-medium text-sm focus:outline-none w-64" value="Loading...">
                             </div>
                             <button onclick="abrirModalEditarCorreo()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-medium px-4 py-2 rounded-xl transition-colors shadow-sm cursor-pointer">
-                                Modificar Correo
+                                Update Email
                             </button>
                         </div>
                     </div>
                     
                     <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm max-w-2xl space-y-3">
-                        <label class="block text-sm font-medium text-slate-700">Cambiar Favicon (formato .ico o .png)</label>
+                        <label class="block text-sm font-medium text-slate-700">Change Favicon (.ico or .png format)</label>
                         <input type="file" id="input-favicon" accept="image/*" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-medium file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200">
-                        <button onclick="subirFavicon()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-medium px-4 py-2 rounded-xl transition-all shadow-sm">Guardar Favicon</button>
+                        <button onclick="subirFavicon()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-medium px-4 py-2 rounded-xl transition-all shadow-sm">Save Favicon</button>
                     </div>
                 </section>
 
-                <!-- SECCIÓN HEADER -->
                 <section id="tab-header" class="tab-content space-y-6">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <h2 class="text-2xl font-bold text-slate-900">Control de Header y Enrutamiento</h2>
-                            <p class="text-slate-500 text-sm">Administra la identidad de marca, los enlaces del menú y tus enlaces estéticos de navegación.</p>
+                            <h2 class="text-2xl font-bold text-slate-900">Header and Routing Control</h2>
+                            <p class="text-slate-500 text-sm">Manage brand identity, menu links, and your aesthetic navigation URLs.</p>
                         </div>
                     </div>
 
                     <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
                         <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Identidad Visual</h3>
-                            <button onclick="abrirModalMarca()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-1.5 rounded-lg transition-all">Editar Identidad</button>
+                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Visual Identity</h3>
+                            <button onclick="abrirModalMarca()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-1.5 rounded-lg transition-all">Edit Identity</button>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                             <div>
-                                <span class="block text-xs font-semibold text-slate-400">Nombre de la Marca:</span>
-                                <p id="vista-nombre-marca" class="font-medium text-slate-700 mt-1">Cargando...</p>
+                                <span class="block text-xs font-semibold text-slate-400">Brand Name:</span>
+                                <p id="vista-nombre-marca" class="font-medium text-slate-700 mt-1">Loading...</p>
                             </div>
                             <div>
-                                <span class="block text-xs font-semibold text-slate-400">Logotipo (SVG):</span>
-                                <p class="font-mono text-xs text-slate-500 mt-1 truncate max-w-xs" id="vista-logo-svg">Cargando...</p>
+                                <span class="block text-xs font-semibold text-slate-400">Logo (SVG):</span>
+                                <p class="font-mono text-xs text-slate-500 mt-1 truncate max-w-xs" id="vista-logo-svg">Loading...</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
                         <div class="p-4 border-b border-slate-100 bg-slate-50/50">
-                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Enlaces del Menú y URLs Limpias</h3>
+                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Menu Links and Clean URLs</h3>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse text-sm">
                                 <thead>
                                     <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-medium">
-                                        <th class="p-4">Archivo Físico</th>
-                                        <th class="p-4">Nombre en Menú</th>
-                                        <th class="p-4">URL Estética</th>
-                                        <th class="p-4 text-center w-32">Acción</th>
+                                        <th class="p-4">Physical File</th>
+                                        <th class="p-4">Menu Name</th>
+                                        <th class="p-4">Aesthetic URL</th>
+                                        <th class="p-4 text-center w-32">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tablaPaginasMenu" class="divide-y divide-slate-100"></tbody>
@@ -351,142 +350,141 @@
 
                     <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
                         <div class="flex justify-between items-center border-b border-slate-100 pb-3 mb-4">
-                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Redes Sociales</h3>
-                            <button onclick="abrirModalRedes()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-1.5 rounded-lg transition-all">Modificar Redes</button>
+                            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Social Media</h3>
+                            <button onclick="abrirModalRedes()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium px-3 py-1.5 rounded-lg transition-all">Modify Social Media</button>
                         </div>
                         <div id="contenedorRedesVista" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600"></div>
                     </div>
                 </section>
 
-                <!-- SECCIÓN FOOTER -->
                 <section id="tab-footer" class="tab-content space-y-6">
                     <div>
-                        <h2 class="text-2xl font-bold text-slate-900">Personalización del Footer</h2>
-                        <p class="text-slate-500 text-sm">Administra y actualiza de forma individual cada sección, textos y títulos que componen el pie de página público.</p>
+                        <h2 class="text-2xl font-bold text-slate-900">Footer Customization</h2>
+                        <p class="text-slate-500 text-sm">Individually manage and update each section, texts, and titles that compose the public footer.</p>
                     </div>
 
                     <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
                         
                         <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
                             <div class="border-b border-slate-100 pb-2">
-                                <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Identidad Corporativa</h3>
+                                <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Corporate Identity</h3>
                             </div>
                             
                             <div>
-                                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Nombre de la Marca <span class="text-slate-400 font-normal italic">(Se edita en Header)</span></label>
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Brand Name <span class="text-slate-400 font-normal italic">(Edited in Header)</span></label>
                                 <input type="text" id="footer-vista-marca" readonly class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-400 cursor-not-allowed focus:outline-none">
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Logotipo Corporativo (SVG) <span class="text-slate-400 font-normal italic">(Se edita en Header)</span></label>
+                                <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Corporate Logo (SVG) <span class="text-slate-400 font-normal italic">(Edited in Header)</span></label>
                                 <div class="flex gap-2">
                                     <textarea id="footer-vista-logo" readonly rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs font-mono text-slate-400 cursor-not-allowed resize-none focus:outline-none"></textarea>
                                 </div>
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Descripción del Footer</label>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Footer Description</label>
                                 <div class="flex gap-2">
                                     <textarea id="footer-descripcion" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400 resize-none"></textarea>
-                                    <button onclick="guardarDatoIndividual('footer_descripcion', 'footer-descripcion')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all flex items-center justify-center shadow-sm">Actualizar</button>
+                                    <button onclick="guardarDatoIndividual('footer_descripcion', 'footer-descripcion')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all flex items-center justify-center shadow-sm">Update</button>
                                 </div>
                             </div>
                         </div>
 
                         <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
                             <div class="border-b border-slate-100 pb-2">
-                                <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Encabezados de Columnas</h3>
+                                <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Column Headers</h3>
                             </div>
                             
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Columna 1: Enlaces Rápidos</label>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Column 1: Quick Links</label>
                                 <div class="flex gap-2">
                                     <input type="text" id="footer-titulo-links" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400">
-                                    <button onclick="guardarDatoIndividual('footer_titulo_links', 'footer-titulo-links')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                    <button onclick="guardarDatoIndividual('footer_titulo_links', 'footer-titulo-links')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Update</button>
                                 </div>
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Columna 2: Contacto</label>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Column 2: Contact</label>
                                 <div class="flex gap-2">
                                     <input type="text" id="footer-titulo-contacto" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400">
-                                    <button onclick="guardarDatoIndividual('footer_titulo_contacto', 'footer-titulo-contacto')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                    <button onclick="guardarDatoIndividual('footer_titulo_contacto', 'footer-titulo-contacto')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Update</button>
                                 </div>
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Columna 3: Redes Sociales</label>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Column 3: Social Media</label>
                                 <div class="flex gap-2">
                                     <input type="text" id="footer-titulo-redes" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400">
-                                    <button onclick="guardarDatoIndividual('footer_titulo_redes', 'footer-titulo-redes')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                    <button onclick="guardarDatoIndividual('footer_titulo_redes', 'footer-titulo-redes')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Update</button>
                                 </div>
                             </div>
                         </div>
 
                         <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
                             <div class="border-b border-slate-100 pb-2">
-                                <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Información de Contacto y Redes</h3>
+                                <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Contact Information and Networks</h3>
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Dirección Física - Línea 1</label>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Physical Address - Line 1</label>
                                 <div class="flex gap-2">
                                     <input type="text" id="footer-direccion-linea1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400">
-                                    <button onclick="guardarDatoIndividual('footer_direccion_linea1', 'footer-direccion-linea1')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                    <button onclick="guardarDatoIndividual('footer_direccion_linea1', 'footer-direccion-linea1')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Update</button>
                                 </div>
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Dirección Física - Línea 2</label>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Physical Address - Line 2</label>
                                 <div class="flex gap-2">
                                     <input type="text" id="footer-direccion-linea2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400">
-                                    <button onclick="guardarDatoIndividual('footer_direccion_linea2', 'footer-direccion-linea2')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                    <button onclick="guardarDatoIndividual('footer_direccion_linea2', 'footer-direccion-linea2')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Update</button>
                                 </div>
                             </div>
                             
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Teléfono Principal</label>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Primary Phone</label>
                                 <div class="flex gap-2">
                                     <input type="text" id="footer-telefono1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400">
-                                    <button onclick="guardarDatoIndividual('footer_telefono1', 'footer-telefono1')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                    <button onclick="guardarDatoIndividual('footer_telefono1', 'footer-telefono1')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Update</button>
                                 </div>
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Teléfono Secundario</label>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Secondary Phone</label>
                                 <div class="flex gap-2">
                                     <input type="text" id="footer-telefono2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400">
-                                    <button onclick="guardarDatoIndividual('footer_telefono2', 'footer-telefono2')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                    <button onclick="guardarDatoIndividual('footer_telefono2', 'footer-telefono2')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Update</button>
                                 </div>
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Subtexto Redes Sociales</label>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Social Media Subtext</label>
                                 <div class="flex gap-2">
                                     <input type="text" id="footer-texto-redes" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400">
-                                    <button onclick="guardarDatoIndividual('footer_texto_redes', 'footer-texto-redes')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                    <button onclick="guardarDatoIndividual('footer_texto_redes', 'footer-texto-redes')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Update</button>
                                 </div>
                             </div>
                         </div>
 
                         <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
                             <div class="border-b border-slate-100 pb-2">
-                                <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Derechos de Autor</h3>
+                                <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Copyright</h3>
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Línea de Copyright 1 (ej. Merkulove &copy; Hosteller)</label>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Copyright Line 1 (e.g., Merkulove &copy; Hosteller)</label>
                                 <div class="flex gap-2">
                                     <input type="text" id="footer-copyright-linea1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400">
-                                    <button onclick="guardarDatoIndividual('footer_copyright_linea1', 'footer-copyright-linea1')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                    <button onclick="guardarDatoIndividual('footer_copyright_linea1', 'footer-copyright-linea1')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Update</button>
                                 </div>
                             </div>
 
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Línea de Copyright 2 (ej. All rights reserved 2026)</label>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Copyright Line 2 (e.g., All rights reserved 2026)</label>
                                 <div class="flex gap-2">
                                     <input type="text" id="footer-copyright-linea2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:border-slate-400">
-                                    <button onclick="guardarDatoIndividual('footer_copyright_linea2', 'footer-copyright-linea2')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Actualizar</button>
+                                    <button onclick="guardarDatoIndividual('footer_copyright_linea2', 'footer-copyright-linea2')" class="bg-slate-800 hover:bg-slate-700 text-white font-medium px-3 rounded-xl text-xs transition-all shadow-sm">Update</button>
                                 </div>
                             </div>
                         </div>
@@ -496,8 +494,8 @@
 
                 <section id="tab-paginas-cms" class="tab-content space-y-4">
                     <div>
-                        <h2 class="text-xl font-bold text-slate-800" style="color: #2c3e50;">Administrador de Contenido</h2>
-                        <p class="text-slate-400 text-xs">Modifica las secciones, textos e imágenes de la plantilla principal.</p>
+                        <h2 class="text-xl font-bold text-slate-800" style="color: #2c3e50;">Content Manager</h2>
+                        <p class="text-slate-400 text-xs">Modify sections, texts, and images of the main template.</p>
                     </div>
 
                     <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm w-full h-[calc(100vh-160px)]">
@@ -510,91 +508,91 @@
 
     <div id="modal-formulario" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
         <div class="bg-white border border-slate-200 w-full max-w-xl p-8 rounded-2xl shadow-2xl relative max-h-[95vh] overflow-y-auto custom-scrollbar">
-            <h3 id="modal-titulo" class="text-2xl font-bold text-slate-900 mb-1">Registrar Propiedad</h3>
-            <p class="text-slate-500 text-xs mb-6">Ingresa la información detallada de la recámara.</p>
+            <h3 id="modal-titulo" class="text-2xl font-bold text-slate-900 mb-1">Register Property</h3>
+            <p class="text-slate-500 text-xs mb-6">Enter the detailed information of the room.</p>
 
             <form id="form-anuncio" class="space-y-4" enctype="multipart/form-data">
                 <input type="hidden" id="anuncio-id">
                 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">ID Interno (Código)</label>
-                        <input type="text" id="id_interno" placeholder="Ej: RM-101" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Internal ID (Code)</label>
+                        <input type="text" id="id_interno" placeholder="e.g., RM-101" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
                     </div>
                     <div class="sm:col-span-2">
-                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Título del Anuncio *</label>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Listing Title *</label>
                         <input type="text" id="titulo" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
                     </div>
                 </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Descripción General</label>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">General Description</label>
                         <textarea id="descripcion" rows="3" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors"></textarea>
                     </div>
                     <div>
                         <div class="flex items-center space-x-1.5 mb-1">
-                            <label class="block text-xs font-bold uppercase text-slate-500">Descripción Corta</label>
+                            <label class="block text-xs font-bold uppercase text-slate-500">Short Description</label>
                             
                             <div class="group relative flex items-center cursor-help text-slate-400 hover:text-cyan-500 transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                 <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-slate-800 text-white text-[10px] rounded-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none shadow-xl z-50 font-normal normal-case leading-snug">
-                                    Recomendado: <span class="text-cyan-400 font-bold">Máx. 120 letras</span>. Este texto se muestra en las tarjetas de la página principal.
+                                    Recommended: <span class="text-cyan-400 font-bold">Max. 120 characters</span>. This text is displayed on the homepage cards.
                                     <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
                                 </div>
                             </div>
                         </div>
-                        <textarea id="descripcion_corta" rows="3" required placeholder="Resumen breve para tarjetas..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors"></textarea>
+                        <textarea id="descripcion_corta" rows="3" required placeholder="Brief summary for cards..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors"></textarea>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div class="form-group sm:col-span-1">
-                        <label for="anuncio-ubicacion-id" class="block text-xs font-bold uppercase text-slate-500 mb-1">Ubicación / Complejo *</label>
+                        <label for="anuncio-ubicacion-id" class="block text-xs font-bold uppercase text-slate-500 mb-1">Location / Complex *</label>
                         <select id="anuncio-ubicacion-id" name="ubicacion_id" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-cyan-500 transition-all" required>
-                            <option value="">Selecciona...</option>
+                            <option value="">Select...</option>
                         </select>
                     </div>
                     <div class="flex flex-col sm:col-span-1">
-                        <label for="tipo_propiedad" class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Tipo de Propiedad *</label>
+                        <label for="tipo_propiedad" class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Property Type *</label>
                         <select id="tipo_propiedad" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-cyan-500 transition-all" required>
-                            <option value="">Selecciona...</option>
+                            <option value="">Select...</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Capacidad *</label>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Capacity *</label>
                         <input type="number" id="capacidad_personas" min="1" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-3 gap-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Recámaras</label>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Bedrooms</label>
                         <input type="number" id="recamaras" min="0" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Camas</label>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Beds</label>
                         <input type="number" id="camas" min="1" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Baños</label>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Bathrooms</label>
                         <input type="number" id="banos" min="0" step="0.5" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Precio x Noche ($ MXN) *</label>
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Price per Night ($ MXN) *</label>
                         <input type="number" id="precio" step="0.01" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Precio Descuento (Opcional)</label>
-                        <input type="number" id="precio_descuento" step="0.01" placeholder="Ej: 1200" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                        <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Discount Price (Optional)</label>
+                        <input type="number" id="precio_descuento" step="0.01" placeholder="e.g., 1200" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
                     </div>
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Imágenes del Anuncio (Máximo 5)</label>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Listing Images (Maximum 5)</label>
                     
                     <input 
                         type="file" 
@@ -607,48 +605,48 @@
                     >
                     
                     <p id="error-limite-imagenes" class="text-red-500 text-xs font-semibold mt-1 hidden">
-                        Solo puedes seleccionar un máximo de 5 imágenes.
+                        You can only select a maximum of 5 images.
                     </p>
                     
                     <div id="vista-previa-imagenes" class="flex flex-wrap gap-2 mt-3"></div>
                 </div>
                 <div>
                     <div class="flex items-center space-x-1.5 mb-1">
-                        <label class="block text-xs font-bold uppercase text-slate-500">Amenidades (Separadas por comas)</label>
+                        <label class="block text-xs font-bold uppercase text-slate-500">Amenities (Separated by commas)</label>
                         
                         <div class="group relative flex items-center cursor-help text-slate-400 hover:text-cyan-500 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                             <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 bg-slate-800 text-white text-[10px] rounded-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none shadow-xl z-50 font-normal normal-case leading-snug">
-                                Separar estrictamente por <span class="text-emerald-400 font-bold">comas (,)</span>. <br>Ejemplo: <span class="font-mono text-slate-300">Wi-Fi, Alberca, Smart TV</span>
+                                Strictly separate by <span class="text-emerald-400 font-bold">commas (,)</span>. <br>Example: <span class="font-mono text-slate-300">Wi-Fi, Pool, Smart TV</span>
                                 <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
                             </div>
                         </div>
                     </div>
-                    <input type="text" id="amenidades" placeholder="Ej: Wi-Fi, Cocina, Clima, Agua Caliente" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                    <input type="text" id="amenidades" placeholder="e.g., Wi-Fi, Kitchen, A/C, Hot Water" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Enlace de Airbnb (Link de Redirección)</label>
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Airbnb Link (Redirection Link)</label>
                     <input type="url" id="link_airbnb" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
                 </div>
                 <div>
                     <div class="flex items-center space-x-1.5 mb-1">
-                        <label class="block text-xs font-bold uppercase text-slate-500">Enlace del Calendario (iCal de Airbnb)</label>
+                        <label class="block text-xs font-bold uppercase text-slate-500">Calendar Link (Airbnb iCal)</label>
                         
                         <div class="group relative flex items-center cursor-help text-amber-500 hover:text-amber-600 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                             <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 bg-slate-900 text-white text-[10px] rounded-lg p-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none shadow-xl z-50 font-normal normal-case leading-relaxed">
-                                <span class="text-amber-400 font-bold block mb-0.5">⚠️ ¡ATENCIÓN! No es el link del anuncio.</span>
-                                Debes entrar a Airbnb desde PC, ir a <span class="text-slate-300 font-semibold">Precios y disponibilidad > Sincronización > Exportar calendario</span> y pegar esa URL.
+                                <span class="text-amber-400 font-bold block mb-0.5">⚠️ ATTENTION! This is not the listing link.</span>
+                                You must log into Airbnb from a PC, go to <span class="text-slate-300 font-semibold">Pricing and availability > Synchronization > Export calendar</span> and paste that URL.
                                 <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></div>
                             </div>
                         </div>
                     </div>
-                    <input type="url" id="link_calendario" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors" placeholder="https://www.airbnb.mx/calendar/ical/...">
+                    <input type="url" id="link_calendario" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors" placeholder="https://www.airbnb.com/calendar/ical/...">
                 </div>
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-slate-100 mt-6">
-                    <button type="button" onclick="cerrarModal()" class="px-5 py-2 rounded-xl bg-slate-200 text-slate-700 hover:bg-slate-300 transition-colors text-sm font-semibold cursor-pointer">Cancelar</button>
-                    <button type="submit" class="px-5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-600 text-slate-950 transition-colors text-sm font-semibold cursor-pointer">Guardar Cambios</button>
+                    <button type="button" onclick="cerrarModal()" class="px-5 py-2 rounded-xl bg-slate-200 text-slate-700 hover:bg-slate-300 transition-colors text-sm font-semibold cursor-pointer">Cancel</button>
+                    <button type="submit" class="px-5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-600 text-slate-950 transition-colors text-sm font-semibold cursor-pointer">Save Changes</button>
                 </div>
             </form>
         </div>
@@ -656,16 +654,16 @@
 
     <div id="modal-tipo-propiedad" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
         <div class="bg-white border border-slate-200 w-full max-w-md p-6 rounded-2xl shadow-2xl relative">
-            <h3 id="modal-tipo-titulo" class="text-xl font-bold text-slate-900 mb-4">Agregar Tipo de Propiedad</h3>
+            <h3 id="modal-tipo-titulo" class="text-xl font-bold text-slate-900 mb-4">Add Property Type</h3>
             <form id="form-tipo-propiedad" class="space-y-4">
                 <input type="hidden" id="tipo-id">
                 <div>
-                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Nombre de la Categoría</label>
-                    <input type="text" id="tipo-nombre" required placeholder="Ej: Loft, Penthouse, Glamping" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
+                    <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Category Name</label>
+                    <input type="text" id="tipo-nombre" required placeholder="e.g., Loft, Penthouse, Glamping" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 transition-colors">
                 </div>
                 <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
-                    <button type="button" onclick="cerrarModalTipoPropiedad()" class="px-4 py-2 rounded-xl bg-slate-200 text-slate-700 text-sm font-semibold">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 rounded-xl bg-cyan-500 text-slate-950 text-sm font-semibold">Guardar</button>
+                    <button type="button" onclick="cerrarModalTipoPropiedad()" class="px-4 py-2 rounded-xl bg-slate-200 text-slate-700 text-sm font-semibold">Cancel</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-cyan-500 text-slate-950 text-sm font-semibold">Save</button>
                 </div>
             </form>
         </div>
@@ -673,66 +671,66 @@
 
     <div id="modal-ubicacion" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 border border-slate-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
-            <h3 id="modal-ubicacion-titulo" class="text-xl font-bold text-slate-800 mb-4">Agregar Ubicación</h3>
+            <h3 id="modal-ubicacion-titulo" class="text-xl font-bold text-slate-800 mb-4">Add Location</h3>
             
             <form id="form-ubicacion" class="space-y-4">
                 <input type="hidden" id="ubicacion-id">
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Ciudad</label>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">City</label>
                         <div class="flex gap-2">
                             <select id="ubicacion-ciudad-select" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-cyan-500" onchange="cambiarZonasPorCiudadAdmin(this.value)"></select>
                             <button type="button" onclick="mostrarInputNuevaCiudad()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold rounded-lg cursor-pointer transition-colors whitespace-nowrap">
-                                + Nueva
+                                + New
                             </button>
                         </div>
-                        <input type="text" id="ubicacion-ciudad-nuevo" class="hidden mt-2 w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-cyan-500" placeholder="Nombre de la ciudad">
-                        <button type="button" id="btn-cancelar-nueva-ciudad" onclick="ocultarInputNuevaCiudad()" class="hidden text-[11px] text-red-500 mt-1 hover:underline cursor-pointer">Cancelar nueva ciudad</button>
+                        <input type="text" id="ubicacion-ciudad-nuevo" class="hidden mt-2 w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-cyan-500" placeholder="City name">
+                        <button type="button" id="btn-cancelar-nueva-ciudad" onclick="ocultarInputNuevaCiudad()" class="hidden text-[11px] text-red-500 mt-1 hover:underline cursor-pointer">Cancel new city</button>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Zona / Colonia</label>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Zone / Neighborhood</label>
                         <div class="flex gap-2">
                             <select id="ubicacion-zona-select" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-cyan-500">
-                                <option value="">Selecciona una zona...</option>
+                                <option value="">Select a zone...</option>
                             </select>
                             <button type="button" onclick="mostrarInputNuevaZona()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold rounded-lg cursor-pointer transition-colors whitespace-nowrap">
-                                + Nueva
+                                + New
                             </button>
                         </div>
-                        <input type="text" id="ubicacion-zona-nuevo" class="hidden mt-2 w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-cyan-500" placeholder="Ej. Centro, Jardines">
-                        <button type="button" id="btn-cancelar-nueva-zona" onclick="ocultarInputNuevaZona()" class="hidden text-[11px] text-red-500 mt-1 hover:underline cursor-pointer">Cancelar nueva zona</button>
+                        <input type="text" id="ubicacion-zona-nuevo" class="hidden mt-2 w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-cyan-500" placeholder="e.g., Downtown, Gardens">
+                        <button type="button" id="btn-cancelar-nueva-zona" onclick="ocultarInputNuevaZona()" class="hidden text-[11px] text-red-500 mt-1 hover:underline cursor-pointer">Cancel new zone</button>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Nombre del Complejo o Edificio</label>
-                    <input type="text" id="ubicacion-nombre-complejo" placeholder="Ej. Edificio Ruumis Centro, Loft Tec" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-cyan-500">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Complex or Building Name</label>
+                    <input type="text" id="ubicacion-nombre-complejo" placeholder="e.g., Ruumis Downtown Building, Loft Tec" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-cyan-500">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Dirección Física Completa</label>
-                    <input type="text" id="ubicacion-direccion" placeholder="Ej. Av. Manuel Madero #405, Int 4" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-cyan-500">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Full Physical Address</label>
+                    <input type="text" id="ubicacion-direccion" placeholder="e.g., 405 Manuel Madero Ave, Apt 4" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-cyan-500">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Enlace de Google Maps (URL Redirección)</label>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Google Maps Link (Redirection URL)</label>
                     <input type="url" id="ubicacion-link-maps" placeholder="https://maps.app.goo.gl/..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-cyan-500">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Código de Mapa Embebido (Iframe src únicamente)</label>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Embedded Map Code (Iframe src only)</label>
                     <input type="text" id="ubicacion-iframe" placeholder="https://www.google.com/maps/embed?pb=..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-cyan-500">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Especificaciones del Complejo</label>
-                    <textarea id="ubicacion-especificaciones" rows="2" placeholder="Ej. Portón eléctrico, CCTV, terraza compartida..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-cyan-500"></textarea>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Complex Specifications</label>
+                    <textarea id="ubicacion-especificaciones" rows="2" placeholder="e.g., Electric gate, CCTV, shared terrace..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-cyan-500"></textarea>
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Imagen de la Ubicación</label>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Location Image</label>
                     <input 
                         type="file" 
                         id="ubicacion-imagen-file" 
@@ -747,8 +745,8 @@
                 </div>
 
                 <div class="flex justify-end space-x-2 pt-4 border-t border-slate-100">
-                    <button type="button" onclick="cerrarModalUbicacion()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold rounded-lg cursor-pointer transition-colors">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-semibold rounded-lg shadow-sm cursor-pointer transition-colors">Guardar Ubicación</button>
+                    <button type="button" onclick="cerrarModalUbicacion()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold rounded-lg cursor-pointer transition-colors">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-semibold rounded-lg shadow-sm cursor-pointer transition-colors">Save Location</button>
                 </div>
             </form>
         </div>
@@ -757,7 +755,7 @@
     <div id="modal-pregunta" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-lg p-6 shadow-xl animate-in fade-in zoom-in-95 duration-150">
             <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
-                <h3 id="modal-pregunta-titulo" class="font-black text-lg text-slate-900">Nueva Pregunta</h3>
+                <h3 id="modal-pregunta-titulo" class="font-black text-lg text-slate-900">New Question</h3>
                 <button onclick="cerrarModalPregunta()" class="text-slate-400 hover:text-slate-600 cursor-pointer">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
@@ -768,18 +766,18 @@
                 
                 <div class="space-y-4 mb-6">
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Pregunta</label>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Question</label>
                         <input type="text" id="pregunta-texto" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-cyan-500 transition-colors">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Respuesta</label>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Answer</label>
                         <textarea id="pregunta-respuesta" required rows="4" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-cyan-500 transition-colors resize-none"></textarea>
                     </div>
                 </div>
                 
                 <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
-                    <button type="button" onclick="cerrarModalPregunta()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 transition-colors cursor-pointer">Cancelar</button>
-                    <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs shadow-sm transition-colors cursor-pointer">Guardar Cambios</button>
+                    <button type="button" onclick="cerrarModalPregunta()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 transition-colors cursor-pointer">Cancel</button>
+                    <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs shadow-sm transition-colors cursor-pointer">Save Changes</button>
                 </div>
             </form>
         </div>
@@ -788,7 +786,7 @@
     <div id="modal-editar-correo" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-lg p-6 shadow-xl">
             <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
-                <h3 class="font-black text-lg text-slate-900">Modificar Correo de Destino</h3>
+                <h3 class="font-black text-lg text-slate-900">Modify Destination Email</h3>
                 <button onclick="cerrarModalEditarCorreo()" class="text-slate-400 hover:text-slate-600 cursor-pointer">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
@@ -797,14 +795,14 @@
             <form onsubmit="guardarCorreoDestinoNuevo(event)">
                 <div class="space-y-4 mb-6">
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Nuevo Correo Electrónico</label>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">New Email Address</label>
                         <input type="email" id="config-email-destino-nuevo" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-cyan-500 transition-colors">
                     </div>
                 </div>
                 
                 <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
-                    <button type="button" onclick="cerrarModalEditarCorreo()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 transition-colors cursor-pointer">Cancelar</button>
-                    <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs shadow-sm transition-colors cursor-pointer">Guardar Cambios</button>
+                    <button type="button" onclick="cerrarModalEditarCorreo()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 transition-colors cursor-pointer">Cancel</button>
+                    <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs shadow-sm transition-colors cursor-pointer">Save Changes</button>
                 </div>
             </form>
         </div>
@@ -813,7 +811,7 @@
     <div id="modal-header-marca" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-lg p-6 shadow-xl">
             <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
-                <h3 class="font-black text-lg text-slate-900">Editar Marca e Identidad</h3>
+                <h3 class="font-black text-lg text-slate-900">Edit Brand and Identity</h3>
                 <button type="button" onclick="cerrarModalMarca()" class="text-slate-400 hover:text-slate-600 cursor-pointer">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
@@ -821,25 +819,25 @@
             <form id="formMarcaLogo">
                 <div class="space-y-4 mb-6">
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Nombre de la Marca</label>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Brand Name</label>
                         <input type="text" id="inputNombreMarca" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-cyan-500">
                     </div>
                     
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Logotipo del Header (Opcional)</label>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Header Logo (Optional)</label>
                         <input type="file" id="inputHeaderLogo" accept="image/jpeg, image/jpg, image/png, image/webp" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-cyan-500">
-                        <p class="text-[11px] text-slate-400 mt-1">Actual: <span id="span-header-actual" class="font-mono font-bold text-cyan-600">Por defecto</span></p>
+                        <p class="text-[11px] text-slate-400 mt-1">Current: <span id="span-header-actual" class="font-mono font-bold text-cyan-600">Default</span></p>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Logotipo del Footer (Opcional)</label>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Footer Logo (Optional)</label>
                         <input type="file" id="inputFooterLogo" accept="image/jpeg, image/jpg, image/png, image/webp" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-indigo-500">
-                        <p class="text-[11px] text-slate-400 mt-1">Actual: <span id="span-footer-actual" class="font-mono font-bold text-indigo-600">Por defecto</span></p>
+                        <p class="text-[11px] text-slate-400 mt-1">Current: <span id="span-footer-actual" class="font-mono font-bold text-indigo-600">Default</span></p>
                     </div>
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
-                    <button type="button" onclick="cerrarModalMarca()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100">Cancelar</button>
-                    <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs shadow-sm">Guardar Cambios</button>
+                    <button type="button" onclick="cerrarModalMarca()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100">Cancel</button>
+                    <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs shadow-sm">Save Changes</button>
                 </div>
             </form>
         </div>
@@ -848,7 +846,7 @@
     <div id="modal-header-pagina" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-lg p-6 shadow-xl">
             <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
-                <h3 class="font-black text-lg text-slate-900">Editar Configuración de Enlace</h3>
+                <h3 class="font-black text-lg text-slate-900">Edit Link Settings</h3>
                 <button onclick="cerrarModalPagina()" class="text-slate-400 hover:text-slate-600 cursor-pointer">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
@@ -857,21 +855,21 @@
                 <input type="hidden" id="edit-pagina-id">
                 <div class="space-y-4 mb-6">
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Archivo Real</label>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Real File</label>
                         <input type="text" id="edit-pagina-archivo" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-500 focus:outline-none">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Nombre en Menú</label>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Menu Name</label>
                         <input type="text" id="edit-pagina-nombre" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-cyan-500">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">URL Estética</label>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Friendly URL</label>
                         <input type="text" id="edit-pagina-url" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-cyan-500">
                     </div>
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
-                    <button type="button" onclick="cerrarModalPagina()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100">Cancelar</button>
-                    <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs shadow-sm">Guardar Cambios</button>
+                    <button type="button" onclick="cerrarModalPagina()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100">Cancel</button>
+                    <button type="submit" class="bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs shadow-sm">Save Changes</button>
                 </div>
             </form>
         </div>
@@ -880,7 +878,7 @@
     <div id="modal-header-redes" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-xl p-6 shadow-xl">
             <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
-                <h3 class="font-black text-lg text-slate-900">Modificar Enlaces de Redes Sociales</h3>
+                <h3 class="font-black text-lg text-slate-900">Modify Social Media Links</h3>
                 <button onclick="cerrarModalRedes()" class="text-slate-400 hover:text-slate-600 cursor-pointer">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
@@ -889,8 +887,8 @@
                 <div id="contenedorRedesInputs" class="space-y-4 mb-6 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
                     </div>
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
-                    <button type="button" onclick="cerrarModalRedes()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100">Cancelar</button>
-                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2.5 rounded-xl text-xs shadow-sm">Actualizar Todo</button>
+                    <button type="button" onclick="cerrarModalRedes()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100">Cancel</button>
+                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2.5 rounded-xl text-xs shadow-sm">Update All</button>
                 </div>
             </form>
         </div>
@@ -900,7 +898,7 @@
         <div class="bg-white border border-slate-200 rounded-3xl w-full max-w-md p-6 shadow-xl transform scale-95 transition-all duration-300">
             
             <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
-                <h3 id="titulo-modal-footer" class="font-black text-lg text-slate-900">Editar Sección</h3>
+                <h3 id="titulo-modal-footer" class="font-black text-lg text-slate-900">Edit Section</h3>
                 <button onclick="cerrarModalEditarFooter()" class="text-slate-400 hover:text-slate-600 cursor-pointer">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
@@ -912,43 +910,43 @@
                 <div class="space-y-4 mb-6">
                     <div id="grupo-logo-footer" class="hidden space-y-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Logotipo del Footer (Opcional)</label>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Footer Logo (Optional)</label>
                             <input type="file" id="inputFooterLogo" accept="image/jpeg, image/jpg, image/png, image/webp" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs focus:outline-none focus:border-indigo-500">
-                            <p class="text-[11px] text-slate-400 mt-1">Actual: <span id="span-footer-actual" class="font-mono font-bold text-indigo-600">Por defecto</span></p>
+                            <p class="text-[11px] text-slate-400 mt-1">Current: <span id="span-footer-actual" class="font-mono font-bold text-indigo-600">Default</span></p>
                         </div>
                     </div>
 
                     <div id="grupo-contacto" class="hidden space-y-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Teléfono Principal</label>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Primary Phone</label>
                             <input type="text" id="footer-telefono1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Teléfono Secundario</label>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Secondary Phone</label>
                             <input type="text" id="footer-telefono2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500">
                         </div>
                     </div>
 
                     <div id="grupo-redes" class="hidden">
-                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Texto Invitación a Redes</label>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Social Media Invitation Text</label>
                         <textarea id="footer-texto-redes" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500 resize-none"></textarea>
                     </div>
 
                     <div id="grupo-copyright" class="hidden space-y-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Línea de Copyright 1</label>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Copyright Line 1</label>
                             <textarea id="footer-copyright-linea1" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500 resize-none"></textarea>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Línea de Copyright 2</label>
+                            <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Copyright Line 2</label>
                             <textarea id="footer-copyright-linea2" rows="2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:border-indigo-500 resize-none"></textarea>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
-                    <button type="button" onclick="cerrarModalEditarFooter()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100">Cancelar</button>
-                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2.5 rounded-xl text-xs shadow-sm">Guardar Cambios</button>
+                    <button type="button" onclick="cerrarModalEditarFooter()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100">Cancel</button>
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2.5 rounded-xl text-xs shadow-sm">Save Changes</button>
                 </div>
             </form>
         </div>
@@ -1238,7 +1236,7 @@
             }
         }
 
-        // MODIFICADO: Ahora procesa múltiples imágenes y los nuevos campos (id_interno, precio_descuento, destacado)
+
         document.getElementById('form-anuncio').addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('anuncio-id').value;
