@@ -2809,7 +2809,7 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 
-const PORT = process.env.PORT || 50000;
+const PORT = process.env.PORT || 50001;
 
 app.listen(PORT, () => {
     console.log(`Servidor de Ruumis ejecutándose exitosamente en el puerto ${PORT}`);
