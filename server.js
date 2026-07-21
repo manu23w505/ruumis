@@ -7,21 +7,20 @@ const ical = require('node-ical');
 const cron = require('node-cron');
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
-const fs = require('fs'); // Importamos fs para asegurarnos de que las carpetas existan
+const fs = require('fs');
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// 1. Asegurar que las carpetas existan
 const dirUploadsImages = path.join(__dirname, 'public', 'uploads', 'images');
 if (!fs.existsSync(dirUploadsImages)) {
     fs.mkdirSync(dirUploadsImages, { recursive: true });
 }
 
-// 2. CONFIGURACIÓN ÚNICA DE ALMACENAMIENTO (DEJA SOLO ESTA)
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const dir = path.join(__dirname, 'public/uploads');
@@ -36,21 +35,28 @@ const storage = multer.diskStorage({
     }
 });
 
-// ¡ESTA ES LA QUE SE QUEDA! (Borra cualquier otra línea que diga "const upload = " más abajo)
 const upload = multer({ storage: storage });
 
-
-// Configuración de la Base de Datos
 const db = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
+    user: process.env.DB_USER || 'ruumiss_admin',
     password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'ruumis',
+    database: process.env.DB_NAME || 'ruumiss_db',
     port: process.env.DB_PORT || 3306, 
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
     ssl: { rejectUnauthorized: false } 
+});
+
+// Verificar conexión a la BD
+db.getConnection((err, connection) => {
+    if (err) {
+        console.error('Error al conectar a la base de datos:', err);
+    } else {
+        console.log('Conectado con éxito a la base de datos mediante Pool');
+        connection.release();
+    }
 });
 
 // Verificar la conexión inicial del Pool
@@ -2542,61 +2548,36 @@ app.get('/api/admin-locations', (req, res) => {
     });
 });
 
-
 app.post('/api/admin-locations', (req, res) => {
     const {
-        adv_subtitle,
-        adv_title,
-        adv_desc,
-        adv1_icon,
-        adv1_title,
-        adv1_desc,
-        adv2_icon,
-        adv2_title,
-        adv2_desc,
-        adv3_icon,
-        adv3_title,
-        adv3_desc
+        adv_subtitle, adv_title, adv_desc,
+        adv1_icon, adv1_title, adv1_desc,
+        adv2_icon, adv2_title, adv2_desc,
+        adv3_icon, adv3_title, adv3_desc
     } = req.body;
 
     const query = `
         UPDATE admin_locations SET 
-            adv_subtitle = ?, 
-            adv_title = ?, 
-            adv_desc = ?, 
-            adv1_icon = ?, 
-            adv1_title = ?, 
-            adv1_desc = ?, 
-            adv2_icon = ?, 
-            adv2_title = ?, 
-            adv2_desc = ?, 
-            adv3_icon = ?, 
-            adv3_title = ?, 
-            adv3_desc = ?
+            adv_subtitle = ?, adv_title = ?, adv_desc = ?,
+            adv1_icon = ?, adv1_title = ?, adv1_desc = ?,
+            adv2_icon = ?, adv2_title = ?, adv2_desc = ?,
+            adv3_icon = ?, adv3_title = ?, adv3_desc = ?
         WHERE id = 1
     `;
 
     const values = [
-        adv_subtitle,
-        adv_title,
-        adv_desc,
-        adv1_icon,
-        adv1_title,
-        adv1_desc,
-        adv2_icon,
-        adv2_title,
-        adv2_desc,
-        adv3_icon,
-        adv3_title,
-        adv3_desc
+        adv_subtitle, adv_title, adv_desc,
+        adv1_icon, adv1_title, adv1_desc,
+        adv2_icon, adv2_title, adv2_desc,
+        adv3_icon, adv3_title, adv3_desc
     ];
 
     db.query(query, values, (err, result) => {
         if (err) {
-            console.error('Error al actualizar ventajas:', err);
-            return res.status(500).json({ error: 'Error al actualizar los datos en la base de datos' });
+            console.error("Error al actualizar ventajas:", err);
+            return res.status(500).json({ error: "Error al actualizar la base de datos" });
         }
-        res.json({ message: 'Sección de ventajas actualizada correctamente' });
+        res.json({ success: true, message: "Ventajas actualizadas correctamente" });
     });
 });
 
@@ -2819,7 +2800,8 @@ cron.schedule('*/5 * * * *', () => {
     sincronizarCalendarios();
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 50000;
+
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en el puerto ${PORT}`);
+    console.log(`Servidor de Ruumis ejecutándose exitosamente en el puerto ${PORT}`);
 });
