@@ -40,7 +40,7 @@ const upload = multer({ storage: storage });
 const db = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'ruumiss_admin',
-    password: process.env.DB_PASSWORD || '',
+    password: process.env.DB_PASSWORD || 'MAV138HR7Lzo',
     database: process.env.DB_NAME || 'ruumiss_db',
     port: process.env.DB_PORT || 3306, 
     waitForConnections: true,
@@ -2799,6 +2799,15 @@ app.post('/api/contacts-secondary', upload.fields([
 cron.schedule('*/5 * * * *', () => {
     sincronizarCalendarios();
 });
+
+process.on('uncaughtException', (err) => {
+    console.error('Error no capturado (uncaughtException):', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Promesa no manejada (unhandledRejection):', reason);
+});
+
 
 const PORT = process.env.PORT || 50000;
 
